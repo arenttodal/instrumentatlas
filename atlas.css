@@ -334,7 +334,19 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-demo-meta b{display:block;font-size:14.5px;color:#fff;font-weight:500}
 .atl-demo-meta span{font-size:12.5px;color:var(--text-dim)}
 .atl-wave{display:flex;align-items:flex-end;gap:2px;height:22px;flex:0 0 auto;opacity:.5}
-.atl-wave i{width:2px;background:var(--gold);border-radius:1px;display:block}
+.atl-wave i{width:2px;background:var(--gold);border-radius:1px;display:block;
+  opacity:.34;transition:opacity .12s linear}
+/* a demo with no file keeps the old flat look: every bar at the same weight */
+.atl-demo:not(.is-playable) .atl-wave i{opacity:1}
+.atl-demo.is-playing .atl-wave{opacity:.9}
+.atl-wave i.is-lit{opacity:1}
+.atl-demo-dur{font-size:12px;color:#4E505A;min-width:32px;text-align:right;font-variant-numeric:tabular-nums}
+.atl-demo.is-playing .atl-play{background:rgba(212,160,74,.16);border-color:var(--gold)}
+.atl-play .ico-pause{display:none}
+.atl-demo.is-playing .atl-play .ico-play{display:none}
+.atl-demo.is-playing .atl-play .ico-pause{display:block}
+.atl-demo.is-missing .atl-demo-meta b{color:var(--text-dim)}
+.atl-demo.is-missing .atl-play{opacity:.4}
 .atl-demo-note{font-size:12px;color:#4E505A;margin-top:14px;letter-spacing:.3px}
 
 /* --- detail blocks --- */

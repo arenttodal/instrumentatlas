@@ -331,15 +331,17 @@ function viewInstrument(id){
             <div class="atl-demos">
               <div class="atl-label" style="margin-bottom:12px">Listen</div>
               ${it.demos.map(d => `
-                <div class="atl-demo">
-                  <button class="atl-play" aria-label="Play ${esc(d.label)}">
-                    <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
+                <div class="atl-demo${d.src ? ' is-playable' : ''}"${d.src ? ` data-src="${esc(d.src)}"` : ''}>
+                  <button class="atl-play" aria-label="Play ${esc(d.label)}"${d.src ? '' : ' aria-disabled="true"'}>
+                    <svg class="ico-play" width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
+                    <svg class="ico-pause" width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><rect x="0" y="0" width="4" height="14" rx="1"/><rect x="8" y="0" width="4" height="14" rx="1"/></svg>
                   </button>
                   <div class="atl-demo-meta"><b>${esc(d.label)}</b><span>${esc(d.note)}</span></div>
                   <div class="atl-wave">${bars(22)}</div>
-                  <span style="font-size:12px;color:#4E505A;min-width:32px;text-align:right">${esc(d.dur)}</span>
+                  <span class="atl-demo-dur">${esc(d.dur)}</span>
                 </div>`).join('')}
-              <div class="atl-demo-note" id="atl-audio-note">Audio connects in the next build. Layout only for now.</div>
+              ${it.demos.some(d => d.src) ? '' :
+                `<div class="atl-demo-note" id="atl-audio-note">Audio connects in the next build. Layout only for now.</div>`}
             </div>
           </div>
         </section>
@@ -657,6 +659,8 @@ function route(path){
   window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
   observeFades();
   wireFamilyVideo(parts.length === 0);
+  /* the demo rows the player was pointing at have just been destroyed */
+  if(typeof stopDemo === 'function') stopDemo();
 }
 
 /* ============================================================================
@@ -771,9 +775,84 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeMenu(); });
 
 
+/* ============================================================================
+   DEMO PLAYERS
+   ----------------------------------------------------------------------------
+   One Audio object for the whole page, reused across every clip, so only one
+   can ever sound at a time and switching costs no extra memory. Nothing is
+   fetched until a button is pressed. A demo without a src keeps its current
+   inert appearance rather than throwing, because most instruments have no
+   audio yet.
+   ============================================================================ */
+const PLAYER = { el:null, row:null, lit:-1 };
+
+function demoAudio(){
+  if(PLAYER.el) return PLAYER.el;
+  const a = new Audio();
+  a.preload = 'none';
+  a.addEventListener('timeupdate', paintWave);
+  a.addEventListener('ended', () => stopDemo());
+  a.addEventListener('error', () => {
+    if(PLAYER.row) PLAYER.row.classList.add('is-missing');
+    stopDemo();
+  });
+  /* the file is the authority on its own length, not the hardcoded string */
+  a.addEventListener('loadedmetadata', () => {
+    if(!PLAYER.row || !isFinite(a.duration)) return;
+    const d = PLAYER.row.querySelector('.atl-demo-dur');
+    if(d) d.textContent = `${Math.floor(a.duration/60)}:${String(Math.round(a.duration%60)).padStart(2,'0')}`;
+  });
+  PLAYER.el = a;
+  return a;
+}
+
+/* light the waveform bars up to the current position, touching the DOM only
+   when the number of lit bars actually changes */
+function paintWave(){
+  const a = PLAYER.el, row = PLAYER.row;
+  if(!a || !row || !isFinite(a.duration) || !a.duration) return;
+  const bars = row.querySelectorAll('.atl-wave i');
+  const n = Math.round((a.currentTime / a.duration) * bars.length);
+  if(n === PLAYER.lit) return;
+  PLAYER.lit = n;
+  bars.forEach((b, i) => b.classList.toggle('is-lit', i < n));
+}
+
+function stopDemo(){
+  const a = PLAYER.el;
+  if(a){ a.pause(); a.currentTime = 0; }
+  if(PLAYER.row){
+    PLAYER.row.classList.remove('is-playing');
+    PLAYER.row.querySelectorAll('.atl-wave i').forEach(b => b.classList.remove('is-lit'));
+  }
+  PLAYER.row = null;
+  PLAYER.lit = -1;
+}
+
+function playDemo(row){
+  const src = row.dataset.src;
+  if(!src) return;
+  const a = demoAudio();
+  if(PLAYER.row === row && !a.paused){ a.pause(); row.classList.remove('is-playing'); return; }
+  if(PLAYER.row === row && a.paused && a.currentTime > 0){
+    row.classList.add('is-playing');
+    a.play().catch(() => {});
+    return;
+  }
+  stopDemo();
+  PLAYER.row = row;
+  row.classList.remove('is-missing');
+  a.src = src;
+  row.classList.add('is-playing');
+  a.play().catch(() => { row.classList.remove('is-playing'); row.classList.add('is-missing'); });
+}
+
 document.addEventListener('click', e => {
-  const p = e.target.closest('.atl-play');
-  if(!p) return;
+  const btn = e.target.closest('.atl-play');
+  if(!btn) return;
+  const row = btn.closest('.atl-demo');
+  if(!row) return;
+  if(row.dataset.src){ playDemo(row); return; }
   const note = document.getElementById('atl-audio-note');
   if(note){ note.textContent = 'Audio connects in the next build. This button will play the clip.'; note.style.color = '#D4A04A'; }
 });
