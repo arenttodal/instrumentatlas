@@ -165,7 +165,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg>
     </button>
     <div class="strip-id">
-      <b id="passage-name">Horn theme · 8 bars</b>
+      <b id="passage-name">Theme 1 · 8 bars</b>
       <span id="lib-name">Junkie XL Brass</span>
     </div>
     <div class="strip-bar" id="scrub"><i id="scrub-fill"></i></div>
@@ -178,10 +178,10 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   <div class="body">
     <div class="toolbar">
       <div class="tgroup"><span class="tlabel">Passage</span>
-        <button class="chip" aria-pressed="true">Horn theme</button>
+        <button class="chip" aria-pressed="true">Theme 1</button>
       </div>
       <div class="tspacer"></div>
-      <div class="meta" id="meta">3 tracks · 8 bars · &#9834; = 92 · levels matched</div>
+      <div class="meta" id="meta">3 tracks · 8 bars · &#9834; = 120 · levels matched</div>
     </div>
     </div>
 
@@ -364,7 +364,7 @@ window.AudioCompare = AudioCompare;
    bottom of this file.
    pitch = MIDI number · start and dur are in beats
    ============================================================================ */
-const BARS = 8, BEATS = 4, TEMPO = 92;
+const BARS = 8, BEATS = 4, TEMPO = 120;
 const TOTAL = BARS * BEATS;
 
 /* File extension for the renders. 'aac' is raw ADTS, 'm4a' is the same codec in
@@ -379,19 +379,19 @@ const A = name => `${name}.${EXT}`;
 const TRACKS = [
   {id:'flute', name:'Flute', role:'Doubling, 8va',
    variants:[{v:'1', label:'Solo', src:A('flute_1')}], variant:'1',
-   notes:[[0,2,84],[2,2,86],[4,3,88],[7,1,86],[8,2,84],[10,2,81],[12,4,79],[16,2,84],[18,2,86],[20,4,88],[24,3,86],[27,1,84],[28,4,81]]},
+   notes:[[1.562, 1.156, 72], [2.49, 0.906, 67], [3.229, 4.25, 79], [7.969, 0.812, 72], [8.698, 0.875, 79], [9.5, 1.719, 80], [11.052, 1.146, 77], [12.073, 2.323, 84], [14.677, 2.531, 79], [17.115, 1.76, 75], [18.635, 0.625, 74], [19.188, 0.469, 72], [19.583, 2.208, 74], [22.052, 1.688, 67], [23.604, 0.938, 70], [24.438, 4.042, 72]]},
 
   {id:'horn', name:'Horn', role:'Melody',
    variants:[{v:'1', label:'Solo', src:A('horn_1')},
              {v:'4', label:'4', src:A('horn_4')},
              {v:'6', label:'6', src:A('horn_6')},
              {v:'12', label:'12', src:A('horn_12')}], variant:'4',
-   notes:[[0,2,60],[2,2,62],[4,3,64],[7,1,62],[8,2,60],[10,2,57],[12,4,55],[16,2,60],[18,2,62],[20,4,64],[24,3,62],[27,1,60],[28,4,57]]},
+   notes:[[1.562, 1.156, 60], [2.49, 0.906, 55], [3.229, 4.25, 67], [7.969, 0.812, 60], [8.698, 0.875, 67], [9.5, 1.719, 68], [11.052, 1.146, 65], [12.073, 2.323, 72], [14.677, 2.531, 67], [17.115, 1.76, 63], [18.635, 0.625, 62], [19.188, 0.469, 60], [19.583, 2.208, 62], [22.052, 1.688, 55], [23.604, 0.938, 58], [24.438, 4.042, 60]]},
 
   {id:'cello', name:'Cello', role:'Doubling, 8vb',
    variants:[{v:'1', label:'Solo', src:A('cello_1')},
              {v:'ens', label:'Section', src:A('cello_ens')}], variant:'ens',
-   notes:[[0,2,48],[2,2,50],[4,3,52],[7,1,50],[8,2,48],[10,2,45],[12,4,43],[16,2,48],[18,2,50],[20,4,52],[24,3,50],[27,1,48],[28,4,45]]}
+   notes:[[1.562, 1.156, 48], [2.49, 0.906, 43], [3.229, 4.25, 55], [7.969, 0.812, 48], [8.698, 0.875, 55], [9.5, 1.719, 56], [11.052, 1.146, 53], [12.073, 2.323, 60], [14.677, 2.531, 55], [17.115, 1.76, 51], [18.635, 0.625, 50], [19.188, 0.469, 48], [19.583, 2.208, 50], [22.052, 1.688, 43], [23.604, 0.938, 46], [24.438, 4.042, 48]]}
 ];
 
 const state = {playing:false, pos:0, muted:new Set(), solo:null, loaded:false};
@@ -511,7 +511,7 @@ function draw(){
 }
 
 /* ---------- transport (simulated; real build drives this from AudioCompare) ---------- */
-const DUR = (TOTAL / TEMPO) * 60;
+let DUR = (TOTAL / TEMPO) * 60;   // provisional; replaced by the real buffer length
 let last = 0;
 
 function fmt(sec){
@@ -535,7 +535,9 @@ function render(){
   const pct = state.pos / DUR;
   document.getElementById('scrub-fill').style.width = (pct * 100) + '%';
   document.getElementById('clock').textContent = fmt(state.pos);
-  document.getElementById('playhead').style.left = (pct * grid.clientWidth) + 'px';
+  const beats = (state.pos / 60) * TEMPO;
+  const x = Math.min(beats / TOTAL, 1) * grid.clientWidth;
+  document.getElementById('playhead').style.left = x + 'px';
 }
 
 document.getElementById('play').onclick = async function(){
@@ -551,6 +553,7 @@ document.getElementById('play').onclick = async function(){
       meta.textContent = e.message + ' — serve this folder over http://';
       engine = null; return;
     }
+    DUR = engine.duration || DUR;
     draw();
   }
   state.playing = !state.playing;
