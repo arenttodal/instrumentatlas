@@ -56,26 +56,22 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* the preset field sits apart from the icon cluster */
 .preset-wrap{margin-right:2px}
-/* the field matches the icon buttons in height and radius; label above value,
-   both sharing one left edge, with the chevron pinned right */
-.preset-field{display:flex;align-items:center;gap:10px;height:34px;padding:0 9px 0 12px;
+/* label and value sit side by side on one baseline, divided by a hairline */
+.preset-field{display:flex;align-items:center;gap:0;height:34px;padding:0 9px 0 12px;
   border:1px solid var(--hair);border-radius:9px;background:transparent;
   transition:border-color .2s ease,background .2s ease}
 .preset-field:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.035)}
 .preset-field[aria-expanded="true"]{border-color:var(--hair-gold);background:rgba(212,160,74,.09)}
-/* the two lines are centred as a block against the 34px field, and the label's
-   letter-spacing is compensated so its optical left edge matches the value's */
-.pf-text{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
-  gap:3px;flex:0 0 auto;height:100%;padding-top:1px}
-.pf-label{font-size:7.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
-  color:#43454F;line-height:1;text-indent:.5px;margin-right:-1.7px}
+.pf-text{display:flex;flex-direction:row;align-items:center;flex:0 0 auto}
+.pf-label{flex:0 0 auto;font-size:8px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
+  color:#43454F;line-height:1;padding-right:10px;margin-right:10px;
+  border-right:1px solid var(--hair)}
 /* fixed width, sized to the longest label ("Counter-melody only"), so the field
    never resizes as presets change — longer custom names ellipsis instead */
 .pf-value{display:block;font-size:12px;color:#fff;font-weight:500;letter-spacing:.1px;
-  line-height:1.05;width:126px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pf-text{width:126px}
+  line-height:1;width:126px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .preset-field.custom .pf-value{color:var(--gold)}
-.pf-chev{color:#4E505A;flex:0 0 auto;margin-left:auto;transition:transform .22s ease,color .2s ease}
+.pf-chev{color:#4E505A;flex:0 0 auto;margin-left:9px;transition:transform .22s ease,color .2s ease}
 .preset-field:hover .pf-chev{color:var(--dim)}
 .preset-field[aria-expanded="true"] .pf-chev{transform:rotate(180deg);color:var(--gold)}
 .tools-sep{width:1px;height:20px;background:var(--hair);margin:0 5px}
