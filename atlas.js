@@ -1,5 +1,5 @@
 /* ============================================================================
-   INSTRUMENT ATLAS — APPLICATION
+   INSTRUMENT ATLAS · APPLICATION
    ----------------------------------------------------------------------------
    Rendering, routing, the seating map and the timbre chart. Reads everything
    from atlas-data.js, which must load first.
@@ -49,7 +49,7 @@ function viewFamily(fam){
 
         <div class="atl-fade">
           <div class="atl-page-head">
-            <div class="atl-eyebrow">${esc(fam.plate)}</div>
+            <div class="atl-eyebrow">The Orchestra</div>
             <h1>${esc(fam.name)}</h1>
             <p class="lede">${esc(fam.lede)}</p>
           </div>
@@ -76,7 +76,7 @@ function viewFamily(fam){
 
         <div class="atl-fade">
           <div class="atl-seatmap">
-            <svg id="atl-seatmap-svg" viewBox="0 2 340 176" role="img" aria-label="Orchestra seating map — each dot is one player"></svg>
+            <svg id="atl-seatmap-svg" viewBox="0 2 340 176" role="img" aria-label="Orchestra seating map, each dot is one player"></svg>
           </div>
           <div class="atl-seat" id="atl-ens" data-family="${fam.id}"></div>
         </div>
@@ -134,7 +134,7 @@ function seatCount(g, tier){
 }
 
 /* Miniature of the same seating fan, for the family cards on the home page.
-   Same geometry, same source data — so the home page teaches where each family
+   Same geometry, same source data, so the home page teaches where each family
    physically sits before you have clicked into anything. */
 function miniArc(famId){
   const CX = 60, CY = 56, K = 54 / 172;   // same fan, scaled to the card
@@ -163,7 +163,7 @@ function renderSeatmap(famId, tier){
     const mine = g.fam === famId;
     const [a0,a1] = g.a, [r0,r1] = g.r;
 
-    /* block outline — always drawn, so empty sections read as absent, not missing */
+    /* block outline: always drawn, so empty sections read as absent, not missing */
     out += `<path d="${seatWedge(a0,a1,r0,r1)}" fill="${mine && n ? 'rgba(212,160,74,.07)' : 'rgba(143,180,224,.03)'}"
       stroke="${mine ? 'rgba(212,160,74,.35)' : 'rgba(143,180,224,.13)'}" stroke-width=".7"/>`;
 
@@ -205,8 +205,18 @@ function renderSeatmap(famId, tier){
 /* --- ensemble sizer --------------------------------------------------- */
 const countOf = v => String(v).split('+').reduce((a,b) => a + (parseInt(b,10) || 0), 0);
 
+/* Section size as the span the ensemble slider actually covers, low to high,
+   ignoring the tiers where the instrument is absent. Derived from the family's
+   own sizes so the instrument page and the family page can never disagree. */
+function sectionRange(fam, id){
+  const counts = (fam.sizes[id] || []).map(countOf).filter(n => n > 0);
+  if(!counts.length) return null;
+  const lo = Math.min(...counts), hi = Math.max(...counts);
+  return lo === hi ? String(lo) : `${lo}–${hi}`;
+}
+
 /* The shell is built once. Only the text and rows update as the slider moves,
-   so the range input is never replaced mid-drag — that is what limited it to
+   so the range input is never replaced mid-drag, which is what limited it to
    one step at a time before. Dragging, clicking anywhere on the track, clicking
    a tick label and arrow keys all work now. */
 function initEnsemble(famId, startTier){
@@ -239,7 +249,7 @@ function updateEnsemble(famId, tier){
   const total = fam.members.reduce((a,id) => a + countOf(fam.sizes[id][tier]), 0);
 
   document.getElementById('atl-ens-name').textContent  = tier === 0 ? fam.smallName : t.label;
-  document.getElementById('atl-ens-count').textContent = total || '—';
+  document.getElementById('atl-ens-count').textContent = total || '–';
   document.getElementById('atl-ens-ex').textContent    = `${t.era} · whole orchestra ${t.players} players`;
   document.querySelectorAll('#atl-ens-ticks button').forEach((b,i) => b.classList.toggle('on', i === tier));
 
@@ -249,7 +259,7 @@ function updateEnsemble(famId, tier){
     const v = fam.sizes[id][tier], n = countOf(v);
     const label = id === 'violin' ? 'Violin I / II' : INSTRUMENTS[id].name;
     return `<div class="atl-seat-row ${n ? '' : 'is-off'}">
-      <span>${esc(label)}</span><b>${n ? esc(String(v)) : '—'}</b></div>`;
+      <span>${esc(label)}</span><b>${n ? esc(String(v)) : '–'}</b></div>`;
   }).join('') + (total ? '' : `<div class="atl-ens-note">${esc(fam.smallName)}.</div>`);
 }
 
@@ -267,6 +277,10 @@ function viewInstrument(id){
     return `<a href="${href}" class="${dir}"><span>${dir === 'r' ? 'Next' : 'Previous'}</span><b>${esc(r.name)}</b></a>`;
   };
   const vids = (it.gallery || GALLERY.map(g => g.v)).map(v => GALLERY.find(g => g.v === v)).filter(Boolean);
+  /* the section-size fact is computed, not typed, so it tracks the family table */
+  const secRange = sectionRange(fam, id);
+  const facts = it.facts.map(f =>
+    (secRange && /^section size$/i.test(f[0])) ? [f[0], secRange, f[2] || 'players'] : f);
 
   return `
   <section class="atl-instpage">
@@ -274,7 +288,7 @@ function viewInstrument(id){
 
       <div class="atl-insthead">
         <div>
-          <div class="atl-eyebrow">${esc(it.plate)}</div>
+          <div class="atl-eyebrow">${esc(fam.name)}</div>
           <h1>${esc(it.name)}</h1>
         </div>
         <div class="atl-tabs" role="tablist">
@@ -304,16 +318,16 @@ function viewInstrument(id){
             <div class="atl-plate-cap">
               <div class="no">${esc(fam.name)} family</div>
               <div class="nm">${esc(it.latin)}</div>
-              <div class="src atl-cap-2d">Placeholder line art — final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>
+              <div class="src atl-cap-2d">Placeholder line art. Final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>
               ${it.model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')}${it.modelSource ? ` · <a href="${esc(it.modelSource)}" target="_blank" rel="noopener">Sketchfab</a>` : ''} · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
+            </div>
+            <div class="atl-plate-facts">
+              ${facts.map(f => `<div><span>${esc(f[0])}</span><b>${esc(f[1])}${f[2] ? ` <em>${esc(f[2])}</em>` : ''}</b></div>`).join('')}
             </div>
           </div>
           <div class="atl-inst-id atl-fade" style="transition-delay:90ms">
             <div class="epithet">${esc(it.epithet)}</div>
             <p class="summary">${esc(it.summary)}</p>
-            <div class="atl-facts">
-              ${it.facts.map(f => `<div class="atl-fact"><span>${esc(f[0])}</span><b>${esc(f[1])}${f[2] ? ` <em>${esc(f[2])}</em>` : ''}</b></div>`).join('')}
-            </div>
             <div class="atl-demos">
               <div class="atl-label" style="margin-bottom:12px">Listen</div>
               ${it.demos.map(d => `
@@ -325,7 +339,7 @@ function viewInstrument(id){
                   <div class="atl-wave">${bars(22)}</div>
                   <span style="font-size:12px;color:#4E505A;min-width:32px;text-align:right">${esc(d.dur)}</span>
                 </div>`).join('')}
-              <div class="atl-demo-note" id="atl-audio-note">Audio connects in the next build — layout only for now.</div>
+              <div class="atl-demo-note" id="atl-audio-note">Audio connects in the next build. Layout only for now.</div>
             </div>
           </div>
         </section>
@@ -336,15 +350,15 @@ function viewInstrument(id){
         <div class="atl-timbre-head">
           <div>
             <h3 class="atl-blockhead">Range and tone colour, against the orchestra</h3>
-            <p class="atl-timbre-lede">Horizontal is pitch. Vertical is brightness of tone colour — dark and
+            <p class="atl-timbre-lede">Horizontal is pitch. Vertical is brightness of tone colour: dark and
               covered at the bottom, bright and penetrating at the top. Every instrument in the collection is
               plotted, because the useful question is never how ${esc(it.name.toLowerCase())} sounds on its own,
               but what it sits next to.</p>
           </div>
           <div class="atl-timbre-stats">
-            <div><span>Sounding range</span><b id="atl-t-range">—</b></div>
-            <div><span>Span</span><b id="atl-t-span">—</b></div>
-            <div><span>Brightness rank</span><b id="atl-t-rank">—</b></div>
+            <div><span>Sounding range</span><b id="atl-t-range">–</b></div>
+            <div><span>Span</span><b id="atl-t-span">–</b></div>
+            <div><span>Brightness rank</span><b id="atl-t-rank">–</b></div>
           </div>
         </div>
         <div class="atl-timbre-chart"><svg id="atl-timbre-svg" role="img"
@@ -409,7 +423,7 @@ function viewInstrument(id){
               </div>
             </div>`).join('')}
         </div>
-        <p class="atl-gallery-note">Videos are embedded through YouTube's own player and remain hosted on the rights holders' channels — nothing is copied or re-uploaded. Each card credits the performing orchestra, conductor and uploading channel, and links back to the source. Placeholder set for now; each instrument gets its own selection.</p>
+        <p class="atl-gallery-note">Videos are embedded through YouTube's own player and remain hosted on the rights holders' channels, and nothing is copied or re-uploaded. Each card credits the performing orchestra, conductor and uploading channel, and links back to the source. Placeholder set for now; each instrument gets its own selection.</p>
       </div>
 
     </div>
@@ -482,7 +496,7 @@ function wireTabs(){
 let currentInstrument = null, currentFamily = null;
 
 /* ============================================================================
-   RANGE & TIMBRE MAP — full page, on the instrument's Timbre tab.
+   RANGE & TIMBRE MAP. Full page, on the instrument's Timbre tab.
    Horizontal axis is pitch, vertical axis is brightness of tone colour. Every
    instrument in the collection is plotted, so the point of the chart is the
    comparison: where this instrument sits relative to everything around it.
@@ -664,7 +678,7 @@ buildMenu();
 
 /* Internal links are intercepted rather than navigated. Real hash URLs are kept
    in the markup so deep links still work once this is deployed on Cloudflare,
-   but we only write to history when this is the top-level document — inside an
+   but we only write to history when this is the top-level document. Inside an
    iframe (preview sandboxes, a Webflow embed) changing the URL is itself read as
    a navigation attempt and triggers a "leave this page?" prompt. */
 const IN_FRAME = (() => { try { return window.self !== window.top; } catch(_){ return true; } })();
@@ -707,7 +721,7 @@ document.addEventListener('click', e => {
   const p = e.target.closest('.atl-play');
   if(!p) return;
   const note = document.getElementById('atl-audio-note');
-  if(note){ note.textContent = 'Audio connects in the next build — this button will play the clip.'; note.style.color = '#D4A04A'; }
+  if(note){ note.textContent = 'Audio connects in the next build. This button will play the clip.'; note.style.color = '#D4A04A'; }
 });
 
 const nav = document.getElementById('atl-nav');
