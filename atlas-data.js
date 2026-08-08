@@ -499,6 +499,9 @@ const INSTRUMENTS = {
 
   violin:{
     family:'strings', name:'Violin', latin:'Violino',
+    model:'violin',
+    modelCredit:'“Violin Texturing” by ilushandro · modified: decimated and re-materialled',
+    modelSource:'https://skfb.ly/oAVFz',
     epithet:'The voice the orchestra is built around', status:'live',
     summary:'The smallest and highest of the family, and the most numerous instrument on stage, with thirty or more of them in a full orchestra, split into two sections. Almost every symphonic texture is organised around what the violins are doing.',
     range:{lo:55, hi:100, note:'G3 – E7', transposition:'Non-transposing'},
@@ -537,6 +540,8 @@ const INSTRUMENTS = {
 
   viola:{
     family:'strings', name:'Viola', latin:'Viola',
+    model:'viola',
+    modelCredit:'Attribution pending, do not publish',
     epithet:'The inner voice, and the one nobody notices working', status:'live',
     summary:'A fifth below the violin, and darker than the size difference suggests. The body is acoustically too small for its tuning, which is exactly where its throaty, slightly veiled character comes from. Most orchestral writing uses it to fill the middle, where nothing else quite reaches.',
     range:{lo:48, hi:88, note:'C3 – E6', transposition:'Non-transposing'},
