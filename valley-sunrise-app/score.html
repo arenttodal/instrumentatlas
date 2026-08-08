@@ -235,7 +235,7 @@ body.annotating .lanes{cursor:crosshair}
 .heads-inner{will-change:transform}
 /* the bar ruler stays put while the lanes scroll under it */
 #ruler{position:sticky;top:0;z-index:3;display:block;background:#0A0E17}
-.ruler-pad{height:24px;border-bottom:1px solid var(--hair)}
+.ruler-pad{height:36px;border-bottom:1px solid var(--hair)}
 .head{position:relative;display:flex;align-items:center;gap:8px;padding:0 11px 0 15px;
   border-bottom:1px solid rgba(255,255,255,.04)}
 .fam{position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--c);
@@ -629,7 +629,7 @@ function seek(sec){
    zoom changes the lane height; horizontal zoom changes pixels-per-beat and
    anchors on the mouse, the way a DAW does.
    -------------------------------------------------------------------------- */
-const RULER = 24;
+const RULER = 36;   // bar numbers on one row, section names on the next
 let LANE = 40;                         // lane height, changed by vertical zoom
 let ppb = 8;                           // pixels per beat
 const MIN_PPB = 1.2, MAX_PPB = 90, MIN_LANE = 22, MAX_LANE = 150;
@@ -730,14 +730,23 @@ function draw(){
   /* ---- ruler (its own sticky svg, so it survives vertical scrolling) ---- */
   for(let bar = 0; bar < S.bars; bar++){
     const x = bar * S.beats * ppb, major = bar % 4 === 0;
-    r += `<line x1="${x.toFixed(1)}" y1="${RULER-6}" x2="${x.toFixed(1)}" y2="${RULER}" stroke="#fff" stroke-opacity="${major?'.22':'.1'}"/>`;
+    r += `<line x1="${x.toFixed(1)}" y1="${RULER-7}" x2="${x.toFixed(1)}" y2="${RULER}" stroke="#fff" stroke-opacity="${major?'.22':'.1'}"/>`;
     if(major || ppb > 12)
-      r += `<text x="${(x+4).toFixed(1)}" y="14" fill="#5E606A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+      r += `<text x="${(x+4).toFixed(1)}" y="12" fill="#5E606A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
   }
+  if(DISP.regions !== 'off') (ANN.sections||[]).forEach((sec,i) => {
+    const x = (sec.bar-1)*S.beats*ppb, w = (sec.to - sec.bar + 1)*S.beats*ppb;
+    if(w < 26) return;                                  // too narrow to letter
+    r += `<line x1="${x.toFixed(1)}" y1="17" x2="${x.toFixed(1)}" y2="${RULER}" stroke="#fff" stroke-opacity=".26"/>
+          <clipPath id="sc${i}"><rect x="${x.toFixed(1)}" y="17" width="${(w-6).toFixed(1)}" height="${RULER-17}"/></clipPath>
+          <text clip-path="url(#sc${i})" x="${(x+6).toFixed(1)}" y="30" fill="#7E808A" font-size="9"
+            font-weight="700" font-family="DM Sans" letter-spacing="1.3">${sec.name.toUpperCase()}</text>`;
+  });
+
   if(tipsOn) (S.tips||[]).forEach(tp => {
     const x = (tp.bar-1)*S.beats*ppb, w = (tp.beats||8)*ppb;
-    r += `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="${RULER}" fill="#D4A04A" fill-opacity=".16"/>
-          <rect x="${x.toFixed(1)}" y="${RULER-2.5}" width="${w.toFixed(1)}" height="2.5" fill="#D4A04A" fill-opacity=".85"/>
+    r += `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="14" fill="#D4A04A" fill-opacity=".16"/>
+          <rect x="${x.toFixed(1)}" y="12" width="${w.toFixed(1)}" height="2" fill="#D4A04A" fill-opacity=".85"/>
           <circle cx="${x.toFixed(1)}" cy="6" r="2.6" fill="#D4A04A"/>`;
   });
   if(loopOn && loopA !== null && loopB !== null){
@@ -819,13 +828,10 @@ function draw(){
         font-size="9" font-weight="700" font-family="DM Sans" letter-spacing=".6">${rr.role==='counter'?'COUNTER':rr.role.toUpperCase()}</text>`;
   });
 
-  /* section boundaries */
+  /* section boundaries — lines only; the names are on the ruler */
   if(DISP.regions !== 'off') (ANN.sections||[]).forEach(sec => {
     const x = (sec.bar-1)*S.beats*ppb;
-    s += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".22" stroke-dasharray="3 4"/>`;
-    if(ppb > 3)
-      s += `<text x="${(x+5).toFixed(1)}" y="${H-6}" fill="#7E808A" font-size="9.5" font-weight="700"
-        font-family="DM Sans" letter-spacing="1.2">${sec.name.toUpperCase()}</text>`;
+    s += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".2" stroke-dasharray="3 4"/>`;
   });
 
   /* lanes */
