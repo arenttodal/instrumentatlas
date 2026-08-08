@@ -561,9 +561,9 @@ function draw(){
   s += `<line x1="0" y1="${RULER}" x2="${W}" y2="${RULER}" stroke="#fff" stroke-opacity=".08"/>`;
 
   /* loop region */
-  if(loopA !== null && loopB !== null){
+  if(loopOn && loopA !== null && loopB !== null){
     const x1 = loopA*ppb, x2 = loopB*ppb;
-    s += `<rect x="${x1}" y="0" width="${x2-x1}" height="${H}" fill="#D4A04A" fill-opacity="${loopOn?.07:.03}"/>
+    s += `<rect x="${x1}" y="0" width="${x2-x1}" height="${H}" fill="#D4A04A" fill-opacity=".07"/>
           <line x1="${x1}" y1="0" x2="${x1}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>
           <line x1="${x2}" y1="0" x2="${x2}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>`;
   }
@@ -960,13 +960,17 @@ $('vz-out').onclick = () => vzoom(1/1.35);
 $('loop-btn').onclick = function(){
   loopOn = !loopOn;
   this.setAttribute('aria-pressed', String(loopOn));
-  if(loopOn && loopA === null){            // default to the current 8 bars
-    const beat = position()/60*S.tempo;
-    loopA = Math.floor(beat/(S.beats*4))*S.beats*4;
-    loopB = loopA + S.beats*8;
+  if(loopOn){
+    if(loopA === null){                    // no region yet: take the current 8 bars
+      const beat = position()/60*S.tempo;
+      loopA = Math.floor(beat/(S.beats*4))*S.beats*4;
+      loopB = loopA + S.beats*8;
+    }
+  } else {
+    loopA = loopB = null;                  // turning it off clears the region
   }
   draw();
-  if(playing){ const p = position(); seek(p); }
+  if(playing) seek(position());
 };
 
 /* drag on the ruler to set a loop region */
