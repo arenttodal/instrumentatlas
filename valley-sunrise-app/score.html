@@ -43,8 +43,11 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .status{font-size:11px;color:var(--gold);min-width:120px}
 
 /* right sidebar */
-/* the sidebar occupies the arrangement area only — the header and transport
-   stay fully visible and clickable at all times */
+/* Everything below the header narrows by the sidebar width, so the transport,
+   the minimap and the arrangement all share one right edge. The sidebar fills
+   the full height beneath the header. */
+body.has-side .bar,
+body.has-side .mini,
 body.has-side .arr{margin-right:340px}
 .side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:8;
   display:flex;flex-direction:column;
@@ -245,8 +248,8 @@ let loopA = null, loopB = null, loopOn = false;   // loop points, in beats
 const $ = id => document.getElementById(id);
 
 function placeSide(){
-  const arr = document.querySelector('.arr');
-  if(arr) $('side').style.top = Math.round(arr.getBoundingClientRect().top) + 'px';
+  const head = document.querySelector('.top');
+  if(head) $('side').style.top = Math.round(head.getBoundingClientRect().bottom) + 'px';
 }
 const audible = id => (typeof audibleTrack === 'function') ? audibleTrack(id) : !muted.has(id);
 
