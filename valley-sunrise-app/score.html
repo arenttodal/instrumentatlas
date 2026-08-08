@@ -140,7 +140,10 @@ body.annotating .lanes{cursor:crosshair}
 
 /* arrangement */
 .arr{flex:1 1 auto;display:grid;grid-template-columns:var(--head-w) 1fr;min-height:0}
-.heads{border-right:1px solid var(--hair);overflow:hidden;background:rgba(255,255,255,.012)}
+.heads{position:relative;border-right:1px solid var(--hair);overflow:hidden;background:rgba(255,255,255,.012)}
+.heads-inner{will-change:transform}
+/* the bar ruler stays put while the lanes scroll under it */
+#ruler{position:sticky;top:0;z-index:3;display:block;background:#0A0E17}
 .ruler-pad{height:24px;border-bottom:1px solid var(--hair)}
 .head{position:relative;display:flex;align-items:center;gap:7px;padding:0 10px 0 14px;
   border-bottom:1px solid rgba(255,255,255,.04)}
@@ -160,7 +163,7 @@ body.annotating .lanes{cursor:crosshair}
 .loopband{position:absolute;top:0;height:24px;background:rgba(212,160,74,.18);
   border-left:1px solid var(--gold);border-right:1px solid var(--gold);pointer-events:none}
 .lanes svg{display:block}
-.ph{position:absolute;top:0;width:1px;background:var(--gold);pointer-events:none;
+.ph{position:absolute;top:0;width:1px;background:var(--gold);pointer-events:none;z-index:4;
   box-shadow:0 0 10px rgba(212,160,74,.8)}
 .ph::before{content:'';position:absolute;top:0;left:-4px;border-left:4.5px solid transparent;
   border-right:4.5px solid transparent;border-top:7px solid var(--gold)}
@@ -222,8 +225,12 @@ body.annotating .lanes{cursor:crosshair}
 </div>
 
 <div class="arr">
-  <div class="heads" id="heads"><div class="ruler-pad"></div></div>
+  <div class="heads" id="heads">
+    <div class="ruler-pad"></div>
+    <div class="heads-inner" id="heads-inner"></div>
+  </div>
   <div class="lanes" id="lanes">
+    <svg id="ruler" xmlns="http://www.w3.org/2000/svg"></svg>
     <svg id="grid" xmlns="http://www.w3.org/2000/svg"></svg>
     <div class="ph" id="ph" style="left:0"></div>
   </div>
@@ -480,10 +487,15 @@ const gridW = () => totalBeats() * ppb;
 const gridH = () => RULER + S.tracks.length * LANE;
 
 function layout(){
-  const g = $('grid');
-  g.setAttribute('width', gridW()); g.setAttribute('height', gridH());
-  [...$('heads').querySelectorAll('.head')].forEach(r => r.style.height = LANE + 'px');
-  $('ph').style.height = gridH() + 'px';
+  [...$('heads-inner').querySelectorAll('.head')].forEach(r => r.style.height = LANE + 'px');
+  $('ph').style.height = (RULER + S.tracks.length*LANE) + 'px';
+  syncHeadScroll();
+}
+
+/* the instrument names must move with the lanes when scrolling vertically */
+function syncHeadScroll(){
+  const hi = $('heads-inner'), l = $('lanes');
+  if(hi && l) hi.style.transform = `translateY(${-l.scrollTop}px)`;
 }
 
 /* zoom horizontally about a fixed point on screen, so the bar under the cursor
@@ -518,7 +530,7 @@ const solos = new Set();               // additive solo, like a mixer
 function audibleTrack(id){ return solos.size ? solos.has(id) : !muted.has(id); }
 
 function buildHeads(){
-  const h = $('heads');
+  const h = $('heads-inner');
   S.tracks.forEach(t => {
     const row = document.createElement('div');
     row.className = 'head'; row.style.height = LANE + 'px';
@@ -543,7 +555,7 @@ function buildHeads(){
   });
 }
 function syncHeads(){
-  [...$('heads').querySelectorAll('.head')].forEach((r,i) => {
+  [...$('heads-inner').querySelectorAll('.head')].forEach((r,i) => {
     const id = S.tracks[i].id;
     r.dataset.solo  = solos.has(id) ? '1' : '0';
     r.dataset.muted = muted.has(id) ? '1' : '0';
@@ -558,24 +570,41 @@ const famColor = f => FAM[f] || '#8FB4E0';
 
 /* ---------- draw ---------- */
 function draw(){
-  const W = gridW(), H = gridH(), tb = totalBeats();
-  let s = '';
+  const W = gridW(), H = S.tracks.length * LANE;     // body only; ruler is separate
+  let r = '', s = '';
 
-  /* bars and beats */
+  /* ---- ruler (its own sticky svg, so it survives vertical scrolling) ---- */
   for(let bar = 0; bar < S.bars; bar++){
-    const x = bar * S.beats * ppb;
-    const major = bar % 4 === 0;
-    s += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity="${major?'.11':'.045'}"/>`;
+    const x = bar * S.beats * ppb, major = bar % 4 === 0;
+    r += `<line x1="${x.toFixed(1)}" y1="${RULER-6}" x2="${x.toFixed(1)}" y2="${RULER}" stroke="#fff" stroke-opacity="${major?'.22':'.1'}"/>`;
     if(major || ppb > 12)
-      s += `<text x="${(x+4).toFixed(1)}" y="15" fill="#4E505A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+      r += `<text x="${(x+4).toFixed(1)}" y="14" fill="#5E606A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+  }
+  if(tipsOn) (S.tips||[]).forEach(tp => {
+    const x = (tp.bar-1)*S.beats*ppb, w = (tp.beats||8)*ppb;
+    r += `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="${RULER}" fill="#D4A04A" fill-opacity=".16"/>
+          <rect x="${x.toFixed(1)}" y="${RULER-2.5}" width="${w.toFixed(1)}" height="2.5" fill="#D4A04A" fill-opacity=".85"/>
+          <circle cx="${x.toFixed(1)}" cy="6" r="2.6" fill="#D4A04A"/>`;
+  });
+  if(loopOn && loopA !== null && loopB !== null){
+    const x1 = loopA*ppb, x2 = loopB*ppb;
+    r += `<rect x="${x1}" y="0" width="${x2-x1}" height="${RULER}" fill="#D4A04A" fill-opacity=".22"/>`;
+  }
+  r += `<line x1="0" y1="${RULER-0.5}" x2="${W}" y2="${RULER-0.5}" stroke="#fff" stroke-opacity=".08"/>`;
+  const rs = $('ruler');
+  rs.setAttribute('width', W); rs.setAttribute('height', RULER);
+  rs.setAttribute('viewBox', `0 0 ${W} ${RULER}`); rs.innerHTML = r;
+
+  /* ---- bars and beats ---- */
+  for(let bar = 0; bar < S.bars; bar++){
+    const x = bar * S.beats * ppb, major = bar % 4 === 0;
+    s += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity="${major?'.11':'.045'}"/>`;
     if(ppb > 26) for(let bt = 1; bt < S.beats; bt++){
       const bx = x + bt*ppb;
-      s += `<line x1="${bx.toFixed(1)}" y1="${RULER}" x2="${bx.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".022"/>`;
+      s += `<line x1="${bx.toFixed(1)}" y1="0" x2="${bx.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".022"/>`;
     }
   }
-  s += `<line x1="0" y1="${RULER}" x2="${W}" y2="${RULER}" stroke="#fff" stroke-opacity=".08"/>`;
 
-  /* loop region */
   if(loopOn && loopA !== null && loopB !== null){
     const x1 = loopA*ppb, x2 = loopB*ppb;
     s += `<rect x="${x1}" y="0" width="${x2-x1}" height="${H}" fill="#D4A04A" fill-opacity=".07"/>
@@ -583,23 +612,15 @@ function draw(){
           <line x1="${x2}" y1="0" x2="${x2}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>`;
   }
 
-  /* tips live on the ruler strip only — the lanes stay clean for annotations */
-  if(tipsOn) (S.tips||[]).forEach(tp => {
-    const x = (tp.bar-1)*S.beats*ppb, w = (tp.beats||8)*ppb;
-    s += `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="${RULER}" fill="#D4A04A" fill-opacity=".16"/>
-          <rect x="${x.toFixed(1)}" y="${RULER-2.5}" width="${w.toFixed(1)}" height="2.5" fill="#D4A04A" fill-opacity=".85"/>
-          <circle cx="${x.toFixed(1)}" cy="6" r="2.6" fill="#D4A04A"/>`;
-  });
-
   /* the lane being annotated, and the region being dragged */
   if(annotating && hoverLane !== null){
-    const y0 = RULER + hoverLane*LANE;
+    const y0 = hoverLane*LANE;
     s += `<rect x="0" y="${y0}" width="${W}" height="${LANE}" fill="#fff" fill-opacity=".035"/>
           <line x1="0" y1="${y0}" x2="${W}" y2="${y0}" stroke="#D4A04A" stroke-opacity=".35"/>
           <line x1="0" y1="${y0+LANE}" x2="${W}" y2="${y0+LANE}" stroke="#D4A04A" stroke-opacity=".35"/>`;
   }
   if(dragSel){
-    const y0 = RULER + dragSel.lane*LANE;
+    const y0 = dragSel.lane*LANE;
     const x = (dragSel.from-1)*S.beats*ppb, w = Math.max((dragSel.to-dragSel.from)*S.beats*ppb, 2);
     const c = ROLE_COLOR[dragSel.role] || '#D4A04A';
     s += `<rect x="${x.toFixed(1)}" y="${y0+1}" width="${w.toFixed(1)}" height="${LANE-2}" rx="4"
@@ -608,12 +629,12 @@ function draw(){
             font-weight="700" font-family="DM Sans">${fmtBar(dragSel.from)} – ${fmtBar(dragSel.to)}</text>`;
   }
 
-  /* role regions, behind the notes */
+  /* role regions */
   if(sideOn) (ANN.roles||[]).forEach(rr => {
     if(!roleFilter.has(rr.role)) return;
     const i = S.tracks.findIndex(t => t.id === rr.track); if(i < 0) return;
     const x = (rr.from-1)*S.beats*ppb, w = (rr.to - rr.from)*S.beats*ppb;
-    const y0 = RULER + i*LANE, c = ROLE_COLOR[rr.role] || '#8FB4E0';
+    const y0 = i*LANE, c = ROLE_COLOR[rr.role] || '#8FB4E0';
     const sel = selTrack === rr.track;
     s += `<rect x="${x.toFixed(1)}" y="${y0+1}" width="${w.toFixed(1)}" height="${LANE-2}" rx="4"
       fill="${c}" fill-opacity="${sel?.20:.10}" stroke="${c}" stroke-opacity="${sel?.75:.35}"/>`;
@@ -633,24 +654,19 @@ function draw(){
 
   /* lanes */
   S.tracks.forEach((t,i) => {
-    const y0 = RULER + i*LANE;
+    const y0 = i*LANE;
     s += `<line x1="0" y1="${y0+LANE}" x2="${W}" y2="${y0+LANE}" stroke="#fff" stroke-opacity=".035"/>`;
     if(!t.notes.length) return;
     const on = audibleTrack(t.id), col = famColor(t.family);
     const ps = t.notes.map(n => n[2]);
     let lo = Math.min(...ps), hi = Math.max(...ps);
-    const pad = 2; lo -= pad; hi += pad;
-    const span = Math.max(hi - lo, 6);
-    const inner = LANE - 8;
-    const nh = Math.max(2, Math.min(inner/span * 1.1, 9));      // note height follows lane height
+    lo -= 2; hi += 2;
+    const span = Math.max(hi - lo, 6), inner = LANE - 8;
+    const nh = Math.max(2, Math.min(inner/span * 1.1, 9));
     const yFor = p => y0 + 4 + (1 - (p - lo)/span) * (inner - nh);
-
-    /* octave guides once lanes are tall enough to read */
     if(LANE >= 46){
-      for(let p = Math.ceil(lo/12)*12; p <= hi; p += 12){
-        const y = yFor(p) + nh/2;
-        s += `<line x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="${col}" stroke-opacity=".07"/>`;
-      }
+      for(let p = Math.ceil(lo/12)*12; p <= hi; p += 12)
+        s += `<line x1="0" y1="${(yFor(p)+nh/2).toFixed(1)}" x2="${W}" y2="${(yFor(p)+nh/2).toFixed(1)}" stroke="${col}" stroke-opacity=".07"/>`;
     }
     t.notes.forEach(([st,du,p]) => {
       const x = st*ppb, w = Math.max(du*ppb - 1, 1.5);
@@ -659,9 +675,11 @@ function draw(){
     });
   });
 
-  $('grid').innerHTML = s;
-  $('grid').setAttribute('width', W); $('grid').setAttribute('height', H);
-  $('ph').style.height = H + 'px';
+  const g = $('grid');
+  g.innerHTML = s;
+  g.setAttribute('width', W); g.setAttribute('height', H);
+  g.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  $('ph').style.height = (RULER + H) + 'px';
 }
 
 /* ---------- minimap ---------- */
@@ -741,7 +759,9 @@ function buildRoleChips(){
     b.onclick = () => {
       roleFilter.has(r) ? roleFilter.delete(r) : roleFilter.add(r);
       b.setAttribute('aria-pressed', String(roleFilter.has(r)));
-      b.style.background = roleFilter.has(r) ? ROLE_COLOR[r] : 'transparent';
+      /* only the dot carries the role colour — the button keeps its default
+         pressed background, set in CSS */
+      b.style.color = roleFilter.has(r) ? ROLE_COLOR[r] : '';
       draw();
     };
     wrap.appendChild(b);
@@ -834,9 +854,8 @@ function exportAnn(){
 /* ---- annotate: drag a region on a lane ---- */
 function laneAt(clientY){
   const r = $('grid').getBoundingClientRect();
-  const y = clientY - r.top - RULER;
-  const i = Math.floor(y / LANE);
-  return (y >= 0 && i >= 0 && i < S.tracks.length) ? S.tracks[i] : null;
+  const i = Math.floor((clientY - r.top) / LANE);
+  return (i >= 0 && i < S.tracks.length) ? S.tracks[i] : null;
 }
 function openEditor(trackId, fromBar, toBar, existing){
   editing = existing || {track:trackId, from:fromBar, to:toBar, role:'melody', note:''};
@@ -946,7 +965,7 @@ $('scrub').onclick = e => {
   seek((e.clientX - r.left)/r.width*duration);
 };
 $('lanes').addEventListener('click', e => {
-  if(e.target.closest('.ph')) return;
+  if(e.target.closest('.ph') || annotating) return;
   const r = $('grid').getBoundingClientRect();
   const beats = (e.clientX - r.left)/ppb;
   if(beats >= 0) seek(beats*60/S.tempo);
@@ -990,12 +1009,12 @@ $('loop-btn').onclick = function(){
 (function ruler(){
   const l = $('lanes'); let dragging = false, from = 0;
   const beatAt = e => {
-    const r = $('grid').getBoundingClientRect();
+    const r = $('ruler').getBoundingClientRect();
     return Math.max(0, (e.clientX - r.left)/ppb);
   };
   l.addEventListener('pointerdown', e => {
-    const r = $('grid').getBoundingClientRect();
-    if(e.clientY - r.top > RULER) return;          // only the ruler strip
+    if(!e.target.closest('#ruler')) return;        // only the ruler strip
+    if(annotating) return;
     dragging = true; from = beatAt(e);
     loopA = from; loopB = from; draw();
     l.setPointerCapture(e.pointerId);
@@ -1031,7 +1050,7 @@ const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
   };
   const laneIndexAt = y => {
     const r = $('grid').getBoundingClientRect();
-    const i = Math.floor((y - r.top - RULER)/LANE);
+    const i = Math.floor((y - r.top)/LANE);
     return (i >= 0 && i < S.tracks.length) ? i : null;
   };
 
@@ -1054,8 +1073,7 @@ const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
 
   l.addEventListener('pointerdown', e => {
     if(!annotating) return;
-    const r = $('grid').getBoundingClientRect();
-    if(e.clientY - r.top < RULER) return;
+    if(e.target.closest('#ruler')) return;
     const li = laneIndexAt(e.clientY); if(li === null) return;
     const t = S.tracks[li], b = barAt(e);
     const hit = ANN.roles.find(x => x.track===t.id && b>=x.from && b<x.to);
@@ -1092,7 +1110,7 @@ $('lanes').addEventListener('wheel', e => {
     $('lanes').scrollLeft += e.deltaY;
   }
 }, {passive:false});
-$('lanes').addEventListener('scroll', syncMiniView, {passive:true});
+$('lanes').addEventListener('scroll', () => { syncMiniView(); syncHeadScroll(); }, {passive:true});
 
 /* minimap drag */
 (function minimap(){
