@@ -56,18 +56,23 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* the preset field sits apart from the icon cluster */
 .preset-wrap{margin-right:2px}
-.preset-field{display:flex;align-items:center;gap:10px;height:34px;padding:0 13px;
+/* the field matches the icon buttons in height and radius; the label sits above
+   the value so the two type sizes never fight on one baseline */
+.preset-field{display:flex;align-items:center;gap:11px;height:34px;padding:0 8px 0 12px;
   border:1px solid var(--hair);border-radius:9px;background:transparent;
   transition:border-color .2s ease,background .2s ease}
-.preset-field:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.03)}
-.preset-field[aria-expanded="true"]{border-color:var(--hair-gold);background:rgba(212,160,74,.08)}
-.pf-label{font-size:8.5px;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;color:#4E505A}
-.pf-value{font-size:12.5px;color:#fff;font-weight:400;max-width:150px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis}
+.preset-field:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.035)}
+.preset-field[aria-expanded="true"]{border-color:var(--hair-gold);background:rgba(212,160,74,.09)}
+.pf-text{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+.pf-label{font-size:7.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:#43454F;line-height:1}
+.pf-value{font-size:12px;color:#fff;font-weight:500;letter-spacing:.1px;line-height:1;
+  max-width:132px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .preset-field.custom .pf-value{color:var(--gold)}
-.pf-chev{color:var(--dim);flex:0 0 auto;transition:transform .22s ease}
+.pf-chev{color:#4E505A;flex:0 0 auto;margin-right:4px;transition:transform .22s ease,color .2s ease}
+.preset-field:hover .pf-chev{color:var(--dim)}
 .preset-field[aria-expanded="true"] .pf-chev{transform:rotate(180deg);color:var(--gold)}
-.tools-sep{width:1px;height:22px;background:var(--hair);margin:0 4px}
+.tools-sep{width:1px;height:20px;background:var(--hair);margin:0 5px}
 
 /* display + preset menus */
 .menu-wrap{position:relative}
@@ -286,8 +291,10 @@ body.annotating .lanes{cursor:crosshair}
   <div class="tools">
     <div class="menu-wrap preset-wrap">
       <button class="preset-field" id="pre-btn" aria-haspopup="true" aria-expanded="false" title="Stem presets">
-        <span class="pf-label">Preset</span>
-        <span class="pf-value" id="pre-current">All stems</span>
+        <span class="pf-text">
+          <span class="pf-label">Preset</span>
+          <span class="pf-value" id="pre-current">All stems</span>
+        </span>
         <svg class="pf-chev" viewBox="0 0 10 6" fill="none" width="10" height="6">
           <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
         </svg>
