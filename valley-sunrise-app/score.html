@@ -56,23 +56,26 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* the preset field sits apart from the icon cluster */
 .preset-wrap{margin-right:2px}
-/* the field matches the icon buttons in height and radius; the label sits above
-   the value so the two type sizes never fight on one baseline */
-.preset-field{display:flex;align-items:center;gap:11px;height:34px;padding:0 8px 0 12px;
+/* the field matches the icon buttons in height and radius; label above value,
+   both sharing one left edge, with the chevron pinned right */
+.preset-field{display:flex;align-items:center;gap:10px;height:34px;padding:0 9px 0 12px;
   border:1px solid var(--hair);border-radius:9px;background:transparent;
   transition:border-color .2s ease,background .2s ease}
 .preset-field:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.035)}
 .preset-field[aria-expanded="true"]{border-color:var(--hair-gold);background:rgba(212,160,74,.09)}
-.pf-text{display:flex;flex-direction:column;align-items:flex-start;gap:2px;flex:0 0 auto}
-.pf-label{font-size:7.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
-  color:#43454F;line-height:1}
+/* the two lines are centred as a block against the 34px field, and the label's
+   letter-spacing is compensated so its optical left edge matches the value's */
+.pf-text{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  gap:3px;flex:0 0 auto;height:100%;padding-top:1px}
+.pf-label{font-size:7.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
+  color:#43454F;line-height:1;text-indent:.5px;margin-right:-1.7px}
 /* fixed width, sized to the longest label ("Counter-melody only"), so the field
    never resizes as presets change — longer custom names ellipsis instead */
-.pf-value{font-size:12px;color:#fff;font-weight:500;letter-spacing:.1px;line-height:1;
-  width:126px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-value{display:block;font-size:12px;color:#fff;font-weight:500;letter-spacing:.1px;
+  line-height:1.05;width:126px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pf-text{width:126px}
 .preset-field.custom .pf-value{color:var(--gold)}
-.pf-chev{color:#4E505A;flex:0 0 auto;margin-right:4px;transition:transform .22s ease,color .2s ease}
+.pf-chev{color:#4E505A;flex:0 0 auto;margin-left:auto;transition:transform .22s ease,color .2s ease}
 .preset-field:hover .pf-chev{color:var(--dim)}
 .preset-field[aria-expanded="true"] .pf-chev{transform:rotate(180deg);color:var(--gold)}
 .tools-sep{width:1px;height:20px;background:var(--hair);margin:0 5px}
@@ -105,6 +108,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 #pre-save{color:var(--text)}
 #pre-save:hover{color:var(--gold)}
 
+.pkey{float:right;font-style:normal;font-size:9px;font-weight:700;letter-spacing:.5px;color:#3E404A;
+  border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:1px 5px;margin-left:8px;line-height:1.4}
+.dgroup button[aria-pressed="true"] .pkey{color:var(--gold);border-color:var(--hair-gold)}
 .prow{display:flex;align-items:center;gap:3px}
 .prow + .prow{margin-top:1px}
 .prow > button:first-child{flex:1 1 auto}
@@ -142,6 +148,18 @@ body.info-bottom .arr{padding-bottom:66px}
 .ib-note{flex:0 0 330px;display:flex;align-items:center;font-size:12px;line-height:1.55;
   color:var(--dim);font-weight:300;padding:0 24px;border-left:1px solid var(--hair)}
 .ib-note span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* magnifier */
+.loupe{position:fixed;z-index:11;width:340px;padding:10px 12px 8px;pointer-events:none;
+  background:rgba(12,17,27,.97);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border:1px solid var(--hair-gold);border-radius:12px;box-shadow:0 18px 44px rgba(0,0,0,.6);
+  opacity:0;transform:scale(.97);transition:opacity .18s ease,transform .22s cubic-bezier(.16,1,.3,1)}
+.loupe.on{opacity:1;transform:none}
+.loupe svg{display:block;width:100%;height:112px}
+.loupe-meta{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin-top:7px;padding-top:7px;border-top:1px solid var(--hair)}
+.loupe-meta b{font-size:11.5px;color:#fff;font-weight:500;letter-spacing:.1px}
+.loupe-meta span{font-size:9px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#4E505A}
 
 /* corner card */
 .corner{position:fixed;right:22px;bottom:22px;z-index:9;width:304px;padding:18px 20px 19px;
@@ -350,6 +368,11 @@ body.annotating .lanes{cursor:crosshair}
           <button data-v="always">Always</button>
           <button data-v="off">Never</button>
         </div>
+        <div class="dgroup" data-key="magnify">
+          <span class="dlabel">Magnifier on hover</span>
+          <button data-v="on">On</button>
+          <button data-v="off">Off</button>
+        </div>
         <div class="dgroup" data-key="style">
           <span class="dlabel">How they are marked</span>
           <button data-v="tint">Tint the notes</button>
@@ -380,6 +403,11 @@ body.annotating .lanes{cursor:crosshair}
   <div class="ib-sec"><span class="eyebrow" id="ib-bars"></span><b id="ib-name"></b></div>
   <div class="ib-roles" id="ib-roles"></div>
   <div class="ib-note" id="ib-note"></div>
+</div>
+
+<div class="loupe" id="loupe">
+  <svg id="loupe-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="loupe-meta"><b id="lp-name"></b><span id="lp-bar"></span></div>
 </div>
 
 <div class="corner" id="corner">
@@ -955,7 +983,7 @@ let selTrack = null;                  // track pinned in the sidebar
 let annotating = false, editing = null;
 
 /* display settings — remembered between visits */
-const DEF = {info:'bottom', regions:'hover', style:'tint'};
+const DEF = {info:'bottom', regions:'hover', style:'tint', magnify:'on'};
 let DISP = Object.assign({}, DEF, JSON.parse(localStorage.getItem('vs-display') || '{}'));
 function saveDisp(){ localStorage.setItem('vs-display', JSON.stringify(DISP)); }
 
@@ -1189,32 +1217,55 @@ function applyRolePreset(force){
   setMix(ids.length ? ids : S.tracks.map(t => t.id));
 }
 
-function buildPresetMenu(){
+/* the menu order and the number-key order are the same list, so a shortcut can
+   never point at something different from what is on screen */
+function presetItems(){
+  const cap = w => w[0].toUpperCase() + w.slice(1);
   const fams = [...new Set(S.tracks.map(t => t.family))];
-  const on = (kind, value) => activePreset && activePreset.kind === kind &&
-             (value === undefined || activePreset.value === value);
+  const items = [{
+    id:'all', label:'All stems', active: !activePreset && !solos.size && !muted.size,
+    run(){ solos.clear(); muted.clear(); activePreset = null; presetSection = null;
+           tempSolo = null; syncHeads(); applyGains(); buildPresetMenu(); }
+  }];
+  fams.forEach(f => items.push({
+    id:'fam:'+f, label: cap(f) + ' only',
+    active: !!activePreset && activePreset.kind === 'family' && activePreset.value === f,
+    run(){ applyPreset({kind:'family', value:f}); }
+  }));
+  ROLES.forEach(r => items.push({
+    id:'role:'+r,
+    label: (r === 'counter' ? 'Counter-melody' : cap(r)) + ' only',
+    active: !!activePreset && activePreset.kind === 'role' && activePreset.value === r,
+    run(){ applyPreset({kind:'role', value:r}); }
+  }));
+  savedPresets().forEach((p,i) => items.push({
+    id:'saved:'+i, label:p.name, saved:i,
+    active: !!activePreset && activePreset.kind === 'custom' && activePreset.name === p.name,
+    run(){ applyPreset(Object.assign({kind:'custom'}, p)); }
+  }));
+  return items;
+}
 
-  $('pre-fams').innerHTML = fams.map(f =>
-    `<button data-fam="${f}" aria-pressed="${on('family', f)}" style="text-transform:capitalize">
-       ${f} only</button>`).join('');
-  $('pre-fams').querySelectorAll('button').forEach(b =>
-    b.onclick = () => { applyPreset({kind:'family', value:b.dataset.fam}); closeMenus(); });
+function buildPresetMenu(){
+  const items = presetItems();
+  const hint = i => i < 10 ? `<em class="pkey">${i === 9 ? 0 : i+1}</em>` : '';
+  const btn = (it,i) =>
+    `<button data-run="${i}" aria-pressed="${it.active}">${it.label}${hint(i)}</button>`;
 
-  $('pre-roles').innerHTML = ROLES.map(r =>
-    `<button data-role="${r}" aria-pressed="${on('role', r)}">
-       ${r === 'counter' ? 'Counter-melody' : r[0].toUpperCase()+r.slice(1)} only</button>`).join('');
-  $('pre-roles').querySelectorAll('button').forEach(b =>
-    b.onclick = () => { applyPreset({kind:'role', value:b.dataset.role}); closeMenus(); });
+  document.querySelector('[data-pre="all"]').outerHTML = btn(items[0], 0);
+  const fams = items.filter(x => x.id.startsWith('fam:'));
+  const roles = items.filter(x => x.id.startsWith('role:'));
+  const saved = items.filter(x => x.id.startsWith('saved:'));
 
-  const list = savedPresets();
-  $('pre-saved-group').style.display = list.length ? '' : 'none';
-  $('pre-saved').innerHTML = list.map((p,i) =>
-    `<div class="prow">
-       <button data-i="${i}" aria-pressed="${on('custom') && activePreset.name === p.name}">${p.name}</button>
-       <button class="pdel" data-del="${i}" title="Delete">&times;</button>
-     </div>`).join('');
-  $('pre-saved').querySelectorAll('[data-i]').forEach(b =>
-    b.onclick = () => { applyPreset(Object.assign({kind:'custom'}, list[+b.dataset.i])); closeMenus(); });
+  $('pre-fams').innerHTML  = fams.map(it => btn(it, items.indexOf(it))).join('');
+  $('pre-roles').innerHTML = roles.map(it => btn(it, items.indexOf(it))).join('');
+  $('pre-saved-group').style.display = saved.length ? '' : 'none';
+  $('pre-saved').innerHTML = saved.map(it =>
+    `<div class="prow">${btn(it, items.indexOf(it))}
+       <button class="pdel" data-del="${it.saved}" title="Delete">&times;</button></div>`).join('');
+
+  $('pmenu').querySelectorAll('[data-run]').forEach(b =>
+    b.onclick = () => { items[+b.dataset.run].run(); closeMenus(); });
   $('pre-saved').querySelectorAll('[data-del]').forEach(b =>
     b.onclick = e => {
       e.stopPropagation();
@@ -1241,11 +1292,6 @@ function buildPresetMenu(){
   $('pre-btn').classList.toggle('custom', custom);
 }
 
-document.querySelector('[data-pre="all"]').onclick = () => {
-  solos.clear(); muted.clear();
-  activePreset = null; presetSection = null;
-  syncHeads(); applyGains(); buildPresetMenu(); closeMenus();
-};
 $('pre-save').onclick = () => {
   const name = prompt('Name this mix', 'My mix');
   if(!name) return;
@@ -1280,6 +1326,7 @@ function applyDisplay(){
   placeSide();
   $('side').classList.toggle('on', wantSide);
   if(DISP.info !== 'corner') $('corner').classList.remove('on');
+  if(DISP.magnify !== 'on') $('loupe').classList.remove('on');
   document.querySelectorAll('.dgroup').forEach(g => {
     const key = g.dataset.key;
     g.querySelectorAll('button').forEach(b =>
@@ -1295,6 +1342,84 @@ document.querySelectorAll('.dgroup').forEach(g => {
 });
 $('disp-btn').onclick = e => { e.stopPropagation(); openMenu('dmenu'); };
 document.addEventListener('click', e => { if(!e.target.closest('.menu-wrap')) closeMenus(); });
+
+
+/* ============================================================================
+   MAGNIFIER
+   ----------------------------------------------------------------------------
+   A loupe that follows the cursor and redraws the hovered lane at a much larger
+   scale — eight bars wide instead of the whole piece, and the full lane height
+   given to the pitch range actually present in that window. It reads the same
+   note data as the arrangement, so it needs no extra state.
+   ============================================================================ */
+const LOUPE_BARS = 4;                       // window either side of the cursor
+
+function drawLoupe(clientX, clientY){
+  const el = $('loupe');
+  if(DISP.magnify !== 'on' || !hoverInfo || annotating){ el.classList.remove('on'); return; }
+  const t = S.tracks[hoverInfo.lane];
+  if(!t || !t.notes.length){ el.classList.remove('on'); return; }
+
+  const gr = $('grid').getBoundingClientRect();
+  const beatAt = (clientX - gr.left)/ppb;
+  const span = LOUPE_BARS * S.beats;
+  const from = Math.max(0, beatAt - span/2), to = from + span;
+
+  const inWin = t.notes.filter(([st,du]) => st + du > from && st < to);
+  const W = 316, H = 112, PAD = 7;
+  let g = '';
+
+  /* bar lines inside the window */
+  const firstBar = Math.floor(from/S.beats);
+  for(let bar = firstBar; bar <= Math.ceil(to/S.beats); bar++){
+    const x = (bar*S.beats - from)/span * W;
+    if(x < 0 || x > W) continue;
+    g += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".08"/>
+          <text x="${(x+4).toFixed(1)}" y="10" fill="#43454F" font-size="8" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+  }
+
+  if(inWin.length){
+    const ps = inWin.map(n => n[2]);
+    let lo = Math.min(...ps) - 1, hi = Math.max(...ps) + 1;
+    const range = Math.max(hi - lo, 4);
+    const nh = Math.max(4, Math.min((H - PAD*2)/range * 0.9, 11));
+    const col = famColor(t.family);
+    const mine = (ANN.roles||[]).filter(r => r.track === t.id);
+    inWin.forEach(([st,du,p]) => {
+      const x = (st - from)/span * W, w = Math.max(du/span * W, 3);
+      const y = PAD + (1 - (p - lo)/range) * (H - PAD*2 - nh);
+      const bar = st/S.beats + 1;
+      const rr = mine.find(r => bar >= r.from - 0.001 && bar < r.to && roleFilter.has(r.role));
+      const fill = (rr && DISP.style === 'tint') ? ROLE_COLOR[rr.role] : col;
+      g += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${nh.toFixed(1)}"
+        rx="${(nh/2.6).toFixed(1)}" fill="${fill}" fill-opacity=".95"/>`;
+    });
+  } else {
+    g += `<text x="${W/2}" y="${H/2+3}" fill="#43454F" font-size="10" font-family="DM Sans"
+      text-anchor="middle">nothing here</text>`;
+  }
+
+  /* where the cursor is */
+  const cx = (beatAt - from)/span * W;
+  g += `<line x1="${cx.toFixed(1)}" y1="0" x2="${cx.toFixed(1)}" y2="${H}" stroke="#D4A04A" stroke-opacity=".5"/>`;
+
+  const svg = $('loupe-svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('preserveAspectRatio','none');
+  svg.innerHTML = g;
+
+  $('lp-name').textContent = t.name;
+  $('lp-bar').textContent = `${LOUPE_BARS} bars · bar ${Math.floor(beatAt/S.beats)+1}`;
+
+  /* follow the cursor, but stay on screen */
+  const w = 340, h = 168;
+  let left = clientX + 22, top = clientY - h - 16;
+  if(left + w > innerWidth - 12) left = clientX - w - 22;
+  if(top < 12) top = clientY + 24;
+  el.style.left = Math.max(12, left) + 'px';
+  el.style.top  = Math.min(top, innerHeight - h - 12) + 'px';
+  el.classList.add('on');
+}
 
 /* ---------- the bottom strip ---------- */
 function drawInfoBar(){
@@ -1345,6 +1470,7 @@ $('ann-btn').onclick = function(){
   annotating = !annotating;
   this.setAttribute('aria-pressed', String(annotating));
   document.body.classList.toggle('annotating', annotating);
+  $('loupe').classList.remove('on');
   if(!annotating){ hoverLane = null; if(editing) closeEditor(); dragSel = null; }
   draw();
   if(annotating && !$('side').classList.contains('on')) $('tips-btn').click();
@@ -1520,6 +1646,7 @@ const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
     const changed = JSON.stringify(next) !== JSON.stringify(hoverInfo);
     hoverInfo = next;
     if(changed){ drawCorner(); drawInfoBar(); if(DISP.regions === 'hover') draw(); }
+    drawLoupe(e.clientX, e.clientY);
 
     if(!annotating) return;
     if(dragging){
@@ -1534,7 +1661,7 @@ const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
     if(lane !== hoverLane){ hoverLane = lane; draw(); }
   });
   l.addEventListener('pointerleave', () => {
-    hoverInfo = null; drawCorner(); drawInfoBar();
+    hoverInfo = null; drawCorner(); drawInfoBar(); $('loupe').classList.remove('on');
     if(!dragging){ hoverLane = null; draw(); }
     else draw();
   });
@@ -1603,10 +1730,12 @@ $('lanes').addEventListener('scroll', () => { syncMiniView(); syncHeadScroll(); 
 })();
 addEventListener('resize', () => { placeSide(); layout(); draw(); syncMiniView(); });
 addEventListener('keydown', e => {
-  /* if a button has focus, the browser fires its click on space too — let that
-     one through instead of handling it twice */
-  if(e.code === 'Space' && !(e.target instanceof HTMLButtonElement)){
-    e.preventDefault(); playing ? pause() : play();
+  /* space is playback, always — blur whatever has focus so the browser does not
+     also fire that button's click */
+  if(e.code === 'Space'){
+    e.preventDefault();
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    playing ? pause() : play();
   }
   if(e.key === 'Escape'){
     releaseTempSolo();
@@ -1623,11 +1752,15 @@ addEventListener('keydown', e => {
   if(e.key === 't' || e.key === 'T'){ $('tips-btn').click(); }
   if(e.key === 'f' || e.key === 'F'){ $('follow-btn').click(); }
   if(e.key === 'a' || e.key === 'A'){ $('ann-btn').click(); }
-  if(e.key === '0'){ fitZoom(); }
-  /* 1-9 solos that track, alt clears */
-  if(/^[1-9]$/.test(e.key)){
-    const t = S.tracks[+e.key - 1];
-    if(t){ solos.has(t.id) ? solos.delete(t.id) : solos.add(t.id); syncHeads(); applyGains(); }
+  if(e.key === 'm' || e.key === 'M'){
+    DISP.magnify = DISP.magnify === 'on' ? 'off' : 'on'; saveDisp(); applyDisplay();
+  }
+  if(e.key === ')'){ fitZoom(); }   /* shift+0 */
+  /* 1-9 and 0 pick the first ten presets, in menu order */
+  if(/^[0-9]$/.test(e.key) && !e.metaKey && !e.ctrlKey){
+    const idx = e.key === '0' ? 9 : (+e.key - 1);
+    const item = presetItems()[idx];
+    if(item){ item.run(); closeMenus(); }
   }
   if(e.key === 'Backspace'){ solos.clear(); muted.clear(); syncHeads(); applyGains(); }
 });
