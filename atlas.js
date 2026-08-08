@@ -280,7 +280,6 @@ function viewInstrument(id){
         <div class="atl-tabs" role="tablist">
           <button class="atl-tab" role="tab" aria-selected="true"  data-tab="overview">Overview</button>
           <button class="atl-tab" role="tab" aria-selected="false" data-tab="timbre">Timbre</button>
-          ${it.model ? `<button class="atl-tab" role="tab" aria-selected="false" data-tab="model">3D Model</button>` : ''}
           <button class="atl-tab" role="tab" aria-selected="false" data-tab="details">Details</button>
           <button class="atl-tab" role="tab" aria-selected="false" data-tab="gallery">Gallery <em>${vids.length}</em></button>
         </div>
@@ -289,12 +288,24 @@ function viewInstrument(id){
       <!-- OVERVIEW -->
       <div class="atl-panel is-active" data-panel="overview">
         <section class="atl-inst-top">
-          <div class="atl-plate atl-fade">
+          <div class="atl-plate atl-fade" data-view="2d">
+            ${it.model ? `
+            <div class="atl-plate-switch" role="group" aria-label="Plate view">
+              <button type="button" data-pv="2d" aria-pressed="true">2D</button>
+              <button type="button" data-pv="3d" aria-pressed="false">3D</button>
+            </div>` : ''}
             <div class="atl-plate-art">${PLATES[id] || ''}</div>
+            ${it.model ? `
+            <div class="atl-plate-3d">
+              <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}"
+                title="Interactive 3D ${esc(it.name)}" loading="lazy" allow="fullscreen"></iframe>
+              <div class="atl-plate-3d-fail">The 3D viewer is not deployed yet.</div>
+            </div>` : ''}
             <div class="atl-plate-cap">
               <div class="no">${esc(it.plate)}</div>
               <div class="nm">${esc(it.latin)}</div>
-              <div class="src">Placeholder line art — final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>
+              <div class="src atl-cap-2d">Placeholder line art — final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>
+              ${it.model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')} · <a href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
             </div>
           </div>
           <div class="atl-inst-id atl-fade" style="transition-delay:90ms">
@@ -343,28 +354,6 @@ function viewInstrument(id){
           ${FAMILIES.map(f => `<span><i style="background:${FAM_COLOR[f.id]};opacity:.6"></i>${esc(f.name)}</span>`).join('')}
         </div>
       </div>
-
-      ${it.model ? `
-      <!-- 3D MODEL -->
-      <div class="atl-panel" data-panel="model">
-        <div class="atl-model-head">
-          <div>
-            <h3 class="atl-blockhead">Explore the instrument</h3>
-            <p class="atl-timbre-lede">Drag to rotate, scroll to zoom, and click any marker to read about
-              that part. The viewer runs as a separate page, so it loads only when you open this tab.</p>
-          </div>
-          <a class="atl-model-out" href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">
-            Open full screen &rarr;</a>
-        </div>
-        <div class="atl-model-frame">
-          <iframe id="atl-model-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}"
-            title="Interactive 3D ${esc(it.name)}" loading="lazy" allow="fullscreen"></iframe>
-          <div class="atl-model-fail" id="atl-model-fail">
-            The viewer lives at <code>viewer/instruments.html</code>. It will appear here once this page is
-            served alongside that folder.
-          </div>
-        </div>
-      </div>` : ''}
 
       <!-- DETAILS -->
       <div class="atl-panel" data-panel="details">
@@ -430,6 +419,7 @@ function viewInstrument(id){
 function initInstrument(id){
   wireTabs();
   renderTimbre(id);
+  wirePlateSwitch();
   document.querySelectorAll('.atl-vid-frame').forEach(f => {
     const play = () => {
       if(f.dataset.on === '1') return;
@@ -442,6 +432,32 @@ function initInstrument(id){
   });
 }
 
+/* 2D engraving <-> 3D model, inside the plate. The iframe is created on first
+   use only, so pages nobody switches never spin up a WebGL context. */
+function wirePlateSwitch(){
+  const plate = document.querySelector('.atl-plate[data-view]');
+  if(!plate) return;
+  plate.querySelectorAll('.atl-plate-switch button').forEach(b => {
+    b.addEventListener('click', () => {
+      const v = b.dataset.pv;
+      plate.dataset.view = v;
+      plate.querySelectorAll('.atl-plate-switch button')
+        .forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      if(v === '3d'){
+        const f = document.getElementById('atl-plate-iframe');
+        if(f && !f.src && f.dataset.src){
+          f.src = f.dataset.src;
+          f.addEventListener('load', () => {
+            let ok = false;
+            try { ok = !!f.contentDocument.getElementById('stage'); } catch(_){ ok = true; }
+            if(!ok) f.style.display = 'none';
+          }, {once:true});
+        }
+      }
+    });
+  });
+}
+
 /* shared tab wiring for family + instrument pages */
 function wireTabs(){
   const tabs = [...document.querySelectorAll('.atl-tab')];
@@ -450,27 +466,6 @@ function wireTabs(){
       tabs.forEach(t => t.setAttribute('aria-selected', String(t === tab)));
       document.querySelectorAll('.atl-panel').forEach(p =>
         p.classList.toggle('is-active', p.dataset.panel === tab.dataset.tab));
-      /* the 3D viewer is a whole WebGL context — never load it until asked */
-      if(tab.dataset.tab === 'model'){
-        const f = document.getElementById('atl-model-iframe');
-        if(f && !f.src && f.dataset.src){
-          f.src = f.dataset.src;
-          /* same origin, so we can tell a real viewer from a 404 page and say so
-             rather than showing the host's error page inside the frame */
-          f.addEventListener('load', () => {
-            let ok = false;
-            try { ok = !!f.contentDocument.getElementById('stage'); } catch(_){ ok = true; }
-            if(!ok){
-              f.style.display = 'none';
-              const fail = document.getElementById('atl-model-fail');
-              if(fail) fail.innerHTML =
-                'The viewer is not deployed yet. Copy the <code>viewer/</code> folder ' +
-                '&mdash; <code>instruments.html</code>, <code>models/</code> and <code>vendor/</code> &mdash; ' +
-                'into the site root beside <code>index.html</code>, then redeploy.';
-            }
-          }, {once:true});
-        }
-      }
       observeFades();
     });
   });
