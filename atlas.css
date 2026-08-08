@@ -498,6 +498,10 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-dock-toolbar{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:0 22px 12px;
   border-bottom:1px solid var(--hair)}
 .atl-dock-spacer{flex:1 1 auto}
+.atl-dock-legend{display:flex;align-items:center;gap:12px}
+.atl-dock-tlabel{font-size:9px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#4E505A}
+.atl-dock-key{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;color:var(--text-dim);letter-spacing:.3px}
+.atl-dock-key i{width:10px;height:3px;border-radius:2px;display:inline-block}
 .atl-dock-meta{font-size:11px;color:#4E505A;letter-spacing:.4px}
 
 /* --- arrangement: headers and lanes are top-aligned, or an over-tall row
@@ -511,10 +515,11 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-dock-head{display:flex;align-items:center;gap:8px;height:58px;padding:0 12px;
   border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s;position:relative}
 .atl-dock-head:hover{background:rgba(255,255,255,.02)}
-.atl-dock-head::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:2px;
-  background:var(--trk,transparent);opacity:.55;border-radius:2px}
-.atl-dock-head.is-here{background:rgba(212,160,74,.06)}
-.atl-dock-head.is-here::before{opacity:1;background:var(--gold)}
+.atl-dock-head{padding-left:16px}
+.atl-dock-head::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;
+  background:var(--fam,transparent);opacity:.9;border-radius:0 2px 2px 0;transition:opacity .2s}
+.atl-dock-head[data-muted="1"]::before{opacity:.22}
+.atl-dock-head.is-here{background:rgba(255,255,255,.03)}
 .atl-dock-head-name{flex:1 1 auto;min-width:0}
 .atl-dock-head-name a,.atl-dock-head-name b{display:block;font-size:12.5px;color:#fff;font-weight:500;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
@@ -525,14 +530,15 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-dock .atl-dock-var{padding:2px 7px;border:1px solid var(--hair);border-radius:100px;font-size:9px;font-weight:700;
   letter-spacing:.6px;color:#4E505A;transition:all .18s;line-height:1.5;background:none;cursor:pointer}
 .atl-dock .atl-dock-var:hover{color:#fff;border-color:var(--hair-gold)}
-.atl-dock .atl-dock-var[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.16);color:var(--gold)}
+.atl-dock .atl-dock-var[aria-pressed="true"]{border-color:var(--fam);
+  background:color-mix(in srgb,var(--fam) 16%,transparent);color:var(--fam)}
 .atl-dock-ms{display:flex;gap:4px;flex:0 0 auto}
 .atl-dock .atl-dock-ms button{width:20px;height:20px;border-radius:4px;border:1px solid var(--hair);font-size:9px;
   font-weight:700;color:#4E505A;display:flex;align-items:center;justify-content:center;transition:all .18s;
   background:none;cursor:pointer}
 .atl-dock .atl-dock-ms button:hover{color:#fff;border-color:var(--hair-gold)}
 .atl-dock-head[data-muted="1"] .atl-dock-ms .m{background:#C0603A;border-color:#C0603A;color:#0A0C14}
-.atl-dock-head[data-solo="1"] .atl-dock-ms .s{background:var(--gold);border-color:var(--gold);color:#0A0C14}
+.atl-dock-head[data-solo="1"] .atl-dock-ms .s{background:var(--fam);border-color:var(--fam);color:#0A0C14}
 .atl-dock-head[data-muted="1"] .atl-dock-head-name a,
 .atl-dock-head[data-muted="1"] .atl-dock-head-name b{color:#4E505A}
 .atl-dock-playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--gold);pointer-events:none;
@@ -564,3 +570,25 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-dock-strip{padding:10px 14px;gap:12px}
   .atl-dock-clock{min-width:70px;font-size:11px}
 }
+
+/* ============================================================================
+   FAMILY HOVER FOOTAGE
+   ----------------------------------------------------------------------------
+   Behind the home page only. Nothing is downloaded until a card is hovered:
+   preload="none" and the src is attached on first hover, so a visitor who never
+   hovers pays nothing. Removed entirely on touch and under reduced motion, so
+   phones never fetch 1.6 MB of video they cannot trigger.
+   ============================================================================ */
+.atl-famvid{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.atl-famvid video{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;
+  opacity:0;transition:opacity 900ms ease}
+.atl-famvid video.is-on{opacity:.30}
+/* The atmosphere gradient must stay above the footage, or the headline is lost.
+   Nothing else needs raising: the nav, topbar, main, footer and dock are all
+   already positioned with a z-index well above this layer, and restating them
+   here would have overridden the nav's sticky and the dock's fixed. */
+.atl-grain,.atl-atmos{z-index:1}
+
+@media (hover:none){ .atl-famvid{display:none} }
+@media (prefers-reduced-motion:reduce){ .atl-famvid{display:none} }

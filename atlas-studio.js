@@ -219,6 +219,7 @@ dockEl.innerHTML = `
           </button>
           <div class="atl-dock-menu" id="atl-dk-sel-menu" role="menu"></div>
         </div>
+        <div class="atl-dock-legend" id="atl-dk-legend"></div>
         <div class="atl-dock-spacer"></div>
         <div class="atl-dock-meta" id="atl-dk-meta"></div>
       </div>
@@ -304,7 +305,7 @@ function draw(){
       const rel = (pit - lo) / span;
       const y = y0 + LANE_H - 9 - rel * (LANE_H - 20);
       s += `<rect x="${x+1}" y="${y}" width="${w}" height="6" rx="2.5"
-        fill="${on ? col : '#8FB4E0'}" fill-opacity="${on ? .95 : .14}"/>`;
+        fill="${col}" fill-opacity="${on ? .95 : .14}"/>`;
     });
   });
 
@@ -337,7 +338,7 @@ function buildHeads(){
       const vsel = variantOf(t);
       return `
       <div class="atl-dock-head" data-track="${esc(t.id)}" data-muted="0" data-solo="0"
-           style="--trk:${STUDIO_FAM[t.family] || '#8FB4E0'}">
+           style="--fam:${STUDIO_FAM[t.family] || '#8FB4E0'}">
         <div class="atl-dock-head-name">
           ${href ? `<a href="${href}">${esc(name)}</a>` : `<b>${esc(name)}</b>`}
           <div class="atl-dock-role">${esc(t.role || '')}</div>
@@ -350,6 +351,10 @@ function buildHeads(){
         </div>
       </div>`;
     }).join('');
+
+  const fams = [...new Set(p.tracks.map(t => t.family))];
+  $('atl-dk-legend').innerHTML = `<span class="atl-dock-tlabel">Family</span>` + fams.map(f =>
+    `<span class="atl-dock-key"><i style="background:${STUDIO_FAM[f] || '#8FB4E0'}"></i>${esc(f[0].toUpperCase() + f.slice(1))}</span>`).join('');
 
   elHeads.querySelectorAll('.atl-dock-head').forEach(row => {
     const id = row.dataset.track;

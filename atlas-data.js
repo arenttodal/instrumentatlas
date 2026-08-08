@@ -35,7 +35,7 @@ const TIERS = [
 ];
 
 const FAMILIES = [
-  { id:'strings', name:'Strings', tagline:'The bread and butter',
+  { id:'strings', name:'Strings', tagline:'The bread and butter', video:'video/strings.mp4',
     lede:'The most versatile family in the orchestra: staccato chase scenes, sweeping romantic themes, harmonic beds, rhythmic accents. Usually where a symphonic piece begins.',
     role:[
       '<b>Pitch flexibility.</b> Any pitch in range, including microtones and glissandi.',
@@ -54,7 +54,7 @@ const FAMILIES = [
     },
     members:['violin','viola','cello','double-bass','harp'] },
 
-  { id:'woodwinds', name:'Woodwinds', tagline:'The overlooked colours',
+  { id:'woodwinds', name:'Woodwinds', tagline:'The overlooked colours', video:'video/woodwinds.mp4',
     lede:'Beautiful and versatile, and routinely forgotten in modern epic writing. Learn to write for them and you add depth and character that staccato strings and choir cannot reach.',
     role:[
       '<b>Two mechanisms.</b> Edge-tone flutes, and reeds: single (clarinet) or double (oboe, bassoon).',
@@ -72,7 +72,7 @@ const FAMILIES = [
     },
     members:['piccolo','flute','oboe','clarinet','bassoon'] },
 
-  { id:'brass', name:'Brass', tagline:'The powerhouse',
+  { id:'brass', name:'Brass', tagline:'The powerhouse', video:'video/brass.mp4',
     lede:'Melodies that carry, chords that feel immense, and enough weight to cover the whole orchestra at will. With that power comes the responsibility to balance it.',
     role:[
       '<b>Lips, not reeds.</b> Pitch comes from lip tension and air pressure, so higher usually means louder.',
@@ -907,14 +907,18 @@ const INSTRUMENTS = {
 
 const AUDIO = { base:'audio/', ext:'aac' };
 
-/* One family palette for the whole site. The studio brief proposed a second
-   set, but it assigned gold to brass, and gold already means "the thing you
-   are currently looking at" everywhere in the atlas, including the audible
-   note blocks and the playhead in this very dock. Two meanings for one colour
-   in one widget is a real collision, so the timbre chart's palette wins and
-   atlas.js reads FAM_COLOR from here. */
+/* Family colours for the dock. Deliberately not FAM_COLOR: the timbre chart
+   plots all twenty instruments at once and needs four well-separated hues,
+   while the dock colours three or four tracks and is read at a glance against
+   a dark strip. Gold reads as brass here rather than as "selected", which is
+   why the pressed variant chip and the solo button take the family colour too
+   and do not fall back to gold. The playhead stays gold: it is the one thing
+   in the dock that is not a track. */
 const STUDIO_FAM = {
-  strings:'#9B8FD4', woodwinds:'#5FB89A', brass:'#6C9BD8', percussion:'#C9834F'
+  woodwinds:'#6FB7E8',   // light blue
+  brass:    '#D4A04A',   // amber
+  strings:  '#CF5F52',   // red
+  percussion:'#9B8FD4'   // violet
 };
 
 const PASSAGES = {
