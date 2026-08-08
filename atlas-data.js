@@ -151,6 +151,7 @@ const INSTRUMENTS = {
   horn:{
     family:'brass', plate:'Plate III · 2', name:'Horn', latin:'Corno / French horn',
     model:'horn',
+    modelCredit:'“French Horn” by Bethanycrandallart · CC BY 4.0 · modified',
     epithet:'The brass instrument that behaves like a woodwind', status:'live',
     summary:'Conical bore, which makes it mellow and round where trumpets and trombones are bright and penetrating. The reason it blends with woodwinds and cellos as happily as with its own family — and the reason heroic themes keep landing on it.',
     range:{lo:41, hi:77, note:'F2 – F5 sounding', transposition:'In F — written a fifth higher'},
@@ -190,6 +191,7 @@ const INSTRUMENTS = {
   cello:{
     family:'strings', plate:'Plate I · 3', name:'Cello', latin:'Violoncello',
     model:'cello',
+    modelCredit:'“Cello Sketchfab” by Limpskin · CC BY 4.0 · modified',
     epithet:'Tenor voice, bass foundation, both at once', status:'live',
     summary:'The tenor and bass instrument of the violin family. Full and rich down low, lyrical and singing up high — which is why it doubles basses for weight in one bar and carries the counter-melody in the next.',
     range:{lo:36, hi:81, note:'C2 – A5', transposition:'Non-transposing'},
