@@ -234,9 +234,11 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 /* ============================================================================
    1. DATA. Instruments, materials, hotspots.
    Hotspots are POINTS IN MODEL SPACE with a radius, not geometry. Models are
-   normalised at export (centred on origin, longest axis = 1.0), so every
-   coordinate below sits in the same -0.5…0.5 space regardless of source model.
+   normalised at export (centred on origin, longest axis = 2.0), so every
+   coordinate below sits in the same -1.0…1.0 space regardless of source model.
    Place new ones with ?author=1: click the model, paste from the console.
+   rotY turns the model so its front faces the opening camera. The bowed
+   strings are modelled back-to-front and need 180; the brass do not.
    ============================================================================ */
 
 const MATERIALS = {
@@ -246,9 +248,128 @@ const MATERIALS = {
 };
 
 const INSTRUMENTS = {
+  viola: {
+    name:'Viola', file:'viola.glb', keepMaterials:true,
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'scroll', label:'Scroll', pos:[0,0.92,0], radius:0.14,
+       title:'Scroll and pegbox',
+       body:'Gasparo da Salò was working in Brescia around 1580, a generation before Stradivari. The carving is the clearest evidence of a maker\'s hand, which is why appraisers look here first.'},
+      {id:'fingerboard', label:'Fingerboard', pos:[0,0.48,0.06], radius:0.18,
+       title:'Fingerboard',
+       body:'Ebony, and unfretted. Written in alto clef, moving to treble up high.'},
+      {id:'bridge', label:'Bridge', pos:[0,-0.1,0.1], radius:0.1,
+       title:'Bridge',
+       body:'Held by string pressure alone. Its curve sets the string spacing and the clearance the bow needs.', related:['soundpost','fholes']},
+      {id:'fholes', label:'f-holes', pos:[0.22,-0.08,0.09], radius:0.12,
+       title:'The f-holes',
+       body:'They tune the air resonance of the body and free the top plate to move. Brescian f-holes are longer and straighter than Cremonese ones.', related:['bridge']},
+      {id:'body', label:'Body', pos:[0,-0.16,0], radius:0.28,
+       title:'Body proportions',
+       body:'The viola is acoustically too small for its tuning. That compromise is the source of its throaty, slightly veiled character.'},
+      {id:'soundpost', label:'Soundpost', pos:[0.06,-0.12,0], radius:0.09,
+       title:'Soundpost',
+       body:'Wedged inside under the treble foot of the bridge. Millimetre adjustments change the instrument\'s brightness audibly.', related:['bridge']},
+      {id:'tailpiece', label:'Tailpiece', pos:[0,-0.46,0.08], radius:0.1,
+       title:'Tailpiece and fine tuners',
+       body:'Anchors the strings at the bottom end and carries the fine tuners, which is how most players tune once they are roughly in.'}
+    ]
+  },
+
+  bassoon: {
+    name:'Bassoon', file:'bassoon.glb', keepMaterials:true,
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'reed', label:'Reed', pos:[0,0.92,0.06], radius:0.12,
+       title:'Double reed',
+       body:'Two cane blades bound together. Players make and adjust their own, and it changes the instrument\'s response more than any other single factor.', related:['bocal']},
+      {id:'bocal', label:'Bocal', pos:[0.12,0.76,0.04], radius:0.12,
+       title:'Bocal',
+       body:'The curved metal tube joining reed to instrument. Its length and taper are a tuning and response control, and players own several.', related:['reed']},
+      {id:'wing', label:'Wing joint', pos:[0.08,0.4,0], radius:0.16,
+       title:'Wing joint',
+       body:'The narrow upper joint. Its tone holes are drilled at steep angles so the player\'s fingers can reach acoustically correct positions.'},
+      {id:'boot', label:'Boot joint', pos:[0,-0.76,0], radius:0.2,
+       title:'Boot joint',
+       body:'The bore doubles back on itself here, which is how nine feet of tubing fits into an instrument you can hold.', related:['long']},
+      {id:'long', label:'Long joint', pos:[-0.1,0.04,0], radius:0.18,
+       title:'Long joint',
+       body:'Carries the bore back upward, with the left-thumb keys that control the lowest notes.', related:['boot']},
+      {id:'bell', label:'Bell', pos:[-0.08,0.84,0], radius:0.14,
+       title:'Bell',
+       body:'Short and barely flared compared with brass. The bassoon radiates sound along its whole length, not just from the end.'},
+      {id:'keys', label:'Keywork', pos:[0.06,-0.2,0.08], radius:0.18,
+       title:'Keywork',
+       body:'Among the most complex in the orchestra, and unstandardised: German (Heckel) and French (Buffet) systems differ enough that players commit to one.'},
+      {id:'register', label:'Register keys', pos:[0.1,0.56,0.06], radius:0.1,
+       title:'Register keys',
+       body:'Left-thumb keys that open small holes to force the air column into its upper modes. The bassoon\'s registers differ sharply in character as a result.'}
+    ]
+  },
+
+  clarinet: {
+    name:'Clarinet', file:'clarinet.glb', keepMaterials:true,
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'mouthpiece', label:'Mouthpiece', pos:[0,0.92,0], radius:0.12,
+       title:'Mouthpiece and reed',
+       body:'A single reed clamped against the mouthpiece by a ligature. The reed opens and closes against the facing hundreds of times a second, driving the air column.', related:['barrel']},
+      {id:'barrel', label:'Barrel', pos:[0,0.72,0], radius:0.1,
+       title:'Barrel',
+       body:'The short joining section. Pulling it out fractionally flattens the whole instrument, and players tune here.', related:['mouthpiece']},
+      {id:'upper', label:'Upper joint', pos:[0,0.32,0], radius:0.2,
+       title:'Upper joint',
+       body:'Left hand. The throat notes at the top of this joint are the instrument\'s acoustic weak point.', related:['register']},
+      {id:'register', label:'Register key', pos:[0.06,0.52,0.06], radius:0.09,
+       title:'Register key',
+       body:'Opens a small hole that pushes the air column to its next mode. Because the bore is cylindrical and closed at the reed, that mode is a twelfth above, not an octave.', related:['bore']},
+      {id:'bore', label:'Bore', pos:[0,0,0], radius:0.24,
+       title:'Cylindrical bore',
+       body:'Constant diameter for nearly the whole length, closed at the reed end. It emphasises odd harmonics and overblows at the twelfth, the single fact that explains the clarinet\'s fingering system and its registers.', related:['register','bell']},
+      {id:'lower', label:'Lower joint', pos:[0,-0.36,0], radius:0.2,
+       title:'Lower joint',
+       body:'Right hand, with the pinky keys that cover the gaps the fingers cannot reach.', related:['keys']},
+      {id:'keys', label:'Keywork', pos:[0.08,-0.12,0.08], radius:0.16,
+       title:'Keywork',
+       body:'Boehm system, with rings and levers linking holes spaced for acoustics rather than for hands.', related:['lower']},
+      {id:'bell', label:'Bell', pos:[0,-0.88,0], radius:0.14,
+       title:'Bell',
+       body:'Flares only at the very end. It affects the lowest notes and the general radiation, but far less than a brass bell does.', related:['bore']}
+    ]
+  },
+
+  violin2: {
+    name:'Violin (new)', file:'violin2.glb', material:'wood',
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'scroll', label:'Scroll', pos:[0,0.88,0], radius:0.14,
+       title:'Scroll and pegbox',
+       body:'The same anatomy as the cello, at a quarter of the size. Carving quality here is one of the first things an appraiser looks at, because it is where a maker\'s hand shows most clearly.'},
+      {id:'fingerboard', label:'Fingerboard', pos:[0,0.44,0.06], radius:0.18,
+       title:'Fingerboard',
+       body:'Ebony and unfretted. Because the instrument is small, the distance between semitones is tiny, so intonation is far less forgiving than on a cello, especially in high positions.'},
+      {id:'bridge', label:'Bridge', pos:[0,-0.12,0.1], radius:0.1,
+       title:'Bridge',
+       body:'Held by string tension alone. Its curve is steeper than a cello\'s relative to size, which is what lets a violinist cross strings quickly without catching the neighbouring one.', related:['fholes']},
+      {id:'fholes', label:'f-holes', pos:[0.2,-0.1,0.08], radius:0.12,
+       title:'The f-holes',
+       body:'Tune the air resonance of the body and free the top plate to move. Their shape is largely inherited from the Cremonese makers, and small variations are a maker\'s signature.', related:['bridge']},
+      {id:'chinrest', label:'Chinrest', pos:[-0.08,-0.56,0.1], radius:0.14,
+       title:'Chinrest',
+       body:'Not original to the instrument: Louis Spohr added it around 1820. It lets the player hold the violin with the jaw alone, freeing the left hand to shift position rather than support the neck.'},
+      {id:'bow', label:'Bow', pos:[0.84,0.1,0], radius:0.24,
+       title:'The bow',
+       body:'Pernambuco or carbon fibre, strung with horsehair and rosined. The frog adjusts hair tension. Bow speed, weight and contact point are the three main controls a player has over tone, more than the instrument itself.'}
+    ]
+  },
+
   cello: {
     name:'Cello', file:'cello.glb', keepMaterials:true,
-    dist:1.9, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:180,
     credit:'&ldquo;Cello Sketchfab&rdquo; by Limpskin · <a href="https://skfb.ly/pICFS" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: re-centred and normalised',
     hotspots:[
       {id:'scroll', label:'Scroll', pos:[0,0.47,0], radius:0.07,
@@ -283,7 +404,7 @@ const INSTRUMENTS = {
 
   horn: {
     name:'French horn', file:'horn.glb', material:'brass',
-    dist:1.9, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:0,
     credit:'&ldquo;French Horn&rdquo; by Bethanycrandallart · <a href="https://skfb.ly/6TxEP" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 90k triangles, brass material applied',
     hotspots:[
       {id:'mouthpiece', label:'Mouthpiece', pos:[-0.35,0.12,0.05], radius:0.07,
@@ -318,7 +439,7 @@ const INSTRUMENTS = {
 
   trumpet: {
     name:'Trumpet', file:'trumpet.glb', material:'brass',
-    dist:1.7, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:0,
     credit:'&ldquo;B&#9837; Trumpet Model&rdquo; by Pakaku · <a href="https://skfb.ly/otwwn" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 110k triangles, brass material applied',
     hotspots:[
       {id:'mouthpiece', label:'Mouthpiece', pos:[-0.46,0.02,0], radius:0.06,
@@ -347,7 +468,7 @@ const INSTRUMENTS = {
 
   violin: {
     name:'Violin', file:'violin.glb', material:'wood',
-    dist:1.9, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:180,
     credit:'&ldquo;Violin Texturing&rdquo; by ilushandro · <a href="https://skfb.ly/oAVFz" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 100k triangles, varnished-wood material applied',
     hotspots:[
       {id:'scroll', label:'Scroll', pos:[0,0.46,0], radius:0.07,
@@ -452,6 +573,37 @@ controls.autoRotate = !reduced; controls.autoRotateSpeed = 0.5;
 const loader = new GLTFLoader();
 let model = null, hotspots = [], markers = [], activeId = null;
 
+/* Frame from the model's own bounds rather than a hand-tuned distance. The
+   four .glb files are all normalised to a longest axis of 2, but their
+   proportions are nothing alike: the cello is tall and narrow, the horn wide
+   and deep. One fixed distance cropped the cello top and bottom while leaving
+   the trumpet adrift in an empty frame. Width is measured across the diagonal
+   of the footprint, so nothing clips as the model orbits. The contact shadow
+   is placed on the model's actual underside for the same reason: at a fixed
+   y it floated across the middle of the taller instruments. */
+function frameModel(inst){
+  const bb     = new THREE.Box3().setFromObject(model);
+  const size   = bb.getSize(new THREE.Vector3());
+  const centre = bb.getCenter(new THREE.Vector3());
+  const vFov   = THREE.MathUtils.degToRad(camera.fov);
+  const hFov   = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+  const fit    = Math.max(
+    (size.y / 2) / Math.tan(vFov / 2),
+    (Math.hypot(size.x, size.z) / 2) / Math.tan(hFov / 2)
+  ) * (inst.zoom || 1.1);
+
+  controls.target.copy(centre).add(new THREE.Vector3(...(inst.target || [0,0,0])));
+  camera.position.copy(controls.target)
+    .add(new THREE.Vector3(0.55, 0.28, 0.8).normalize().multiplyScalar(fit));
+  controls.minDistance = fit * 0.3;
+  controls.maxDistance = fit * 2.4;
+  controls.update();
+
+  shadow.position.y = bb.min.y - 0.02;
+  const foot = Math.max(size.x, size.z) * 1.7 / 2.4;
+  shadow.scale.set(foot, foot, 1);
+}
+
 /* ---------- proximity glow: highlight is distance to a point, not geometry ---------- */
 const GLOW = { center:new THREE.Vector3(999,999,999), radius:0.0001, strength:0.0 };
 
@@ -522,9 +674,7 @@ function loadInstrument(key_){
       `${inst.name} · ${Math.round(tris/1000)}k triangles`;
     document.getElementById('credit').innerHTML = inst.credit;
 
-    camera.position.set(inst.dist*0.55, inst.dist*0.28, inst.dist*0.8);
-    controls.target.set(...inst.target);
-    controls.update();
+    frameModel(inst);
 
     setProgress(1);
     window.__viewerBooted = true;
