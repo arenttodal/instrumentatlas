@@ -845,6 +845,8 @@ function playDemo(row){
     return;
   }
   stopDemo();
+  /* and the other way round: starting a clip pauses the studio dock */
+  if(typeof window.atlasStudioPause === 'function') window.atlasStudioPause();
   PLAYER.row = row;
   row.classList.remove('is-missing');
   a.src = src;

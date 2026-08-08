@@ -1,11 +1,11 @@
 /* ============================================================
-   EVENANT INSTRUMENT ATLAS — visual mockup
+   EVENANT INSTRUMENT ATLAS · visual mockup
    All classes namespaced .atl- so this can drop into Webflow.
    ============================================================ */
 
 .atl,.atl *,.atl *::before,.atl *::after{margin:0;padding:0;box-sizing:border-box}
 /* Reserve the scrollbar gutter at all times. Without this, switching to a taller
-   tab introduces a scrollbar and the whole page — nav, headline, everything —
+   tab introduces a scrollbar and the whole page, nav, headline and everything,
    jumps left by its width. scrollbar-gutter handles modern browsers; the
    overflow-y fallback covers the rest. */
 html{background:#080C14;overflow-y:scroll;scrollbar-gutter:stable}
@@ -63,7 +63,7 @@ body{background:#080C14}
 .atl-nav-div{width:1px;height:20px;background:var(--hair)}
 .atl-nav-title{font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
 /* Inside the atlas the breadcrumb states where you are, so the wordmark line
-   is only shown on the front page and the crumb takes its place — in line with
+   is only shown on the front page and the crumb takes its place, in line with
    the logo, as the topmost element on the page. */
 .atl-nav.is-sub .atl-nav-title,.atl-nav.is-sub .atl-nav-div{display:none}
 /* the announcement bar belongs to the collection front page; inside the atlas it
@@ -78,7 +78,7 @@ body{background:#080C14}
 .atl-nav.is-sub .atl-nav-sep,.atl-nav.is-sub .atl-nav-crumb{display:flex}
 .atl-nav-crumb .atl-crumb{margin-bottom:0;flex-wrap:nowrap;overflow:hidden}
 /* the root segment wraps its link and slash in one span, so it needs its own
-   gap — without this, "Orchestral" sits flush against the separator */
+   gap: without this, "Orchestral" sits flush against the separator */
 .atl-crumb-root{display:inline-flex;align-items:center;gap:14px}
 .atl-nav-right{display:flex;align-items:center;gap:8px}
 
@@ -126,7 +126,7 @@ body{background:#080C14}
 /* --- page shell --- */
 .atl-main{position:relative;z-index:10}
 /* width:100% is load-bearing. .atl-fampage and .atl-home are flex columns, and an
-   auto cross-axis margin (margin:0 auto) on a flex child overrides stretch — the
+   auto cross-axis margin (margin:0 auto) on a flex child overrides stretch, so the
    wrapper would size to its contents and re-centre, so switching between tabs of
    differing content width shifted the whole page sideways. */
 .atl-wrap{width:100%;max-width:1220px;margin:0 auto;padding:0 32px;min-width:0}
@@ -244,7 +244,7 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate-3d{position:relative;height:var(--plate-art-h);border-radius:6px;overflow:hidden;background:transparent;
   margin:6px 0 18px;display:none}
 .atl-plate-3d iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2}
-/* hidden until the iframe actually fails — the viewer renders on alpha now,
+/* hidden until the iframe actually fails: the viewer renders on alpha now,
    so anything left underneath it would read straight through the model */
 .atl-plate-3d-fail{position:absolute;inset:0;z-index:1;display:none;align-items:center;justify-content:center;
   padding:24px;text-align:center;font-size:12px;color:#5E606A;line-height:1.6}

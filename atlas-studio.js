@@ -445,6 +445,10 @@ function setPlayIcon(){
 
 elPlay.onclick = async () => {
   if(!S.playing){
+    /* the dock and a demo clip are separate audio paths and would otherwise
+       play over each other, which is worst on the very pages where both have
+       something to say */
+    if(typeof stopDemo === 'function') stopDemo();
     if(!await ensureEngine()) return;      /* nothing is fetched until here */
     S.engine.seek(S.pos);
     await S.engine.play();
@@ -564,6 +568,11 @@ function setOpen(on){
 }
 
 if(btn) btn.addEventListener('click', () => setDock(!S.shown));
+
+/* let the demo players on instrument pages pause the dock before they start */
+window.atlasStudioPause = () => {
+  if(S.playing && S.engine){ S.engine.pause(); S.playing = false; setPlayIcon(); }
+};
 
 /* ------------------------------------------------------------------ go --- */
 addEventListener('resize', () => { if(S.shown){ draw(); render(); measure(); } });

@@ -1,11 +1,23 @@
 # Cloudflare Pages headers
 
-# Models and the vendored three.js never change once deployed — cache hard.
-/viewer/models/*
+# Big binaries never change once deployed, so cache them hard. Their content is
+# fixed for the life of a file name: re-cutting a clip or re-exporting a model
+# means a new name, not a new version of an old one.
+#
+# The .glb files live FLAT in /viewer/, not in /viewer/models/, so the old
+# /viewer/models/* rule matched nothing and every visitor re-downloaded roughly
+# 17 MB of models on each visit. /viewer/vendor/* is gone entirely: three.js now
+# comes from unpkg and is cached by that CDN rather than by us.
+/viewer/*.glb
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
 
-/viewer/vendor/*
+# Studio renders and per-instrument demo clips.
+/audio/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Family hover footage. Only fetched on hover, but fetched once.
+/video/*
   Cache-Control: public, max-age=31536000, immutable
 
 # HTML should revalidate so edits go live immediately.
