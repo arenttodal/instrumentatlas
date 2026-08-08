@@ -85,6 +85,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .chip:hover{border-color:var(--hair-gold);color:#fff}
 .chip[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
 .tspacer{flex:1 1 auto}
+.key{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;color:var(--dim);letter-spacing:.3px}
+.key i{width:10px;height:3px;border-radius:2px;display:inline-block}
 .meta{font-size:11px;color:var(--faint);letter-spacing:.4px}
 
 /* --- arrangement --- */
@@ -92,8 +94,11 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .heads{border-right:1px solid var(--hair);overflow-y:auto}
 .ruler-pad{height:26px;border-bottom:1px solid var(--hair);display:flex;align-items:center;padding:0 14px}
 .ruler-pad span{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--faint)}
-.head{display:flex;align-items:center;gap:8px;height:58px;padding:0 12px;border-bottom:1px solid rgba(255,255,255,.04);
-  transition:background .2s}
+.head{position:relative;display:flex;align-items:center;gap:8px;height:58px;padding:0 12px 0 16px;
+  border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s}
+.fam{position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;
+  background:var(--fam);opacity:.9;transition:opacity .2s}
+.head[data-muted="1"] .fam{opacity:.22}
 .head:hover{background:rgba(255,255,255,.02)}
 .head-name{flex:1 1 auto;min-width:0}
 .head-name b{display:block;font-size:12.5px;color:#fff;font-weight:500;white-space:nowrap;overflow:hidden;
@@ -103,13 +108,13 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .vars .var{padding:2px 7px;border:1px solid var(--hair);border-radius:100px;font-size:9px;font-weight:700;
   letter-spacing:.6px;color:var(--faint);transition:all .18s;line-height:1.5}
 .vars .var:hover{color:#fff;border-color:var(--hair-gold)}
-.vars .var[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.16);color:var(--gold)}
+.vars .var[aria-pressed="true"]{border-color:var(--fam);background:color-mix(in srgb,var(--fam) 16%,transparent);color:var(--fam)}
 .ms{display:flex;gap:4px;flex:0 0 auto}
 .ms button{width:20px;height:20px;border-radius:4px;border:1px solid var(--hair);font-size:9px;font-weight:700;
   color:var(--faint);display:flex;align-items:center;justify-content:center;transition:all .18s}
 .ms button:hover{color:#fff;border-color:var(--hair-gold)}
 .head[data-muted="1"] .ms .m{background:#C0603A;border-color:#C0603A;color:#0A0C14}
-.head[data-solo="1"] .ms .s{background:var(--gold);border-color:var(--gold);color:#0A0C14}
+.head[data-solo="1"] .ms .s{background:var(--fam);border-color:var(--fam);color:#0A0C14}
 .head[data-muted="1"] .head-name b{color:var(--faint)}
 .lanes{position:relative;overflow:auto}
 .lanes svg{display:block}
@@ -165,7 +170,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg>
     </button>
     <div class="strip-id">
-      <b id="passage-name">Theme 1 · 8 bars</b>
+      <b id="passage-name">Theme 1 · 7 bars</b>
       <span id="lib-name">Junkie XL Brass</span>
     </div>
     <div class="strip-bar" id="scrub"><i id="scrub-fill"></i></div>
@@ -180,8 +185,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
       <div class="tgroup"><span class="tlabel">Passage</span>
         <button class="chip" aria-pressed="true">Theme 1</button>
       </div>
+      <div class="tgroup" id="legend"></div>
       <div class="tspacer"></div>
-      <div class="meta" id="meta">3 tracks · 8 bars · &#9834; = 120 · levels matched</div>
+      <div class="meta" id="meta">3 tracks · 8 bars · &#9834; = 73 · levels matched</div>
     </div>
     </div>
 
@@ -364,12 +370,21 @@ window.AudioCompare = AudioCompare;
    bottom of this file.
    pitch = MIDI number · start and dur are in beats
    ============================================================================ */
-const BARS = 8, BEATS = 4, TEMPO = 120;
+const BARS = 7, BEATS = 4, TEMPO = 73;
 const TOTAL = BARS * BEATS;
 
 /* File extension for the renders. 'aac' is raw ADTS, 'm4a' is the same codec in
    an MP4 container — change this one line if you re-export. */
 const EXT = 'aac';
+
+/* Family colours. Tracks are coloured by family so a glance at the arrangement
+   tells you which section is playing without reading the names. */
+const FAM = {
+  woodwinds:'#6FB7E8',   // light blue
+  brass:    '#D4A04A',   // amber
+  strings:  '#CF5F52',   // red
+  percussion:'#9B8FD4'   // violet, for later
+};
 const A = name => `${name}.${EXT}`;
 
 /* Three tracks. Section size belongs to the track, not to the page — "solo horn
@@ -377,21 +392,21 @@ const A = name => `${name}.${EXT}`;
    flute constant while you change it. Each variant is a separate render of the
    SAME passage, so every combination stacks in time. */
 const TRACKS = [
-  {id:'flute', name:'Flute', role:'Doubling, 8va',
+  {id:'flute', name:'Flute', family:'woodwinds', role:'Doubling, 8va',
    variants:[{v:'1', label:'Solo', src:A('flute_1')}], variant:'1',
-   notes:[[1.562, 1.156, 72], [2.49, 0.906, 67], [3.229, 4.25, 79], [7.969, 0.812, 72], [8.698, 0.875, 79], [9.5, 1.719, 80], [11.052, 1.146, 77], [12.073, 2.323, 84], [14.677, 2.531, 79], [17.115, 1.76, 75], [18.635, 0.625, 74], [19.188, 0.469, 72], [19.583, 2.208, 74], [22.052, 1.688, 67], [23.604, 0.938, 70], [24.438, 4.042, 72]]},
+   notes:[[0.0, 1.156, 72], [0.928, 0.906, 67], [1.667, 4.25, 79], [6.407, 0.812, 72], [7.136, 0.875, 79], [7.938, 1.719, 80], [9.49, 1.146, 77], [10.511, 2.323, 84], [13.115, 2.531, 79], [15.553, 1.76, 75], [17.073, 0.625, 74], [17.626, 0.469, 72], [18.021, 2.208, 74], [20.49, 1.688, 67], [22.042, 0.938, 70], [22.876, 4.042, 72]]},
 
-  {id:'horn', name:'Horn', role:'Melody',
+  {id:'horn', name:'Horn', family:'brass', role:'Melody',
    variants:[{v:'1', label:'Solo', src:A('horn_1')},
              {v:'4', label:'4', src:A('horn_4')},
              {v:'6', label:'6', src:A('horn_6')},
              {v:'12', label:'12', src:A('horn_12')}], variant:'4',
-   notes:[[1.562, 1.156, 60], [2.49, 0.906, 55], [3.229, 4.25, 67], [7.969, 0.812, 60], [8.698, 0.875, 67], [9.5, 1.719, 68], [11.052, 1.146, 65], [12.073, 2.323, 72], [14.677, 2.531, 67], [17.115, 1.76, 63], [18.635, 0.625, 62], [19.188, 0.469, 60], [19.583, 2.208, 62], [22.052, 1.688, 55], [23.604, 0.938, 58], [24.438, 4.042, 60]]},
+   notes:[[0.0, 1.156, 60], [0.928, 0.906, 55], [1.667, 4.25, 67], [6.407, 0.812, 60], [7.136, 0.875, 67], [7.938, 1.719, 68], [9.49, 1.146, 65], [10.511, 2.323, 72], [13.115, 2.531, 67], [15.553, 1.76, 63], [17.073, 0.625, 62], [17.626, 0.469, 60], [18.021, 2.208, 62], [20.49, 1.688, 55], [22.042, 0.938, 58], [22.876, 4.042, 60]]},
 
-  {id:'cello', name:'Cello', role:'Doubling, 8vb',
+  {id:'cello', name:'Cello', family:'strings', role:'Doubling, 8vb',
    variants:[{v:'1', label:'Solo', src:A('cello_1')},
              {v:'ens', label:'Section', src:A('cello_ens')}], variant:'ens',
-   notes:[[1.562, 1.156, 48], [2.49, 0.906, 43], [3.229, 4.25, 55], [7.969, 0.812, 48], [8.698, 0.875, 55], [9.5, 1.719, 56], [11.052, 1.146, 53], [12.073, 2.323, 60], [14.677, 2.531, 55], [17.115, 1.76, 51], [18.635, 0.625, 50], [19.188, 0.469, 48], [19.583, 2.208, 50], [22.052, 1.688, 43], [23.604, 0.938, 46], [24.438, 4.042, 48]]}
+   notes:[[0.0, 1.156, 48], [0.928, 0.906, 43], [1.667, 4.25, 55], [6.407, 0.812, 48], [7.136, 0.875, 55], [7.938, 1.719, 56], [9.49, 1.146, 53], [10.511, 2.323, 60], [13.115, 2.531, 55], [15.553, 1.76, 51], [17.073, 0.625, 50], [17.626, 0.469, 48], [18.021, 2.208, 50], [20.49, 1.688, 43], [22.042, 0.938, 46], [22.876, 4.042, 48]]}
 ];
 
 const state = {playing:false, pos:0, muted:new Set(), solo:null, loaded:false};
@@ -405,7 +420,9 @@ TRACKS.forEach(t => {
   row.dataset.track = t.id;
   row.dataset.muted = '0';
   row.dataset.solo = '0';
+  row.style.setProperty('--fam', FAM[t.family] || '#8FB4E0');
   row.innerHTML = `
+    <span class="fam"></span>
     <div class="head-name">
       <b>${t.name}</b>
       <div class="vars">${t.variants.map(v =>
@@ -492,7 +509,7 @@ function draw(){
       const rel = (p - lo) / span;
       const y = y0 + LANE_H - 9 - rel * (LANE_H - 20);
       s += `<rect x="${x+1}" y="${y}" width="${w}" height="6" rx="2.5"
-        fill="${on ? '#D4A04A' : '#8FB4E0'}" fill-opacity="${on ? .92 : .16}"/>`;
+        fill="${FAM[t.family] || '#8FB4E0'}" fill-opacity="${on ? .95 : .14}"/>`;
     });
   });
 
@@ -583,6 +600,13 @@ addEventListener('resize', draw);
 addEventListener('keydown', e => {
   if(e.code === 'Space' && e.target === document.body){ e.preventDefault(); document.getElementById('play').click(); }
 });
+
+(function legend(){
+  const seen = [...new Set(TRACKS.map(t => t.family))];
+  document.getElementById('legend').innerHTML =
+    `<span class="tlabel">Family</span>` + seen.map(f =>
+      `<span class="key"><i style="background:${FAM[f]}"></i>${f[0].toUpperCase()+f.slice(1)}</span>`).join('');
+})();
 
 draw();
 render();
