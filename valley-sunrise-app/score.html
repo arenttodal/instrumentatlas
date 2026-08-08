@@ -148,7 +148,6 @@ body.annotating .lanes{cursor:crosshair}
   <div class="tools">
     <button class="btn" id="tips-btn" aria-pressed="false">Tips</button>
     <button class="btn" id="follow-btn" aria-pressed="true">Follow</button>
-    <button class="btn" id="quality-btn" aria-pressed="true">Stereo</button>
     <button class="btn" id="loop-btn" aria-pressed="false">Loop</button>
     <button class="btn" id="ann-btn" aria-pressed="false" title="Create role regions by dragging on a lane">Annotate</button>
     <div class="zoom" title="Horizontal zoom"><button id="zoom-out">&minus;</button><button id="zoom-fit">Fit</button><button id="zoom-in">+</button></div>
@@ -220,12 +219,15 @@ body.annotating .lanes{cursor:crosshair}
    SCORE PLAYER
    ----------------------------------------------------------------------------
    Twelve stems, two minutes. The naive approach — decode everything to 48 kHz
-   stereo up front — costs 550 MB of RAM and kills the tab. Three things avoid it:
+   stereo up front — costs 550 MB of RAM and kills the tab. Two things avoid it:
 
-     · the AudioContext runs at 32 kHz, so decodeAudioData resamples on the way in
-     · buffers are mixed to mono unless you ask for stereo (halves it again)
+     · the AudioContext runs at 32 kHz, so decodeAudioData resamples on the way in,
+       which costs a third of the memory for no audible difference here
      · stems decode lazily, only when they first become audible, and start at the
        current transport position so they drop in sample-aligned mid-playback
+
+   Playback is always stereo. Summing an orchestral mix to mono comb-filters the
+   reverb and sounds like a fault, which is not a trade worth any amount of RAM.
 
    Everything is scheduled against one clock, so mute/solo never restarts anything.
    ============================================================================ */
@@ -233,7 +235,7 @@ body.annotating .lanes{cursor:crosshair}
 const EXTS = ['aac','wav','m4a'];
 let S = null;                       // the score
 let ctx = null, buffers = new Map();
-let playing = false, startTime = 0, offset = 0, duration = 0, stereo = true;
+let playing = false, startTime = 0, offset = 0, duration = 0;
 const muted = new Set();
 let loopA = null, loopB = null, loopOn = false;   // loop points, in beats
 
@@ -274,14 +276,6 @@ function ensureCtx(){
   ctx = new (window.AudioContext || window.webkitAudioContext)({sampleRate:32000});
 }
 
-function toMono(buf){
-  if(stereo || buf.numberOfChannels === 1) return buf;
-  const out = ctx.createBuffer(1, buf.length, buf.sampleRate);
-  const o = out.getChannelData(0), a = buf.getChannelData(0), b = buf.getChannelData(1);
-  for(let i=0;i<buf.length;i++) o[i] = (a[i]+b[i])*0.5;
-  return out;
-}
-
 async function fetchStem(t){
   for(const e of EXTS){
     const url = `${S.audioBase}${t.file || t.id}.${e}`;
@@ -292,7 +286,7 @@ async function fetchStem(t){
 
 async function decode(t){
   if(buffers.has(t.id)) return buffers.get(t.id);
-  const buf = toMono(await ctx.decodeAudioData(await fetchStem(t)));
+  const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
   buffers.set(t.id, buf);
   duration = Math.max(duration, buf.duration);
   return buf;
@@ -918,15 +912,6 @@ $('tips-btn').onclick = function(){
 };
 $('follow-btn').onclick = function(){
   followOn = !followOn; this.setAttribute('aria-pressed', String(followOn));
-};
-$('quality-btn').onclick = async function(){
-  stereo = !stereo;
-  killAll();
-  this.setAttribute('aria-pressed', String(stereo));
-  this.textContent = stereo ? 'Stereo' : 'Mono';
-  const was = playing; if(was) pause();
-  buffers.clear();                    /* force re-decode at the new width */
-  if(was) play();
 };
 $('zoom-in').onclick  = () => { ppb = Math.min(ppb*1.6, 60); layout(); draw(); };
 $('zoom-out').onclick = () => { ppb = Math.max(ppb/1.6, 1.5); layout(); draw(); };
