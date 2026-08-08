@@ -12,6 +12,11 @@
 </head>
 <body>
 <div class="atl" id="atl">
+  <!-- Family hover footage, home page only. One <video> per family that has a
+       clip, all preload="none" so nothing downloads until a card is hovered.
+       The dark gradient sits ABOVE the video: to see the players better lower
+       the video opacity, never lighten the gradient, or the headline goes. -->
+  <div class="atl-famvid" id="atl-famvid" aria-hidden="true"></div>
   <div class="atl-grain"></div>
   <div class="atl-atmos"></div>
 
@@ -40,6 +45,12 @@
   </nav>
 
   <main class="atl-main" id="atl-view"></main>
+
+  <!-- The studio dock is rendered once, here, deliberately OUTSIDE #atl-view.
+       Routing replaces the contents of #atl-view on every navigation; if the
+       dock lived in there, playback would stop the moment you clicked a link.
+       That is the whole reason it is a dock and not a page. -->
+  <aside class="atl-dock" id="atl-dock" aria-label="Studio" hidden></aside>
 
   <footer class="atl-foot">
     <div class="atl-wrap">
@@ -71,5 +82,6 @@
 
 <script defer src="atlas-data.js"></script>
 <script defer src="atlas.js"></script>
+<script defer src="atlas-studio.js"></script>
 </body>
 </html>

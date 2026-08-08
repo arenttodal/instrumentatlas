@@ -504,6 +504,8 @@ let currentInstrument = null, currentFamily = null;
 /* family colours, following the convention of printed orchestra seating charts:
    strings violet, woodwinds green, brass blue, percussion amber. Gold is reserved
    for the instrument you are reading, so no family uses it. */
+/* The timbre chart's palette, which is not the dock's: see STUDIO_FAM in
+   atlas-data.js for why the two are deliberately different. */
 const FAM_COLOR = {
   strings:'#9B8FD4', woodwinds:'#5FB89A', brass:'#6C9BD8', percussion:'#C9834F'
 };
@@ -654,6 +656,58 @@ function route(path){
   closeMenu();
   window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
   observeFades();
+  wireFamilyVideo(parts.length === 0);
+}
+
+/* ============================================================================
+   FAMILY HOVER FOOTAGE
+   ----------------------------------------------------------------------------
+   Home page only. A <video> per family that declares one, all preload="none"
+   with no src until the card is first hovered, so a visitor who never hovers
+   downloads nothing at all. A short delay before starting means sweeping the
+   cursor across the row does not fire every clip at once.
+   ============================================================================ */
+const VID = { peak:0.30, delay:120, timer:null, built:false };
+
+function wireFamilyVideo(isHome){
+  const layer = document.getElementById('atl-famvid');
+  if(!layer) return;
+  const off = window.matchMedia('(hover: none)').matches ||
+              window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!isHome || off){ layer.innerHTML = ''; VID.built = false; return; }
+
+  if(!VID.built){
+    layer.innerHTML = FAMILIES.filter(f => f.video).map(f =>
+      `<video data-fam="${esc(f.id)}" data-src="${esc(f.video)}" preload="none" muted playsinline loop></video>`).join('');
+    VID.built = true;
+  }
+
+  document.querySelectorAll('.atl-fam-card').forEach(card => {
+    const id = (card.getAttribute('href') || '').replace('#/', '');
+    card.addEventListener('mouseenter', () => showFamilyVideo(id));
+    card.addEventListener('mouseleave', hideFamilyVideo);
+    card.addEventListener('focus', () => showFamilyVideo(id));
+    card.addEventListener('blur', hideFamilyVideo);
+  });
+}
+
+function showFamilyVideo(famId){
+  clearTimeout(VID.timer);
+  VID.timer = setTimeout(() => {
+    document.querySelectorAll('#atl-famvid video').forEach(v => {
+      if(v.dataset.fam !== famId){ v.classList.remove('is-on'); v.pause(); return; }
+      /* first hover is the first byte requested */
+      if(!v.src && v.dataset.src) v.src = v.dataset.src;
+      v.classList.add('is-on');
+      const p = v.play();
+      if(p && p.catch) p.catch(() => {});   /* a blocked autoplay is not an error worth logging */
+    });
+  }, VID.delay);
+}
+
+function hideFamilyVideo(){
+  clearTimeout(VID.timer);
+  document.querySelectorAll('#atl-famvid video').forEach(v => v.classList.remove('is-on'));
 }
 
 function closeMenu(){
