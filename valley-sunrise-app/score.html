@@ -42,6 +42,14 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .clock{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:132px;text-align:right}
 .status{font-size:11px;color:var(--gold);min-width:120px}
 
+/* minimap */
+.mini{position:relative;height:46px;flex:0 0 auto;border-bottom:1px solid var(--hair);
+  background:rgba(255,255,255,.012);cursor:pointer;overflow:hidden}
+.mini svg{position:absolute;inset:0;width:100%;height:100%}
+.mini-view{position:absolute;top:0;bottom:0;border:1px solid var(--hair-gold);
+  background:rgba(212,160,74,.10);pointer-events:none;border-radius:2px}
+.mini-ph{position:absolute;top:0;bottom:0;width:1px;background:var(--gold);pointer-events:none}
+
 /* arrangement */
 .arr{flex:1 1 auto;display:grid;grid-template-columns:var(--head-w) 1fr;min-height:0}
 .heads{border-right:1px solid var(--hair);overflow:hidden;background:rgba(255,255,255,.012)}
@@ -60,7 +68,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .ms button:hover{color:#fff;border-color:var(--hair-gold)}
 .head[data-muted="1"] .m{background:#C0603A;border-color:#C0603A;color:#0A0C14}
 .head[data-solo="1"] .s{background:var(--c);border-color:var(--c);color:#0A0C14}
-.lanes{position:relative;overflow:auto}
+.lanes{position:relative;overflow:auto;scrollbar-width:thin}
+.loopband{position:absolute;top:0;height:24px;background:rgba(212,160,74,.18);
+  border-left:1px solid var(--gold);border-right:1px solid var(--gold);pointer-events:none}
 .lanes svg{display:block}
 .ph{position:absolute;top:0;width:1px;background:var(--gold);pointer-events:none;
   box-shadow:0 0 10px rgba(212,160,74,.8)}
@@ -97,7 +107,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
     <button class="btn" id="tips-btn" aria-pressed="false">Tips</button>
     <button class="btn" id="follow-btn" aria-pressed="true">Follow</button>
     <button class="btn" id="quality-btn" aria-pressed="true">Stereo</button>
-    <div class="zoom"><button id="zoom-out">&minus;</button><button id="zoom-fit">Fit</button><button id="zoom-in">+</button></div>
+    <button class="btn" id="loop-btn" aria-pressed="false">Loop</button>
+    <div class="zoom" title="Horizontal zoom"><button id="zoom-out">&minus;</button><button id="zoom-fit">Fit</button><button id="zoom-in">+</button></div>
+    <div class="zoom" title="Track height"><button id="vz-out">&#8597;&minus;</button><button id="vz-in">&#8597;+</button></div>
   </div>
 </div>
 
@@ -106,6 +118,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   <div class="scrub" id="scrub"><i id="scrub-fill"></i></div>
   <div class="status" id="status"></div>
   <div class="clock" id="clock">1.1.0 · 0:00 / 0:00</div>
+</div>
+
+<div class="mini" id="mini" title="Whole piece — drag to move the view">
+  <svg id="mini-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="mini-view" id="mini-view"></div>
+  <div class="mini-ph" id="mini-ph"></div>
 </div>
 
 <div class="arr">
@@ -148,10 +166,11 @@ const EXTS = ['aac','wav','m4a'];
 let S = null;                       // the score
 let ctx = null, buffers = new Map();
 let playing = false, startTime = 0, offset = 0, duration = 0, stereo = true;
-const muted = new Set(); let solo = null;
+const muted = new Set();
+let loopA = null, loopB = null, loopOn = false;   // loop points, in beats
 
 const $ = id => document.getElementById(id);
-const audible = id => solo ? id === solo : !muted.has(id);
+const audible = id => (typeof audibleTrack === 'function') ? audibleTrack(id) : !muted.has(id);
 
 /* ---------- load the score description ---------- */
 async function boot(){
@@ -164,7 +183,7 @@ async function boot(){
   duration = S.duration;
   $('t-title').textContent = S.title;
   $('t-sub').textContent = `${S.tracks.length} stems · ${S.bars} bars · \u2669 ${Math.round(S.tempo)}`;
-  buildHeads(); layout(); draw(); paintScrubTips();
+  buildHeads(); fitLanes(); layout(); draw(); drawMini(); paintScrubTips();
   $('boot').classList.add('gone');
   tick();
 }
@@ -220,10 +239,18 @@ function killAll(){ [...LIVE].forEach(killNode); LIVE.clear(); }
 function nodeFor(id){ return [...LIVE].find(n => n.id === id) || null; }
 
 /* one place that ever creates a source */
+function loopSecs(){
+  if(!loopOn || loopA === null || loopB === null) return null;
+  const a = loopA*60/S.tempo, b = loopB*60/S.tempo;
+  return (b - a > 0.2) ? [a, b] : null;
+}
+
 function startNode(t, at, when, gainValue){
   killTrack(t.id);                       // never two nodes for one track
   const b = buffers.get(t.id); if(!b) return null;
   const src = ctx.createBufferSource(); src.buffer = b;
+  const L = loopSecs();
+  if(L){ src.loop = true; src.loopStart = L[0]; src.loopEnd = Math.min(L[1], b.duration); }
   const gain = ctx.createGain(); gain.gain.value = gainValue;
   src.connect(gain).connect(ctx.destination);
   const n = {id:t.id, src, gain};
@@ -267,7 +294,13 @@ function pause(){
   killAll();
   setPlayIcon();
 }
-const position = () => (playing && ctx) ? Math.min(ctx.currentTime - startTime, duration) : offset;
+function position(){
+  if(!playing || !ctx) return offset;
+  let p = ctx.currentTime - startTime;
+  const L = loopSecs();
+  if(L && p > L[1]) p = L[0] + ((p - L[0]) % (L[1] - L[0]));
+  return Math.min(p, duration);
+}
 
 function setPlayIcon(){
   $('play').innerHTML = playing
@@ -279,7 +312,7 @@ function setPlayIcon(){
    position rather than restarting anything */
 let applying = false;
 async function applyGains(){
-  draw(); refreshOff();
+  draw(); refreshOff(); drawMini();
   if(!playing || applying) return;
   applying = true;
   try {
@@ -314,89 +347,190 @@ function seek(sec){
   if(was) play();
 }
 
-/* ---------- layout ---------- */
-const LANE = 40, RULER = 24;
-let ppb = 8;                          // pixels per beat
+/* ---------- layout ---------------------------------------------------------
+   Lane height is a variable, not a constant, and notes are placed on a real
+   pitch scale within each lane rather than squeezed into a few pixels. Vertical
+   zoom changes the lane height; horizontal zoom changes pixels-per-beat and
+   anchors on the mouse, the way a DAW does.
+   -------------------------------------------------------------------------- */
+const RULER = 24;
+let LANE = 40;                         // lane height, changed by vertical zoom
+let ppb = 8;                           // pixels per beat
+const MIN_PPB = 1.2, MAX_PPB = 90, MIN_LANE = 22, MAX_LANE = 150;
+
+const totalBeats = () => S.bars * S.beats;
+const gridW = () => totalBeats() * ppb;
+const gridH = () => RULER + S.tracks.length * LANE;
 
 function layout(){
-  const totalBeats = S.bars * S.beats;
-  $('heads').style.setProperty('--n', S.tracks.length);
-  $('grid').setAttribute('width', totalBeats * ppb);
-  $('grid').setAttribute('height', RULER + S.tracks.length * LANE);
+  const g = $('grid');
+  g.setAttribute('width', gridW()); g.setAttribute('height', gridH());
+  [...$('heads').querySelectorAll('.head')].forEach(r => r.style.height = LANE + 'px');
+  $('ph').style.height = gridH() + 'px';
+}
+
+/* zoom horizontally about a fixed point on screen, so the bar under the cursor
+   stays under the cursor */
+function zoomAt(factor, clientX){
+  const l = $('lanes');
+  const rect = l.getBoundingClientRect();
+  const px = (clientX === undefined ? rect.width/2 : clientX - rect.left);
+  const beatUnder = (l.scrollLeft + px) / ppb;
+  ppb = Math.max(MIN_PPB, Math.min(ppb * factor, MAX_PPB));
+  layout(); draw();
+  l.scrollLeft = Math.max(0, beatUnder * ppb - px);
+  drawMini();
 }
 function fitZoom(){
-  ppb = Math.max(2, ($('lanes').clientWidth - 20) / (S.bars * S.beats));
-  layout(); draw();
+  ppb = Math.max(MIN_PPB, ($('lanes').clientWidth - 24) / totalBeats());
+  layout(); draw(); $('lanes').scrollLeft = 0; drawMini();
 }
+function vzoom(mult){
+  LANE = Math.max(MIN_LANE, Math.min(LANE * mult, MAX_LANE));
+  layout(); draw(); drawMini();
+}
+/* on load, size the lanes so the whole stack just fills the window */
+function fitLanes(){
+  const avail = $('lanes').clientHeight - RULER - 8;
+  LANE = Math.max(MIN_LANE, Math.min(avail / S.tracks.length, MAX_LANE));
+  layout();
+}
+
+/* ---------- track headers ---------- */
+const solos = new Set();               // additive solo, like a mixer
+function audibleTrack(id){ return solos.size ? solos.has(id) : !muted.has(id); }
 
 function buildHeads(){
   const h = $('heads');
   S.tracks.forEach(t => {
     const row = document.createElement('div');
     row.className = 'head'; row.style.height = LANE + 'px';
-    row.style.setProperty('--c', S.colors ? S.colors[t.family] : famColor(t.family));
+    row.style.setProperty('--c', famColor(t.family));
     row.dataset.muted = '0'; row.dataset.solo = '0'; row.dataset.off = '0';
     row.innerHTML = `<span class="fam"></span><b>${t.name}</b>
-      <span class="ms"><button class="m">M</button><button class="s">S</button></span>`;
-    row.querySelector('.m').onclick = () => {
+      <span class="ms"><button class="m" title="Mute">M</button><button class="s" title="Solo">S</button></span>`;
+    row.querySelector('.m').onclick = e => {
+      e.stopPropagation();
       muted.has(t.id) ? muted.delete(t.id) : muted.add(t.id);
       row.dataset.muted = muted.has(t.id) ? '1' : '0';
-      refreshOff(); applyGains();
+      applyGains();
     };
-    row.querySelector('.s').onclick = () => {
-      solo = solo === t.id ? null : t.id;
-      [...h.querySelectorAll('.head')].forEach((r,i) =>
-        r.dataset.solo = S.tracks[i].id === solo ? '1' : '0');
-      refreshOff(); applyGains();
+    row.querySelector('.s').onclick = e => {
+      e.stopPropagation();
+      /* alt-click solos exclusively, plain click adds to the solo group */
+      if(e.altKey){ solos.clear(); solos.add(t.id); }
+      else solos.has(t.id) ? solos.delete(t.id) : solos.add(t.id);
+      syncHeads(); applyGains();
     };
     h.appendChild(row);
   });
 }
-function refreshOff(){
-  [...$('heads').querySelectorAll('.head')].forEach((r,i) =>
-    r.dataset.off = audible(S.tracks[i].id) ? '0' : '1');
+function syncHeads(){
+  [...$('heads').querySelectorAll('.head')].forEach((r,i) => {
+    const id = S.tracks[i].id;
+    r.dataset.solo  = solos.has(id) ? '1' : '0';
+    r.dataset.muted = muted.has(id) ? '1' : '0';
+    r.dataset.off   = audibleTrack(id) ? '0' : '1';
+  });
 }
-const FAM = {woodwinds:'#6FB7E8',brass:'#D4A04A',strings:'#CF5F52',percussion:'#9B8FD4',choir:'#7FD1B9'};
+function refreshOff(){ syncHeads(); }
+
+const FAM = {woodwinds:'#6FB7E8',brass:'#D4A04A',strings:'#CF5F52',
+             percussion:'#9B8FD4',choir:'#7FD1B9'};
 const famColor = f => FAM[f] || '#8FB4E0';
 
 /* ---------- draw ---------- */
 function draw(){
-  const totalBeats = S.bars * S.beats, W = totalBeats * ppb;
-  const H = RULER + S.tracks.length * LANE;
+  const W = gridW(), H = gridH(), tb = totalBeats();
   let s = '';
+
+  /* bars and beats */
   for(let bar = 0; bar < S.bars; bar++){
     const x = bar * S.beats * ppb;
     const major = bar % 4 === 0;
-    s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#fff" stroke-opacity="${major?'.11':'.045'}"/>`;
-    if(major || ppb > 14)
-      s += `<text x="${x+4}" y="15" fill="#4E505A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+    s += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity="${major?'.11':'.045'}"/>`;
+    if(major || ppb > 12)
+      s += `<text x="${(x+4).toFixed(1)}" y="15" fill="#4E505A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+    if(ppb > 26) for(let bt = 1; bt < S.beats; bt++){
+      const bx = x + bt*ppb;
+      s += `<line x1="${bx.toFixed(1)}" y1="${RULER}" x2="${bx.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".022"/>`;
+    }
   }
   s += `<line x1="0" y1="${RULER}" x2="${W}" y2="${RULER}" stroke="#fff" stroke-opacity=".08"/>`;
 
-  /* tip regions behind the notes */
+  /* loop region */
+  if(loopA !== null && loopB !== null){
+    const x1 = loopA*ppb, x2 = loopB*ppb;
+    s += `<rect x="${x1}" y="0" width="${x2-x1}" height="${H}" fill="#D4A04A" fill-opacity="${loopOn?.07:.03}"/>
+          <line x1="${x1}" y1="0" x2="${x1}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>
+          <line x1="${x2}" y1="0" x2="${x2}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>`;
+  }
+
+  /* tip regions */
   if(tipsOn) (S.tips||[]).forEach(tp => {
     const x = (tp.bar-1)*S.beats*ppb, w = (tp.beats||8)*ppb;
-    s += `<rect x="${x}" y="${RULER}" width="${w}" height="${H-RULER}" fill="#D4A04A" fill-opacity=".055"/>
-          <line x1="${x}" y1="${RULER}" x2="${x}" y2="${H}" stroke="#D4A04A" stroke-opacity=".45"/>`;
+    s += `<rect x="${x}" y="${RULER}" width="${w}" height="${H-RULER}" fill="#D4A04A" fill-opacity=".05"/>
+          <line x1="${x}" y1="${RULER}" x2="${x}" y2="${H}" stroke="#D4A04A" stroke-opacity=".4"/>`;
   });
 
+  /* lanes */
   S.tracks.forEach((t,i) => {
     const y0 = RULER + i*LANE;
     s += `<line x1="0" y1="${y0+LANE}" x2="${W}" y2="${y0+LANE}" stroke="#fff" stroke-opacity=".035"/>`;
-    const on = audible(t.id), col = famColor(t.family);
+    if(!t.notes.length) return;
+    const on = audibleTrack(t.id), col = famColor(t.family);
     const ps = t.notes.map(n => n[2]);
-    if(!ps.length) return;
-    const lo = Math.min(...ps), hi = Math.max(...ps), span = Math.max(hi-lo, 8);
+    let lo = Math.min(...ps), hi = Math.max(...ps);
+    const pad = 2; lo -= pad; hi += pad;
+    const span = Math.max(hi - lo, 6);
+    const inner = LANE - 8;
+    const nh = Math.max(2, Math.min(inner/span * 1.1, 9));      // note height follows lane height
+    const yFor = p => y0 + 4 + (1 - (p - lo)/span) * (inner - nh);
+
+    /* octave guides once lanes are tall enough to read */
+    if(LANE >= 46){
+      for(let p = Math.ceil(lo/12)*12; p <= hi; p += 12){
+        const y = yFor(p) + nh/2;
+        s += `<line x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}" stroke="${col}" stroke-opacity=".07"/>`;
+      }
+    }
     t.notes.forEach(([st,du,p]) => {
       const x = st*ppb, w = Math.max(du*ppb - 1, 1.5);
-      const y = y0 + LANE - 7 - ((p-lo)/span)*(LANE-15);
-      s += `<rect x="${x}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="4" rx="2"
-        fill="${col}" fill-opacity="${on?.95:.13}"/>`;
+      s += `<rect x="${x.toFixed(1)}" y="${yFor(p).toFixed(1)}" width="${w.toFixed(1)}" height="${nh.toFixed(1)}" rx="${(nh/2.5).toFixed(1)}"
+        fill="${col}" fill-opacity="${on?.95:.12}"/>`;
     });
   });
+
   $('grid').innerHTML = s;
   $('grid').setAttribute('width', W); $('grid').setAttribute('height', H);
   $('ph').style.height = H + 'px';
+}
+
+/* ---------- minimap ---------- */
+function drawMini(){
+  const svg = $('mini-svg'); if(!svg || !S) return;
+  const W = 1000, H = 46, tb = totalBeats();
+  const rows = S.tracks.length;
+  let s = '';
+  S.tracks.forEach((t,i) => {
+    const col = famColor(t.family);
+    const y0 = (i/rows)*H, h = Math.max(H/rows - 0.6, 1);
+    t.notes.forEach(([st,du]) => {
+      s += `<rect x="${(st/tb*W).toFixed(2)}" y="${y0.toFixed(2)}" width="${Math.max(du/tb*W,0.6).toFixed(2)}"
+        height="${h.toFixed(2)}" fill="${col}" fill-opacity="${audibleTrack(t.id)?.8:.15}"/>`;
+    });
+  });
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('preserveAspectRatio','none');
+  svg.innerHTML = s;
+  syncMiniView();
+}
+function syncMiniView(){
+  const l = $('lanes'), m = $('mini-view');
+  if(!m || !gridW()) return;
+  const frac = l.clientWidth / gridW(), left = l.scrollLeft / gridW();
+  m.style.left = (left*100) + '%';
+  m.style.width = Math.min(frac*100, 100) + '%';
 }
 
 /* ---------- tips ---------- */
@@ -423,11 +557,9 @@ function showTip(tp){
     const b = document.createElement('button');
     b.className = 'btn'; b.textContent = tp.action.solo.length ? 'Hear it alone' : 'Hear everything';
     b.onclick = () => {
-      muted.clear(); solo = null;
-      if(tp.action.solo.length) S.tracks.forEach(t => { if(!tp.action.solo.includes(t.id)) muted.add(t.id); });
-      [...$('heads').querySelectorAll('.head')].forEach((r,i) =>
-        r.dataset.muted = muted.has(S.tracks[i].id) ? '1' : '0');
-      refreshOff(); applyGains();
+      muted.clear(); solos.clear();
+      if(tp.action.solo.length) tp.action.solo.forEach(id => solos.add(id));
+      syncHeads(); applyGains();
     };
     acts.appendChild(b);
   }
@@ -446,6 +578,7 @@ function render(){
   $('clock').textContent = `${bar}.${bt}.${tk} · ${fmt(p)} / ${fmt(duration)}`;
   const x = beats*ppb;
   $('ph').style.left = x + 'px';
+  $('mini-ph').style.left = (p/duration*100) + '%';
   if(playing && followOn){
     const l = $('lanes'), margin = l.clientWidth*0.4;
     if(x - l.scrollLeft > margin || x < l.scrollLeft) l.scrollLeft = Math.max(0, x - margin);
@@ -492,7 +625,78 @@ $('quality-btn').onclick = async function(){
 $('zoom-in').onclick  = () => { ppb = Math.min(ppb*1.6, 60); layout(); draw(); };
 $('zoom-out').onclick = () => { ppb = Math.max(ppb/1.6, 1.5); layout(); draw(); };
 $('zoom-fit').onclick = fitZoom;
-addEventListener('resize', () => { draw(); });
+$('vz-in').onclick  = () => vzoom(1.35);
+$('vz-out').onclick = () => vzoom(1/1.35);
+
+$('loop-btn').onclick = function(){
+  loopOn = !loopOn;
+  this.setAttribute('aria-pressed', String(loopOn));
+  if(loopOn && loopA === null){            // default to the current 8 bars
+    const beat = position()/60*S.tempo;
+    loopA = Math.floor(beat/(S.beats*4))*S.beats*4;
+    loopB = loopA + S.beats*8;
+  }
+  draw();
+  if(playing){ const p = position(); seek(p); }
+};
+
+/* drag on the ruler to set a loop region */
+(function ruler(){
+  const l = $('lanes'); let dragging = false, from = 0;
+  const beatAt = e => {
+    const r = $('grid').getBoundingClientRect();
+    return Math.max(0, (e.clientX - r.left)/ppb);
+  };
+  l.addEventListener('pointerdown', e => {
+    const r = $('grid').getBoundingClientRect();
+    if(e.clientY - r.top > RULER) return;          // only the ruler strip
+    dragging = true; from = beatAt(e);
+    loopA = from; loopB = from; draw();
+    l.setPointerCapture(e.pointerId);
+  });
+  l.addEventListener('pointermove', e => {
+    if(!dragging) return;
+    const b = beatAt(e);
+    loopA = Math.min(from, b); loopB = Math.max(from, b);
+    draw();
+  });
+  l.addEventListener('pointerup', e => {
+    if(!dragging) return;
+    dragging = false;
+    if(loopB - loopA < 1){ loopA = loopB = null; }
+    else if(!loopOn){ loopOn = true; $('loop-btn').setAttribute('aria-pressed','true'); }
+    draw();
+    if(playing) seek(position());
+  });
+})();
+
+/* wheel: plain scrolls, shift scrolls horizontally, cmd/ctrl zooms */
+$('lanes').addEventListener('wheel', e => {
+  if(e.ctrlKey || e.metaKey){
+    e.preventDefault();
+    zoomAt(e.deltaY < 0 ? 1.12 : 1/1.12, e.clientX);
+  } else if(e.shiftKey){
+    e.preventDefault();
+    $('lanes').scrollLeft += e.deltaY;
+  }
+}, {passive:false});
+$('lanes').addEventListener('scroll', syncMiniView, {passive:true});
+
+/* minimap drag */
+(function minimap(){
+  const m = $('mini'); let down = false;
+  const go = e => {
+    const r = m.getBoundingClientRect();
+    const frac = Math.max(0, Math.min((e.clientX - r.left)/r.width, 1));
+    const l = $('lanes');
+    l.scrollLeft = Math.max(0, frac*gridW() - l.clientWidth/2);
+    syncMiniView();
+  };
+  m.addEventListener('pointerdown', e => { down = true; go(e); m.setPointerCapture(e.pointerId); });
+  m.addEventListener('pointermove', e => { if(down) go(e); });
+  m.addEventListener('pointerup',   () => { down = false; });
+})();
+addEventListener('resize', () => { layout(); draw(); syncMiniView(); });
 addEventListener('keydown', e => {
   /* if a button has focus, the browser fires its click on space too — let that
      one through instead of handling it twice */
@@ -500,9 +704,22 @@ addEventListener('keydown', e => {
     e.preventDefault(); playing ? pause() : play();
   }
   if(e.key === 'Escape'){ $('tip-panel').classList.remove('on'); openTip = null; }
+  if(e.key === 'ArrowRight'){ e.preventDefault(); seek(position() + (e.shiftKey ? 10 : S.beats*60/S.tempo)); }
+  if(e.key === 'ArrowLeft'){  e.preventDefault(); seek(Math.max(0, position() - (e.shiftKey ? 10 : S.beats*60/S.tempo))); }
+  if(e.key === 'Home'){ e.preventDefault(); seek(0); }
+  if(e.key === '+' || e.key === '='){ zoomAt(1.3); }
+  if(e.key === '-'){ zoomAt(1/1.3); }
+  if(e.key === 'l' || e.key === 'L'){ $('loop-btn').click(); }
+  if(e.key === '0'){ fitZoom(); }
+  /* 1-9 solos that track, alt clears */
+  if(/^[1-9]$/.test(e.key)){
+    const t = S.tracks[+e.key - 1];
+    if(t){ solos.has(t.id) ? solos.delete(t.id) : solos.add(t.id); syncHeads(); applyGains(); }
+  }
+  if(e.key === 'Backspace'){ solos.clear(); muted.clear(); syncHeads(); applyGains(); }
 });
 
-boot().then(() => setTimeout(fitZoom, 60));
+boot().then(() => setTimeout(() => { fitLanes(); fitZoom(); }, 80));
 </script>
 </body>
 </html>
