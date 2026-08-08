@@ -1,0 +1,441 @@
+/* ============================================================
+   EVENANT INSTRUMENT ATLAS — visual mockup
+   All classes namespaced .atl- so this can drop into Webflow.
+   ============================================================ */
+
+.atl,.atl *,.atl *::before,.atl *::after{margin:0;padding:0;box-sizing:border-box}
+/* Reserve the scrollbar gutter at all times. Without this, switching to a taller
+   tab introduces a scrollbar and the whole page — nav, headline, everything —
+   jumps left by its width. scrollbar-gutter handles modern browsers; the
+   overflow-y fallback covers the rest. */
+html{background:#080C14;overflow-y:scroll;scrollbar-gutter:stable}
+body{background:#080C14}
+.atl{
+  --bg:#080C14;
+  --bg-lift:#0C1220;
+  --gold:#D4A04A;
+  --gold-deep:#C08830;
+  --gold-lift:#DEB05A;
+  --blue:#4A8CD4;
+  --text:#BEC0C8;
+  --text-dim:#7E808A;
+  --hair:rgba(255,255,255,.07);
+  --hair-gold:rgba(212,160,74,.22);
+  font-family:'DM Sans',-apple-system,sans-serif;
+  font-size:17px;color:var(--text);background:var(--bg);line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;min-height:100vh;
+}
+.atl ::selection{background:rgba(212,160,74,.35);color:#fff}
+.atl h1,.atl h2,.atl h3,.atl h4{font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;letter-spacing:-.4px}
+.atl a{text-decoration:none;color:inherit}
+.atl button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.atl img{max-width:100%;display:block}
+.atl :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+
+/* --- ambient layers --- */
+.atl-grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")}
+.atl-atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.20) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 25%,rgba(74,140,212,.08) 0%,transparent 45%),
+    radial-gradient(ellipse at 10% 70%,rgba(20,50,120,.10) 0%,transparent 45%)}
+
+/* --- utility type --- */
+.atl-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);line-height:1.4}
+.atl-eyebrow-dim{color:var(--text-dim)}
+.atl-label{font-size:10.5px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--text-dim)}
+.atl-serif-em{font-style:italic;color:var(--gold)}
+
+/* --- top bar + nav --- */
+.atl-topbar{position:relative;z-index:60;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:7px 16px;min-height:32px;text-align:center;
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold-deep) 100%);color:#0A0C14;
+  font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
+.atl-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}
+.atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
+.atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
+.atl-logo{height:15px;width:auto;object-fit:contain}
+.atl-logo-fallback{font-family:'Playfair Display',serif;font-size:19px;color:#fff;letter-spacing:.5px}
+.atl-nav-div{width:1px;height:20px;background:var(--hair)}
+.atl-nav-title{font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+/* Inside the atlas the breadcrumb states where you are, so the wordmark line
+   is only shown on the front page and the crumb takes its place — in line with
+   the logo, as the topmost element on the page. */
+.atl-nav.is-sub .atl-nav-title,.atl-nav.is-sub .atl-nav-div{display:none}
+/* the announcement bar belongs to the collection front page; inside the atlas it
+   is just 32px of vertical space taken from the content */
+.atl-topbar.is-hidden,.atl-hero-topline.is-hidden{display:none}
+.atl-nav-sep{display:none;width:1px;height:18px;background:var(--hair);flex:0 0 auto}
+.atl-nav-crumb{display:none;min-width:0}
+.atl-nav.is-sub .atl-nav-sep,.atl-nav.is-sub .atl-nav-crumb{display:flex}
+.atl-nav-crumb .atl-crumb{margin-bottom:0;flex-wrap:nowrap;overflow:hidden}
+/* the root segment wraps its link and slash in one span, so it needs its own
+   gap — without this, "Orchestral" sits flush against the separator */
+.atl-crumb-root{display:inline-flex;align-items:center;gap:14px}
+.atl-nav-right{display:flex;align-items:center;gap:8px}
+
+/* --- instrument selector --- */
+.atl-select{position:relative}
+.atl-select-btn{display:flex;align-items:center;gap:11px;padding:9px 18px;border:1px solid rgba(212,160,74,.42);
+  border-radius:100px;font-size:13px;font-weight:500;color:#fff;background:rgba(212,160,74,.07);
+  transition:border-color .25s,background .25s,box-shadow .25s}
+.atl-select-btn:hover,.atl-select[data-open="1"] .atl-select-btn{border-color:var(--gold);
+  background:rgba(212,160,74,.14);box-shadow:0 0 0 3px rgba(212,160,74,.08)}
+.atl-select-btn .chev{transition:transform .25s ease;color:var(--gold)}
+.atl-select[data-open="1"] .chev{transform:rotate(180deg)}
+.atl-menu{position:absolute;top:calc(100% + 10px);right:0;width:min(920px,94vw);padding:26px 26px 22px;
+  background:#0B111C;border:1px solid var(--hair);border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .22s ease,transform .22s ease,visibility .22s}
+.atl-select[data-open="1"] .atl-menu{opacity:1;visibility:visible;transform:translateY(0)}
+.atl-menu-col{min-width:0}
+.atl-menu-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--hair);overflow:hidden}
+.atl-menu-col h4{font-size:10.5px;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;color:var(--gold);
+  font-family:'DM Sans',sans-serif;margin:0;padding:0;border:none;white-space:nowrap;min-width:0}
+.atl-menu a,.atl-menu span.dim{display:block;font-size:14px;line-height:2.05;color:var(--text)}
+.atl-menu a:hover{color:var(--gold)}
+.atl-menu span.dim{color:#4B4D57}
+.atl-menu a.atl-menu-fam{display:inline-flex;align-items:baseline;gap:5px;font-size:10px;line-height:1.4;
+  font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4B4D57;white-space:nowrap;
+  flex:0 0 auto;transition:color .25s ease}
+.atl-menu a.atl-menu-fam:hover{color:var(--gold)}
+.atl-menu-fam em{font-style:normal;transition:transform .25s ease;display:inline-block}
+.atl-menu a.atl-menu-fam:hover em{transform:translateX(3px)}
+
+/* --- page shell --- */
+.atl-main{position:relative;z-index:10}
+/* width:100% is load-bearing. .atl-fampage and .atl-home are flex columns, and an
+   auto cross-axis margin (margin:0 auto) on a flex child overrides stretch — the
+   wrapper would size to its contents and re-centre, so switching between tabs of
+   differing content width shifted the whole page sideways. */
+.atl-wrap{width:100%;max-width:1220px;margin:0 auto;padding:0 32px;min-width:0}
+.atl-rule{height:1px;background:var(--hair);margin:0}
+.atl-topline{height:2px;background:linear-gradient(90deg,transparent 12%,rgba(74,140,212,.6) 40%,rgba(100,170,230,.4) 62%,transparent 88%)}
+
+/* --- hero --- */
+.atl-home{min-height:calc(100vh - 92px);display:flex;flex-direction:column;justify-content:center;padding:44px 0 56px}
+.atl-hero{position:relative;margin-bottom:46px}
+.atl-hero h1{font-size:clamp(38px,4.6vw,64px);line-height:1.04;margin:18px 0 20px}
+.atl-hero h1 span{display:block}
+.atl-hero p{max-width:600px;font-weight:300;color:#9A9CA4;font-size:16.5px}
+
+/* --- home: miniature seating arc on each family card --- */
+.atl-fam-arc{margin:-4px 0 18px;height:104px}
+.atl-fam-arc svg{width:100%;height:100%;display:block;overflow:visible}
+.atl-fam-card:hover .atl-fam-arc .lit{opacity:1}
+.atl-fam-arc .lit{opacity:.82;transition:opacity .35s ease}
+
+/* --- view transition --- */
+#atl-view{transition:opacity .22s ease,transform .3s cubic-bezier(.16,1,.3,1)}
+#atl-view.is-leaving{opacity:0;transform:translateY(6px)}
+
+/* --- family index --- */
+.atl-section{padding:72px 0}
+.atl-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:36px;flex-wrap:wrap}
+.atl-section-head h2{font-size:clamp(26px,3vw,38px)}
+.atl-fam-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.atl-fam-card{display:block;padding:26px 24px 24px;border:1px solid var(--hair);border-radius:12px;background:rgba(255,255,255,.02);
+  transition:border-color .3s,background .3s,transform .3s}
+.atl-fam-card:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03);transform:translateY(-3px)}
+.atl-fam-card .plate{font-size:10.5px;font-weight:700;letter-spacing:2.4px;color:var(--gold);text-transform:uppercase}
+.atl-fam-card h3{font-size:24px;margin:0 0 10px}
+.atl-fam-card p{font-size:14px;line-height:1.6;color:var(--text-dim);font-weight:300}
+.atl-fam-card .count{margin-top:18px;padding-top:14px;border-top:1px solid var(--hair);font-size:12px;color:#5E606A;letter-spacing:.4px}
+
+/* --- family page --- */
+.atl-page-head{padding:0}
+.atl-page-head .atl-eyebrow{margin-bottom:2px}
+.atl-crumb{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;font-weight:700;color:var(--text-dim);margin-bottom:16px;flex-wrap:wrap}
+.atl-crumb a:hover{color:var(--gold)}
+.atl-crumb i{font-style:normal;color:#3E404A}
+.atl-page-head h1{font-size:clamp(32px,3.8vw,50px);line-height:1.04;margin:8px 0 12px}
+.atl-page-head .lede{max-width:560px;font-size:15.5px;font-weight:300;color:#9A9CA4}
+.atl-cols{display:grid;grid-template-columns:1.4fr 1fr;gap:56px;padding:44px 0}
+.atl-list{list-style:none}
+.atl-list li{position:relative;padding-left:20px;margin-bottom:11px;font-size:14.5px;line-height:1.6}
+.atl-list li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--gold)}
+.atl-list li b{color:#fff;font-weight:500}
+.atl-seat{border:1px solid var(--hair);border-radius:12px;padding:20px 22px;background:rgba(255,255,255,.015)}
+.atl-seat-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:7px 0;border-bottom:1px solid var(--hair);font-size:14px;transition:opacity .25s ease}
+.atl-seat-row:last-child{border-bottom:none}
+.atl-seat-row span{color:var(--text-dim)}
+.atl-seat-row b{font-family:'Playfair Display',serif;color:#fff;font-weight:600;font-size:16px;white-space:nowrap}
+.atl-seat-row.is-off{opacity:.28}
+.atl-seat-row.is-off b{color:var(--text-dim);font-size:15px}
+
+/* --- family page: tabs --- */
+.atl-fampage{min-height:calc(100vh - 60px);display:flex;flex-direction:column;padding:30px 0 44px}
+.atl-blockhead{font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:2.6px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.atl-tabs{display:flex;gap:24px;border-bottom:1px solid var(--hair);margin-top:24px}
+.atl-tab{position:relative;padding:10px 0 12px;font-size:9.5px;font-weight:700;letter-spacing:1.7px;
+  text-transform:uppercase;color:var(--text-dim);transition:color .25s ease}
+.atl-tab:hover{color:var(--gold)}
+.atl-tab[aria-selected="true"]{color:#fff}
+.atl-tab[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--gold)}
+.atl-tab em{font-style:normal;color:#4B4D57;margin-left:5px;letter-spacing:.6px;font-size:9px}
+.atl-panel{display:none;padding-top:28px}
+.atl-panel.is-active{display:block}
+.atl-ovw{display:grid;grid-template-columns:1.08fr .92fr;gap:68px;align-items:start;margin-top:0}
+
+/* --- family page: instrument grid (sits under the bullets, left column) --- */
+.atl-strip{display:grid;gap:10px}
+.atl-sc{display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;
+  padding:12px 7px 10px;border:1px solid var(--hair);border-radius:9px;background:rgba(255,255,255,.02);
+  transition:border-color .28s ease,background .28s ease,transform .28s ease}
+a.atl-sc:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.04);transform:translateY(-2px)}
+a.atl-sc .atl-sc-art svg{transition:filter .3s ease,transform .3s cubic-bezier(.16,1,.3,1)}
+a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));transform:scale(1.06)}
+.atl-sc-art{height:34px;display:flex;align-items:center;justify-content:center}
+.atl-sc-art svg{height:34px;width:auto}
+.atl-sc b{font-size:12px;color:#fff;font-weight:500;line-height:1.25}
+.atl-sc.is-planned{opacity:.34;pointer-events:none}
+.atl-sc .st{font-size:8px;letter-spacing:1.4px;text-transform:uppercase;color:#4B4D57;font-weight:700}
+.atl-striphead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--hair)}
+
+/* --- instrument page: headline and tabs share the top line --- */
+.atl-instpage{padding:30px 0 44px}
+.atl-insthead{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;
+  border-bottom:1px solid var(--hair);padding-bottom:20px;margin-bottom:32px}
+.atl-insthead h1{font-size:clamp(34px,4.2vw,54px);line-height:1.02;margin:6px 0 0;letter-spacing:-.6px}
+.atl-insthead .atl-eyebrow{margin-bottom:0}
+.atl-insthead .atl-tabs{border-bottom:none;margin:0;gap:22px}
+.atl-insthead .atl-tab{padding:0 0 4px;font-size:9px;letter-spacing:1.5px}
+.atl-insthead .atl-tab[aria-selected="true"]::after{bottom:-12px;height:1.5px}
+.atl-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.atl-vid{border:1px solid var(--hair);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.02);
+  transition:border-color .3s ease,background .3s ease;display:flex;flex-direction:column}
+.atl-vid:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03)}
+.atl-vid-frame{position:relative;aspect-ratio:16/9;background:#0A0E18;cursor:pointer;overflow:hidden}
+.atl-vid-frame img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.16,1,.3,1),opacity .3s}
+.atl-vid-frame:hover img{transform:scale(1.04);opacity:.75}
+.atl-vid-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(4,8,16,.32);transition:background .25s ease}
+.atl-vid-frame:hover .atl-vid-play{background:rgba(4,8,16,.14)}
+.atl-vid-play i{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;transition:transform .22s ease}
+.atl-vid-frame:hover .atl-vid-play i{transform:scale(1.09)}
+.atl-vid-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.atl-vid-meta{padding:15px 16px 16px;flex:1 1 auto;display:flex;flex-direction:column}
+.atl-vid-meta b{font-size:14.5px;color:#fff;font-weight:500;line-height:1.4;display:block;margin-bottom:5px}
+.atl-vid-meta .perf{font-size:12.5px;color:var(--text-dim);line-height:1.5}
+.atl-vid-meta .why{font-size:12.5px;color:var(--gold);margin-top:9px;line-height:1.5}
+.atl-vid-meta .cred{margin-top:auto;padding-top:12px;font-size:11px;color:#4E505A}
+.atl-vid-meta .cred a{color:#6E707A;border-bottom:1px solid rgba(255,255,255,.12)}
+.atl-vid-meta .cred a:hover{color:var(--gold);border-bottom-color:var(--hair-gold)}
+.atl-gallery-note{font-size:12px;color:#4E505A;margin-top:24px;line-height:1.6;max-width:760px}
+
+/* --- seating map (unframed; the table below already labels it) --- */
+/* negative top margin pulls the arc's crown up to the cap height of the first
+   line of text in the left column, so the two columns start on the same line */
+.atl-seatmap{margin:-4px 0 16px}
+.atl-seatmap svg{width:100%;display:block;overflow:visible}
+
+/* --- ensemble sizer --- */
+.atl-ens-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.atl-ens-name{font-family:'Playfair Display',serif;font-size:21px;color:#fff;line-height:1.2}
+.atl-ens-count{font-family:'Playfair Display',serif;font-size:21px;color:var(--gold);white-space:nowrap}
+.atl-ens-ex{font-size:12.5px;color:var(--text-dim);margin-top:5px;line-height:1.5}
+.atl-ens-slider{margin:16px 0 4px}
+.atl-range{width:100%;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;display:block}
+.atl-range::-webkit-slider-runnable-track{height:2px;background:rgba(255,255,255,.14);border-radius:2px}
+.atl-range::-moz-range-track{height:2px;background:rgba(255,255,255,.14);border-radius:2px}
+.atl-range::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;margin-top:-6.5px;border-radius:50%;
+  background:var(--gold);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--gold),0 2px 10px rgba(212,160,74,.4)}
+.atl-range::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--gold);
+  border:3px solid var(--bg);box-shadow:0 0 0 1px var(--gold)}
+.atl-ticks{display:flex;margin-top:10px;margin-bottom:14px}
+.atl-ticks button{flex:1;font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;
+  color:#43454F;text-align:center;line-height:1.4;padding:2px 2px;transition:color .25s ease}
+.atl-ticks button:first-child{text-align:left}
+.atl-ticks button:last-child{text-align:right}
+.atl-ticks button:hover{color:var(--text-dim)}
+.atl-ticks button.on{color:var(--gold)}
+.atl-ens-note{font-size:12px;color:#4E505A;margin-top:14px;line-height:1.55}
+
+/* --- instrument cards in family page --- */
+.atl-inst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.atl-inst-card{display:flex;align-items:center;gap:18px;padding:18px 20px;border:1px solid var(--hair);border-radius:10px;
+  background:rgba(255,255,255,.02);transition:border-color .3s,background .3s}
+.atl-inst-card:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03)}
+.atl-inst-card.is-planned{opacity:.42;pointer-events:none}
+.atl-inst-thumb{width:52px;height:64px;flex:0 0 auto;border:1px solid var(--hair);border-radius:6px;display:flex;align-items:center;justify-content:center;background:#0A0F1A}
+.atl-inst-card h4{font-size:17px;margin-bottom:2px}
+.atl-inst-card p{font-size:12.5px;color:var(--text-dim);line-height:1.45}
+.atl-soon{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#4B4D57;font-weight:700}
+
+/* --- instrument page: the plate --- */
+.atl-inst-top{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:56px;align-items:start;padding:0}
+.atl-plate{position:relative;border:1px solid var(--hair);border-radius:4px;padding:30px 26px 22px;background:
+  radial-gradient(ellipse at 50% 38%,rgba(74,140,212,.10) 0%,transparent 62%),
+  linear-gradient(180deg,rgba(255,255,255,.022) 0%,rgba(255,255,255,0) 70%)}
+.atl-plate::before,.atl-plate::after{content:'';position:absolute;width:12px;height:12px;border:1px solid var(--hair-gold)}
+.atl-plate::before{top:9px;left:9px;border-right:none;border-bottom:none}
+.atl-plate::after{bottom:9px;right:9px;border-left:none;border-top:none}
+.atl-plate-art{display:flex;justify-content:center;padding:6px 0 18px}
+.atl-plate-art svg{width:100%;max-width:290px;height:auto}
+.atl-plate-cap{border-top:1px solid var(--hair);padding-top:14px;text-align:center}
+.atl-plate-cap .no{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
+.atl-plate-cap .nm{font-family:'Playfair Display',serif;font-style:italic;font-size:19px;color:#fff;margin-top:6px}
+.atl-plate-cap .src{font-size:11px;color:#4E505A;margin-top:8px;line-height:1.5}
+.atl-plate-cap .src a{color:#6E707A;border-bottom:1px solid rgba(255,255,255,.12)}
+.atl-plate-cap .src a:hover{color:var(--gold);border-bottom-color:var(--hair-gold)}
+
+.atl-inst-id .epithet{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--gold);margin:0 0 18px}
+.atl-inst-id .summary{font-size:16.5px;font-weight:300;color:#9A9CA4;max-width:560px}
+.atl-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:32px;background:var(--hair);border:1px solid var(--hair);border-radius:8px;overflow:hidden}
+.atl-fact{background:#080C14;padding:16px 18px}
+.atl-fact span{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+.atl-fact b{font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:600;line-height:1.25}
+.atl-fact b em{font-style:normal;font-size:13px;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-weight:400}
+
+/* --- audio demos --- */
+.atl-demos{margin-top:34px;border-top:1px solid var(--hair);padding-top:26px}
+.atl-demo{display:flex;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid var(--hair)}
+.atl-demo:last-of-type{border-bottom:none}
+.atl-play{width:38px;height:38px;flex:0 0 auto;border-radius:50%;border:1px solid var(--hair-gold);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;transition:background .25s,transform .2s}
+.atl-play:hover{background:rgba(212,160,74,.12);transform:scale(1.06)}
+.atl-demo-meta{flex:1 1 auto;min-width:0}
+.atl-demo-meta b{display:block;font-size:14.5px;color:#fff;font-weight:500}
+.atl-demo-meta span{font-size:12.5px;color:var(--text-dim)}
+.atl-wave{display:flex;align-items:flex-end;gap:2px;height:22px;flex:0 0 auto;opacity:.5}
+.atl-wave i{width:2px;background:var(--gold);border-radius:1px;display:block}
+.atl-demo-note{font-size:12px;color:#4E505A;margin-top:14px;letter-spacing:.3px}
+
+/* --- detail blocks --- */
+.atl-detail{display:grid;grid-template-columns:repeat(2,1fr);gap:48px 56px;padding:56px 0}
+.atl-block h3{font-size:13px;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
+  color:var(--gold);padding-bottom:12px;margin-bottom:18px;border-bottom:1px solid var(--hair)}
+.atl-reg{padding:14px 0;border-bottom:1px solid var(--hair)}
+.atl-reg:last-child{border-bottom:none}
+.atl-reg-top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:5px}
+.atl-reg-top b{font-size:15px;color:#fff;font-weight:500}
+.atl-reg-top span{font-size:12px;color:var(--gold);letter-spacing:1.4px;font-weight:500}
+.atl-reg p{font-size:14px;line-height:1.6;color:var(--text-dim)}
+.atl-chips{display:flex;flex-wrap:wrap;gap:8px}
+.atl-chip{padding:7px 14px;border:1px solid var(--hair);border-radius:100px;font-size:13px;color:var(--text);
+  transition:border-color .25s,color .25s,background .25s}
+a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba(212,160,74,.05)}
+.atl-chip i{font-style:normal;color:var(--gold);margin-right:6px}
+.atl-warn li::before{background:#C0603A}
+
+/* --- next / prev --- */
+.atl-pager{display:flex;justify-content:space-between;gap:20px;padding:38px 0 90px;border-top:1px solid var(--hair);flex-wrap:wrap}
+.atl-pager a{display:block}
+.atl-pager span{display:block;font-size:10.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--text-dim);font-weight:700;margin-bottom:6px}
+.atl-pager b{font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:500}
+.atl-pager a:hover b{color:var(--gold)}
+.atl-pager .r{text-align:right;margin-left:auto}
+
+/* --- footer / credits --- */
+.atl-foot{border-top:1px solid var(--hair);padding:44px 0 60px;position:relative;z-index:10}
+.atl-foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px}
+.atl-foot h4{font-size:10.5px;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px}
+.atl-foot p,.atl-foot li{font-size:13px;color:#6E707A;line-height:1.75;list-style:none}
+.atl-foot a{color:#8A8C94;border-bottom:1px solid rgba(255,255,255,.1)}
+.atl-foot a:hover{color:var(--gold);border-bottom-color:var(--hair-gold)}
+.atl-foot .fine{margin-top:28px;padding-top:20px;border-top:1px solid var(--hair);font-size:12px;color:#4E505A}
+
+/* --- timbre page --- */
+.atl-timbre-head{display:grid;grid-template-columns:1.25fr .75fr;gap:56px;align-items:start;margin-bottom:26px}
+.atl-timbre-lede{font-size:15px;line-height:1.65;color:#9A9CA4;font-weight:300;max-width:600px}
+.atl-timbre-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);
+  border:1px solid var(--hair);border-radius:8px;overflow:hidden}
+.atl-timbre-stats div{background:#080C14;padding:14px 14px}
+.atl-timbre-stats span{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+.atl-timbre-stats b{font-family:'Playfair Display',serif;font-size:17px;color:#fff;font-weight:600;line-height:1.2}
+.atl-timbre-chart{border:1px solid var(--hair);border-radius:12px;padding:14px 10px 10px;
+  background:rgba(255,255,255,.015)}
+.atl-timbre-chart svg{width:100%;height:auto;display:block;overflow:visible}
+.atl-timbre-key{display:flex;gap:26px;flex-wrap:wrap;margin-top:16px;font-size:11px;color:#5E606A;letter-spacing:.3px}
+.atl-timbre-key i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:8px}
+
+/* --- 3D model tab --- */
+.atl-model-head{display:flex;align-items:flex-start;justify-content:space-between;gap:40px;margin-bottom:20px}
+.atl-model-out{flex:0 0 auto;padding:9px 17px;border:1px solid rgba(212,160,74,.42);border-radius:100px;
+  font-size:12px;color:#fff;background:rgba(212,160,74,.07);transition:all .25s ease;white-space:nowrap}
+.atl-model-out:hover{border-color:var(--gold);background:rgba(212,160,74,.16)}
+.atl-model-frame{position:relative;aspect-ratio:16/10;border:1px solid var(--hair);border-radius:12px;
+  overflow:hidden;background:#0A0E18}
+.atl-model-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2}
+.atl-model-fail{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:30px;font-size:13px;color:#5E606A;line-height:1.7}
+.atl-model-fail code{color:var(--gold);font-family:inherit}
+
+/* --- reveal --- */
+.atl-fade{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1)}
+.atl-fade.is-in{opacity:1;transform:none}
+
+/* --- responsive --- */
+/* --- tablet --- */
+@media (max-width:1080px){
+  .atl-fam-grid{grid-template-columns:repeat(2,1fr)}
+  .atl-inst-top{grid-template-columns:1fr;gap:40px}
+  .atl-plate{max-width:440px}
+  .atl-cols{grid-template-columns:1fr;gap:36px}
+  .atl-ovw{grid-template-columns:1fr;gap:34px}
+  .atl-timbre-head{grid-template-columns:1fr;gap:24px}
+  .atl-model-head{flex-direction:column;gap:16px}
+  .atl-fampage{min-height:0;padding:30px 0 48px}
+  .atl-home{min-height:0;padding:40px 0 56px}
+  .atl-inst-grid{grid-template-columns:repeat(2,1fr)}
+  .atl-gallery{grid-template-columns:repeat(2,1fr)}
+  .atl-menu{grid-template-columns:repeat(2,1fr);width:min(640px,94vw)}
+  .atl-detail{gap:40px}
+}
+/* --- phone --- */
+@media (max-width:760px){
+  .atl{font-size:16px}
+  .atl-wrap{padding:0 20px}
+  .atl-nav{padding:12px 20px}
+  .atl-logo{height:13px}
+  .atl-nav-div,.atl-nav-title{display:none}
+  .atl-topbar{font-size:9.5px;letter-spacing:2px}
+  .atl-home{min-height:auto;padding:36px 0 52px}
+  .atl-hero{margin-bottom:32px}
+  .atl-fampage{padding:26px 0 44px}
+  .atl-instpage{padding:22px 0 40px}
+  .atl-insthead{gap:10px;align-items:flex-start;flex-direction:column;padding-bottom:10px;margin-bottom:18px}
+  .atl-insthead .atl-tabs{gap:18px;width:100%}
+  .atl-insthead .atl-tab[aria-selected="true"]::after{bottom:-10px}
+  .atl-nav-crumb .atl-crumb-root{display:none}
+  .atl-nav-crumb .atl-crumb{font-size:10px;letter-spacing:1.6px;gap:10px}
+  .atl-fam-grid,.atl-inst-grid,.atl-detail,.atl-foot-grid,.atl-gallery{grid-template-columns:1fr}
+  .atl-strip{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .atl-detail{gap:34px;padding:36px 0}
+  .atl-facts{grid-template-columns:1fr}
+  .atl-timbre-stats{grid-template-columns:1fr}
+  .atl-timbre-chart{padding:10px 4px 6px}
+  .atl-timbre-key{gap:14px;font-size:10px}
+  .atl-menu{position:fixed;left:12px;right:12px;top:64px;width:auto;max-height:72vh;overflow:auto;
+    grid-template-columns:1fr;gap:18px;padding:20px}
+  .atl-select-btn{padding:8px 13px;font-size:12.5px}
+  .atl-tabs{gap:22px}
+  .atl-ticks button{font-size:8px;letter-spacing:.3px}
+  .atl-seat{padding:20px}
+  .atl-plate-art svg{max-width:210px}
+  .atl-plate{padding:24px 20px 18px}
+  .atl-demo{flex-wrap:wrap;gap:12px}
+  .atl-wave{display:none}
+  .atl-pager{gap:24px}
+  .atl-pager .r{text-align:left;margin-left:0}
+}
+@media (max-width:420px){
+  .atl-wrap{padding:0 16px}
+  .atl-ticks button{font-size:7.5px}
+  .atl-ens-name{font-size:18px}
+  .atl-ens-count{font-size:19px}
+  .atl-inst-card{padding:14px 16px;gap:14px}
+  .atl-tabs{gap:18px}
+  .atl-tab{font-size:10px;letter-spacing:1.6px}
+}
+@media (prefers-reduced-motion:reduce){
+  .atl-fade{opacity:1;transform:none;transition:none}
+  .atl *{animation:none!important;transition-duration:.01ms!important}
+}
