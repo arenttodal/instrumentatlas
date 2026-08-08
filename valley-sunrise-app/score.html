@@ -63,11 +63,14 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   transition:border-color .2s ease,background .2s ease}
 .preset-field:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.035)}
 .preset-field[aria-expanded="true"]{border-color:var(--hair-gold);background:rgba(212,160,74,.09)}
-.pf-text{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+.pf-text{display:flex;flex-direction:column;align-items:flex-start;gap:2px;flex:0 0 auto}
 .pf-label{font-size:7.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
   color:#43454F;line-height:1}
+/* fixed width, sized to the longest label ("Counter-melody only"), so the field
+   never resizes as presets change — longer custom names ellipsis instead */
 .pf-value{font-size:12px;color:#fff;font-weight:500;letter-spacing:.1px;line-height:1;
-  max-width:132px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  width:126px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-text{width:126px}
 .preset-field.custom .pf-value{color:var(--gold)}
 .pf-chev{color:#4E505A;flex:0 0 auto;margin-right:4px;transition:transform .22s ease,color .2s ease}
 .preset-field:hover .pf-chev{color:var(--dim)}
