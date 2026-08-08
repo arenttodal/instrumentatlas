@@ -110,9 +110,12 @@ html.embed,html.embed body{background:transparent}
 html.embed .bar,html.embed .atmos,html.embed .hint{display:none}
 html.embed .load,html.embed .fallback{background:transparent}
 html.embed .foot{padding:12px 14px;justify-content:flex-end}
-/* the credit now sits over the model rather than a flat backdrop — lift it
-   just enough to stay legible over varnished wood or polished brass */
-html.embed .credit{max-width:none;color:#6E707A;text-shadow:0 1px 8px rgba(8,12,20,.95)}
+/* The credit is hidden HERE ONLY because the host page prints the full CC BY
+   attribution — title, author, Sketchfab source, licence and modification —
+   in the plate caption directly beneath this frame. Standalone /viewer/ keeps
+   its own credit, and it must: without the host caption this frame would carry
+   no attribution at all. Do not reuse embed=1 anywhere the caption is absent. */
+html.embed .credit{display:none}
 
 @media (max-width:820px){
   .panel{top:auto;bottom:0;right:0;left:0;width:auto;transform:translateY(20px);border-radius:14px 14px 0 0;
