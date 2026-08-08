@@ -1105,7 +1105,7 @@ function setMix(soloIds){
 function applyPreset(p){
   activePreset = p;
   presetSection = null;
-  if(!p || p.kind === 'all'){
+  if(!p){
     solos.clear(); muted.clear(); syncHeads(); applyGains();
   } else if(p.kind === 'family'){
     setMix(S.tracks.filter(t => t.family === p.value).map(t => t.id));
@@ -1164,12 +1164,12 @@ function buildPresetMenu(){
       const l = savedPresets(); l.splice(+b.dataset.del, 1); writePresets(l); buildPresetMenu();
     });
 
-  document.querySelector('[data-pre="all"]').setAttribute('aria-pressed', String(!activePreset || activePreset.kind === 'all'));
 
   /* the field always names what you are listening to */
   const cap = w => w[0].toUpperCase() + w.slice(1);
+  const untouched = !solos.size && !muted.size;
   let label = 'Custom mix', custom = true;
-  if(!activePreset || activePreset.kind === 'all'){ label = 'All stems'; custom = false; }
+  if(!activePreset){ label = untouched ? 'All stems' : 'Custom mix'; custom = !untouched; }
   else if(activePreset.kind === 'family') label = cap(activePreset.value) + ' only';
   else if(activePreset.kind === 'role')
     label = (activePreset.value === 'counter' ? 'Counter-melody' : cap(activePreset.value)) + ' only';
@@ -1178,7 +1178,11 @@ function buildPresetMenu(){
   $('pre-btn').classList.toggle('custom', custom);
 }
 
-document.querySelector('[data-pre="all"]').onclick = () => { applyPreset({kind:'all'}); closeMenus(); };
+document.querySelector('[data-pre="all"]').onclick = () => {
+  solos.clear(); muted.clear();
+  activePreset = null; presetSection = null;
+  syncHeads(); applyGains(); buildPresetMenu(); closeMenus();
+};
 $('pre-save').onclick = () => {
   const name = prompt('Name this mix', 'My mix');
   if(!name) return;
