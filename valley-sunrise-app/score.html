@@ -96,7 +96,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   <div class="tools">
     <button class="btn" id="tips-btn" aria-pressed="false">Tips</button>
     <button class="btn" id="follow-btn" aria-pressed="true">Follow</button>
-    <button class="btn" id="quality-btn" aria-pressed="false">Stereo</button>
+    <button class="btn" id="quality-btn" aria-pressed="true">Stereo</button>
     <div class="zoom"><button id="zoom-out">&minus;</button><button id="zoom-fit">Fit</button><button id="zoom-in">+</button></div>
   </div>
 </div>
@@ -146,8 +146,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 const EXTS = ['aac','wav','m4a'];
 let S = null;                       // the score
-let ctx = null, buffers = new Map(), sources = new Map(), gains = new Map();
-let playing = false, startTime = 0, offset = 0, duration = 0, stereo = false;
+let ctx = null, buffers = new Map();
+let playing = false, startTime = 0, offset = 0, duration = 0, stereo = true;
 const muted = new Set(); let solo = null;
 
 const $ = id => document.getElementById(id);
@@ -169,7 +169,18 @@ async function boot(){
   tick();
 }
 
-/* ---------- audio ---------- */
+/* ---------- audio ----------------------------------------------------------
+   Every playing node is registered in LIVE. Nothing is ever replaced silently:
+   a node is created only through startNode(), and killed only through
+   killNode()/killAll(), both of which go through the registry. The previous
+   version stored nodes in a Map keyed by track id and overwrote entries, so a
+   second play() left the first set of sources running with no reference to them
+   — audible as phasing, as solo failing to isolate, and as sound continuing
+   after stop.
+   -------------------------------------------------------------------------- */
+const LIVE = new Set();               // {id, src, gain}
+let starting = false;                 // re-entrancy guard for play()
+
 function ensureCtx(){
   if(ctx) return;
   ctx = new (window.AudioContext || window.webkitAudioContext)({sampleRate:32000});
@@ -178,8 +189,7 @@ function ensureCtx(){
 function toMono(buf){
   if(stereo || buf.numberOfChannels === 1) return buf;
   const out = ctx.createBuffer(1, buf.length, buf.sampleRate);
-  const o = out.getChannelData(0);
-  const a = buf.getChannelData(0), b = buf.getChannelData(1);
+  const o = out.getChannelData(0), a = buf.getChannelData(0), b = buf.getChannelData(1);
   for(let i=0;i<buf.length;i++) o[i] = (a[i]+b[i])*0.5;
   return out;
 }
@@ -187,70 +197,77 @@ function toMono(buf){
 async function fetchStem(t){
   for(const e of EXTS){
     const url = `${S.audioBase}${t.file || t.id}.${e}`;
-    try {
-      const r = await fetch(url);
-      if(r.ok) return await r.arrayBuffer();
-    } catch(_){}
+    try { const r = await fetch(url); if(r.ok) return await r.arrayBuffer(); } catch(_){}
   }
   throw new Error('no audio for ' + t.id);
 }
 
 async function decode(t){
   if(buffers.has(t.id)) return buffers.get(t.id);
-  const raw = await fetchStem(t);
-  const buf = toMono(await ctx.decodeAudioData(raw));
+  const buf = toMono(await ctx.decodeAudioData(await fetchStem(t)));
   buffers.set(t.id, buf);
   duration = Math.max(duration, buf.duration);
   return buf;
 }
 
-function startSource(t, at){
-  if(sources.has(t.id)) return;
-  const b = buffers.get(t.id); if(!b) return;
-  const src = ctx.createBufferSource(); src.buffer = b;
-  const g = ctx.createGain(); g.gain.value = audible(t.id) ? 1 : 0;
-  src.connect(g).connect(ctx.destination);
-  const when = ctx.currentTime + 0.05;
-  src.start(when, Math.min(at, b.duration - 0.01));
-  startTime = when - at;
-  sources.set(t.id, src); gains.set(t.id, g);
+function killNode(n){
+  try { n.src.onended = null; n.src.stop(); } catch(_){}
+  try { n.src.disconnect(); n.gain.disconnect(); } catch(_){}
+  LIVE.delete(n);
 }
+function killTrack(id){ [...LIVE].forEach(n => { if(n.id === id) killNode(n); }); }
+function killAll(){ [...LIVE].forEach(killNode); LIVE.clear(); }
+function nodeFor(id){ return [...LIVE].find(n => n.id === id) || null; }
 
-function stopAll(){
-  sources.forEach(s => { try{ s.stop(); }catch(_){} });
-  sources.clear(); gains.clear();
+/* one place that ever creates a source */
+function startNode(t, at, when, gainValue){
+  killTrack(t.id);                       // never two nodes for one track
+  const b = buffers.get(t.id); if(!b) return null;
+  const src = ctx.createBufferSource(); src.buffer = b;
+  const gain = ctx.createGain(); gain.gain.value = gainValue;
+  src.connect(gain).connect(ctx.destination);
+  const n = {id:t.id, src, gain};
+  src.onended = () => LIVE.delete(n);
+  src.start(when, Math.max(0, Math.min(at, b.duration - 0.01)));
+  LIVE.add(n);
+  return n;
 }
 
 async function play(){
-  ensureCtx();
-  if(ctx.state === 'suspended') await ctx.resume();
-  const want = S.tracks.filter(t => audible(t.id));
-  $('status').textContent = `decoding ${want.length} stems…`;
-  let n = 0;
-  for(const t of want){
-    await decode(t); n++;
-    $('status').textContent = `decoding ${n}/${want.length}`;
-  }
-  $('status').textContent = '';
-  const at = offset % duration;
-  const when = ctx.currentTime + 0.06;
-  startTime = when - at;
-  S.tracks.forEach(t => {
-    if(!buffers.has(t.id)) return;
-    const b = buffers.get(t.id);
-    const src = ctx.createBufferSource(); src.buffer = b;
-    const g = ctx.createGain(); g.gain.value = audible(t.id) ? 1 : 0;
-    src.connect(g).connect(ctx.destination);
-    src.start(when, Math.min(at, b.duration - 0.01));
-    sources.set(t.id, src); gains.set(t.id, g);
-  });
-  playing = true; setPlayIcon();
+  if(playing || starting) return;
+  starting = true;
+  try {
+    ensureCtx();
+    if(ctx.state === 'suspended') await ctx.resume();
+    killAll();                            // belt and braces
+    const want = S.tracks.filter(t => audible(t.id));
+    let n = 0;
+    for(const t of want){
+      await decode(t); n++;
+      $('status').textContent = `decoding ${n}/${want.length}`;
+    }
+    $('status').textContent = '';
+    const at = Math.min(offset, duration - 0.05);
+    const when = ctx.currentTime + 0.08;
+    startTime = when - at;
+    S.tracks.forEach(t => {
+      if(buffers.has(t.id)) startNode(t, at, when, audible(t.id) ? 1 : 0);
+    });
+    playing = true; setPlayIcon();
+  } catch(err){
+    $('status').textContent = 'audio error — see console';
+    console.error(err);
+  } finally { starting = false; }
 }
 
 function pause(){
-  offset = position(); stopAll(); playing = false; setPlayIcon();
+  if(!playing) return;
+  offset = position();
+  playing = false;
+  killAll();
+  setPlayIcon();
 }
-const position = () => playing ? Math.min(ctx.currentTime - startTime, duration) : offset;
+const position = () => (playing && ctx) ? Math.min(ctx.currentTime - startTime, duration) : offset;
 
 function setPlayIcon(){
   $('play').innerHTML = playing
@@ -258,49 +275,43 @@ function setPlayIcon(){
     : '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg>';
 }
 
-/* gain changes only — never a restart. A stem that was muted at play time has no
-   buffer yet, so it decodes and joins at the current position. */
+/* gain-only changes; a newly audible track decodes and joins at the current
+   position rather than restarting anything */
+let applying = false;
 async function applyGains(){
-  draw();
-  if(!playing){ return; }
-  const now = ctx.currentTime;
-  S.tracks.forEach(t => {
-    const g = gains.get(t.id);
-    if(g){
-      const target = audible(t.id) ? 1 : 0;
-      g.gain.cancelScheduledValues(now);
-      g.gain.setValueAtTime(g.gain.value, now);
-      g.gain.linearRampToValueAtTime(target, now + 0.03);
+  draw(); refreshOff();
+  if(!playing || applying) return;
+  applying = true;
+  try {
+    const now = ctx.currentTime;
+    LIVE.forEach(n => {
+      const target = audible(n.id) ? 1 : 0;
+      n.gain.gain.cancelScheduledValues(now);
+      n.gain.gain.setValueAtTime(n.gain.gain.value, now);
+      n.gain.gain.linearRampToValueAtTime(target, now + 0.03);
+    });
+    for(const t of S.tracks){
+      if(audible(t.id) && !nodeFor(t.id)){
+        $('status').textContent = 'adding ' + t.name + '…';
+        await decode(t);
+        if(!playing) break;
+        const at = position() + 0.06;
+        const node = startNode(t, at, ctx.currentTime + 0.06, 0);
+        if(node) node.gain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.12);
+        $('status').textContent = '';
+      }
     }
-  });
-  for(const t of S.tracks){
-    if(audible(t.id) && !sources.has(t.id)){
-      $('status').textContent = 'adding ' + t.name + '…';
-      await decode(t);
-      startSourceAtNow(t);
-      $('status').textContent = '';
-    }
-  }
-}
-function startSourceAtNow(t){
-  const b = buffers.get(t.id); if(!b || !playing) return;
-  const at = position();
-  const src = ctx.createBufferSource(); src.buffer = b;
-  const g = ctx.createGain(); g.gain.value = 0;
-  src.connect(g).connect(ctx.destination);
-  const when = ctx.currentTime + 0.04;
-  src.start(when, Math.min(at + 0.04, b.duration - 0.01));
-  g.gain.linearRampToValueAtTime(1, when + 0.05);
-  sources.set(t.id, src); gains.set(t.id, g);
+  } finally { applying = false; }
 }
 
 function seek(sec){
   const was = playing;
-  if(was) stopAll();
-  offset = Math.max(0, Math.min(sec, duration - 0.05));
+  killAll();
   playing = false;
-  if(was) play();
+  offset = Math.max(0, Math.min(sec, duration - 0.05));
+  setPlayIcon();
   render();
+  if(was) play();
 }
 
 /* ---------- layout ---------- */
@@ -450,7 +461,7 @@ function render(){
 function tick(){ if(S) render(); requestAnimationFrame(tick); }
 
 /* ---------- controls ---------- */
-$('play').onclick = () => playing ? pause() : play();
+$('play').onclick = function(){ this.blur(); playing ? pause() : play(); };
 $('scrub').onclick = e => {
   const r = e.currentTarget.getBoundingClientRect();
   seek((e.clientX - r.left)/r.width*duration);
@@ -471,6 +482,7 @@ $('follow-btn').onclick = function(){
 };
 $('quality-btn').onclick = async function(){
   stereo = !stereo;
+  killAll();
   this.setAttribute('aria-pressed', String(stereo));
   this.textContent = stereo ? 'Stereo' : 'Mono';
   const was = playing; if(was) pause();
@@ -482,7 +494,11 @@ $('zoom-out').onclick = () => { ppb = Math.max(ppb/1.6, 1.5); layout(); draw(); 
 $('zoom-fit').onclick = fitZoom;
 addEventListener('resize', () => { draw(); });
 addEventListener('keydown', e => {
-  if(e.code === 'Space'){ e.preventDefault(); playing ? pause() : play(); }
+  /* if a button has focus, the browser fires its click on space too — let that
+     one through instead of handling it twice */
+  if(e.code === 'Space' && !(e.target instanceof HTMLButtonElement)){
+    e.preventDefault(); playing ? pause() : play();
+  }
   if(e.key === 'Escape'){ $('tip-panel').classList.remove('on'); openTip = null; }
 });
 
