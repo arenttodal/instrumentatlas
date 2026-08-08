@@ -226,11 +226,159 @@ const INSTRUMENTS = {
     prev:'viola', next:'double-bass'
   },
 
+  violin:{
+    family:'strings', plate:'Plate I · 1', name:'Violin', latin:'Violino',
+    epithet:'The voice the orchestra is built around', status:'live',
+    summary:'The smallest and highest of the family, and the most numerous instrument on stage — thirty or more of them in a full orchestra, split into two sections. Almost every symphonic texture is organised around what the violins are doing.',
+    range:{lo:55, hi:100, note:'G3 – E7', transposition:'Non-transposing'},
+    timbre:0.78,
+    facts:[['Sounding range','G3 – E7'],['Section size','16 + 14','players'],['Transposition','Concert pitch']],
+    registers:[
+      {label:'Low register', pitch:'G3 – D4', text:'The G string — dark, thick and surprisingly weak. Soloists love it; in section it disappears under almost anything.'},
+      {label:'Middle register', pitch:'E4 – D5', text:'Warm and even. Where most melodic writing sits, and where a section blends into one voice rather than many.'},
+      {label:'High register', pitch:'E5 – E7', text:'Brilliant and soaring, and above roughly B6 increasingly thin and strained. Sixteen violins in unison up here is the loudest sound in the string section.'}
+    ],
+    characteristics:[
+      'Divided into firsts and seconds, which can play in unison for weight or split for harmony.',
+      'Four strings tuned in fifths — G, D, A, E — and each has an audibly different character.',
+      'Fast passagework, leaps and string crossings are all idiomatic.',
+      'Divisi splits a section into further parts, at the cost of thinning each one.'
+    ],
+    articulations:['Arco','Pizzicato','Legato','Spiccato','Staccato','Tremolo','Sul ponticello','Harmonics','Con sordino'],
+    blends:[
+      {id:'flute', label:'Flute in octaves', note:'Air and shimmer on top of the line'},
+      {id:'viola', label:'Violas in octaves', note:'Thickens without changing colour'},
+      {id:'oboe', label:'Oboe in unison', note:'Adds edge and definition'},
+      {id:'harp', label:'Harp', note:'Plucked attack under sustained bowing'}
+    ],
+    limits:[
+      'The low G string will not carry a melody through a loud texture — give it to violas or cellos instead.',
+      'Sustained writing above B6 tires players and turns shrill; use it for a moment, not a phrase.',
+      'Too much divisi and the section stops sounding like a section.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:20'},
+      {label:'Section vs solo', note:'One player, then sixteen', dur:'0:16'}
+    ],
+    prev:'', next:'viola'
+  },
+
+  viola:{
+    family:'strings', plate:'Plate I · 2', name:'Viola', latin:'Viola',
+    epithet:'The inner voice, and the one nobody notices working', status:'live',
+    summary:'A fifth below the violin, and darker than the size difference suggests — the body is acoustically too small for its tuning, which is exactly where its throaty, slightly veiled character comes from. Most orchestral writing uses it to fill the middle, where nothing else quite reaches.',
+    range:{lo:48, hi:88, note:'C3 – E6', transposition:'Non-transposing'},
+    timbre:0.52,
+    facts:[['Sounding range','C3 – E6'],['Section size','12','players'],['Notation','Alto clef']],
+    registers:[
+      {label:'Low register', pitch:'C3 – G3', text:'The C string. Dark, reedy and slightly rough — the sound most people mean when they say "viola".'},
+      {label:'Middle register', pitch:'A3 – D5', text:'Warm and covered. Perfect for inner harmony, which is where it spends most of its life.'},
+      {label:'High register', pitch:'E5 – E6', text:'Intense and a little strained, in a way that reads as expressive rather than weak. Worth using deliberately.'}
+    ],
+    characteristics:[
+      'Tuned C, G, D, A — a fifth below the violin.',
+      'Written in alto clef, moving to treble for high passages.',
+      'Same techniques as the violin, marginally slower to speak.',
+      'Blends with almost everything, which is why it is so often used as glue.'
+    ],
+    articulations:['Arco','Pizzicato','Legato','Spiccato','Staccato','Tremolo','Harmonics','Con sordino'],
+    blends:[
+      {id:'clarinet', label:'Clarinet', note:'Two covered timbres that fuse completely'},
+      {id:'horn', label:'Horn', note:'Adds body to a mid-register line'},
+      {id:'cello', label:'Cellos in octaves', note:'The standard warm middle-and-low pairing'},
+      {id:'trumpet', label:'Trumpet', note:'Bright over dark; the viola takes the edge off'}
+    ],
+    limits:[
+      'Twelve violas will not project over full brass. It is a supporting colour, not a competing one.',
+      'Exposed high writing is unforgiving — beautiful when it works, painful when it does not.',
+      'Do not simply write violin parts a fifth lower; the register changes what sits well.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Against the violin', note:'The same line on both, back to back', dur:'0:16'},
+      {label:'With clarinet', note:'Where the two timbres become one', dur:'0:14'}
+    ],
+    prev:'violin', next:'cello'
+  },
+
+  'double-bass':{
+    family:'strings', plate:'Plate I · 4', name:'Double Bass', latin:'Contrabasso',
+    epithet:'The floor everything else stands on', status:'live',
+    summary:'Not actually a member of the violin family — sloped shoulders and fourths tuning give it away as a descendant of the viol. It sounds an octave lower than written, and doubling the cellos in octaves is so standard that most orchestral bass lines assume it.',
+    range:{lo:28, hi:67, note:'E1 – G4 sounding', transposition:'Sounds an octave lower than written'},
+    timbre:0.18,
+    facts:[['Sounding range','E1 – G4'],['Section size','8','players'],['Transposition','Octave below written']],
+    registers:[
+      {label:'Low register', pitch:'E1 – A1', text:'Felt more than heard. Pitch definition is poor down here, which is why the cello octave above matters so much.'},
+      {label:'Middle register', pitch:'B1 – D3', text:'The working range. Dark, woody and clear enough to carry an actual line.'},
+      {label:'High register', pitch:'E3 – G4', text:'Thin and strained, and unmistakably expressive — a solo bass up here sounds like nothing else in the orchestra.'}
+    ],
+    characteristics:[
+      'Tuned in fourths — E, A, D, G — unlike the rest of the family.',
+      'Many instruments have a low C extension, reaching a fourth below the open E.',
+      'Slow to speak: attacks need time, and fast passagework muddies quickly.',
+      'Pizzicato is enormous and decays slowly, which is half of its use in film scoring.'
+    ],
+    articulations:['Arco','Pizzicato','Legato','Staccato','Marcato','Tremolo','Harmonics','Con sordino'],
+    blends:[
+      {id:'cello', label:'Cello in octaves', note:'The standard bass line; the cello supplies the pitch clarity'},
+      {id:'bassoon', label:'Bassoon', note:'Woody reinforcement of the fundamental'},
+      {id:'tuba', label:'Tuba', note:'Weight, at the cost of definition'},
+      {id:'timpani', label:'Timpani', note:'Attack under sustained bass'}
+    ],
+    limits:[
+      'Fast runs in the bottom octave turn to mud. Simplify the bass line and let the cellos carry the detail.',
+      'Doubling cellos in unison rather than octaves wastes both. Octaves keep the bottom clear.',
+      'Remember the transposition when you print parts — written E1 sounds E0, below the piano.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:14'},
+      {label:'With cello in octaves', note:'Why the pairing is standard', dur:'0:16'}
+    ],
+    prev:'cello', next:'harp'
+  },
+
+  harp:{
+    family:'strings', plate:'Plate I · 5', name:'Harp', latin:'Arpa',
+    epithet:'Diatonic by design, chromatic only with planning', status:'live',
+    summary:'Forty-seven strings and seven pedals, each pedal controlling every octave of one note name. That single mechanical fact governs everything you can and cannot write for it — the harp is not a keyboard you pluck, and treating it as one is the most common mistake in orchestral writing.',
+    range:{lo:24, hi:103, note:'C1 – G7', transposition:'Non-transposing'},
+    timbre:0.60,
+    facts:[['Sounding range','C1 – G7'],['Section size','1–2','players'],['Pedals','7 · three positions']],
+    registers:[
+      {label:'Low register', pitch:'C1 – B2', text:'Wire strings, long decay, considerable weight. Sparse writing here reads as enormous.'},
+      {label:'Middle register', pitch:'C3 – B5', text:'Gut strings, warm and singing. Where glissandi and arpeggiated figures live.'},
+      {label:'High register', pitch:'C6 – G7', text:'Bright, short and bell-like. Cuts through a full orchestra at surprisingly low dynamics.'}
+    ],
+    characteristics:[
+      'Each of the seven pedals sets one note name to flat, natural or sharp across all octaves.',
+      'A glissando is whatever the pedals are currently set to — you choose the scale by setting pedals in advance.',
+      'Ten fingers, but only eight usable for chords; the little fingers are not used.',
+      'Notes ring until damped, so dense writing turns into a wash very quickly.'
+    ],
+    articulations:['Glissando','Arpeggio','Harmonics','Près de la table','Bisbigliando','Damped','Pedal slides'],
+    blends:[
+      {id:'flute', label:'Flute', note:'The classic pairing — air over plucked attack'},
+      {id:'cello', label:'Pizzicato strings', note:'Two plucked colours, one sustaining longer'},
+      {id:'celesta', label:'Celesta', note:'Doubling makes both sound larger and stranger'},
+      {id:'violin', label:'Violins', note:'Harp supplies attack the bowed line lacks'}
+    ],
+    limits:[
+      'Chromatic passages are hard or impossible — pedals take time and the player needs bars, not beats, to reset.',
+      'Repeated notes are awkward; the same string cannot be replucked quickly and cleanly.',
+      'Write pedal changes into rests, or ask a harpist. This is the section where composers most often write the unplayable.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Glissando, three tunings', note:'The same sweep with different pedal settings', dur:'0:18'},
+      {label:'With flute', note:'The pairing that defines the colour', dur:'0:14'}
+    ],
+    prev:'double-bass', next:''
+  },
+
   /* ---------- PLANNED (menu only) ---------- */
-  violin:{family:'strings',name:'Violin',status:'plan',range:{lo:55,hi:100},timbre:0.78},
-  viola:{family:'strings',name:'Viola',status:'plan',range:{lo:48,hi:88},timbre:0.52},
-  'double-bass':{family:'strings',name:'Double Bass',status:'plan',range:{lo:28,hi:67},timbre:0.18},
-  harp:{family:'strings',name:'Harp',status:'plan',range:{lo:24,hi:103},timbre:0.60},
   piccolo:{family:'woodwinds',name:'Piccolo',status:'plan',range:{lo:74,hi:108},timbre:0.95},
   oboe:{family:'woodwinds',name:'Oboe',status:'plan',range:{lo:58,hi:91},timbre:0.80},
   clarinet:{family:'woodwinds',name:'Clarinet',status:'plan',range:{lo:50,hi:91},timbre:0.55},
@@ -269,6 +417,64 @@ const GALLERY = [
    2. PLATE ART — placeholder line engravings.
    Replace each with a cut-out public-domain engraving (Met CC0 / Meyers).
    ============================================================================ */
+
+/* The violin family shares one outline, so the plates are generated from a
+   single parametric drawing rather than four hand-drawn copies. Proportions are
+   what actually distinguish them: the bass has sloped shoulders and an endpin,
+   the violin a chinrest, the viola neither. */
+function stringPlate(o){
+  const cx = 150, top = o.top, bot = o.bot, upper = o.upper, waist = o.waist, lower = o.lower;
+  const mid = top + (bot - top) * 0.42;
+  const shoulder = o.sloped
+    ? `C ${cx+upper*0.55} ${top+6} ${cx+upper} ${top+40} ${cx+upper-4} ${mid-34}`
+    : `C ${cx+upper*0.9} ${top} ${cx+upper} ${top+30} ${cx+upper-2} ${mid-38}`;
+  const half = `M${cx} ${top}
+    ${shoulder}
+    C ${cx+upper-6} ${mid-8} ${cx+waist+2} ${mid-4} ${cx+waist} ${mid+10}
+    C ${cx+waist-2} ${mid+26} ${cx+lower-8} ${mid+40} ${cx+lower} ${mid+74}
+    C ${cx+lower+8} ${bot-58} ${cx+lower-16} ${bot} ${cx} ${bot}`;
+  const neckTop = o.neckTop, bridgeY = mid + 62;
+  return `<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <path d="${half}" opacity=".92"/>
+      <path d="${half}" opacity=".92" transform="translate(300,0) scale(-1,1)"/>
+      <path d="M${cx} ${top}V${neckTop+26}" opacity=".8"/>
+      <path d="M${cx-13} ${neckTop+26}c0-22 5-38 13-44 8 6 13 22 13 44" opacity=".8"/>
+      <path d="M${cx} ${neckTop-18}c-8-6-12-14-6-19 6-4 12 0 12 7" opacity=".75"/>
+      <g opacity=".5">
+        <line x1="${cx-9}" y1="${neckTop+2}" x2="${cx-18}" y2="${neckTop}"/>
+        <line x1="${cx+9}" y1="${neckTop+2}" x2="${cx+18}" y2="${neckTop}"/>
+        <line x1="${cx-9}" y1="${neckTop+14}" x2="${cx-18}" y2="${neckTop+12}"/>
+        <line x1="${cx+9}" y1="${neckTop+14}" x2="${cx+18}" y2="${neckTop+12}"/>
+      </g>
+      <g opacity=".55">
+        <line x1="${cx-5}" y1="${neckTop+26}" x2="${cx-5}" y2="${bridgeY}"/>
+        <line x1="${cx-1.7}" y1="${neckTop+26}" x2="${cx-1.7}" y2="${bridgeY}"/>
+        <line x1="${cx+1.7}" y1="${neckTop+26}" x2="${cx+1.7}" y2="${bridgeY}"/>
+        <line x1="${cx+5}" y1="${neckTop+26}" x2="${cx+5}" y2="${bridgeY}"/>
+      </g>
+      <path d="M${cx-18} ${bridgeY}h36" opacity=".9"/>
+      <path d="M${cx-14} ${bridgeY}l-4 10M${cx+14} ${bridgeY}l4 10" opacity=".6"/>
+      <path d="M${cx-26} ${bridgeY-38}c-6 4-6 14-1 18 4 3 9 1 10-4" opacity=".85"/>
+      <path d="M${cx+26} ${bridgeY-38}c6 4 6 14 1 18-4 3-9 1-10-4" opacity=".85"/>
+      <path d="M${cx} ${bridgeY+12}v${o.tail}m-14 0h28l-6 ${Math.round(o.tail*0.6)}h-16z" opacity=".7"/>
+      ${o.chinrest ? `<ellipse cx="${cx-24}" cy="${bot-26}" rx="20" ry="12" opacity=".55"/>` : ''}
+      ${o.pin ? `<path d="M${cx} ${bot}v${o.pin}" opacity=".8"/><line x1="${cx-18}" y1="${bot+o.pin}" x2="${cx+18}" y2="${bot+o.pin}" opacity=".7"/>` : ''}
+    </g>
+    <g opacity=".2" stroke-width=".8">
+      <path d="M${cx+lower+30} ${mid+20}c6 26 6 58-4 82"/>
+      <path d="M${cx+lower+38} ${mid+14}c8 30 8 66-4 94"/>
+    </g>
+  </svg>`;
+}
+
+function stringThumb(o){
+  return `<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85">
+    <path d="M20 ${o.t}c${o.u} 0 ${o.u+4} 5 ${o.u+4} 11 0 5-5 7-6 10-2 4 5 6 8 13 3 8 1 22-12 22"/>
+    <path d="M20 ${o.t}c-${o.u} 0-${o.u+4} 5-${o.u+4} 11 0 5 5 7 6 10 2 4-5 6-8 13-3 8-1 22 12 22"/>
+    <path d="M20 ${o.t}V${o.n}"/></svg>`;
+}
+
 const PLATES = {
   flute:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g transform="rotate(-38 150 260)" stroke-width="1.3">
@@ -319,6 +525,28 @@ const PLATES = {
     </g>
   </svg>`,
 
+  violin: stringPlate({top:196, bot:452, upper:58, waist:26, lower:60, neckTop:96, tail:40, chinrest:true}),
+  viola:  stringPlate({top:186, bot:462, upper:62, waist:28, lower:64, neckTop:88, tail:44}),
+  'double-bass': stringPlate({top:170, bot:470, upper:66, waist:30, lower:70, neckTop:64, tail:50, sloped:true, pin:40}),
+  harp:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <path d="M78 470V150c0-42 34-78 76-88" opacity=".92"/>
+      <path d="M154 62c26 0 40 18 44 46l30 300" opacity=".92"/>
+      <path d="M78 470h170" opacity=".85"/>
+      <path d="M92 470l24-8" opacity=".5"/>
+      <path d="M150 56c8-6 18-4 20 4 2 7-4 12-11 11" opacity=".7"/>
+      <g opacity=".45" stroke-width=".9">
+        <line x1="88" y1="446" x2="152" y2="118"/><line x1="100" y1="446" x2="160" y2="132"/>
+        <line x1="112" y1="446" x2="168" y2="150"/><line x1="124" y1="446" x2="176" y2="172"/>
+        <line x1="136" y1="446" x2="184" y2="198"/><line x1="148" y1="446" x2="191" y2="228"/>
+        <line x1="160" y1="446" x2="197" y2="262"/><line x1="172" y1="446" x2="203" y2="300"/>
+        <line x1="184" y1="446" x2="209" y2="340"/><line x1="196" y1="446" x2="214" y2="382"/>
+      </g>
+      <path d="M116 486v22M210 486v22" opacity=".6"/>
+      <path d="M104 508h124" opacity=".55"/>
+    </g>
+    <g opacity=".2" stroke-width=".8"><path d="M244 300c8 30 8 66-4 94"/><path d="M252 292c8 34 8 74-4 106"/></g>
+  </svg>`,
   cello:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g stroke-width="1.3">
       <path d="M150 168c22 0 40 20 39 44-1 22-19 28-24 40-6 14 20 24 30 52 12 34 4 88-45 88" opacity=".92"/>
@@ -346,5 +574,9 @@ const PLATES = {
 const THUMBS = {
   flute:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-38 20 26)"><rect x="3" y="22" width="34" height="7" rx="3.5"/><circle cx="12" cy="25.5" r="2"/><circle cx="19" cy="25.5" r="2"/><circle cx="26" cy="25.5" r="2"/></g></svg>`,
   horn:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><circle cx="18" cy="23" r="13"/><circle cx="18" cy="23" r="8" opacity=".5"/><ellipse cx="29" cy="41" rx="8" ry="4" transform="rotate(-24 29 41)"/></svg>`,
+  violin: stringThumb({t:16, u:5, n:5}),
+  viola: stringThumb({t:17, u:6, n:6}),
+  'double-bass': stringThumb({t:15, u:7, n:4}),
+  harp:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M11 44V17c0-9 7-14 14-15"/><path d="M25 2c5 0 7 4 8 10l4 32"/><path d="M11 44h26"/><g opacity=".5" stroke-width=".7"><line x1="15" y1="41" x2="26" y2="12"/><line x1="21" y1="41" x2="30" y2="20"/><line x1="27" y1="41" x2="33" y2="28"/></g></svg>`,
   cello:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M20 18c6 0 10 5 10 11 0 5-5 7-6 10-2 4 5 6 8 13 3 8 1 22-12 22"/><path d="M20 18c-6 0-10 5-10 11 0 5 5 7 6 10 2 4-5 6-8 13-3 8-1 22 12 22"/><path d="M20 18V6"/></svg>`
 };
