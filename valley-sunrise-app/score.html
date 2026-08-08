@@ -306,7 +306,7 @@ body.annotating .lanes{cursor:crosshair}
       </button>
       <div class="dmenu wide" id="pmenu">
         <div class="dgroup"><span class="dlabel">Everything</span>
-          <button data-pre="all">All stems</button></div>
+          <div id="pre-all"></div></div>
         <div class="dgroup"><span class="dlabel">By family</span><div id="pre-fams"></div></div>
         <div class="dgroup"><span class="dlabel">By role — follows the section</span><div id="pre-roles"></div></div>
         <div class="dgroup" id="pre-saved-group"><span class="dlabel">Saved</span><div id="pre-saved"></div></div>
@@ -1226,7 +1226,7 @@ function buildPresetMenu(){
   const btn = (it,i) =>
     `<button data-run="${i}" aria-pressed="${it.active}">${it.label}${hint(i)}</button>`;
 
-  document.querySelector('[data-pre="all"]').outerHTML = btn(items[0], 0);
+  $('pre-all').innerHTML = btn(items[0], 0);
   const fams = items.filter(x => x.id.startsWith('fam:'));
   const roles = items.filter(x => x.id.startsWith('role:'));
   const saved = items.filter(x => x.id.startsWith('saved:'));
