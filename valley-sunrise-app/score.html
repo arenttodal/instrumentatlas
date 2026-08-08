@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valley Sunrise — Score</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080C14;--gold:#D4A04A;--gold-deep:#C08830;--text:#BEC0C8;--dim:#7E808A;
+  --faint:#4E505A;--hair:rgba(255,255,255,.08);--hair-gold:rgba(212,160,74,.26);--head-w:190px}
+html,body{height:100%;background:var(--bg);overflow:hidden}
+body{font-family:'DM Sans',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column}
+h1{font-family:'Playfair Display',serif;font-weight:500;color:#fff;font-size:19px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:22px;
+  padding:12px 20px;border-bottom:1px solid var(--hair);flex:0 0 auto}
+.title{display:flex;align-items:baseline;gap:14px;min-width:0}
+.title span{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--faint)}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 14px;border:1px solid var(--hair);border-radius:100px;font-size:11.5px;color:var(--dim);
+  transition:all .2s;white-space:nowrap}
+.btn:hover{border-color:var(--hair-gold);color:#fff}
+.btn[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
+.zoom{display:flex;align-items:center;gap:2px;border:1px solid var(--hair);border-radius:100px;overflow:hidden}
+.zoom button{padding:6px 12px;font-size:13px;color:var(--dim)}
+.zoom button:hover{color:var(--gold);background:rgba(212,160,74,.08)}
+
+/* transport */
+.bar{display:flex;align-items:center;gap:16px;padding:10px 20px;border-bottom:1px solid var(--hair);flex:0 0 auto}
+.play{width:38px;height:38px;flex:0 0 auto;border-radius:50%;border:1px solid var(--hair-gold);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;transition:all .2s}
+.play:hover{background:rgba(212,160,74,.14);transform:scale(1.05)}
+.scrub{flex:1 1 auto;height:4px;background:rgba(255,255,255,.09);border-radius:3px;position:relative;cursor:pointer}
+.scrub i{position:absolute;inset:0 auto 0 0;width:0;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold))}
+.scrub .tipmark{position:absolute;top:-4px;width:2px;height:12px;background:var(--gold);opacity:.55;border-radius:1px}
+.clock{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:132px;text-align:right}
+.status{font-size:11px;color:var(--gold);min-width:120px}
+
+/* arrangement */
+.arr{flex:1 1 auto;display:grid;grid-template-columns:var(--head-w) 1fr;min-height:0}
+.heads{border-right:1px solid var(--hair);overflow:hidden;background:rgba(255,255,255,.012)}
+.ruler-pad{height:24px;border-bottom:1px solid var(--hair)}
+.head{position:relative;display:flex;align-items:center;gap:7px;padding:0 10px 0 14px;
+  border-bottom:1px solid rgba(255,255,255,.04)}
+.fam{position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--c);
+  opacity:.9;transition:opacity .2s}
+.head[data-off="1"] .fam{opacity:.2}
+.head b{flex:1 1 auto;font-size:12px;color:#fff;font-weight:500;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.head[data-off="1"] b{color:var(--faint)}
+.ms{display:flex;gap:3px;flex:0 0 auto}
+.ms button{width:19px;height:19px;border-radius:4px;border:1px solid var(--hair);font-size:8.5px;
+  font-weight:700;color:var(--faint);display:flex;align-items:center;justify-content:center;transition:all .18s}
+.ms button:hover{color:#fff;border-color:var(--hair-gold)}
+.head[data-muted="1"] .m{background:#C0603A;border-color:#C0603A;color:#0A0C14}
+.head[data-solo="1"] .s{background:var(--c);border-color:var(--c);color:#0A0C14}
+.lanes{position:relative;overflow:auto}
+.lanes svg{display:block}
+.ph{position:absolute;top:0;width:1px;background:var(--gold);pointer-events:none;
+  box-shadow:0 0 10px rgba(212,160,74,.8)}
+.ph::before{content:'';position:absolute;top:0;left:-4px;border-left:4.5px solid transparent;
+  border-right:4.5px solid transparent;border-top:7px solid var(--gold)}
+
+/* tips */
+.tip-panel{position:absolute;right:18px;top:44px;width:320px;z-index:5;padding:20px;
+  background:rgba(9,13,22,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border:1px solid var(--hair-gold);border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.6);
+  opacity:0;visibility:hidden;transform:translateX(10px);transition:all .3s cubic-bezier(.16,1,.3,1)}
+.tip-panel.on{opacity:1;visibility:visible;transform:none}
+.tip-panel .eyebrow{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.tip-panel h3{font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:500;margin:8px 0 10px}
+.tip-panel p{font-size:14px;line-height:1.62;color:var(--text);font-weight:300}
+.tip-panel .acts{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair);display:flex;gap:8px}
+.tip-panel .x{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;
+  border:1px solid var(--hair);color:var(--dim);display:flex;align-items:center;justify-content:center;font-size:14px}
+.tip-panel .x:hover{color:var(--gold);border-color:var(--hair-gold)}
+
+.boot{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;background:var(--bg);transition:opacity .4s}
+.boot.gone{opacity:0;pointer-events:none}
+.boot .n{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--gold)}
+.boot .s{font-size:12px;color:var(--dim);max-width:420px;text-align:center;line-height:1.6}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="title"><h1 id="t-title">Valley Sunrise</h1><span id="t-sub"></span></div>
+  <div class="tools">
+    <button class="btn" id="tips-btn" aria-pressed="false">Tips</button>
+    <button class="btn" id="follow-btn" aria-pressed="true">Follow</button>
+    <button class="btn" id="quality-btn" aria-pressed="false">Stereo</button>
+    <div class="zoom"><button id="zoom-out">&minus;</button><button id="zoom-fit">Fit</button><button id="zoom-in">+</button></div>
+  </div>
+</div>
+
+<div class="bar">
+  <button class="play" id="play"><svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg></button>
+  <div class="scrub" id="scrub"><i id="scrub-fill"></i></div>
+  <div class="status" id="status"></div>
+  <div class="clock" id="clock">1.1.0 · 0:00 / 0:00</div>
+</div>
+
+<div class="arr">
+  <div class="heads" id="heads"><div class="ruler-pad"></div></div>
+  <div class="lanes" id="lanes">
+    <svg id="grid" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="ph" id="ph" style="left:0"></div>
+  </div>
+</div>
+
+<aside class="tip-panel" id="tip-panel">
+  <button class="x" id="tip-x">&times;</button>
+  <div class="eyebrow" id="tip-bar"></div>
+  <h3 id="tip-title"></h3>
+  <p id="tip-body"></p>
+  <div class="acts" id="tip-acts"></div>
+</aside>
+
+<div class="boot" id="boot">
+  <div class="n" id="boot-n">Valley Sunrise</div>
+  <div class="s" id="boot-s">Loading score…</div>
+</div>
+
+<script>
+/* ============================================================================
+   SCORE PLAYER
+   ----------------------------------------------------------------------------
+   Twelve stems, two minutes. The naive approach — decode everything to 48 kHz
+   stereo up front — costs 550 MB of RAM and kills the tab. Three things avoid it:
+
+     · the AudioContext runs at 32 kHz, so decodeAudioData resamples on the way in
+     · buffers are mixed to mono unless you ask for stereo (halves it again)
+     · stems decode lazily, only when they first become audible, and start at the
+       current transport position so they drop in sample-aligned mid-playback
+
+   Everything is scheduled against one clock, so mute/solo never restarts anything.
+   ============================================================================ */
+
+const EXTS = ['aac','wav','m4a'];
+let S = null;                       // the score
+let ctx = null, buffers = new Map(), sources = new Map(), gains = new Map();
+let playing = false, startTime = 0, offset = 0, duration = 0, stereo = false;
+const muted = new Set(); let solo = null;
+
+const $ = id => document.getElementById(id);
+const audible = id => solo ? id === solo : !muted.has(id);
+
+/* ---------- load the score description ---------- */
+async function boot(){
+  try {
+    S = await (await fetch('score.json')).json();
+  } catch(e){
+    $('boot-s').innerHTML = 'Could not load <b>score.json</b> — it must sit beside this page, served over http://';
+    return;
+  }
+  duration = S.duration;
+  $('t-title').textContent = S.title;
+  $('t-sub').textContent = `${S.tracks.length} stems · ${S.bars} bars · \u2669 ${Math.round(S.tempo)}`;
+  buildHeads(); layout(); draw(); paintScrubTips();
+  $('boot').classList.add('gone');
+  tick();
+}
+
+/* ---------- audio ---------- */
+function ensureCtx(){
+  if(ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)({sampleRate:32000});
+}
+
+function toMono(buf){
+  if(stereo || buf.numberOfChannels === 1) return buf;
+  const out = ctx.createBuffer(1, buf.length, buf.sampleRate);
+  const o = out.getChannelData(0);
+  const a = buf.getChannelData(0), b = buf.getChannelData(1);
+  for(let i=0;i<buf.length;i++) o[i] = (a[i]+b[i])*0.5;
+  return out;
+}
+
+async function fetchStem(t){
+  for(const e of EXTS){
+    const url = `${S.audioBase}${t.file || t.id}.${e}`;
+    try {
+      const r = await fetch(url);
+      if(r.ok) return await r.arrayBuffer();
+    } catch(_){}
+  }
+  throw new Error('no audio for ' + t.id);
+}
+
+async function decode(t){
+  if(buffers.has(t.id)) return buffers.get(t.id);
+  const raw = await fetchStem(t);
+  const buf = toMono(await ctx.decodeAudioData(raw));
+  buffers.set(t.id, buf);
+  duration = Math.max(duration, buf.duration);
+  return buf;
+}
+
+function startSource(t, at){
+  if(sources.has(t.id)) return;
+  const b = buffers.get(t.id); if(!b) return;
+  const src = ctx.createBufferSource(); src.buffer = b;
+  const g = ctx.createGain(); g.gain.value = audible(t.id) ? 1 : 0;
+  src.connect(g).connect(ctx.destination);
+  const when = ctx.currentTime + 0.05;
+  src.start(when, Math.min(at, b.duration - 0.01));
+  startTime = when - at;
+  sources.set(t.id, src); gains.set(t.id, g);
+}
+
+function stopAll(){
+  sources.forEach(s => { try{ s.stop(); }catch(_){} });
+  sources.clear(); gains.clear();
+}
+
+async function play(){
+  ensureCtx();
+  if(ctx.state === 'suspended') await ctx.resume();
+  const want = S.tracks.filter(t => audible(t.id));
+  $('status').textContent = `decoding ${want.length} stems…`;
+  let n = 0;
+  for(const t of want){
+    await decode(t); n++;
+    $('status').textContent = `decoding ${n}/${want.length}`;
+  }
+  $('status').textContent = '';
+  const at = offset % duration;
+  const when = ctx.currentTime + 0.06;
+  startTime = when - at;
+  S.tracks.forEach(t => {
+    if(!buffers.has(t.id)) return;
+    const b = buffers.get(t.id);
+    const src = ctx.createBufferSource(); src.buffer = b;
+    const g = ctx.createGain(); g.gain.value = audible(t.id) ? 1 : 0;
+    src.connect(g).connect(ctx.destination);
+    src.start(when, Math.min(at, b.duration - 0.01));
+    sources.set(t.id, src); gains.set(t.id, g);
+  });
+  playing = true; setPlayIcon();
+}
+
+function pause(){
+  offset = position(); stopAll(); playing = false; setPlayIcon();
+}
+const position = () => playing ? Math.min(ctx.currentTime - startTime, duration) : offset;
+
+function setPlayIcon(){
+  $('play').innerHTML = playing
+    ? '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><rect width="4" height="14" rx="1"/><rect x="8" width="4" height="14" rx="1"/></svg>'
+    : '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg>';
+}
+
+/* gain changes only — never a restart. A stem that was muted at play time has no
+   buffer yet, so it decodes and joins at the current position. */
+async function applyGains(){
+  draw();
+  if(!playing){ return; }
+  const now = ctx.currentTime;
+  S.tracks.forEach(t => {
+    const g = gains.get(t.id);
+    if(g){
+      const target = audible(t.id) ? 1 : 0;
+      g.gain.cancelScheduledValues(now);
+      g.gain.setValueAtTime(g.gain.value, now);
+      g.gain.linearRampToValueAtTime(target, now + 0.03);
+    }
+  });
+  for(const t of S.tracks){
+    if(audible(t.id) && !sources.has(t.id)){
+      $('status').textContent = 'adding ' + t.name + '…';
+      await decode(t);
+      startSourceAtNow(t);
+      $('status').textContent = '';
+    }
+  }
+}
+function startSourceAtNow(t){
+  const b = buffers.get(t.id); if(!b || !playing) return;
+  const at = position();
+  const src = ctx.createBufferSource(); src.buffer = b;
+  const g = ctx.createGain(); g.gain.value = 0;
+  src.connect(g).connect(ctx.destination);
+  const when = ctx.currentTime + 0.04;
+  src.start(when, Math.min(at + 0.04, b.duration - 0.01));
+  g.gain.linearRampToValueAtTime(1, when + 0.05);
+  sources.set(t.id, src); gains.set(t.id, g);
+}
+
+function seek(sec){
+  const was = playing;
+  if(was) stopAll();
+  offset = Math.max(0, Math.min(sec, duration - 0.05));
+  playing = false;
+  if(was) play();
+  render();
+}
+
+/* ---------- layout ---------- */
+const LANE = 40, RULER = 24;
+let ppb = 8;                          // pixels per beat
+
+function layout(){
+  const totalBeats = S.bars * S.beats;
+  $('heads').style.setProperty('--n', S.tracks.length);
+  $('grid').setAttribute('width', totalBeats * ppb);
+  $('grid').setAttribute('height', RULER + S.tracks.length * LANE);
+}
+function fitZoom(){
+  ppb = Math.max(2, ($('lanes').clientWidth - 20) / (S.bars * S.beats));
+  layout(); draw();
+}
+
+function buildHeads(){
+  const h = $('heads');
+  S.tracks.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'head'; row.style.height = LANE + 'px';
+    row.style.setProperty('--c', S.colors ? S.colors[t.family] : famColor(t.family));
+    row.dataset.muted = '0'; row.dataset.solo = '0'; row.dataset.off = '0';
+    row.innerHTML = `<span class="fam"></span><b>${t.name}</b>
+      <span class="ms"><button class="m">M</button><button class="s">S</button></span>`;
+    row.querySelector('.m').onclick = () => {
+      muted.has(t.id) ? muted.delete(t.id) : muted.add(t.id);
+      row.dataset.muted = muted.has(t.id) ? '1' : '0';
+      refreshOff(); applyGains();
+    };
+    row.querySelector('.s').onclick = () => {
+      solo = solo === t.id ? null : t.id;
+      [...h.querySelectorAll('.head')].forEach((r,i) =>
+        r.dataset.solo = S.tracks[i].id === solo ? '1' : '0');
+      refreshOff(); applyGains();
+    };
+    h.appendChild(row);
+  });
+}
+function refreshOff(){
+  [...$('heads').querySelectorAll('.head')].forEach((r,i) =>
+    r.dataset.off = audible(S.tracks[i].id) ? '0' : '1');
+}
+const FAM = {woodwinds:'#6FB7E8',brass:'#D4A04A',strings:'#CF5F52',percussion:'#9B8FD4',choir:'#7FD1B9'};
+const famColor = f => FAM[f] || '#8FB4E0';
+
+/* ---------- draw ---------- */
+function draw(){
+  const totalBeats = S.bars * S.beats, W = totalBeats * ppb;
+  const H = RULER + S.tracks.length * LANE;
+  let s = '';
+  for(let bar = 0; bar < S.bars; bar++){
+    const x = bar * S.beats * ppb;
+    const major = bar % 4 === 0;
+    s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#fff" stroke-opacity="${major?'.11':'.045'}"/>`;
+    if(major || ppb > 14)
+      s += `<text x="${x+4}" y="15" fill="#4E505A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+  }
+  s += `<line x1="0" y1="${RULER}" x2="${W}" y2="${RULER}" stroke="#fff" stroke-opacity=".08"/>`;
+
+  /* tip regions behind the notes */
+  if(tipsOn) (S.tips||[]).forEach(tp => {
+    const x = (tp.bar-1)*S.beats*ppb, w = (tp.beats||8)*ppb;
+    s += `<rect x="${x}" y="${RULER}" width="${w}" height="${H-RULER}" fill="#D4A04A" fill-opacity=".055"/>
+          <line x1="${x}" y1="${RULER}" x2="${x}" y2="${H}" stroke="#D4A04A" stroke-opacity=".45"/>`;
+  });
+
+  S.tracks.forEach((t,i) => {
+    const y0 = RULER + i*LANE;
+    s += `<line x1="0" y1="${y0+LANE}" x2="${W}" y2="${y0+LANE}" stroke="#fff" stroke-opacity=".035"/>`;
+    const on = audible(t.id), col = famColor(t.family);
+    const ps = t.notes.map(n => n[2]);
+    if(!ps.length) return;
+    const lo = Math.min(...ps), hi = Math.max(...ps), span = Math.max(hi-lo, 8);
+    t.notes.forEach(([st,du,p]) => {
+      const x = st*ppb, w = Math.max(du*ppb - 1, 1.5);
+      const y = y0 + LANE - 7 - ((p-lo)/span)*(LANE-15);
+      s += `<rect x="${x}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="4" rx="2"
+        fill="${col}" fill-opacity="${on?.95:.13}"/>`;
+    });
+  });
+  $('grid').innerHTML = s;
+  $('grid').setAttribute('width', W); $('grid').setAttribute('height', H);
+  $('ph').style.height = H + 'px';
+}
+
+/* ---------- tips ---------- */
+let tipsOn = false, followOn = true, openTip = null;
+function paintScrubTips(){
+  const el = $('scrub');
+  [...el.querySelectorAll('.tipmark')].forEach(n => n.remove());
+  if(!tipsOn) return;
+  (S.tips||[]).forEach(tp => {
+    const secs = (tp.bar-1)*S.beats*60/S.tempo;
+    const m = document.createElement('div');
+    m.className = 'tipmark'; m.style.left = (secs/duration*100) + '%';
+    m.title = tp.title; m.onclick = e => { e.stopPropagation(); showTip(tp); };
+    el.appendChild(m);
+  });
+}
+function showTip(tp){
+  openTip = tp;
+  $('tip-bar').textContent = 'Bar ' + tp.bar;
+  $('tip-title').textContent = tp.title;
+  $('tip-body').textContent = tp.body;
+  const acts = $('tip-acts'); acts.innerHTML = '';
+  if(tp.action && tp.action.solo){
+    const b = document.createElement('button');
+    b.className = 'btn'; b.textContent = tp.action.solo.length ? 'Hear it alone' : 'Hear everything';
+    b.onclick = () => {
+      muted.clear(); solo = null;
+      if(tp.action.solo.length) S.tracks.forEach(t => { if(!tp.action.solo.includes(t.id)) muted.add(t.id); });
+      [...$('heads').querySelectorAll('.head')].forEach((r,i) =>
+        r.dataset.muted = muted.has(S.tracks[i].id) ? '1' : '0');
+      refreshOff(); applyGains();
+    };
+    acts.appendChild(b);
+  }
+  $('tip-panel').classList.add('on');
+}
+$('tip-x').onclick = () => { $('tip-panel').classList.remove('on'); openTip = null; };
+
+/* ---------- loop ---------- */
+function render(){
+  const p = position();
+  $('scrub-fill').style.width = (p/duration*100) + '%';
+  const beats = p/60*S.tempo;
+  const bar = Math.floor(beats/S.beats)+1, bt = Math.floor(beats%S.beats)+1;
+  const tk = Math.floor((beats%1)*10);
+  const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  $('clock').textContent = `${bar}.${bt}.${tk} · ${fmt(p)} / ${fmt(duration)}`;
+  const x = beats*ppb;
+  $('ph').style.left = x + 'px';
+  if(playing && followOn){
+    const l = $('lanes'), margin = l.clientWidth*0.4;
+    if(x - l.scrollLeft > margin || x < l.scrollLeft) l.scrollLeft = Math.max(0, x - margin);
+  }
+  if(tipsOn && playing){
+    const cur = (S.tips||[]).find(tp => {
+      const a = (tp.bar-1)*S.beats, b = a + (tp.beats||8);
+      return beats >= a && beats < b;
+    });
+    if(cur && cur !== openTip) showTip(cur);
+  }
+}
+function tick(){ if(S) render(); requestAnimationFrame(tick); }
+
+/* ---------- controls ---------- */
+$('play').onclick = () => playing ? pause() : play();
+$('scrub').onclick = e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  seek((e.clientX - r.left)/r.width*duration);
+};
+$('lanes').addEventListener('click', e => {
+  if(e.target.closest('.ph')) return;
+  const r = $('grid').getBoundingClientRect();
+  const beats = (e.clientX - r.left)/ppb;
+  if(beats >= 0) seek(beats*60/S.tempo);
+});
+$('tips-btn').onclick = function(){
+  tipsOn = !tipsOn; this.setAttribute('aria-pressed', String(tipsOn));
+  if(!tipsOn){ $('tip-panel').classList.remove('on'); openTip = null; }
+  paintScrubTips(); draw();
+};
+$('follow-btn').onclick = function(){
+  followOn = !followOn; this.setAttribute('aria-pressed', String(followOn));
+};
+$('quality-btn').onclick = async function(){
+  stereo = !stereo;
+  this.setAttribute('aria-pressed', String(stereo));
+  this.textContent = stereo ? 'Stereo' : 'Mono';
+  const was = playing; if(was) pause();
+  buffers.clear();                    /* force re-decode at the new width */
+  if(was) play();
+};
+$('zoom-in').onclick  = () => { ppb = Math.min(ppb*1.6, 60); layout(); draw(); };
+$('zoom-out').onclick = () => { ppb = Math.max(ppb/1.6, 1.5); layout(); draw(); };
+$('zoom-fit').onclick = fitZoom;
+addEventListener('resize', () => { draw(); });
+addEventListener('keydown', e => {
+  if(e.code === 'Space'){ e.preventDefault(); playing ? pause() : play(); }
+  if(e.key === 'Escape'){ $('tip-panel').classList.remove('on'); openTip = null; }
+});
+
+boot().then(() => setTimeout(fitZoom, 60));
+</script>
+</body>
+</html>
