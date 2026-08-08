@@ -110,6 +110,44 @@ const FAMILIES = [
 
 const INSTRUMENTS = {
   /* ---------- LIVE ---------- */
+  piccolo:{
+    family:'woodwinds', plate:'Plate II · 1', name:'Piccolo', latin:'Ottavino',
+    epithet:'The loudest instrument in the orchestra, by a distance', status:'live',
+    summary:'Half the length of a flute and sounding an octave above it, the piccolo occupies the top of the orchestral range alone. One player can cut through a full tutti, which is exactly why it is written sparingly — it has no dynamic hiding place.',
+    range:{lo:74, hi:108, note:'D5 – C8', transposition:'Sounds an octave higher than written'},
+    timbre:0.95,
+    facts:[['Sounding range','D5 – C8'],['Section size','1–2','players'],['Transposition','Octave above written']],
+    registers:[
+      {label:'Low register', pitch:'D5 – A5', text:'Weak, hollow and easily buried. Rarely worth writing except for colour in a thin texture.'},
+      {label:'Middle register', pitch:'B5 – A6', text:'Clear and flute-like, with more bite. The usable range for anything melodic.'},
+      {label:'High register', pitch:'B6 – C8', text:'Piercing and unmistakable. Carries over the entire orchestra at full force, and turns shrill and exhausting fast.'}
+    ],
+    characteristics:[
+      'Sounds an octave above written, so the written part looks deceptively modest.',
+      'Intonation is unforgiving — small errors are enormously audible up here.',
+      'Excels at fast runs and trills, doubling flutes an octave up.',
+      'Almost never plays quietly in its top octave; the mechanism resists it.'
+    ],
+    articulations:['Legato','Staccato','Double tonguing','Flutter tongue','Trills','Runs'],
+    blends:[
+      {id:'flute', label:'Flute an octave below', note:'The standard doubling; adds brilliance to the line'},
+      {id:'oboe', label:'Oboe', note:'Sharpens the attack of a woodwind chord'},
+      {id:'violin', label:'Violins at the octave', note:'Lifts a string melody into the light'},
+      {id:'cymbals', label:'Percussion accents', note:'Both cut through a tutti at the same moment'}
+    ],
+    limits:[
+      'Use it sparingly. Sustained high piccolo is genuinely tiring to listen to and will dominate any mix you put it in.',
+      'The bottom octave will not project — if you need that range, write for flute.',
+      'Doubling a quiet passage with piccolo does not make it prettier, it makes it a piccolo solo.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Against the flute', note:'The same figure, an octave apart', dur:'0:16'},
+      {label:'Full force over tutti', note:'Why it is used at climaxes', dur:'0:14'}
+    ],
+    prev:'', next:'flute'
+  },
+
   flute:{
     family:'woodwinds', plate:'Plate II · 2', name:'Flute', latin:'Flauto traverso',
     epithet:'Round, warm, and quietly everywhere', status:'live',
@@ -146,6 +184,121 @@ const INSTRUMENTS = {
       {label:'With violins in octaves', note:'The doubling, isolated then in context', dur:'0:15'}
     ],
     prev:'piccolo', next:'oboe'
+  },
+
+  oboe:{
+    family:'woodwinds', plate:'Plate II · 3', name:'Oboe', latin:'Oboe',
+    epithet:'The instrument the orchestra tunes to, and the one that sounds most like a voice', status:'live',
+    summary:'A double reed with a narrow conical bore, which produces the most penetrating and least blendable tone colour in the woodwind section. That penetration is why it gives the tuning A, and why a single oboe can carry a melody over a full string section without effort.',
+    range:{lo:58, hi:91, note:'B♭3 – G6', transposition:'Non-transposing'},
+    timbre:0.80,
+    facts:[['Sounding range','B♭3 – G6'],['Section size','2–4','players'],['Transposition','Concert pitch']],
+    registers:[
+      {label:'Low register', pitch:'B♭3 – E4', text:'Thick, heavy and a little coarse. Hard to play softly and difficult to blend.'},
+      {label:'Middle register', pitch:'F4 – D5', text:'The expressive core — reedy, singing and instantly recognisable. Almost every famous oboe solo lives here.'},
+      {label:'High register', pitch:'E5 – G6', text:'Thin and increasingly strained. Effective for a moment of tension, punishing across a phrase.'}
+    ],
+    characteristics:[
+      'Double reed, narrow conical bore — the combination that makes it cut.',
+      'Very low air consumption, so players run out of places to breathe rather than breath.',
+      'Extremely agile: fast runs, trills and wide leaps all sit well.',
+      'Blends poorly by nature, which makes it a soloist more often than a section instrument.'
+    ],
+    articulations:['Legato','Staccato','Trills','Runs','Flutter tongue'],
+    blends:[
+      {id:'bassoon', label:'Bassoon', note:'Two double reeds, an octave or two apart; a distinctly reedy colour'},
+      {id:'clarinet', label:'Clarinet', note:'Rounds off the oboe’s edge'},
+      {id:'flute', label:'Flute', note:'Mellows the tone without dulling it'},
+      {id:'violin', label:'Violins in unison', note:'Adds definition and bite to the string line'}
+    ],
+    limits:[
+      'Soft playing in the low register is very difficult. Do not write a quiet low oboe entrance and expect it to be quiet.',
+      'It will not disappear into a chord — if you need blend, use clarinet.',
+      'Long unbroken lines are a breathing problem in reverse: players need somewhere to exhale.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:18'},
+      {label:'Solo over strings', note:'Why it carries', dur:'0:15'}
+    ],
+    prev:'flute', next:'clarinet'
+  },
+
+  clarinet:{
+    family:'woodwinds', plate:'Plate II · 4', name:'Clarinet', latin:'Clarinetto',
+    epithet:'The widest dynamic range in the orchestra, and the best blender in it', status:'live',
+    summary:'A single reed with a cylindrical bore, which makes it behave unlike everything around it: it overblows at the twelfth rather than the octave, and its registers have genuinely different characters. It can play quieter than any other wind instrument and still be heard.',
+    range:{lo:50, hi:91, note:'D3 – G6 sounding', transposition:'In B♭ — written a tone higher'},
+    timbre:0.55,
+    facts:[['Sounding range','D3 – G6'],['Section size','2–4','players'],['Transposition','In B♭ (and A)']],
+    registers:[
+      {label:'Chalumeau', pitch:'D3 – G4', text:'Dark, hollow and unmistakable. The most distinctive low register in the woodwind section.'},
+      {label:'Throat register', pitch:'A4 – B♭4', text:'Weak, slightly stuffy, and the part section players work hardest to disguise. Avoid exposing it.'},
+      {label:'Clarion', pitch:'B4 – C6', text:'Bright, singing and even. Where most melodic writing belongs.'},
+      {label:'Altissimo', pitch:'C♯6 – G6', text:'Piercing and effortful. Effective in a tutti, unreliable when exposed.'}
+    ],
+    characteristics:[
+      'Cylindrical bore closed at the reed end — it overblows at the twelfth, not the octave.',
+      'Registers differ audibly, which is a colour resource rather than a defect.',
+      'The finest diminuendo in the orchestra: it can fade to genuine silence.',
+      'Two instruments in common use, B♭ and A, chosen by key to keep fingerings manageable.'
+    ],
+    articulations:['Legato','Staccato','Glissando','Trills','Flutter tongue','Subtone'],
+    blends:[
+      {id:'horn', label:'Horn', note:'Two covered timbres; they fuse almost completely'},
+      {id:'viola', label:'Viola', note:'Both sit in the middle and neither fights'},
+      {id:'flute', label:'Flute', note:'Warmer, fuller combined tone'},
+      {id:'bassoon', label:'Bassoon', note:'Depth under the line'}
+    ],
+    limits:[
+      'The throat register is the weak spot. Do not write an exposed sustained A4 or B♭4 and expect it to sing.',
+      'Remember the transposition when printing parts — B♭ instrument, written a tone above sounding.',
+      'Rapid register crossings over the break are awkward; give the player somewhere to move.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Chalumeau to clarion', note:'The same figure across the break', dur:'0:18'},
+      {label:'Diminuendo to nothing', note:'The fade no other wind instrument can match', dur:'0:12'}
+    ],
+    prev:'oboe', next:'bassoon'
+  },
+
+  bassoon:{
+    family:'woodwinds', plate:'Plate II · 5', name:'Bassoon', latin:'Fagotto',
+    epithet:'The bass of the woodwind section, and its most characterful tenor', status:'live',
+    summary:'A double reed like the oboe but far less penetrating, with registers that differ more sharply than any other woodwind. It plays the bass line of the wind section, doubles the low strings for weight, and — in its middle register — has one of the most distinctive solo voices in the orchestra.',
+    range:{lo:34, hi:75, note:'B♭1 – E♭5', transposition:'Non-transposing'},
+    timbre:0.30,
+    facts:[['Sounding range','B♭1 – E♭5'],['Section size','2–4','players'],['Notation','Bass and tenor clef']],
+    registers:[
+      {label:'Low register', pitch:'B♭1 – F2', text:'Thick, heavy and slightly rough. A genuine bass foundation, and it takes some effort to play quietly.'},
+      {label:'Middle register', pitch:'G2 – F4', text:'The characterful range — mysterious, melancholic, faintly comic depending entirely on context. Most solos live here.'},
+      {label:'High register', pitch:'G4 – E♭5', text:'Compressed, lyrical and strained, in a way composers use deliberately. The opening of The Rite of Spring is the famous example.'}
+    ],
+    characteristics:[
+      'Double reed like the oboe, but wider bore and far less projection.',
+      'Registers are markedly different in character — an asset, not a fault.',
+      'Agile enough for fast passagework despite its size.',
+      'Takes the metallic edge off brass when doubled, which is half of its orchestral use.'
+    ],
+    articulations:['Legato','Staccato','Trills','Flutter tongue','Runs'],
+    blends:[
+      {id:'cello', label:'Cello', note:'Woody reinforcement of the low string line'},
+      {id:'horn', label:'Horn', note:'Softens the brass attack'},
+      {id:'oboe', label:'Oboe', note:'Both double reeds; the family resemblance is audible'},
+      {id:'clarinet', label:'Clarinet', note:'Warm, covered woodwind chord'}
+    ],
+    limits:[
+      'Quiet low notes are difficult — the reed needs air to speak at all.',
+      'Very high writing is possible but exposed and effortful; use it for effect, not for range.',
+      'It cannot compete with brass on volume. If you need weight there, add players, not dynamics.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:18'},
+      {label:'With cello in octaves', note:'The doubling that gives the low line its wood', dur:'0:15'}
+    ],
+    prev:'clarinet', next:''
   },
 
   horn:{
@@ -381,10 +534,6 @@ const INSTRUMENTS = {
   },
 
   /* ---------- PLANNED (menu only) ---------- */
-  piccolo:{family:'woodwinds',name:'Piccolo',status:'plan',range:{lo:74,hi:108},timbre:0.95},
-  oboe:{family:'woodwinds',name:'Oboe',status:'plan',range:{lo:58,hi:91},timbre:0.80},
-  clarinet:{family:'woodwinds',name:'Clarinet',status:'plan',range:{lo:50,hi:91},timbre:0.55},
-  bassoon:{family:'woodwinds',name:'Bassoon',status:'plan',range:{lo:34,hi:75},timbre:0.30},
   trumpet:{family:'brass',name:'Trumpet',status:'plan',range:{lo:54,hi:82},timbre:0.88},
   trombone:{family:'brass',name:'Trombone',status:'plan',range:{lo:40,hi:72},timbre:0.66},
   tuba:{family:'brass',name:'Tuba',status:'plan',range:{lo:26,hi:65},timbre:0.20},
@@ -503,6 +652,108 @@ const PLATES = {
     </g>
   </svg>`,
 
+  /* Woodwinds. The flute and piccolo lie diagonally because they are played
+     across the body; the reeds stand upright. Conical bores (oboe, bassoon)
+     have visibly diverging sides, the cylindrical clarinet has parallel ones —
+     the same distinction the entries talk about. */
+  piccolo:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g transform="rotate(-38 150 260)" stroke-width="1.3">
+      <rect x="60" y="244" width="180" height="24" rx="12" opacity=".85"/>
+      <line x1="96" y1="244" x2="96" y2="268" opacity=".5"/>
+      <line x1="204" y1="244" x2="204" y2="268" opacity=".5"/>
+      <ellipse cx="76" cy="256" rx="6.5" ry="4.6" opacity=".9"/>
+      <path d="M60 248c-6 2-6 14 0 16" opacity=".6"/>
+      <g opacity=".9">
+        <ellipse cx="116" cy="256" rx="6.4" ry="6"/><ellipse cx="134" cy="256" rx="6.4" ry="6"/>
+        <ellipse cx="152" cy="256" rx="6.4" ry="6"/><ellipse cx="176" cy="256" rx="6.4" ry="6"/>
+        <ellipse cx="194" cy="256" rx="6.4" ry="6"/><ellipse cx="216" cy="256" rx="5.4" ry="5"/>
+      </g>
+      <g opacity=".45" stroke-width="1">
+        <line x1="110" y1="244" x2="122" y2="244"/><line x1="146" y1="244" x2="158" y2="244"/>
+        <line x1="126" y1="268" x2="142" y2="268"/><line x1="170" y1="268" x2="184" y2="268"/>
+      </g>
+      <path d="M228 247c7 3 7 15 0 18" opacity=".7"/>
+    </g>
+    <g opacity=".22" stroke-width=".8">
+      <path d="M96 452c34-16 66-44 92-78"/><path d="M108 464c38-18 74-50 102-88"/>
+    </g>
+  </svg>`,
+
+  oboe:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <path d="M146 94l4-32 4 32" opacity=".9"/>
+      <path d="M144 94h12" opacity=".6"/>
+      <path d="M143 96L133 384" opacity=".92"/>
+      <path d="M157 96L167 384" opacity=".92"/>
+      <path d="M141 154h18M138 250h24" opacity=".5"/>
+      <g opacity=".85">
+        <ellipse cx="150" cy="186" rx="6" ry="5"/><ellipse cx="150" cy="214" rx="6" ry="5"/>
+        <ellipse cx="150" cy="286" rx="6.5" ry="5.5"/><ellipse cx="150" cy="318" rx="6.5" ry="5.5"/>
+      </g>
+      <g opacity=".5" stroke-width="1">
+        <path d="M139 172h-8v28h8"/><path d="M161 232h8v26h-8"/><path d="M137 300h-9v34h9"/>
+      </g>
+      <path d="M133 384c-4 22-10 36-15 46" opacity=".92"/>
+      <path d="M167 384c4 22 10 36 15 46" opacity=".92"/>
+      <ellipse cx="150" cy="432" rx="32" ry="9" opacity=".95"/>
+      <ellipse cx="150" cy="432" rx="22" ry="6" opacity=".35"/>
+    </g>
+    <g opacity=".2" stroke-width=".8">
+      <path d="M206 300c8 30 8 66-4 94"/><path d="M214 292c8 34 8 74-4 106"/>
+    </g>
+  </svg>`,
+
+  clarinet:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <path d="M143 104c0-26 3-44 7-50 4 6 7 24 7 50" opacity=".9"/>
+      <path d="M143 86h14M143 94h14" opacity=".45"/>
+      <rect x="141" y="104" width="18" height="26" rx="4" opacity=".85"/>
+      <path d="M143 130v258M157 130v258" opacity=".92"/>
+      <path d="M141 256h18" opacity=".5"/>
+      <g opacity=".85">
+        <ellipse cx="150" cy="164" rx="6" ry="5"/><ellipse cx="150" cy="192" rx="6" ry="5"/>
+        <ellipse cx="150" cy="220" rx="6" ry="5"/><ellipse cx="150" cy="292" rx="6" ry="5"/>
+        <ellipse cx="150" cy="322" rx="6" ry="5"/>
+      </g>
+      <g opacity=".5" stroke-width="1">
+        <path d="M141 150h-9v26h9"/><path d="M159 206h9v28h-9"/><path d="M141 306h-9v32h9"/>
+      </g>
+      <path d="M143 388c-6 26-14 42-21 52" opacity=".92"/>
+      <path d="M157 388c6 26 14 42 21 52" opacity=".92"/>
+      <ellipse cx="150" cy="442" rx="30" ry="9" opacity=".95"/>
+      <ellipse cx="150" cy="442" rx="20" ry="6" opacity=".35"/>
+    </g>
+    <g opacity=".2" stroke-width=".8">
+      <path d="M204 306c8 30 8 64-4 92"/><path d="M212 298c8 34 8 72-4 104"/>
+    </g>
+  </svg>`,
+
+  bassoon:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <ellipse cx="168" cy="92" rx="17" ry="7" opacity=".95"/>
+      <path d="M151 92c1 22 4 36 7 46" opacity=".9"/>
+      <path d="M185 92c-1 22-4 36-7 46" opacity=".9"/>
+      <path d="M158 138v290M178 138v290" opacity=".92"/>
+      <path d="M124 200v228M140 200v228" opacity=".92"/>
+      <path d="M124 428v18c0 17 12 27 27 27s27-10 27-27v-18" opacity=".92"/>
+      <path d="M140 428v14c0 6 5 9 11 9s11-3 11-9v-14" opacity=".55"/>
+      <path d="M132 200c-6-26-22-46-42-54" opacity=".9"/>
+      <path d="M90 146l-12-6" opacity=".85"/>
+      <path d="M78 140l-11-7M78 140l-9-9" opacity=".8"/>
+      <path d="M156 176h24M156 300h24M122 264h20" opacity=".45"/>
+      <g opacity=".85">
+        <ellipse cx="132" cy="228" rx="5.5" ry="4.5"/><ellipse cx="132" cy="300" rx="5.5" ry="4.5"/>
+        <ellipse cx="168" cy="212" rx="5.5" ry="4.5"/><ellipse cx="168" cy="356" rx="5.5" ry="4.5"/>
+      </g>
+      <g opacity=".5" stroke-width="1">
+        <path d="M124 246h-9v34h9"/><path d="M178 236h9v40h-9"/><path d="M140 330h9v30h-9"/>
+      </g>
+    </g>
+    <g opacity=".2" stroke-width=".8">
+      <path d="M212 300c8 30 8 66-4 94"/><path d="M220 292c8 34 8 74-4 106"/>
+    </g>
+  </svg>`,
+
   horn:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g stroke-width="1.3">
       <circle cx="142" cy="250" r="92" opacity=".9"/>
@@ -575,6 +826,10 @@ const PLATES = {
 };
 const THUMBS = {
   flute:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-38 20 26)"><rect x="3" y="22" width="34" height="7" rx="3.5"/><circle cx="12" cy="25.5" r="2"/><circle cx="19" cy="25.5" r="2"/><circle cx="26" cy="25.5" r="2"/></g></svg>`,
+  piccolo:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-38 20 26)"><rect x="8" y="23" width="24" height="6" rx="3"/><circle cx="15" cy="26" r="1.7"/><circle cx="20" cy="26" r="1.7"/><circle cx="25" cy="26" r="1.7"/></g></svg>`,
+  oboe:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M20 4v6"/><path d="M17 10L13 38"/><path d="M23 10l4 28"/><path d="M13 38c-1 5-3 7-4 9M27 38c1 5 3 7 4 9"/><ellipse cx="20" cy="47" rx="11" ry="3"/><g opacity=".5"><circle cx="20" cy="20" r="1.6"/><circle cx="20" cy="30" r="1.6"/></g></svg>`,
+  clarinet:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M17 11c0-5 1-8 3-9 2 1 3 4 3 9"/><path d="M17 11v27M23 11v27"/><path d="M17 38c-2 5-4 7-6 9M23 38c2 5 4 7 6 9"/><ellipse cx="20" cy="47" rx="10" ry="3"/><g opacity=".5"><circle cx="20" cy="19" r="1.6"/><circle cx="20" cy="29" r="1.6"/></g></svg>`,
+  bassoon:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><ellipse cx="26" cy="6" rx="4" ry="1.8"/><path d="M22 6v34M30 6v34"/><path d="M11 15v25M18 15v25"/><path d="M11 40c0 5 4 8 9.5 8s9.5-3 9.5-8"/><path d="M13 15c-2-5-5-7-8-8"/></svg>`,
   horn:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><circle cx="18" cy="23" r="13"/><circle cx="18" cy="23" r="8" opacity=".5"/><ellipse cx="29" cy="41" rx="8" ry="4" transform="rotate(-24 29 41)"/></svg>`,
   violin: stringThumb({t:16, u:5, n:5}),
   viola: stringThumb({t:17, u:6, n:6}),
