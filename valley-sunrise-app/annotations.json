@@ -4,49 +4,49 @@
    "bar": 1,
    "to": 7,
    "name": "Intro",
-   "note": "D minor. Atmosphere, a string bed and flute fragments. Almost nothing is happening, which is what makes everything later feel large."
+   "note": "D minor, atmosphere and a string bed \u2014 almost nothing, which is what makes everything later feel large."
   },
   {
    "bar": 8,
    "to": 16,
    "name": "First theme",
-   "note": "The oboe takes the melody over the bed. Cello and bass arrive underneath and the harmony gets a floor."
+   "note": "The oboe takes the melody and the low strings give the harmony a floor."
   },
   {
    "bar": 17,
    "to": 24,
    "name": "Growth",
-   "note": "More lanes join. Still no violins \u2014 the most obvious melodic voice is being withheld."
+   "note": "More lanes join, but the violins are still being withheld."
   },
   {
    "bar": 25,
    "to": 30,
    "name": "First wave",
-   "note": "Violins finally enter, already mid-build. Ten lanes playing. In a two-minute cue this would be a reasonable place to end."
+   "note": "Violins finally enter, already mid-build \u2014 ten lanes playing."
   },
   {
    "bar": 31,
    "to": 35,
    "name": "Pull back",
-   "note": "Straight from the peak down to three lanes, and bar 35 is empty. The reset that makes the second half work."
+   "note": "Straight from the peak down to three lanes, with one empty bar as a reset."
   },
   {
    "bar": 36,
    "to": 46,
    "name": "Rebuild",
-   "note": "Fragments return one at a time. The same material, thinner, moving forward faster than the first build did."
+   "note": "The same material returns thinner, and moves forward faster than the first build."
   },
   {
    "bar": 47,
    "to": 55,
    "name": "Second build",
-   "note": "Four lanes to ten in six bars. The first build took sixteen; this one takes six, which is why it reads as urgent."
+   "note": "Four lanes to ten in six bars \u2014 half the time the first build took."
   },
   {
    "bar": 56,
    "to": 65,
    "name": "Finale",
-   "note": "Full orchestra, densest bars in the piece, and the tonality has arrived on D Lydian. Same tonic as bar 1, opposite feeling."
+   "note": "Full orchestra, densest bars in the piece, arriving on D Lydian."
   }
  ],
  "roles": [
