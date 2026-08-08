@@ -466,10 +466,7 @@ $('atl-dk-scrub').onclick = e => {
 
 /* --------------------------------------------------------------- expand --- */
 $('atl-dk-expand').onclick = () => {
-  S.open = !S.open;
-  dockEl.classList.toggle('is-open', S.open);
-  $('atl-dk-expand').setAttribute('aria-expanded', String(S.open));
-  measure();
+  setOpen(!S.open);
   if(S.open) requestAnimationFrame(() => { draw(); render(); measure(); });
 };
 
@@ -551,9 +548,19 @@ function setDock(on){
     if(S.playing && S.engine){ S.engine.pause(); S.playing = false; setPlayIcon(); }
     closeMenu();
   } else {
+    /* it arrives expanded: someone who asked for the studio wants the tracks,
+       not a strip they have to open a second time */
+    setOpen(true);
     /* laid out only now, so the roll has to be drawn against real widths */
     requestAnimationFrame(() => { draw(); render(); measure(); });
   }
+}
+
+function setOpen(on){
+  S.open = on;
+  dockEl.classList.toggle('is-open', on);
+  $('atl-dk-expand').setAttribute('aria-expanded', String(on));
+  measure();
 }
 
 if(btn) btn.addEventListener('click', () => setDock(!S.shown));

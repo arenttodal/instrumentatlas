@@ -671,7 +671,7 @@ function route(path){
    downloads nothing at all. A short delay before starting means sweeping the
    cursor across the row does not fire every clip at once.
    ============================================================================ */
-const VID = { peak:0.24, delay:120, timer:null, built:false };
+const VID = { peak:0.20, delay:120, timer:null, built:false };
 
 function wireFamilyVideo(isHome){
   const layer = document.getElementById('atl-famvid');
