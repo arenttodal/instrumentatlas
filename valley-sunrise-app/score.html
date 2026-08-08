@@ -53,7 +53,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* display menu */
 .menu-wrap{position:relative}
-.dmenu{position:absolute;right:0;top:calc(100% + 8px);width:212px;padding:12px;z-index:30;
+.dmenu{position:absolute;right:0;top:calc(100% + 8px);width:212px;max-height:70vh;overflow:auto;padding:12px;z-index:30;
   background:rgba(11,16,26,.98);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
   border:1px solid var(--hair);border-radius:11px;box-shadow:0 20px 50px rgba(0,0,0,.6);
   opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .22s ease}
@@ -65,6 +65,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   font-size:12.5px;color:var(--dim);transition:all .18s}
 .dgroup button:hover{color:#fff;background:rgba(255,255,255,.04)}
 .dgroup button[aria-pressed="true"]{color:var(--gold);background:rgba(212,160,74,.10)}
+.dmenu.wide{width:238px}
+.prow{display:flex;align-items:center;gap:4px}
+.prow button:first-child{flex:1 1 auto}
+.pdel{flex:0 0 auto;width:22px;height:22px;border-radius:5px;color:var(--faint);font-size:13px;
+  display:flex;align-items:center;justify-content:center;transition:all .18s}
+.pdel:hover{color:#C0603A;background:rgba(192,96,58,.12)}
 
 /* bottom strip */
 .infobar{position:fixed;left:0;right:0;bottom:0;z-index:7;display:none;align-items:center;gap:22px;
@@ -243,6 +249,23 @@ body.annotating .lanes{cursor:crosshair}
       </svg>
     </button>
     <div class="menu-wrap">
+      <button class="ico" id="pre-btn" title="Stem presets" aria-label="Stem presets">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <path d="M5 6h14M5 12h14M5 18h14"/>
+          <circle cx="9" cy="6" r="2" fill="var(--bg)"/><circle cx="15" cy="12" r="2" fill="var(--bg)"/>
+          <circle cx="8" cy="18" r="2" fill="var(--bg)"/>
+        </svg>
+      </button>
+      <div class="dmenu wide" id="pmenu">
+        <div class="dgroup"><span class="dlabel">Everything</span>
+          <button data-pre="all">All stems</button></div>
+        <div class="dgroup"><span class="dlabel">By family</span><div id="pre-fams"></div></div>
+        <div class="dgroup"><span class="dlabel">By role — follows the section</span><div id="pre-roles"></div></div>
+        <div class="dgroup" id="pre-saved-group"><span class="dlabel">Saved</span><div id="pre-saved"></div></div>
+        <div class="dgroup"><button id="pre-save">Save current mix…</button></div>
+      </div>
+    </div>
+    <div class="menu-wrap">
       <button class="ico" id="disp-btn" title="Display options" aria-label="Display options">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
           <circle cx="12" cy="12" r="2.6"/><path d="M12 4v2.2M12 17.8V20M4 12h2.2M17.8 12H20"/>
@@ -398,7 +421,7 @@ async function boot(){
   $('t-sub').textContent = `${S.tracks.length} stems · ${S.bars} bars · \u2669 ${Math.round(S.tempo)}`;
   buildHeads(); fitLanes(); layout(); draw(); drawMini(); paintScrubTips(); placeSide();
   await loadAnnotations();
-  applyDisplay();
+  applyDisplay(); buildPresetMenu();
   $('boot').classList.add('gone');
   tick();
 }
@@ -623,12 +646,14 @@ function buildHeads(){
       <span class="ms"><button class="m" title="Mute">M</button><button class="s" title="Solo">S</button></span>`;
     row.querySelector('.m').onclick = e => {
       e.stopPropagation();
+      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; buildPresetMenu(); }
       muted.has(t.id) ? muted.delete(t.id) : muted.add(t.id);
       row.dataset.muted = muted.has(t.id) ? '1' : '0';
       applyGains();
     };
     row.querySelector('.s').onclick = e => {
       e.stopPropagation();
+      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; buildPresetMenu(); }
       /* alt-click solos exclusively, plain click adds to the solo group */
       if(e.altKey){ solos.clear(); solos.add(t.id); }
       else solos.has(t.id) ? solos.delete(t.id) : solos.add(t.id);
@@ -1007,6 +1032,108 @@ $('ae-del').onclick = () => {
   closeEditor(); drawSidebar(true);
 };
 
+
+/* ============================================================================
+   STEM PRESETS
+   ----------------------------------------------------------------------------
+   Family presets are fixed sets of tracks. Role presets are not — "melody only"
+   means whatever is carrying the melody *at this point in the piece*, so it
+   re-solos itself as the playhead crosses into a new section. Custom presets
+   store whatever is currently soloed and muted, in localStorage.
+   ============================================================================ */
+let activePreset = null;                 // {kind:'all'|'family'|'role'|'custom', value}
+let presetSection = null;                // section the role preset was last applied for
+
+function savedPresets(){
+  try { return JSON.parse(localStorage.getItem('vs-presets') || '[]'); }
+  catch(_){ return []; }
+}
+function writePresets(list){ localStorage.setItem('vs-presets', JSON.stringify(list)); }
+
+function setMix(soloIds){
+  solos.clear(); muted.clear();
+  soloIds.forEach(id => solos.add(id));
+  syncHeads(); applyGains();
+}
+
+function applyPreset(p){
+  activePreset = p;
+  presetSection = null;
+  if(!p || p.kind === 'all'){
+    solos.clear(); muted.clear(); syncHeads(); applyGains();
+  } else if(p.kind === 'family'){
+    setMix(S.tracks.filter(t => t.family === p.value).map(t => t.id));
+  } else if(p.kind === 'role'){
+    applyRolePreset(true);
+  } else if(p.kind === 'custom'){
+    solos.clear(); muted.clear();
+    (p.solos||[]).forEach(id => solos.add(id));
+    (p.muted||[]).forEach(id => muted.add(id));
+    syncHeads(); applyGains();
+  }
+  buildPresetMenu();
+}
+
+/* re-solo as the piece moves into a new section */
+function applyRolePreset(force){
+  if(!activePreset || activePreset.kind !== 'role') return;
+  const b = Math.floor(barPos());
+  const sec = sectionAt(b);
+  const key = sec ? sec.name : 'bar' + b;
+  if(key === presetSection && !force) return;
+  presetSection = key;
+  const ids = rolesAt(barPos()).filter(r => r.role === activePreset.value).map(r => r.track);
+  setMix(ids.length ? ids : S.tracks.map(t => t.id));
+}
+
+function buildPresetMenu(){
+  const fams = [...new Set(S.tracks.map(t => t.family))];
+  const on = (kind, value) => activePreset && activePreset.kind === kind &&
+             (value === undefined || activePreset.value === value);
+
+  $('pre-fams').innerHTML = fams.map(f =>
+    `<button data-fam="${f}" aria-pressed="${on('family', f)}" style="text-transform:capitalize">
+       ${f} only</button>`).join('');
+  $('pre-fams').querySelectorAll('button').forEach(b =>
+    b.onclick = () => applyPreset({kind:'family', value:b.dataset.fam}));
+
+  $('pre-roles').innerHTML = ROLES.map(r =>
+    `<button data-role="${r}" aria-pressed="${on('role', r)}">
+       ${r === 'counter' ? 'Counter-melody' : r[0].toUpperCase()+r.slice(1)} only</button>`).join('');
+  $('pre-roles').querySelectorAll('button').forEach(b =>
+    b.onclick = () => applyPreset({kind:'role', value:b.dataset.role}));
+
+  const list = savedPresets();
+  $('pre-saved-group').style.display = list.length ? '' : 'none';
+  $('pre-saved').innerHTML = list.map((p,i) =>
+    `<div class="prow">
+       <button data-i="${i}" aria-pressed="${on('custom') && activePreset.name === p.name}">${p.name}</button>
+       <button class="pdel" data-del="${i}" title="Delete">&times;</button>
+     </div>`).join('');
+  $('pre-saved').querySelectorAll('[data-i]').forEach(b =>
+    b.onclick = () => applyPreset(Object.assign({kind:'custom'}, list[+b.dataset.i])));
+  $('pre-saved').querySelectorAll('[data-del]').forEach(b =>
+    b.onclick = e => {
+      e.stopPropagation();
+      const l = savedPresets(); l.splice(+b.dataset.del, 1); writePresets(l); buildPresetMenu();
+    });
+
+  document.querySelector('[data-pre="all"]').setAttribute('aria-pressed', String(!activePreset || activePreset.kind === 'all'));
+}
+
+document.querySelector('[data-pre="all"]').onclick = () => applyPreset({kind:'all'});
+$('pre-save').onclick = () => {
+  const name = prompt('Name this mix', 'My mix');
+  if(!name) return;
+  const list = savedPresets();
+  list.push({name, solos:[...solos], muted:[...muted]});
+  writePresets(list);
+  activePreset = {kind:'custom', name};
+  buildPresetMenu();
+};
+$('pre-btn').onclick = e => { e.stopPropagation(); $('pmenu').classList.toggle('on'); };
+
+
 function applyDisplay(){
   document.body.classList.toggle('info-bottom', DISP.info === 'bottom');
   const wantSide = DISP.info === 'side' && tipsOn;
@@ -1029,7 +1156,9 @@ document.querySelectorAll('.dgroup').forEach(g => {
 });
 $('disp-btn').onclick = e => { e.stopPropagation(); $('dmenu').classList.toggle('on'); };
 document.addEventListener('click', e => {
-  if(!e.target.closest('.menu-wrap')) $('dmenu').classList.remove('on');
+  if(!e.target.closest('.menu-wrap')){
+    $('dmenu').classList.remove('on'); $('pmenu').classList.remove('on');
+  }
 });
 
 /* ---------- the bottom strip ---------- */
@@ -1134,6 +1263,7 @@ function render(){
   $('mini-ph').style.left = (p/duration*100) + '%';
   if(sideOn) drawSidebar();
   if(DISP.info === 'bottom') drawInfoBar();
+  if(activePreset && activePreset.kind === 'role') applyRolePreset(false);
   if(playing && followOn){
     const l = $('lanes'), margin = l.clientWidth*0.4;
     if(x - l.scrollLeft > margin || x < l.scrollLeft) l.scrollLeft = Math.max(0, x - margin);
