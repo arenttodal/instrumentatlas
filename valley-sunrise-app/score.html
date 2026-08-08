@@ -712,18 +712,26 @@ function buildHeads(){
       <span class="ms"><button class="m" title="Mute">M</button><button class="s" title="Solo">S</button></span>`;
     row.querySelector('.m').onclick = e => {
       e.stopPropagation();
-      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; buildPresetMenu(); }
+      tempSolo = null;
+      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; }
+      buildPresetMenu();
       muted.has(t.id) ? muted.delete(t.id) : muted.add(t.id);
       row.dataset.muted = muted.has(t.id) ? '1' : '0';
       applyGains();
     };
     row.querySelector('.s').onclick = e => {
       e.stopPropagation();
-      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; buildPresetMenu(); }
+      tempSolo = null;
+      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; }
+      buildPresetMenu();
       /* alt-click solos exclusively, plain click adds to the solo group */
       if(e.altKey){ solos.clear(); solos.add(t.id); }
       else solos.has(t.id) ? solos.delete(t.id) : solos.add(t.id);
       syncHeads(); applyGains();
+    };
+    row.ondblclick = e => {
+      if(e.target.closest('.ms')) return;
+      toggleTempSolo(t.id);
     };
     h.appendChild(row);
   });
@@ -1113,7 +1121,10 @@ $('ae-del').onclick = () => {
    re-solos itself as the playhead crosses into a new section. Custom presets
    store whatever is currently soloed and muted, in localStorage.
    ============================================================================ */
-let activePreset = null;                 // {kind:'all'|'family'|'role'|'custom', value}
+let activePreset = null;                 // {kind:'family'|'role'|'custom', value}
+/* double-click any lane to hear it alone; double-click again to put the mix back
+   exactly as it was, preset and all */
+let tempSolo = null;                     // {id, prev:{solos,muted,preset,section}}
 let presetSection = null;                // section the role preset was last applied for
 
 function savedPresets(){
@@ -1122,6 +1133,25 @@ function savedPresets(){
 }
 function writePresets(list){ localStorage.setItem('vs-presets', JSON.stringify(list)); }
 
+function toggleTempSolo(id){
+  if(tempSolo && tempSolo.id === id){ releaseTempSolo(); return; }
+  const prev = tempSolo ? tempSolo.prev : {
+    solos:[...solos], muted:[...muted], preset:activePreset, section:presetSection
+  };
+  tempSolo = {id, prev};
+  solos.clear(); muted.clear(); solos.add(id);
+  syncHeads(); applyGains(); buildPresetMenu(); draw();
+}
+function releaseTempSolo(){
+  if(!tempSolo) return;
+  const p = tempSolo.prev; tempSolo = null;
+  solos.clear(); muted.clear();
+  p.solos.forEach(x => solos.add(x));
+  p.muted.forEach(x => muted.add(x));
+  activePreset = p.preset; presetSection = p.section;
+  syncHeads(); applyGains(); buildPresetMenu(); draw();
+}
+
 function setMix(soloIds){
   solos.clear(); muted.clear();
   soloIds.forEach(id => solos.add(id));
@@ -1129,6 +1159,7 @@ function setMix(soloIds){
 }
 
 function applyPreset(p){
+  tempSolo = null;
   activePreset = p;
   presetSection = null;
   if(!p){
@@ -1195,6 +1226,12 @@ function buildPresetMenu(){
   const cap = w => w[0].toUpperCase() + w.slice(1);
   const untouched = !solos.size && !muted.size;
   let label = 'Custom mix', custom = true;
+  if(tempSolo){
+    const t = S.tracks.find(x => x.id === tempSolo.id);
+    $('pre-current').textContent = 'Solo · ' + (t ? t.name : '');
+    $('pre-btn').classList.add('custom');
+    return;
+  }
   if(!activePreset){ label = untouched ? 'All stems' : 'Custom mix'; custom = !untouched; }
   else if(activePreset.kind === 'family') label = cap(activePreset.value) + ' only';
   else if(activePreset.kind === 'role')
@@ -1386,6 +1423,7 @@ $('scrub').onclick = e => {
 };
 $('lanes').addEventListener('click', e => {
   if(e.target.closest('.ph') || annotating) return;
+  if(e.detail > 1) return;                 // part of a double-click
   const r = $('grid').getBoundingClientRect();
   const beats = (e.clientX - r.left)/ppb;
   if(beats >= 0) seek(beats*60/S.tempo);
@@ -1530,6 +1568,13 @@ const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
   });
 })();
 
+/* double-click a lane to solo it temporarily */
+$('lanes').addEventListener('dblclick', e => {
+  if(annotating || e.target.closest('#ruler')) return;
+  const t = laneAt(e.clientY);
+  if(t) toggleTempSolo(t.id);
+});
+
 /* wheel: plain scrolls, shift scrolls horizontally, cmd/ctrl zooms */
 $('lanes').addEventListener('wheel', e => {
   if(e.ctrlKey || e.metaKey){
@@ -1564,6 +1609,7 @@ addEventListener('keydown', e => {
     e.preventDefault(); playing ? pause() : play();
   }
   if(e.key === 'Escape'){
+    releaseTempSolo();
     closeMenus();
     hideTip();
     if(editing) closeEditor();
