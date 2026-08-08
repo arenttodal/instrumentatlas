@@ -151,7 +151,12 @@ body{background:#080C14}
 .atl-fam-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .atl-fam-card{display:block;padding:26px 24px 24px;border:1px solid var(--hair);border-radius:12px;background:rgba(255,255,255,.02);
   transition:border-color .3s,background .3s,transform .3s}
-.atl-fam-card:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03);transform:translateY(-3px)}
+/* The hovered card is the one the footage is playing for, so it takes a nearly
+   opaque dark fill: the video reads around it rather than through it, and the
+   card lifts off the moving background instead of dissolving into it. */
+.atl-fam-card:hover{border-color:var(--hair-gold);transform:translateY(-3px);
+  background:linear-gradient(180deg,rgba(10,14,24,.94) 0%,rgba(8,12,20,.97) 100%);
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
 .atl-fam-card .plate{font-size:10.5px;font-weight:700;letter-spacing:2.4px;color:var(--gold);text-transform:uppercase}
 .atl-fam-card h3{font-size:24px;margin:0 0 10px}
 .atl-fam-card p{font-size:14px;line-height:1.6;color:var(--text-dim);font-weight:300}
@@ -607,7 +612,7 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-famvid video{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;
   opacity:0;transition:opacity 900ms ease}
-.atl-famvid video.is-on{opacity:.24}
+.atl-famvid video.is-on{opacity:.20}
 /* The atmosphere gradient must stay above the footage, or the headline is lost.
    Nothing else needs raising: the nav, topbar, main, footer and dock are all
    already positioned with a z-index well above this layer, and restating them
