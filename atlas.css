@@ -208,7 +208,10 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
   background:linear-gradient(135deg,var(--gold) 0%,var(--gold-deep) 100%)}
 /* transparent: the embedded viewer renders on alpha, so the plate's own
    gradient reads straight through instead of a second darker rectangle */
-.atl-plate-3d{position:relative;aspect-ratio:4/5;border-radius:6px;overflow:hidden;background:transparent;
+/* 11/12 is chosen so this box and the 2D engraving below resolve to the same
+   height at the same column width. They swap in place, and the caption and the
+   facts under them do not move when the toggle is used. */
+.atl-plate-3d{position:relative;aspect-ratio:11/12;border-radius:6px;overflow:hidden;background:transparent;
   margin:6px 0 18px;display:none}
 .atl-plate-3d iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2}
 /* hidden until the iframe actually fails — the viewer renders on alpha now,
@@ -301,7 +304,7 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate::before{top:9px;left:9px;border-right:none;border-bottom:none}
 .atl-plate::after{bottom:9px;right:9px;border-left:none;border-top:none}
 .atl-plate-art{display:flex;justify-content:center;padding:6px 0 18px}
-.atl-plate-art svg{width:100%;max-width:290px;height:auto}
+.atl-plate-art svg{width:100%;max-width:230px;height:auto}   /* 230 × 520/300 matches the 3D box */
 .atl-plate-cap{border-top:1px solid var(--hair);padding-top:14px;text-align:center}
 .atl-plate-cap .no{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
 .atl-plate-cap .nm{font-family:'Playfair Display',serif;font-style:italic;font-size:19px;color:#fff;margin-top:6px}
@@ -311,11 +314,14 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 
 .atl-inst-id .epithet{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--gold);margin:0 0 18px}
 .atl-inst-id .summary{font-size:16.5px;font-weight:300;color:#9A9CA4;max-width:560px}
-.atl-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:32px;background:var(--hair);border:1px solid var(--hair);border-radius:8px;overflow:hidden}
-.atl-fact{background:#080C14;padding:16px 18px}
-.atl-fact span{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
-.atl-fact b{font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:600;line-height:1.25}
-.atl-fact b em{font-style:normal;font-size:13px;color:var(--text-dim);font-family:'DM Sans',sans-serif;font-weight:400}
+/* The three key numbers sit under the plate caption as a compact label/value
+   list rather than three large cards. They are reference detail, not headline,
+   and the space they used to take belongs to the summary and the demos. */
+.atl-plate-facts{margin-top:12px;padding-top:10px;border-top:1px solid var(--hair)}
+.atl-plate-facts div{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:3.5px 0}
+.atl-plate-facts span{font-size:9px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+.atl-plate-facts b{font-size:12.5px;color:#fff;font-weight:500;text-align:right}
+.atl-plate-facts b em{font-style:normal;font-size:11px;color:var(--text-dim);font-weight:400}
 
 /* --- audio demos --- */
 .atl-demos{margin-top:34px;border-top:1px solid var(--hair);padding-top:26px}
@@ -421,7 +427,6 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-fam-grid,.atl-inst-grid,.atl-detail,.atl-foot-grid,.atl-gallery{grid-template-columns:1fr}
   .atl-strip{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   .atl-detail{gap:34px;padding:36px 0}
-  .atl-facts{grid-template-columns:1fr}
   .atl-timbre-stats{grid-template-columns:1fr}
   .atl-timbre-chart{padding:10px 4px 6px}
   .atl-timbre-key{gap:14px;font-size:10px}

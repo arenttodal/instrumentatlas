@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Instrument Viewer — Evenant</title>
+<title>Instrument Viewer · Evenant</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -111,7 +111,7 @@ html.embed .bar,html.embed .atmos,html.embed .hint{display:none}
 html.embed .load,html.embed .fallback{background:transparent}
 html.embed .foot{padding:12px 14px;justify-content:flex-end}
 /* The credit is hidden HERE ONLY because the host page prints the full CC BY
-   attribution — title, author, Sketchfab source, licence and modification —
+   attribution: title, author, Sketchfab source, licence and modification,
    in the plate caption directly beneath this frame. Standalone /viewer/ keeps
    its own credit, and it must: without the host caption this frame would carry
    no attribution at all. Do not reuse embed=1 anywhere the caption is absent. */
@@ -208,14 +208,14 @@ window.addEventListener('unhandledrejection', function(e){
   if(window.__viewerBooted) return;
   viewerFail('Load failed', String(e.reason && e.reason.message || e.reason || ''));
 });
-/* file:// cannot fetch models or modules — say so explicitly */
+/* file:// cannot fetch models or modules, so say so explicitly */
 if(location.protocol === 'file:'){
   viewerFail('Needs a local server',
     'Browsers block <code>file://</code> from loading 3D models.<br><br>' +
     'In this folder run:<br><b style="color:#D4A04A">python3 -m http.server 8000</b><br>' +
     'then open <b style="color:#D4A04A">http://localhost:8000/instruments.html</b>');
 }
-/* nothing rendered after 12s? something is wrong — stop pretending to load */
+/* nothing rendered after 12s? something is wrong. Stop pretending to load */
 setTimeout(function(){
   if(!window.__viewerBooted && location.protocol !== 'file:'){
     viewerFail('Still loading…',
@@ -232,11 +232,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /* ============================================================================
-   1. DATA — instruments, materials, hotspots.
+   1. DATA. Instruments, materials, hotspots.
    Hotspots are POINTS IN MODEL SPACE with a radius, not geometry. Models are
    normalised at export (centred on origin, longest axis = 1.0), so every
    coordinate below sits in the same -0.5…0.5 space regardless of source model.
-   Place new ones with ?author=1 — click the model, paste from the console.
+   Place new ones with ?author=1: click the model, paste from the console.
    ============================================================================ */
 
 const MATERIALS = {
@@ -256,25 +256,25 @@ const INSTRUMENTS = {
        body:'Decorative and functional at once: the pegbox houses the tuning pegs, and the scroll caps it. The carving style is often distinctive enough to identify a maker or a whole school of instrument building.'},
       {id:'pegs', label:'Pegs', pos:[0.03,0.42,0], radius:0.055,
        title:'Tuning pegs',
-       body:'Friction-fit tapered pegs with no gearing at all — tuned by pushing in and turning at the same time. They are coarse by design; fine tuning happens down at the tailpiece.', related:['tailpiece']},
+       body:'Friction-fit tapered pegs with no gearing at all, and tuned by pushing in and turning at the same time. They are coarse by design; fine tuning happens down at the tailpiece.', related:['tailpiece']},
       {id:'fingerboard', label:'Fingerboard', pos:[0,0.26,0.03], radius:0.09,
        title:'Fingerboard',
-       body:'Ebony, and unfretted — pitch is entirely the player\'s responsibility. It is curved to match the bridge so that each string can be bowed on its own without catching its neighbours.'},
+       body:'Ebony, and unfretted, so pitch is entirely the player\'s responsibility. It is curved to match the bridge so that each string can be bowed on its own without catching its neighbours.'},
       {id:'bridge', label:'Bridge', pos:[0,-0.05,0.05], radius:0.05,
        title:'Bridge',
-       body:'Transmits string vibration into the top plate, and is held in place by string pressure alone — never glued. Its curvature sets both the string spacing and the clearance the bow needs to reach one string at a time.', related:['soundpost','fholes']},
+       body:'Transmits string vibration into the top plate, and is held in place by string pressure alone, never glued. Its curvature sets both the string spacing and the clearance the bow needs to reach one string at a time.', related:['soundpost','fholes']},
       {id:'fholes', label:'f-holes', pos:[0.12,-0.04,0.045], radius:0.07,
        title:'The f-holes',
        body:'They let air move in and out of the body, and their length and placement tune the air resonance inside it. They also free the centre of the top plate to vibrate, which matters as much as the airflow.', related:['bridge']},
       {id:'soundpost', label:'Soundpost', pos:[0.03,-0.06,0], radius:0.05,
-       title:'Soundpost — l\'âme',
+       title:'Soundpost, l\'âme',
        body:'A dowel wedged inside between top and back, just under the treble foot of the bridge. It couples the two plates, and moving it by a millimetre shifts the whole instrument brighter or darker. The French call it the soul of the instrument.', related:['bridge','bassbar']},
       {id:'bassbar', label:'Bass bar', pos:[-0.06,-0.06,0.02], radius:0.05,
        title:'Bass bar',
        body:'Glued under the bass side of the top plate. It strengthens the top against string pressure and carries low-frequency vibration along its length, spreading it across the plate.', related:['soundpost']},
       {id:'tailpiece', label:'Tailpiece', pos:[0,-0.22,0.04], radius:0.06,
        title:'Tailpiece and fine tuners',
-       body:'Anchors the strings at the bottom end. The fine tuners here give small, controllable adjustments without going near the pegs — which is how most players tune once they are roughly in.', related:['pegs']},
+       body:'Anchors the strings at the bottom end. The fine tuners here give small, controllable adjustments without going near the pegs, which is how most players tune once they are roughly in.', related:['pegs']},
       {id:'endpin', label:'Endpin', pos:[0,-0.42,0], radius:0.06,
        title:'Endpin',
        body:'An adjustable spike that sets playing height and anchors the instrument against the floor. It also transmits a little sound into the stage itself, which players on a wooden platform can feel.'}
@@ -291,7 +291,7 @@ const INSTRUMENTS = {
        body:'A deep funnel-shaped cup, quite unlike a trumpet\'s shallower bowl. That funnel is a large part of why the horn reads as dark and rounded rather than bright and direct.', related:['bore']},
       {id:'leadpipe', label:'Leadpipe', pos:[-0.22,0.06,0.04], radius:0.07,
        title:'Leadpipe',
-       body:'The first tapered section after the mouthpiece. Its exact taper has a strong effect on response and on how cleanly the instrument slots onto a note — players are particular about it.', related:['bore']},
+       body:'The first tapered section after the mouthpiece. Its exact taper has a strong effect on response and on how cleanly the instrument slots onto a note, and players are particular about it.', related:['bore']},
       {id:'bore', label:'Conical bore', pos:[-0.05,0.02,0], radius:0.12,
        title:'Conical vs cylindrical bore',
        body:'The horn is predominantly conical, expanding gradually all the way from mouthpiece to bell. Trumpets and trombones are largely cylindrical until the bell flares. Conical bores emphasise even harmonics and read as warm and round; cylindrical bores favour odd harmonics and sound brighter and more penetrating.', related:['bell','mouthpiece']},
@@ -300,16 +300,16 @@ const INSTRUMENTS = {
        body:'Rotary rather than piston, as on a trumpet. Each one diverts the air through an extra length of tubing, lowering the pitch. The rotary action is quieter and smoother, which suits the horn\'s legato writing.', related:['slides','thumb']},
       {id:'slides', label:'Valve slides', pos:[0.16,-0.16,0], radius:0.08,
        title:'Valve slides',
-       body:'These fine-tune the extra length each valve adds. Horn intonation leans heavily on them — plus the player\'s lip and right hand, which do more correcting on this instrument than on any other brass.', related:['valves','hand']},
+       body:'These fine-tune the extra length each valve adds. Horn intonation leans heavily on them, plus the player\'s lip and right hand, which do more correcting on this instrument than on any other brass.', related:['valves','hand']},
       {id:'thumb', label:'Thumb valve', pos:[-0.02,-0.14,0.06], radius:0.06,
-       title:'Thumb valve — the double horn',
+       title:'Thumb valve, the double horn',
        body:'Switches between the F and B♭ sides of a double horn. B♭ is more secure up high, F is warmer and speaks better low down. Most orchestral players are switching constantly, mid-phrase.'},
       {id:'tuning', label:'Tuning slide', pos:[-0.12,-0.18,-0.03], radius:0.07,
        title:'Main tuning slide',
        body:'Adjusts the pitch of the whole instrument, rather than one valve\'s worth of tubing. This is what gets pulled or pushed when the orchestra tunes.', related:['slides']},
       {id:'bell', label:'Bell', pos:[0.34,-0.02,-0.02], radius:0.13,
        title:'Bell throat and flare',
-       body:'Where the gradual taper suddenly accelerates. The diameter of the flare and how fast it opens shape both projection and brightness — a wider, faster flare throws more sound into the room.', related:['bore','hand']},
+       body:'Where the gradual taper suddenly accelerates. The diameter of the flare and how fast it opens shape both projection and brightness. A wider, faster flare throws more sound into the room.', related:['bore','hand']},
       {id:'hand', label:'Hand position', pos:[0.28,-0.08,0.04], radius:0.09,
        title:'The hand in the bell',
        body:'The right hand sits inside the bell and adjusts pitch and colour continuously. Closing it fully gives stopped horn: a nasal, metallic sound that also raises the pitch by roughly a semitone.', related:['bell']}
@@ -323,7 +323,7 @@ const INSTRUMENTS = {
     hotspots:[
       {id:'mouthpiece', label:'Mouthpiece', pos:[-0.46,0.02,0], radius:0.06,
        title:'Mouthpiece',
-       body:'A shallow, cup-shaped bowl with a fairly sharp inner rim — the opposite of the horn\'s deep funnel. The shallow cup favours upper harmonics, which is most of why a trumpet cuts through an orchestra.', related:['bore']},
+       body:'A shallow, cup-shaped bowl with a fairly sharp inner rim, the opposite of the horn\'s deep funnel. The shallow cup favours upper harmonics, which is most of why a trumpet cuts through an orchestra.', related:['bore']},
       {id:'bore', label:'Cylindrical bore', pos:[-0.12,-0.02,0], radius:0.10,
        title:'Cylindrical bore',
        body:'For roughly two-thirds of its length the trumpet\'s tubing holds a constant diameter, only flaring near the end. Cylindrical bores emphasise odd harmonics, giving the bright, penetrating tone that separates it from the conical horn.', related:['bell']},
@@ -341,7 +341,7 @@ const INSTRUMENTS = {
        body:'The rapid flare at the end radiates sound into the room and sets how directional it is. High frequencies beam straight ahead, which is why a trumpet sounds noticeably brighter when it points at you.', related:['bore']},
       {id:'watervalve', label:'Water key', pos:[0.14,-0.24,0], radius:0.05,
        title:'Water key',
-       body:'Condensation collects at the low points of the tubing and has to be released, or the sound turns gurgling and unfocused. Nothing acoustic about it — purely practical, and used constantly.'}
+       body:'Condensation collects at the low points of the tubing and has to be released, or the sound turns gurgling and unfocused. Nothing acoustic about it: purely practical, and used constantly.'}
     ]
   },
 
@@ -355,7 +355,7 @@ const INSTRUMENTS = {
        body:'The same anatomy as the cello, at a quarter of the size. Carving quality here is one of the first things an appraiser looks at, because it is where a maker\'s hand shows most clearly.'},
       {id:'fingerboard', label:'Fingerboard', pos:[0,0.24,0.02], radius:0.10,
        title:'Fingerboard',
-       body:'Ebony and unfretted. Because the instrument is small, the distance between semitones is tiny — intonation is far less forgiving than on a cello, especially in high positions.'},
+       body:'Ebony and unfretted. Because the instrument is small, the distance between semitones is tiny, so intonation is far less forgiving than on a cello, especially in high positions.'},
       {id:'bridge', label:'Bridge', pos:[0,-0.06,0.05], radius:0.05,
        title:'Bridge',
        body:'Held by string tension alone. Its curve is steeper than a cello\'s relative to size, which is what lets a violinist cross strings quickly without catching the neighbouring one.', related:['soundpost']},
@@ -364,10 +364,10 @@ const INSTRUMENTS = {
        body:'Tune the air resonance of the body and free the top plate to move. Their shape is largely inherited from the Cremonese makers, and small variations are a maker\'s signature.'},
       {id:'soundpost', label:'Soundpost', pos:[0.03,-0.07,0], radius:0.045,
        title:'Soundpost',
-       body:'Wedged between top and back under the treble side of the bridge. Millimetre adjustments audibly change the instrument\'s brightness — enough that players have it moved seasonally.', related:['bridge']},
+       body:'Wedged between top and back under the treble side of the bridge. Millimetre adjustments audibly change the instrument\'s brightness, enough that players have it moved seasonally.', related:['bridge']},
       {id:'chinrest', label:'Chinrest', pos:[-0.04,-0.30,0.05], radius:0.07,
        title:'Chinrest',
-       body:'Not original to the instrument — Louis Spohr added it around 1820. It lets the player hold the violin with the jaw alone, freeing the left hand to shift position rather than support the neck.'},
+       body:'Not original to the instrument: Louis Spohr added it around 1820. It lets the player hold the violin with the jaw alone, freeing the left hand to shift position rather than support the neck.'},
       {id:'tailpiece', label:'Tailpiece', pos:[0,-0.24,0.04], radius:0.05,
        title:'Tailpiece and fine tuners',
        body:'Anchors the strings and carries the fine tuners. Steel E strings in particular need one, since the pegs are far too coarse to tune them accurately.'}
@@ -418,7 +418,7 @@ wrap.appendChild(renderer.domElement);
 const scene  = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 0.01, 100);
 
-/* RoomEnvironment generates a studio IBL procedurally — no HDRI to host */
+/* RoomEnvironment generates a studio IBL procedurally, so there is no HDRI to host */
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
@@ -427,7 +427,7 @@ const rim = new THREE.DirectionalLight(0x8FB4E0, 1.1); rim.position.set(-2,1,-2)
 const warm= new THREE.DirectionalLight(0xD4A04A, 0.5); warm.position.set(0,-1.5,1.5);
 scene.add(key, rim, warm);
 
-/* contact shadow — instruments with no shadow read as clip art */
+/* contact shadow: instruments with no shadow read as clip art */
 const shadowGeo = new THREE.PlaneGeometry(2.4, 2.4);
 const shadowMat = new THREE.MeshBasicMaterial({
   transparent:true, opacity:0.5, depthWrite:false,
@@ -663,11 +663,11 @@ if(AUTHOR){
   });
   hotspotDebug();
   function hotspotDebug(){
-    console.log('%c AUTHOR MODE — double-click the model to print a hotspot coordinate.',
+    console.log('%c AUTHOR MODE. Double-click the model to print a hotspot coordinate.',
       'background:#D4A04A;color:#000;padding:2px 6px');
   }
   document.querySelector('.hint').innerHTML =
-    '<b style="color:#D4A04A">AUTHOR MODE</b> — double-click the model, coordinates print to the console';
+    '<b style="color:#D4A04A">AUTHOR MODE</b>. Double-click the model, coordinates print to the console';
 }
 
 /* ---------- loop ---------- */
