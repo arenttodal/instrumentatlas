@@ -297,12 +297,12 @@ function viewInstrument(id){
             <div class="atl-plate-art">${PLATES[id] || ''}</div>
             ${it.model ? `
             <div class="atl-plate-3d">
-              <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}"
+              <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}&amp;embed=1"
                 title="Interactive 3D ${esc(it.name)}" loading="lazy" allow="fullscreen"></iframe>
               <div class="atl-plate-3d-fail">The 3D viewer is not deployed yet.</div>
             </div>` : ''}
             <div class="atl-plate-cap">
-              <div class="no">${esc(it.plate)}</div>
+              <div class="no">${esc(fam.name)} family</div>
               <div class="nm">${esc(it.latin)}</div>
               <div class="src atl-cap-2d">Placeholder line art — final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>
               ${it.model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')} · <a href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
@@ -450,7 +450,7 @@ function wirePlateSwitch(){
           f.addEventListener('load', () => {
             let ok = false;
             try { ok = !!f.contentDocument.getElementById('stage'); } catch(_){ ok = true; }
-            if(!ok) f.style.display = 'none';
+            if(!ok){ f.style.display = 'none'; f.closest('.atl-plate-3d').classList.add('is-fail'); }
           }, {once:true});
         }
       }

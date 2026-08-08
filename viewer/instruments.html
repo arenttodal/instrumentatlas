@@ -101,6 +101,19 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 .fallback article h3{font-size:17px;margin-bottom:6px}
 .fallback article p{font-size:14px;line-height:1.6;color:var(--text);font-weight:300}
 
+/* ---------- embed mode (?embed=1) ----------
+   Used when the viewer is iframed inside a plate on an instrument page. The
+   host page already carries the title, the instrument name and its own
+   background, so the viewer drops all of its chrome except the CC BY credit
+   and lets the host's background show through. */
+html.embed,html.embed body{background:transparent}
+html.embed .bar,html.embed .atmos,html.embed .hint{display:none}
+html.embed .load,html.embed .fallback{background:transparent}
+html.embed .foot{padding:12px 14px;justify-content:flex-end}
+/* the credit now sits over the model rather than a flat backdrop — lift it
+   just enough to stay legible over varnished wood or polished brass */
+html.embed .credit{max-width:none;color:#6E707A;text-shadow:0 1px 8px rgba(8,12,20,.95)}
+
 @media (max-width:820px){
   .panel{top:auto;bottom:0;right:0;left:0;width:auto;transform:translateY(20px);border-radius:14px 14px 0 0;
     max-height:52vh;overflow:auto}
@@ -114,6 +127,12 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 </style>
+<script>
+/* Set before first paint so an embedded viewer never flashes its own
+   background or chrome before the module runs. */
+if(new URLSearchParams(location.search).get('embed') === '1')
+  document.documentElement.classList.add('embed');
+</script>
 </head>
 <body>
 
@@ -364,6 +383,8 @@ function hasWebGL(){
 
 const params  = new URLSearchParams(location.search);
 const AUTHOR  = params.get('author') === '1';
+/* embedded in an instrument page: one instrument, no chrome, no picker */
+const EMBED   = params.get('embed') === '1';
 let current   = INSTRUMENTS[params.get('i')] ? params.get('i') : 'cello';
 
 if(!hasWebGL()){
@@ -612,7 +633,7 @@ addEventListener('keydown', e => {
 
 /* ---------- instrument picker ---------- */
 const picker = document.getElementById('picker');
-Object.keys(INSTRUMENTS).forEach(k => {
+if(!EMBED) Object.keys(INSTRUMENTS).forEach(k => {
   const b = document.createElement('button');
   b.textContent = INSTRUMENTS[k].name;
   b.setAttribute('aria-pressed', String(k === current));
