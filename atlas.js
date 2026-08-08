@@ -288,11 +288,11 @@ function viewInstrument(id){
       <!-- OVERVIEW -->
       <div class="atl-panel is-active" data-panel="overview">
         <section class="atl-inst-top">
-          <div class="atl-plate atl-fade" data-view="2d">
+          <div class="atl-plate atl-fade" data-view="${it.model ? '3d' : '2d'}">
             ${it.model ? `
             <div class="atl-plate-switch" role="group" aria-label="Plate view">
-              <button type="button" data-pv="2d" aria-pressed="true">2D</button>
-              <button type="button" data-pv="3d" aria-pressed="false">3D</button>
+              <button type="button" data-pv="2d" aria-pressed="false">2D</button>
+              <button type="button" data-pv="3d" aria-pressed="true">3D</button>
             </div>` : ''}
             <div class="atl-plate-art">${PLATES[id] || ''}</div>
             ${it.model ? `
@@ -305,7 +305,7 @@ function viewInstrument(id){
               <div class="no">${esc(fam.name)} family</div>
               <div class="nm">${esc(it.latin)}</div>
               <div class="src atl-cap-2d">Placeholder line art — final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>
-              ${it.model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')} · <a href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
+              ${it.model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')}${it.modelSource ? ` · <a href="${esc(it.modelSource)}" target="_blank" rel="noopener">Sketchfab</a>` : ''} · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
             </div>
           </div>
           <div class="atl-inst-id atl-fade" style="transition-delay:90ms">
@@ -432,30 +432,35 @@ function initInstrument(id){
   });
 }
 
-/* 2D engraving <-> 3D model, inside the plate. The iframe is created on first
-   use only, so pages nobody switches never spin up a WebGL context. */
+/* 2D engraving <-> 3D model, inside the plate. Instruments with a model open on
+   3D, so the iframe is spun up on arrival; pages without one never touch WebGL.
+   The iframe is still created only once, whether by default or by a click. */
 function wirePlateSwitch(){
   const plate = document.querySelector('.atl-plate[data-view]');
   if(!plate) return;
+
+  const load3d = () => {
+    const f = document.getElementById('atl-plate-iframe');
+    if(!f || f.src || !f.dataset.src) return;
+    f.src = f.dataset.src;
+    f.addEventListener('load', () => {
+      let ok = false;
+      try { ok = !!f.contentDocument.getElementById('stage'); } catch(_){ ok = true; }
+      if(!ok){ f.style.display = 'none'; f.closest('.atl-plate-3d').classList.add('is-fail'); }
+    }, {once:true});
+  };
+
   plate.querySelectorAll('.atl-plate-switch button').forEach(b => {
     b.addEventListener('click', () => {
       const v = b.dataset.pv;
       plate.dataset.view = v;
       plate.querySelectorAll('.atl-plate-switch button')
         .forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-      if(v === '3d'){
-        const f = document.getElementById('atl-plate-iframe');
-        if(f && !f.src && f.dataset.src){
-          f.src = f.dataset.src;
-          f.addEventListener('load', () => {
-            let ok = false;
-            try { ok = !!f.contentDocument.getElementById('stage'); } catch(_){ ok = true; }
-            if(!ok){ f.style.display = 'none'; f.closest('.atl-plate-3d').classList.add('is-fail'); }
-          }, {once:true});
-        }
-      }
+      if(v === '3d') load3d();
     });
   });
+
+  if(plate.dataset.view === '3d') load3d();
 }
 
 /* shared tab wiring for family + instrument pages */
