@@ -707,7 +707,7 @@ function buildRoleChips(){
       b.onclick = () => {
         [...ae.children].forEach(c => { c.setAttribute('aria-pressed','false'); c.style.color=''; });
         b.setAttribute('aria-pressed','true'); b.style.color = ROLE_COLOR[r];
-        if(editing){ editing.role = r; lastRole = r; }
+        if(editing){ editing.role = r; lastRole = r; if(dragSel){ dragSel.role = r; draw(); } }
       };
       ae.appendChild(b);
     });
@@ -804,25 +804,28 @@ function openEditor(trackId, fromBar, toBar, existing){
   });
   $('ann-edit').classList.add('on');
 }
-$('ae-cancel').onclick = () => { $('ann-edit').classList.remove('on'); editing = null; };
+function closeEditor(){
+  $('ann-edit').classList.remove('on');
+  editing = null; dragSel = null;
+  draw();
+}
+$('ae-cancel').onclick = closeEditor;
 $('ae-save').onclick = () => {
   if(!editing) return;
   editing.note = $('ae-note').value.trim();
   if(!ANN.roles.includes(editing)) ANN.roles.push(editing);
-  $('ann-edit').classList.remove('on'); editing = null;
-  draw(); drawSidebar(true);
+  closeEditor(); drawSidebar(true);
 };
 $('ae-del').onclick = () => {
   if(editing){ ANN.roles = ANN.roles.filter(r => r !== editing); }
-  $('ann-edit').classList.remove('on'); editing = null;
-  draw(); drawSidebar(true);
+  closeEditor(); drawSidebar(true);
 };
 
 $('ann-btn').onclick = function(){
   annotating = !annotating;
   this.setAttribute('aria-pressed', String(annotating));
   document.body.classList.toggle('annotating', annotating);
-  if(!annotating){ hoverLane = null; dragSel = null; }
+  if(!annotating){ hoverLane = null; if(editing) closeEditor(); dragSel = null; }
   draw();
   if(annotating && !$('side').classList.contains('on')) $('tips-btn').click();
   drawSidebar(true);
@@ -1016,7 +1019,12 @@ const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
     const li = laneIndexAt(e.clientY); if(li === null) return;
     const t = S.tracks[li], b = barAt(e);
     const hit = ANN.roles.find(x => x.track===t.id && b>=x.from && b<x.to);
-    if(hit){ selTrack=t.id; openEditor(t.id, hit.from, hit.to, hit); drawSidebar(true); return; }
+    if(hit){
+      selTrack = t.id;
+      dragSel = {lane:li, from:hit.from, to:hit.to, role:hit.role};
+      openEditor(t.id, hit.from, hit.to, hit);
+      draw(); drawSidebar(true); return;
+    }
     dragging = true; track = t; anchor = b; hoverLane = li;
     dragSel = {lane:li, from:b, to:b+SNAP, role:lastRole};
     draw();
@@ -1026,10 +1034,10 @@ const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
   l.addEventListener('pointerup', e => {
     if(!dragging) return;
     dragging = false;
-    const from = dragSel.from, to = dragSel.to;
-    dragSel = null; draw();
+    /* leave dragSel in place — it stays drawn until the editor is saved or
+       dismissed, so you can see what you are writing about */
     selTrack = track.id;
-    openEditor(track.id, from, to);
+    openEditor(track.id, dragSel.from, dragSel.to);
     drawSidebar(true);
   });
 })();
@@ -1067,7 +1075,10 @@ addEventListener('keydown', e => {
   if(e.code === 'Space' && !(e.target instanceof HTMLButtonElement)){
     e.preventDefault(); playing ? pause() : play();
   }
-  if(e.key === 'Escape'){ $('tip-panel').classList.remove('on'); openTip = null; }
+  if(e.key === 'Escape'){
+    $('tip-panel').classList.remove('on'); openTip = null;
+    if(editing) closeEditor();
+  }
   if(e.key === 'ArrowRight'){ e.preventDefault(); seek(position() + (e.shiftKey ? 10 : S.beats*60/S.tempo)); }
   if(e.key === 'ArrowLeft'){  e.preventDefault(); seek(Math.max(0, position() - (e.shiftKey ? 10 : S.beats*60/S.tempo))); }
   if(e.key === 'Home'){ e.preventDefault(); seek(0); }
