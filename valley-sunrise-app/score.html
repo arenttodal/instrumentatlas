@@ -46,9 +46,15 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 /* the sidebar occupies the arrangement area only — the header and transport
    stay fully visible and clickable at all times */
 body.has-side .arr{margin-right:340px}
-.side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:8;overflow-y:auto;
+.side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:8;
+  display:flex;flex-direction:column;
   background:rgba(9,13,22,.97);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   border-left:1px solid var(--hair);transform:translateX(100%);transition:transform .34s cubic-bezier(.16,1,.3,1)}
+/* everything above the tip scrolls; the tip itself is pinned to the bottom so it
+   never shifts the layout when it appears */
+.side-sec,.side-roles{flex:0 0 auto}
+.side-list{flex:1 1 auto;overflow-y:auto;min-height:0}
+.side-foot{flex:0 0 auto}
 .side.on{transform:none}
 .side .eyebrow{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
 .side-sec{padding:20px 20px 18px;border-bottom:1px solid var(--hair)}
@@ -73,11 +79,10 @@ body.has-side .arr{margin-right:340px}
 .rname.sel{color:var(--gold);border-bottom-color:var(--hair-gold)}
 .rnote{font-size:12.5px;line-height:1.6;color:var(--dim);font-weight:300;
   padding:2px 0 10px;border-bottom:1px solid rgba(255,255,255,.05)}
-.side-tip{margin:6px 14px 0;padding:0 16px;max-height:0;overflow:hidden;opacity:0;
-  border:1px solid transparent;border-radius:10px;
-  transition:max-height .4s cubic-bezier(.16,1,.3,1),opacity .3s ease,padding .3s ease,
-             border-color .3s ease,background .3s ease}
-.side-tip.on{max-height:460px;opacity:1;padding:16px;border-color:var(--hair-gold);
+.side-tip{flex:0 0 auto;height:216px;margin:0 14px 14px;padding:16px;overflow-y:auto;
+  border:1px solid transparent;border-radius:10px;opacity:0;visibility:hidden;
+  transition:opacity .32s ease,visibility .32s,border-color .32s ease,background .32s ease}
+.side-tip.on{opacity:1;visibility:visible;border-color:var(--hair-gold);
   background:rgba(212,160,74,.05)}
 .side-tip h3{font-family:'Playfair Display',serif;font-size:18px;color:#fff;font-weight:500;margin:7px 0 9px;line-height:1.25}
 .side-tip p{font-size:13.5px;line-height:1.6;color:var(--text);font-weight:300}
@@ -131,18 +136,6 @@ body.annotating .lanes{cursor:crosshair}
   border-right:4.5px solid transparent;border-top:7px solid var(--gold)}
 
 /* tips */
-.tip-panel{position:absolute;right:18px;top:44px;width:320px;z-index:5;padding:20px;
-  background:rgba(9,13,22,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  border:1px solid var(--hair-gold);border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.6);
-  opacity:0;visibility:hidden;transform:translateX(10px);transition:all .3s cubic-bezier(.16,1,.3,1)}
-.tip-panel.on{opacity:1;visibility:visible;transform:none}
-.tip-panel .eyebrow{font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
-.tip-panel h3{font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:500;margin:8px 0 10px}
-.tip-panel p{font-size:14px;line-height:1.62;color:var(--text);font-weight:300}
-.tip-panel .acts{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair);display:flex;gap:8px}
-.tip-panel .x{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;
-  border:1px solid var(--hair);color:var(--dim);display:flex;align-items:center;justify-content:center;font-size:14px}
-.tip-panel .x:hover{color:var(--gold);border-color:var(--hair-gold)}
 
 .boot{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:14px;background:var(--bg);transition:opacity .4s}
@@ -198,13 +191,13 @@ body.annotating .lanes{cursor:crosshair}
     <div class="rolechips" id="rolechips"></div>
   </div>
   <div class="side-list" id="s-list"></div>
+  <div class="side-foot" id="s-foot"></div>
   <div class="side-tip" id="side-tip">
     <div class="eyebrow" id="tip-bar"></div>
     <h3 id="tip-title"></h3>
     <p id="tip-body"></p>
     <div class="acts" id="tip-acts"></div>
   </div>
-  <div class="side-foot" id="s-foot"></div>
 </aside>
 
 <div class="ann-edit" id="ann-edit">
