@@ -698,6 +698,9 @@ function wireFamilyVideo(isHome){
 function showFamilyVideo(famId){
   clearTimeout(VID.timer);
   VID.timer = setTimeout(() => {
+    const layer = document.getElementById('atl-famvid');
+    /* the scrim rides with the clip, so a still page is never darkened */
+    if(layer) layer.classList.toggle('is-active', FAMILIES.some(f => f.id === famId && f.video));
     document.querySelectorAll('#atl-famvid video').forEach(v => {
       if(v.dataset.fam !== famId){ v.classList.remove('is-on'); v.pause(); return; }
       /* first hover is the first byte requested */
@@ -711,6 +714,8 @@ function showFamilyVideo(famId){
 
 function hideFamilyVideo(){
   clearTimeout(VID.timer);
+  const layer = document.getElementById('atl-famvid');
+  if(layer) layer.classList.remove('is-active');
   document.querySelectorAll('#atl-famvid video').forEach(v => v.classList.remove('is-on'));
 }
 

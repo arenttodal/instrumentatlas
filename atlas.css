@@ -619,6 +619,24 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;
   opacity:0;transition:opacity 900ms ease}
 .atl-famvid video.is-on{opacity:.20}
+
+/* Scrim over the footage. Three layers, painted above the video but below the
+   grain and atmosphere, and faded in with the clip so a page with nothing
+   playing looks exactly as it did before:
+     1. a soft dark pool centred over the content, darkest where the headline
+        and the cards sit, so the type never has to compete with a bright frame
+     2. top and bottom bands, grounding the nav and the card row
+     3. a vignette, which is what actually gives the footage its depth: the
+        corners fall away and the middle distance reads as lit
+   The right of the frame stays the most visible, so the footage still reads as
+   footage rather than as a texture. */
+.atl-famvid::after{content:'';position:absolute;inset:0;pointer-events:none;
+  opacity:0;transition:opacity 900ms ease;
+  background:
+    radial-gradient(ellipse 60% 68% at 34% 44%,rgba(6,9,16,.58) 0%,rgba(6,9,16,.30) 45%,rgba(6,9,16,0) 76%),
+    linear-gradient(180deg,rgba(8,12,20,.72) 0%,rgba(8,12,20,.16) 18%,rgba(8,12,20,.10) 56%,rgba(8,12,20,.80) 100%),
+    radial-gradient(ellipse 76% 80% at 50% 48%,rgba(4,6,12,0) 44%,rgba(4,6,12,.40) 100%)}
+.atl-famvid.is-active::after{opacity:1}
 /* The atmosphere gradient must stay above the footage, or the headline is lost.
    Nothing else needs raising: the nav, topbar, main, footer and dock are all
    already positioned with a z-index well above this layer, and restating them
