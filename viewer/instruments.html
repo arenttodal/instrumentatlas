@@ -248,6 +248,125 @@ const MATERIALS = {
 };
 
 const INSTRUMENTS = {
+  viola: {
+    name:'Viola', file:'viola.glb', keepMaterials:true,
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'scroll', label:'Scroll', pos:[0,0.92,0], radius:0.14,
+       title:'Scroll and pegbox',
+       body:'Gasparo da Salò was working in Brescia around 1580, a generation before Stradivari. The carving is the clearest evidence of a maker\'s hand, which is why appraisers look here first.'},
+      {id:'fingerboard', label:'Fingerboard', pos:[0,0.48,0.06], radius:0.18,
+       title:'Fingerboard',
+       body:'Ebony, and unfretted. Written in alto clef, moving to treble up high.'},
+      {id:'bridge', label:'Bridge', pos:[0,-0.1,0.1], radius:0.1,
+       title:'Bridge',
+       body:'Held by string pressure alone. Its curve sets the string spacing and the clearance the bow needs.', related:['soundpost','fholes']},
+      {id:'fholes', label:'f-holes', pos:[0.22,-0.08,0.09], radius:0.12,
+       title:'The f-holes',
+       body:'They tune the air resonance of the body and free the top plate to move. Brescian f-holes are longer and straighter than Cremonese ones.', related:['bridge']},
+      {id:'body', label:'Body', pos:[0,-0.16,0], radius:0.28,
+       title:'Body proportions',
+       body:'The viola is acoustically too small for its tuning. That compromise is the source of its throaty, slightly veiled character.'},
+      {id:'soundpost', label:'Soundpost', pos:[0.06,-0.12,0], radius:0.09,
+       title:'Soundpost',
+       body:'Wedged inside under the treble foot of the bridge. Millimetre adjustments change the instrument\'s brightness audibly.', related:['bridge']},
+      {id:'tailpiece', label:'Tailpiece', pos:[0,-0.46,0.08], radius:0.1,
+       title:'Tailpiece and fine tuners',
+       body:'Anchors the strings at the bottom end and carries the fine tuners, which is how most players tune once they are roughly in.'}
+    ]
+  },
+
+  bassoon: {
+    name:'Bassoon', file:'bassoon.glb', keepMaterials:true,
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'reed', label:'Reed', pos:[0,0.92,0.06], radius:0.12,
+       title:'Double reed',
+       body:'Two cane blades bound together. Players make and adjust their own, and it changes the instrument\'s response more than any other single factor.', related:['bocal']},
+      {id:'bocal', label:'Bocal', pos:[0.12,0.76,0.04], radius:0.12,
+       title:'Bocal',
+       body:'The curved metal tube joining reed to instrument. Its length and taper are a tuning and response control, and players own several.', related:['reed']},
+      {id:'wing', label:'Wing joint', pos:[0.08,0.4,0], radius:0.16,
+       title:'Wing joint',
+       body:'The narrow upper joint. Its tone holes are drilled at steep angles so the player\'s fingers can reach acoustically correct positions.'},
+      {id:'boot', label:'Boot joint', pos:[0,-0.76,0], radius:0.2,
+       title:'Boot joint',
+       body:'The bore doubles back on itself here, which is how nine feet of tubing fits into an instrument you can hold.', related:['long']},
+      {id:'long', label:'Long joint', pos:[-0.1,0.04,0], radius:0.18,
+       title:'Long joint',
+       body:'Carries the bore back upward, with the left-thumb keys that control the lowest notes.', related:['boot']},
+      {id:'bell', label:'Bell', pos:[-0.08,0.84,0], radius:0.14,
+       title:'Bell',
+       body:'Short and barely flared compared with brass. The bassoon radiates sound along its whole length, not just from the end.'},
+      {id:'keys', label:'Keywork', pos:[0.06,-0.2,0.08], radius:0.18,
+       title:'Keywork',
+       body:'Among the most complex in the orchestra, and unstandardised: German (Heckel) and French (Buffet) systems differ enough that players commit to one.'},
+      {id:'register', label:'Register keys', pos:[0.1,0.56,0.06], radius:0.1,
+       title:'Register keys',
+       body:'Left-thumb keys that open small holes to force the air column into its upper modes. The bassoon\'s registers differ sharply in character as a result.'}
+    ]
+  },
+
+  clarinet: {
+    name:'Clarinet', file:'clarinet.glb', keepMaterials:true,
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'mouthpiece', label:'Mouthpiece', pos:[0,0.92,0], radius:0.12,
+       title:'Mouthpiece and reed',
+       body:'A single reed clamped against the mouthpiece by a ligature. The reed opens and closes against the facing hundreds of times a second, driving the air column.', related:['barrel']},
+      {id:'barrel', label:'Barrel', pos:[0,0.72,0], radius:0.1,
+       title:'Barrel',
+       body:'The short joining section. Pulling it out fractionally flattens the whole instrument, and players tune here.', related:['mouthpiece']},
+      {id:'upper', label:'Upper joint', pos:[0,0.32,0], radius:0.2,
+       title:'Upper joint',
+       body:'Left hand. The throat notes at the top of this joint are the instrument\'s acoustic weak point.', related:['register']},
+      {id:'register', label:'Register key', pos:[0.06,0.52,0.06], radius:0.09,
+       title:'Register key',
+       body:'Opens a small hole that pushes the air column to its next mode. Because the bore is cylindrical and closed at the reed, that mode is a twelfth above, not an octave.', related:['bore']},
+      {id:'bore', label:'Bore', pos:[0,0,0], radius:0.24,
+       title:'Cylindrical bore',
+       body:'Constant diameter for nearly the whole length, closed at the reed end. It emphasises odd harmonics and overblows at the twelfth, the single fact that explains the clarinet\'s fingering system and its registers.', related:['register','bell']},
+      {id:'lower', label:'Lower joint', pos:[0,-0.36,0], radius:0.2,
+       title:'Lower joint',
+       body:'Right hand, with the pinky keys that cover the gaps the fingers cannot reach.', related:['keys']},
+      {id:'keys', label:'Keywork', pos:[0.08,-0.12,0.08], radius:0.16,
+       title:'Keywork',
+       body:'Boehm system, with rings and levers linking holes spaced for acoustics rather than for hands.', related:['lower']},
+      {id:'bell', label:'Bell', pos:[0,-0.88,0], radius:0.14,
+       title:'Bell',
+       body:'Flares only at the very end. It affects the lowest notes and the general radiation, but far less than a brass bell does.', related:['bore']}
+    ]
+  },
+
+  violin2: {
+    name:'Violin (new)', file:'violin2.glb', material:'wood',
+    target:[0,0,0], rotY:0,
+    credit:'Attribution pending, do not publish',
+    hotspots:[
+      {id:'scroll', label:'Scroll', pos:[0,0.88,0], radius:0.14,
+       title:'Scroll and pegbox',
+       body:'The same anatomy as the cello, at a quarter of the size. Carving quality here is one of the first things an appraiser looks at, because it is where a maker\'s hand shows most clearly.'},
+      {id:'fingerboard', label:'Fingerboard', pos:[0,0.44,0.06], radius:0.18,
+       title:'Fingerboard',
+       body:'Ebony and unfretted. Because the instrument is small, the distance between semitones is tiny, so intonation is far less forgiving than on a cello, especially in high positions.'},
+      {id:'bridge', label:'Bridge', pos:[0,-0.12,0.1], radius:0.1,
+       title:'Bridge',
+       body:'Held by string tension alone. Its curve is steeper than a cello\'s relative to size, which is what lets a violinist cross strings quickly without catching the neighbouring one.', related:['fholes']},
+      {id:'fholes', label:'f-holes', pos:[0.2,-0.1,0.08], radius:0.12,
+       title:'The f-holes',
+       body:'Tune the air resonance of the body and free the top plate to move. Their shape is largely inherited from the Cremonese makers, and small variations are a maker\'s signature.', related:['bridge']},
+      {id:'chinrest', label:'Chinrest', pos:[-0.08,-0.56,0.1], radius:0.14,
+       title:'Chinrest',
+       body:'Not original to the instrument: Louis Spohr added it around 1820. It lets the player hold the violin with the jaw alone, freeing the left hand to shift position rather than support the neck.'},
+      {id:'bow', label:'Bow', pos:[0.84,0.1,0], radius:0.24,
+       title:'The bow',
+       body:'Pernambuco or carbon fibre, strung with horsehair and rosined. The frog adjusts hair tension. Bow speed, weight and contact point are the three main controls a player has over tone, more than the instrument itself.'}
+    ]
+  },
+
   cello: {
     name:'Cello', file:'cello.glb', keepMaterials:true,
     target:[0,0,0], rotY:180,
