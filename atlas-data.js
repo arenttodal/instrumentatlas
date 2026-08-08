@@ -489,10 +489,15 @@ const INSTRUMENTS = {
       'Extreme high register is exposed and unforgiving for less experienced players.',
       'Doubling basses at the unison muddies; octaves keep the bottom clear.'
     ],
+    /* File names are inconsistently capitalised on purpose: that is how they
+       were uploaded, and Cloudflare serves paths case-sensitively. */
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:14'},
-      {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:15'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23',
+       src:'audio/instruments/Celloexample1.aac'},
+      {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20',
+       src:'audio/instruments/Celloexample2.aac'},
+      {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:23',
+       src:'audio/instruments/CelloExample3.aac'}
     ],
     prev:'viola', next:'double-bass'
   },

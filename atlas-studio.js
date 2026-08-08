@@ -186,12 +186,15 @@ const S = {
   solo:    null,
   variant: {},     // trackId -> variant v
   chosen:  false,  // has the user picked a theme this session?
-  open:    false,
+  shown:   false,  // is the dock on screen at all?
+  open:    false,  // is the arrangement expanded below the strip?
   loading: false
 };
 
-/* ---------------------------------------------------------------- shell --- */
-dockEl.hidden = false;
+/* ---------------------------------------------------------------- shell ---
+   The markup is built once now, but the dock stays hidden until the Studio
+   button in the nav is switched on. Building it up front costs nothing: no
+   audio is fetched until play is pressed either way. */
 dockEl.innerHTML = `
   <div class="atl-dock-strip">
     <button class="atl-dock-play" id="atl-dk-play" aria-label="Play">
@@ -532,14 +535,38 @@ function syncToRoute(){
 }
 addEventListener('hashchange', syncToRoute);
 
+/* ------------------------------------------------- show and hide the dock ---
+   Off by default. Switching it off pauses playback rather than leaving audio
+   running behind a dock with no visible controls, and keeps the position, so
+   switching it back on resumes exactly where you left it. */
+const btn = document.getElementById('atl-studio-btn');
+const atl = document.getElementById('atl');
+
+function setDock(on){
+  S.shown = on;
+  dockEl.hidden = !on;
+  if(atl) atl.classList.toggle('has-dock', on);
+  if(btn) btn.setAttribute('aria-pressed', String(on));
+  if(!on){
+    if(S.playing && S.engine){ S.engine.pause(); S.playing = false; setPlayIcon(); }
+    closeMenu();
+  } else {
+    /* laid out only now, so the roll has to be drawn against real widths */
+    requestAnimationFrame(() => { draw(); render(); measure(); });
+  }
+}
+
+if(btn) btn.addEventListener('click', () => setDock(!S.shown));
+
 /* ------------------------------------------------------------------ go --- */
-addEventListener('resize', () => { draw(); render(); measure(); });
+addEventListener('resize', () => { if(S.shown){ draw(); render(); measure(); } });
 addEventListener('keydown', e => {
-  if(e.code === 'Space' && e.target === document.body){ e.preventDefault(); elPlay.click(); }
+  if(S.shown && e.code === 'Space' && e.target === document.body){ e.preventDefault(); elPlay.click(); }
 });
 
 loadPassage(Object.keys(PASSAGES)[0]);
 syncToRoute();
+setDock(false);
 requestAnimationFrame(frame);
 
 })();

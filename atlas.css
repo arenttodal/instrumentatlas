@@ -77,6 +77,18 @@ body{background:#080C14}
 .atl-nav-right{display:flex;align-items:center;gap:8px}
 
 /* --- instrument selector --- */
+/* Studio toggle: a ghost twin of the Browse instruments pill, sitting to its
+   left. The dock does not exist on the page until this is switched on. */
+.atl-studio-btn{display:flex;align-items:center;gap:9px;padding:9px 18px;border-radius:100px;
+  border:1px solid var(--hair);background:transparent;color:var(--text-dim);
+  font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;
+  transition:border-color .25s,background .25s,color .25s,box-shadow .25s}
+.atl-studio-btn:hover{border-color:var(--hair-gold);color:#fff}
+.atl-studio-btn .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.45;
+  transition:opacity .25s,background .25s,box-shadow .25s}
+.atl-studio-btn[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.12);color:#fff}
+.atl-studio-btn[aria-pressed="true"] .dot{background:var(--gold);opacity:1;box-shadow:0 0 8px rgba(212,160,74,.8)}
+
 .atl-select{position:relative}
 .atl-select-btn{display:flex;align-items:center;gap:11px;padding:9px 18px;border:1px solid rgba(212,160,74,.42);
   border-radius:100px;font-size:13px;font-weight:500;color:#fff;background:rgba(212,160,74,.07);
@@ -334,7 +346,19 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-demo-meta b{display:block;font-size:14.5px;color:#fff;font-weight:500}
 .atl-demo-meta span{font-size:12.5px;color:var(--text-dim)}
 .atl-wave{display:flex;align-items:flex-end;gap:2px;height:22px;flex:0 0 auto;opacity:.5}
-.atl-wave i{width:2px;background:var(--gold);border-radius:1px;display:block}
+.atl-wave i{width:2px;background:var(--gold);border-radius:1px;display:block;
+  opacity:.34;transition:opacity .12s linear}
+/* a demo with no file keeps the old flat look: every bar at the same weight */
+.atl-demo:not(.is-playable) .atl-wave i{opacity:1}
+.atl-demo.is-playing .atl-wave{opacity:.9}
+.atl-wave i.is-lit{opacity:1}
+.atl-demo-dur{font-size:12px;color:#4E505A;min-width:32px;text-align:right;font-variant-numeric:tabular-nums}
+.atl-demo.is-playing .atl-play{background:rgba(212,160,74,.16);border-color:var(--gold)}
+.atl-play .ico-pause{display:none}
+.atl-demo.is-playing .atl-play .ico-play{display:none}
+.atl-demo.is-playing .atl-play .ico-pause{display:block}
+.atl-demo.is-missing .atl-demo-meta b{color:var(--text-dim)}
+.atl-demo.is-missing .atl-play{opacity:.4}
 .atl-demo-note{font-size:12px;color:#4E505A;margin-top:14px;letter-spacing:.3px}
 
 /* --- detail blocks --- */
@@ -560,8 +584,8 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-dock-opt span{display:block;font-size:11.5px;color:var(--text-dim);font-weight:300;line-height:1.45}
 .atl-dock-opt[aria-current="true"] b{color:var(--gold)}
 
-/* the footer must clear the collapsed strip, or the last line hides behind it */
-.atl-foot{padding-bottom:78px}
+/* the footer only needs to clear the strip while the dock is on screen */
+.atl.has-dock .atl-foot{padding-bottom:78px}
 
 @media (max-width:820px){
   .atl-arr{grid-template-columns:132px 1fr;max-height:min(46vh,420px)}
@@ -583,7 +607,7 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-famvid video{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   min-width:100%;min-height:100%;width:auto;height:auto;object-fit:cover;
   opacity:0;transition:opacity 900ms ease}
-.atl-famvid video.is-on{opacity:.30}
+.atl-famvid video.is-on{opacity:.24}
 /* The atmosphere gradient must stay above the footage, or the headline is lost.
    Nothing else needs raising: the nav, topbar, main, footer and dock are all
    already positioned with a z-index well above this layer, and restating them
