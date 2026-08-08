@@ -894,6 +894,67 @@ const INSTRUMENTS = {
    orchestra / label channel uploads, embedded through YouTube's own player
    with attribution and a link back to the source.
    ============================================================================ */
+/* ============================================================================
+   STUDIO
+   ----------------------------------------------------------------------------
+   The dock at the bottom of every page. Each passage is the same music rendered
+   once per part, and once per section size within a part, so any combination
+   stacks in time and can be crossfaded without restarting.
+
+   Adding a theme: drop a folder of renders into audio/<id>/ and add one entry
+   to PASSAGES. Nothing else in the codebase needs to change.
+   ============================================================================ */
+
+const AUDIO = { base:'audio/', ext:'aac' };
+
+/* One family palette for the whole site. The studio brief proposed a second
+   set, but it assigned gold to brass, and gold already means "the thing you
+   are currently looking at" everywhere in the atlas, including the audible
+   note blocks and the playhead in this very dock. Two meanings for one colour
+   in one widget is a real collision, so the timbre chart's palette wins and
+   atlas.js reads FAM_COLOR from here. */
+const STUDIO_FAM = {
+  strings:'#9B8FD4', woodwinds:'#5FB89A', brass:'#6C9BD8', percussion:'#C9834F'
+};
+
+const PASSAGES = {
+
+  'theme-1': {
+    title:   'Theme 1',
+    subtitle:'Horn melody with octave doublings',
+    tempo:   73,
+    beats:   4,
+    bars:    7,
+    tracks: [
+      { id:'flute', instrument:'flute', family:'woodwinds', role:'Doubling, 8va',
+        variants:[ {v:'1', label:'Solo', file:'flute_1'} ],
+        notes:[ [0,1.156,72], [0.928,0.906,67], [1.667,4.25,79], [6.407,0.812,72], [7.136,0.875,79],
+                [7.938,1.719,80], [9.49,1.146,77], [10.511,2.323,84], [13.115,2.531,79], [15.553,1.76,75],
+                [17.073,0.625,74], [17.626,0.469,72], [18.021,2.208,74], [20.49,1.688,67], [22.042,0.938,70],
+                [22.876,4.042,72] ] },
+
+      { id:'horn', instrument:'horn', family:'brass', role:'Melody',
+        variants:[ {v:'1',  label:'Solo', file:'horn_1'},
+                   {v:'4',  label:'4',    file:'horn_4'},
+                   {v:'6',  label:'6',    file:'horn_6'},
+                   {v:'12', label:'12',   file:'horn_12'} ],
+        notes:[ [0,1.156,60], [0.928,0.906,55], [1.667,4.25,67], [6.407,0.812,60], [7.136,0.875,67],
+                [7.938,1.719,68], [9.49,1.146,65], [10.511,2.323,72], [13.115,2.531,67], [15.553,1.76,63],
+                [17.073,0.625,62], [17.626,0.469,60], [18.021,2.208,62], [20.49,1.688,55], [22.042,0.938,58],
+                [22.876,4.042,60] ] },
+
+      { id:'cello', instrument:'cello', family:'strings', role:'Doubling, 8vb',
+        variants:[ {v:'1',   label:'Solo',    file:'cello_1'},
+                   {v:'ens', label:'Section', file:'cello_ens'} ],
+        notes:[ [0,1.156,48], [0.928,0.906,43], [1.667,4.25,55], [6.407,0.812,48], [7.136,0.875,55],
+                [7.938,1.719,56], [9.49,1.146,53], [10.511,2.323,60], [13.115,2.531,55], [15.553,1.76,51],
+                [17.073,0.625,50], [17.626,0.469,48], [18.021,2.208,50], [20.49,1.688,43], [22.042,0.938,46],
+                [22.876,4.042,48] ] }
+    ]
+  }
+
+};
+
 const GALLERY = [
   {v:'9aDEq3u5huA', title:'Beethoven, Symphony No. 5', perf:'Berliner Philharmoniker · Herbert von Karajan', why:'The most famous motif in music, developed for four movements', chan:'Berliner Philharmoniker'},
   {v:'a9UApyClFKA', title:'Beethoven, Symphony No. 5 (complete)', perf:'Concertgebouworkest · Iván Fischer', why:'A modern reading, filmed close enough to watch the sections work', chan:'Concertgebouworkest'},

@@ -41,6 +41,12 @@
 
   <main class="atl-main" id="atl-view"></main>
 
+  <!-- The studio dock is rendered once, here, deliberately OUTSIDE #atl-view.
+       Routing replaces the contents of #atl-view on every navigation; if the
+       dock lived in there, playback would stop the moment you clicked a link.
+       That is the whole reason it is a dock and not a page. -->
+  <aside class="atl-dock" id="atl-dock" aria-label="Studio" hidden></aside>
+
   <footer class="atl-foot">
     <div class="atl-wrap">
       <div class="atl-foot-grid">
@@ -71,5 +77,6 @@
 
 <script defer src="atlas-data.js"></script>
 <script defer src="atlas.js"></script>
+<script defer src="atlas-studio.js"></script>
 </body>
 </html>

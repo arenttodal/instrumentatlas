@@ -504,9 +504,9 @@ let currentInstrument = null, currentFamily = null;
 /* family colours, following the convention of printed orchestra seating charts:
    strings violet, woodwinds green, brass blue, percussion amber. Gold is reserved
    for the instrument you are reading, so no family uses it. */
-const FAM_COLOR = {
-  strings:'#9B8FD4', woodwinds:'#5FB89A', brass:'#6C9BD8', percussion:'#C9834F'
-};
+/* single source of truth, defined in atlas-data.js so the studio dock and the
+   timbre chart cannot drift apart */
+const FAM_COLOR = STUDIO_FAM;
 
 function renderTimbre(id){
   const svg = document.getElementById('atl-timbre-svg');
