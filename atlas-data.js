@@ -654,13 +654,237 @@ const INSTRUMENTS = {
     prev:'double-bass', next:''
   },
 
-  /* ---------- PLANNED (menu only) ---------- */
-  timpani:{family:'percussion',name:'Timpani',status:'plan',range:{lo:29,hi:53},timbre:0.22},
-  cymbals:{family:'percussion',name:'Cymbals',status:'plan',range:{lo:60,hi:96},timbre:0.92},
-  'snare-drum':{family:'percussion',name:'Snare Drum',status:'plan',range:{lo:58,hi:80},timbre:0.85},
-  'bass-drum':{family:'percussion',name:'Bass Drum',status:'plan',range:{lo:24,hi:40},timbre:0.10},
-  gong:{family:'percussion',name:'Gong',status:'plan',range:{lo:30,hi:60},timbre:0.45},
-  celesta:{family:'percussion',name:'Celesta',status:'plan',range:{lo:60,hi:96},timbre:0.86}
+  /* The unpitched percussion still carry a range, because the timbre chart
+     plots every instrument and needs somewhere to put them. Those numbers
+     describe roughly where the energy sits spectrally, not pitch, and each
+     entry says so in its range note so it cannot be misread. */
+  timpani:{
+    family:'percussion', name:'Timpani', latin:'Timpani',
+    epithet:'The only orchestral drums that play notes, and the oldest member of the section', status:'live',
+    summary:'Usually four drums of different sizes, tuned by pedal and played by a specialist. They carry rhythm, harmony and pitch at once, which is why the timpani part is the one percussion line composers write first and cut last.',
+    range:{lo:38, hi:57, note:'D2 – A3 across four drums', transposition:'Non-transposing'},
+    timbre:0.22,
+    facts:[['Range','D2 – A3'],['Drums','4','typical'],['Tuning','Pedal, during play']],
+    registers:[
+      {label:'Large drums', pitch:'D2 – A2', text:'Deep, booming and slow to decay. Rolls here feel like weather rather than rhythm.'},
+      {label:'Medium drums', pitch:'B2 – E3', text:'The working range. Clear pitch, strong attack, unmistakably orchestral.'},
+      {label:'Small drum', pitch:'F3 – A3', text:'Tight and articulate, closer to a tuned tom. Good for rhythmic detail.'}
+    ],
+    characteristics:[
+      'Pedal tuning means pitch can change mid-piece, and glissandi are possible.',
+      'Mallet choice changes everything: felt for warmth, wood for attack.',
+      'Rolls sustain indefinitely and crescendo further than almost anything else in the orchestra.',
+      'Reinforces the harmonic bass, so the note choice matters as much as the rhythm.'
+    ],
+    articulations:['Single strokes','Roll','Muffled','Glissando','Wood mallets','Rim'],
+    blends:[
+      {id:'double-bass', label:'Double basses', note:'Attack under a sustained bass note'},
+      {id:'tuba', label:'Low brass', note:'Timpani supplies the transient the brass lacks'},
+      {id:'bass-drum', label:'Bass drum', note:'Weight without pitch, layered under pitch'},
+      {id:'cello', label:'Cellos', note:'Reinforces the harmonic root'}
+    ],
+    limits:[
+      'Retuning takes time. Give the player bars, not beats, to change a drum’s pitch.',
+      'Notes outside the drum sizes on stage are simply unplayable. Check the pitches you actually need.',
+      'A timpani roll under a quiet passage is not quiet. It is the loudest thing in the orchestra at will.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Felt vs wood mallets', note:'The same figure, two sticks', dur:'0:14'},
+      {label:'Roll and crescendo', note:'From nothing to the top of the dynamic', dur:'0:16'}
+    ],
+    prev:'', next:'cymbals'
+  },
+
+  cymbals:{
+    family:'percussion', name:'Cymbals', latin:'Piatti',
+    epithet:'The orchestra’s exclamation mark', status:'live',
+    summary:'Two plates crashed together, or one suspended and struck. Unpitched but enormously wide-spectrum, which is why a single crash reads as the loudest moment in a piece regardless of what else is playing. Used once, it lands. Used often, it stops meaning anything.',
+    range:{lo:60, hi:96, note:'Unpitched. Broadband, with the energy weighted high', transposition:'Non-transposing'},
+    timbre:0.92,
+    facts:[['Pitch','Unpitched'],['Types','Crash, suspended, hi-hat'],['Players','1–2']],
+    registers:[
+      {label:'Crash cymbals', pitch:'Broadband', text:'Two plates struck together. Instant, huge and impossible to take back.'},
+      {label:'Suspended cymbal', pitch:'Broadband', text:'Struck or rolled with mallets. A roll from silence to a crash is one of the great orchestral crescendos.'},
+      {label:'Choked', pitch:'Short', text:'Damped immediately against the body for a hard stop.'}
+    ],
+    characteristics:[
+      'Unpitched but not neutral: size and alloy change the colour considerably.',
+      'A suspended roll can crescendo over many bars and covers an entire orchestra at its peak.',
+      'Decay is long and cannot be shortened without choking the instrument.',
+      'A single player usually covers crash and suspended, so simultaneous parts need two.'
+    ],
+    articulations:['Crash','Suspended roll','Struck with mallets','Choked','Scraped','Sizzle'],
+    blends:[
+      {id:'bass-drum', label:'Bass drum', note:'The classic pairing: weight plus brilliance'},
+      {id:'trumpet', label:'Brass', note:'Cymbal supplies the transient the brass attack lacks'},
+      {id:'gong', label:'Gong', note:'Layered impact with a much longer tail'},
+      {id:'piccolo', label:'Piccolo', note:'Both cut through a tutti at the same instant'}
+    ],
+    limits:[
+      'It is a moment, not a texture. Repeated crashes lose all impact within a few bars.',
+      'You cannot make it quiet by writing p. You make it quiet with a smaller pair or a mallet.',
+      'Nothing after a crash will be heard for about a second. Plan the bar around it.'
+    ],
+    demos:[
+      {label:'Crash, suspended and choked', note:'The three ways it is played', dur:'0:14'},
+      {label:'Roll from silence', note:'The crescendo that covers an orchestra', dur:'0:16'},
+      {label:'With bass drum', note:'The pairing, isolated then in context', dur:'0:12'}
+    ],
+    prev:'timpani', next:'snare-drum'
+  },
+
+  'snare-drum':{
+    family:'percussion', name:'Snare Drum', latin:'Tamburo militare',
+    epithet:'Military ancestry, and the sharpest attack in the orchestra', status:'live',
+    summary:'A small cylindrical drum with wire snares stretched across the lower head, which buzz on every stroke and give it its characteristic rattle. Its attack is sharp enough to define rhythm for the entire orchestra, which is why it drives marches, builds tension and cuts through anything.',
+    range:{lo:58, hi:80, note:'Unpitched. Bright, with high-mid energy', transposition:'Non-transposing'},
+    timbre:0.85,
+    facts:[['Pitch','Unpitched'],['Players','1'],['Snares','On or off']],
+    registers:[
+      {label:'Snares on', pitch:'Bright', text:'The default. Sharp, rattling, and audible at almost any dynamic.'},
+      {label:'Snares off', pitch:'Dry', text:'Becomes a tenor drum, darker and more archaic. Worth specifying deliberately.'},
+      {label:'Rim and rimshot', pitch:'Sharp', text:'A crack rather than a stroke. Extremely loud relative to effort.'}
+    ],
+    characteristics:[
+      'Wire snares under the bottom head produce the buzz that defines it.',
+      'The roll is a controlled buzz, not measured single strokes, and can sustain indefinitely.',
+      'Enormous dynamic range, from barely audible to painfully loud.',
+      'Ravel’s Boléro is a single snare pattern for fifteen minutes, which tells you how much the instrument can carry.'
+    ],
+    articulations:['Single strokes','Roll','Flam','Drag','Rimshot','Brushes','Snares off'],
+    blends:[
+      {id:'bass-drum', label:'Bass drum', note:'The rhythmic spine of a march'},
+      {id:'trumpet', label:'Brass', note:'Sharpens every brass attack it doubles'},
+      {id:'timpani', label:'Timpani', note:'Detail over weight'},
+      {id:'cymbals', label:'Cymbals', note:'Combined percussion accent'}
+    ],
+    limits:[
+      'It is louder than you think at every dynamic. Mark it softer than feels right.',
+      'A roll under a quiet string passage will dominate unless carefully controlled.',
+      'Specify snares on or off. The difference is large and players will ask.'
+    ],
+    demos:[
+      {label:'Snares on and off', note:'The same pattern, both settings', dur:'0:14'},
+      {label:'Roll and crescendo', note:'The buzz sustained and built', dur:'0:14'},
+      {label:'March pattern in context', note:'What the instrument was built for', dur:'0:16'}
+    ],
+    prev:'cymbals', next:'bass-drum'
+  },
+
+  'bass-drum':{
+    family:'percussion', name:'Bass Drum', latin:'Gran cassa',
+    epithet:'Felt more than heard, which is exactly the point', status:'live',
+    summary:'The largest drum in the orchestra, usually a single instrument mounted on a stand and struck with a large soft beater. It contributes almost no pitch and an enormous amount of physical weight. At climaxes it is the difference between loud and overwhelming.',
+    range:{lo:24, hi:40, note:'Unpitched. Very low, felt as much as heard', transposition:'Non-transposing'},
+    timbre:0.10,
+    facts:[['Pitch','Unpitched'],['Drums','1','typical'],['Players','1']],
+    registers:[
+      {label:'Soft strokes', pitch:'Low', text:'Distant thunder. Almost subliminal under a quiet texture, and unnerving.'},
+      {label:'Full strokes', pitch:'Low', text:'The weight under a tutti. Adds size without adding anything audible in the mid range.'},
+      {label:'Roll', pitch:'Low', text:'Two mallets, sustained. A slow crescendo here reads as approaching catastrophe.'}
+    ],
+    characteristics:[
+      'Enormous low-frequency energy with very little pitch definition.',
+      'Decay is long, so a damped stroke and an open one are different instruments in effect.',
+      'One instrument covers the entire orchestra, so balance is entirely in the player’s hands.',
+      'Struck near the edge for a drier sound, near the centre for maximum depth.'
+    ],
+    articulations:['Single strokes','Roll','Damped','Two-mallet roll','Struck with timpani mallets'],
+    blends:[
+      {id:'cymbals', label:'Cymbals', note:'The classic pairing; weight plus brilliance'},
+      {id:'tuba', label:'Low brass', note:'Adds physical size beneath the pitch'},
+      {id:'timpani', label:'Timpani', note:'Pitch and weight together'},
+      {id:'double-bass', label:'Double basses', note:'Reinforces the bottom without muddying it'}
+    ],
+    limits:[
+      'Overuse flattens a piece. If everything is enormous, nothing is.',
+      'Long decay means fast rhythms turn into a wash. Write sparse parts and damp where needed.',
+      'It will not be heard on small speakers, only felt on large ones. Do not rely on it to carry information.'
+    ],
+    demos:[
+      {label:'Soft, full and damped', note:'Three strokes, three instruments', dur:'0:14'},
+      {label:'Roll and crescendo', note:'The slow build', dur:'0:16'},
+      {label:'Under a tutti', note:'With and without, same bar', dur:'0:12'}
+    ],
+    prev:'snare-drum', next:'gong'
+  },
+
+  gong:{
+    family:'percussion', name:'Gong', latin:'Tam-tam',
+    epithet:'One stroke, and the sound keeps arriving for half a minute', status:'live',
+    summary:'A large suspended metal disc, struck with a soft beater. Strictly, a tam-tam is unpitched and a gong is tuned, and orchestras almost always mean the former. Its sound blooms slowly after the strike rather than decaying from it, which no other instrument does.',
+    range:{lo:30, hi:60, note:'Unpitched. Broadband, and it blooms after the strike', transposition:'Non-transposing'},
+    timbre:0.45,
+    facts:[['Pitch','Unpitched (tam-tam)'],['Players','1'],['Decay','20–30','seconds']],
+    registers:[
+      {label:'Soft strokes', pitch:'Broadband', text:'A shimmer that emerges from nothing. Extraordinary under quiet strings.'},
+      {label:'Full strokes', pitch:'Broadband', text:'Vast, slow and enveloping. It takes seconds to reach full volume.'},
+      {label:'Damped', pitch:'Short', text:'Stopped with the hands, which requires real physical effort on a large instrument.'}
+    ],
+    characteristics:[
+      'The sound blooms after the strike rather than starting at full volume.',
+      'Decay runs twenty to thirty seconds and cannot be hurried without damping.',
+      'Effective at both extremes of dynamic and slightly awkward in between.',
+      'Frequently used for ritual, death and the supernatural, to the point of cliché. Use it knowingly.'
+    ],
+    articulations:['Struck','Rolled','Damped','Scraped','Water gong'],
+    blends:[
+      {id:'bass-drum', label:'Bass drum', note:'Impact plus bloom'},
+      {id:'cymbals', label:'Cymbals', note:'Brilliance over the tam-tam’s slower spread'},
+      {id:'double-bass', label:'Low strings', note:'The gong extends what the basses start'},
+      {id:'timpani', label:'Timpani', note:'Defined attack against undefined resonance'}
+    ],
+    limits:[
+      'Nothing quiet survives underneath it for several seconds. Write the silence after it.',
+      'It cannot be stopped quickly without an audible damping noise.',
+      'Its associations are strong and specific. One stroke reads as significant whether you meant it or not.'
+    ],
+    demos:[
+      {label:'Soft to full stroke', note:'The bloom, at both dynamics', dur:'0:18'},
+      {label:'Full decay, unedited', note:'How long it actually takes', dur:'0:30'},
+      {label:'Under low strings', note:'Where the two blend into one sound', dur:'0:16'}
+    ],
+    prev:'bass-drum', next:'celesta'
+  },
+
+  celesta:{
+    family:'percussion', name:'Celesta', latin:'Celesta',
+    epithet:'A piano action striking metal bars, and the sound of everything enchanted', status:'live',
+    summary:'Invented in 1886, played from a keyboard, with hammers striking steel plates over wooden resonators. Tchaikovsky used it for the Sugar Plum Fairy before anyone else could get hold of one, and it has meant magic ever since. That specificity of association is both its gift and its trap.',
+    range:{lo:60, hi:108, note:'C4 – C8 sounding', transposition:'Sounds an octave higher than written'},
+    timbre:0.86,
+    facts:[['Sounding range','C4 – C8'],['Players','1'],['Transposition','Octave above written']],
+    registers:[
+      {label:'Low register', pitch:'C4 – B4', text:'Soft and slightly dull. The least useful part of the instrument.'},
+      {label:'Middle register', pitch:'C5 – B6', text:'The characteristic bell-like shimmer. Everything memorable is written here.'},
+      {label:'High register', pitch:'C7 – C8', text:'Delicate, glassy and very quiet. Beautiful, and easily lost.'}
+    ],
+    characteristics:[
+      'Keyboard-operated, so chords, runs and two-hand writing are all straightforward.',
+      'Very quiet. It needs a thin texture or careful orchestration to be heard at all.',
+      'Notated an octave below sounding, like the piccolo in reverse.',
+      'Frequently doubled with harp or glockenspiel to give it enough presence to register.'
+    ],
+    articulations:['Legato','Staccato','Arpeggios','Trills','Damper pedal'],
+    blends:[
+      {id:'harp', label:'Harp', note:'Both plucked-attack colours; the pairing sounds larger than either'},
+      {id:'flute', label:'Flute', note:'Air around the bell tone'},
+      {id:'violin', label:'Violin harmonics', note:'Two glassy timbres, barely distinguishable'},
+      {id:'snare-drum', label:'Light percussion', note:'Sparkle that reinforces the attack'}
+    ],
+    limits:[
+      'It is very quiet. Write it over almost nothing, or double it, or it will not be heard.',
+      'The bottom octave is weak enough to be barely worth using.',
+      'Its associations are extremely strong. Any celesta line reads as magical whether or not you want it to.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:16'},
+      {label:'With harp', note:'The doubling that makes it audible', dur:'0:14'}
+    ],
+    prev:'gong', next:''
+  }
 };
 
 
@@ -872,6 +1096,139 @@ const PLATES = {
     </g>
   </svg>`,
 
+  /* Percussion. These are objects rather than tubes, so they are drawn as
+     objects: a struck surface, the thing holding it up, and whatever strikes
+     it. The stand matters as much as the instrument for recognising them at
+     this size. */
+  timpani:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <ellipse cx="150" cy="196" rx="96" ry="34" opacity=".95"/>
+      <ellipse cx="150" cy="196" rx="80" ry="27" opacity=".35"/>
+      <path d="M54 196c2 62 26 112 50 136" opacity=".92"/>
+      <path d="M246 196c-2 62-26 112-50 136" opacity=".92"/>
+      <path d="M104 332c14 12 28 18 46 18s32-6 46-18" opacity=".92"/>
+      <g opacity=".55">
+        <path d="M66 216v22M96 228v20M150 232v20M204 228v20M234 216v22"/>
+        <circle cx="66" cy="243" r="4"/><circle cx="96" cy="253" r="4"/><circle cx="150" cy="257" r="4"/>
+        <circle cx="204" cy="253" r="4"/><circle cx="234" cy="243" r="4"/>
+      </g>
+      <path d="M150 350v54" opacity=".85"/>
+      <path d="M108 424l42-20 42 20" opacity=".8"/>
+      <path d="M96 434h108" opacity=".7"/>
+      <path d="M150 404v30" opacity=".6"/>
+      <g opacity=".75">
+        <line x1="214" y1="122" x2="248" y2="176"/><ellipse cx="212" cy="116" rx="9" ry="7" transform="rotate(-58 212 116)"/>
+        <line x1="238" y1="108" x2="266" y2="158"/><ellipse cx="236" cy="102" rx="9" ry="7" transform="rotate(-58 236 102)"/>
+      </g>
+    </g>
+    <g opacity=".2" stroke-width=".8"><path d="M262 250c9 30 9 66-4 94"/><path d="M270 242c9 34 9 74-4 106"/></g>
+  </svg>`,
+
+  cymbals:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <path d="M40 214c30-26 70-40 110-40s80 14 110 40" opacity=".95"/>
+      <path d="M40 214c30 14 70 22 110 22s80-8 110-22" opacity=".92"/>
+      <ellipse cx="150" cy="180" rx="24" ry="9" opacity=".8"/>
+      <circle cx="150" cy="180" r="3" opacity=".7"/>
+      <path d="M150 189v230" opacity=".85"/>
+      <path d="M108 440l42-24 42 24" opacity=".8"/>
+      <path d="M92 452h116" opacity=".7"/>
+      <path d="M150 419v33" opacity=".6"/>
+      <g opacity=".4">
+        <path d="M74 224c26 10 50 16 76 18M226 224c-26 10-50 16-76 18"/>
+      </g>
+      <g opacity=".75">
+        <line x1="246" y1="288" x2="212" y2="230"/>
+        <path d="M250 296c8-4 10-14 4-20-6-5-14-2-16 5" opacity=".9"/>
+      </g>
+    </g>
+    <g opacity=".2" stroke-width=".8"><path d="M52 300c-10 28-12 62-4 92"/><path d="M44 292c-12 32-14 70-4 104"/></g>
+  </svg>`,
+
+  'snare-drum':`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <ellipse cx="150" cy="196" rx="86" ry="30" opacity=".95"/>
+      <ellipse cx="150" cy="196" rx="72" ry="24" opacity=".35"/>
+      <path d="M64 196v66M236 196v66" opacity=".92"/>
+      <path d="M64 262c0 17 39 30 86 30s86-13 86-30" opacity=".92"/>
+      <g opacity=".5">
+        <path d="M78 206v50M112 214v52M150 216v54M188 214v52M222 206v50"/>
+        <path d="M74 206h8M108 214h8M146 216h8M184 214h8M218 206h8"/>
+      </g>
+      <g opacity=".45"><path d="M92 272h116M96 280h108"/></g>
+      <path d="M92 292l-24 108M208 292l24 108" opacity=".8"/>
+      <path d="M150 292v112" opacity=".8"/>
+      <path d="M64 412h172" opacity=".7"/>
+      <g opacity=".75">
+        <line x1="196" y1="120" x2="228" y2="168"/><circle cx="232" cy="174" r="5"/>
+        <line x1="218" y1="110" x2="248" y2="156"/><circle cx="252" cy="162" r="5"/>
+      </g>
+    </g>
+    <g opacity=".2" stroke-width=".8"><path d="M46 300c-10 28-12 62-4 92"/><path d="M38 292c-12 32-14 70-4 104"/></g>
+  </svg>`,
+
+  'bass-drum':`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <circle cx="150" cy="242" r="118" opacity=".95"/>
+      <circle cx="150" cy="242" r="104" opacity=".4"/>
+      <circle cx="150" cy="242" r="96" opacity=".2"/>
+      <g opacity=".5">
+        <path d="M150 124v-14M150 360v14M32 242h-14M268 242h14"/>
+        <path d="M67 159l-10-10M233 159l10-10M67 325l-10 10M233 325l10 10"/>
+      </g>
+      <path d="M46 316L34 424M254 316l12 108" opacity=".8"/>
+      <path d="M28 430h56M216 430h56" opacity=".7"/>
+      <path d="M56 350v76M244 350v76" opacity=".5"/>
+      <g opacity=".8">
+        <line x1="196" y1="196" x2="252" y2="150"/>
+        <ellipse cx="190" cy="201" rx="14" ry="11" transform="rotate(-40 190 201)"/>
+      </g>
+    </g>
+    <g opacity=".2" stroke-width=".8"><path d="M28 258c-12 26-16 58-10 88"/></g>
+  </svg>`,
+
+  gong:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <circle cx="150" cy="230" r="106" opacity=".95"/>
+      <circle cx="150" cy="230" r="92" opacity=".3"/>
+      <circle cx="150" cy="230" r="58" opacity=".22"/>
+      <circle cx="150" cy="230" r="26" opacity=".35"/>
+      <path d="M150 124V96" opacity=".7"/>
+      <path d="M52 96h196" opacity=".9"/>
+      <path d="M52 96v330M248 96v330" opacity=".9"/>
+      <path d="M22 434h60M218 434h60" opacity=".75"/>
+      <path d="M52 426l-14 8M248 426l14 8" opacity=".55"/>
+      <g opacity=".8">
+        <line x1="196" y1="286" x2="248" y2="336"/>
+        <ellipse cx="190" cy="280" rx="15" ry="12" transform="rotate(-42 190 280)"/>
+      </g>
+    </g>
+    <g opacity=".2" stroke-width=".8"><path d="M270 200c12 34 12 76-4 110"/></g>
+  </svg>`,
+
+  celesta:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <path d="M52 148h196v148H52z" opacity=".95"/>
+      <path d="M52 176h196" opacity=".5"/>
+      <path d="M64 296h172v34H64z" opacity=".9"/>
+      <g opacity=".55">
+        <path d="M78 296v34M96 296v34M114 296v34M132 296v34M150 296v34M168 296v34M186 296v34M204 296v34M222 296v34"/>
+      </g>
+      <g opacity=".85">
+        <path d="M72 296v20h10v-20zM104 296v20h10v-20zM122 296v20h10v-20z"/>
+        <path d="M158 296v20h10v-20zM190 296v20h10v-20zM208 296v20h10v-20z"/>
+      </g>
+      <g opacity=".35">
+        <path d="M72 196v66M92 196v66M112 196v66M132 196v66M152 196v66M172 196v66M192 196v66M212 196v66M232 196v66"/>
+      </g>
+      <path d="M70 330v82M230 330v82" opacity=".85"/>
+      <path d="M56 412h28M216 412h28" opacity=".7"/>
+      <path d="M70 356h160" opacity=".4"/>
+      <path d="M116 148v-16h68v16" opacity=".6"/>
+    </g>
+    <g opacity=".2" stroke-width=".8"><path d="M262 232c10 30 10 66-4 96"/><path d="M270 224c10 34 10 74-4 108"/></g>
+  </svg>`,
+
   /* Brass. Drawn as tubing rather than as objects: the trumpet lies on a
      diagonal so its cylindrical run is visible end to end, the trombone shows
      slide and bell as two separate tube systems, and the tuba stands upright
@@ -1025,6 +1382,12 @@ const THUMBS = {
   oboe:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M20 4v6"/><path d="M17 10L13 38"/><path d="M23 10l4 28"/><path d="M13 38c-1 5-3 7-4 9M27 38c1 5 3 7 4 9"/><ellipse cx="20" cy="47" rx="11" ry="3"/><g opacity=".5"><circle cx="20" cy="20" r="1.6"/><circle cx="20" cy="30" r="1.6"/></g></svg>`,
   clarinet:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M17 11c0-5 1-8 3-9 2 1 3 4 3 9"/><path d="M17 11v27M23 11v27"/><path d="M17 38c-2 5-4 7-6 9M23 38c2 5 4 7 6 9"/><ellipse cx="20" cy="47" rx="10" ry="3"/><g opacity=".5"><circle cx="20" cy="19" r="1.6"/><circle cx="20" cy="29" r="1.6"/></g></svg>`,
   bassoon:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><ellipse cx="26" cy="6" rx="4" ry="1.8"/><path d="M22 6v34M30 6v34"/><path d="M11 15v25M18 15v25"/><path d="M11 40c0 5 4 8 9.5 8s9.5-3 9.5-8"/><path d="M13 15c-2-5-5-7-8-8"/></svg>`,
+  timpani:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><ellipse cx="20" cy="18" rx="14" ry="5"/><path d="M6 18c0 9 4 16 8 19M34 18c0 9-4 16-8 19"/><path d="M14 37c2 2 4 3 6 3s4-1 6-3"/><path d="M20 40v6"/><path d="M13 50l7-4 7 4"/></svg>`,
+  cymbals:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M5 20c4-4 9-6 15-6s11 2 15 6"/><path d="M5 20c4 2 9 3 15 3s11-1 15-3"/><ellipse cx="20" cy="16" rx="3.5" ry="1.5"/><path d="M20 23v22"/><path d="M14 49l6-4 6 4"/></svg>`,
+  'snare-drum':`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><ellipse cx="20" cy="18" rx="13" ry="5"/><path d="M7 18v9M33 18v9"/><path d="M7 27c0 3 6 5 13 5s13-2 13-5"/><path d="M11 33l-4 14M29 33l4 14M20 33v14"/><path d="M6 48h28" opacity=".7"/></svg>`,
+  'bass-drum':`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><circle cx="20" cy="23" r="16"/><circle cx="20" cy="23" r="12" opacity=".45"/><path d="M8 34l-2 13M32 34l2 13"/><path d="M3 49h7M30 49h7" opacity=".7"/></svg>`,
+  gong:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><circle cx="20" cy="26" r="14"/><circle cx="20" cy="26" r="8" opacity=".4"/><circle cx="20" cy="26" r="3" opacity=".5"/><path d="M20 12V8"/><path d="M6 8h28M6 8v40M34 8v40"/></svg>`,
+  celesta:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M6 12h28v20H6z"/><path d="M8 32h24v7H8z"/><g opacity=".55"><path d="M12 32v7M16 32v7M20 32v7M24 32v7M28 32v7"/></g><path d="M10 39v9M30 39v9"/><path d="M6 48h8M26 48h8" opacity=".7"/></svg>`,
   trumpet:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-30 20 26)"><circle cx="5" cy="23" r="1.8"/><path d="M7 23h6"/><rect x="13" y="19.5" width="3" height="8" rx="1.5"/><rect x="17.5" y="19.5" width="3" height="8" rx="1.5"/><rect x="22" y="19.5" width="3" height="8" rx="1.5"/><path d="M25.5 23h4"/><path d="M29.5 20.5c3-1 5-3 6-5M29.5 25.5c3 1 5 3 6 5"/><ellipse cx="35.5" cy="23" rx="1.6" ry="5.5"/></g></svg>`,
   trombone:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-32 20 26)"><ellipse cx="5" cy="22" rx="1.8" ry="6"/><path d="M5 16c4 2 8 4 11 5M5 28c4-2 8-4 11-5"/><path d="M16 21h17c2.5 0 3.5 1 3.5 2s-1 2-3.5 2H16"/><path d="M14 29h19c2 0 3 .8 3 1.8s-1 1.8-3 1.8H14"/><path d="M14 29v3.6"/></g></svg>`,
   tuba:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><ellipse cx="17" cy="9" rx="9" ry="3"/><path d="M8 9c1 8 3 14 5 19M26 9c-1 8-3 13-4 18"/><path d="M13 28c-2 7-2 14 0 20M22 26c2 7 2 15 0 22"/><path d="M13 48c1 3 3 4 5 4s4-1 4-4"/><g opacity=".8"><rect x="24" y="24" width="3" height="8" rx="1.5"/><rect x="28" y="22" width="3" height="8" rx="1.5"/></g></svg>`,
