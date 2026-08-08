@@ -158,8 +158,8 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 
 <script type="importmap">
 { "imports": {
-  "three": "./vendor/three.module.js",
-  "three/addons/": "./vendor/jsm/"
+  "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
 }}
 </script>
 
@@ -197,8 +197,8 @@ if(location.protocol === 'file:'){
 setTimeout(function(){
   if(!window.__viewerBooted && location.protocol !== 'file:'){
     viewerFail('Still loading…',
-      'The model has not arrived. Check that <b>models/</b> and <b>vendor/</b> sit next to this file, ' +
-      'and look at the browser console for the failing request.');
+      'The model has not arrived. The .glb files must sit in the same folder as this page. ' +
+      'Check the browser console for the failing request.');
   }
 }, 12000);
 </script>
@@ -225,7 +225,7 @@ const MATERIALS = {
 
 const INSTRUMENTS = {
   cello: {
-    name:'Cello', file:'models/cello.glb', keepMaterials:true,
+    name:'Cello', file:'cello.glb', keepMaterials:true,
     dist:1.9, target:[0,0,0], rotY:0,
     credit:'&ldquo;Cello Sketchfab&rdquo; by Limpskin · <a href="https://skfb.ly/pICFS" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: re-centred and normalised',
     hotspots:[
@@ -260,7 +260,7 @@ const INSTRUMENTS = {
   },
 
   horn: {
-    name:'French horn', file:'models/horn.glb', material:'brass',
+    name:'French horn', file:'horn.glb', material:'brass',
     dist:1.9, target:[0,0,0], rotY:0,
     credit:'&ldquo;French Horn&rdquo; by Bethanycrandallart · <a href="https://skfb.ly/6TxEP" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 90k triangles, brass material applied',
     hotspots:[
@@ -295,7 +295,7 @@ const INSTRUMENTS = {
   },
 
   trumpet: {
-    name:'Trumpet', file:'models/trumpet.glb', material:'brass',
+    name:'Trumpet', file:'trumpet.glb', material:'brass',
     dist:1.7, target:[0,0,0], rotY:0,
     credit:'&ldquo;B&#9837; Trumpet Model&rdquo; by Pakaku · <a href="https://skfb.ly/otwwn" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 110k triangles, brass material applied',
     hotspots:[
@@ -324,7 +324,7 @@ const INSTRUMENTS = {
   },
 
   violin: {
-    name:'Violin', file:'models/violin.glb', material:'wood',
+    name:'Violin', file:'violin.glb', material:'wood',
     dist:1.9, target:[0,0,0], rotY:0,
     credit:'&ldquo;Violin Texturing&rdquo; by ilushandro · <a href="https://skfb.ly/oAVFz" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 100k triangles, varnished-wood material applied',
     hotspots:[
@@ -514,7 +514,7 @@ function loadInstrument(key_){
     console.error('[viewer] model load failed:', inst.file, err);
     viewerFail('Could not load ' + inst.name,
       'Missing or unreadable: <b style="color:#D4A04A">' + inst.file + '</b><br>' +
-      'It must sit in a <b>models/</b> folder beside instruments.html, served over http://');
+      'It must sit in the same folder as instruments.html');
   });
 }
 
