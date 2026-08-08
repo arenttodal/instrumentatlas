@@ -453,7 +453,23 @@ function wireTabs(){
       /* the 3D viewer is a whole WebGL context — never load it until asked */
       if(tab.dataset.tab === 'model'){
         const f = document.getElementById('atl-model-iframe');
-        if(f && !f.src && f.dataset.src) f.src = f.dataset.src;
+        if(f && !f.src && f.dataset.src){
+          f.src = f.dataset.src;
+          /* same origin, so we can tell a real viewer from a 404 page and say so
+             rather than showing the host's error page inside the frame */
+          f.addEventListener('load', () => {
+            let ok = false;
+            try { ok = !!f.contentDocument.getElementById('stage'); } catch(_){ ok = true; }
+            if(!ok){
+              f.style.display = 'none';
+              const fail = document.getElementById('atl-model-fail');
+              if(fail) fail.innerHTML =
+                'The viewer is not deployed yet. Copy the <code>viewer/</code> folder ' +
+                '&mdash; <code>instruments.html</code>, <code>models/</code> and <code>vendor/</code> &mdash; ' +
+                'into the site root beside <code>index.html</code>, then redeploy.';
+            }
+          }, {once:true});
+        }
       }
       observeFades();
     });
