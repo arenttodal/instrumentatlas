@@ -530,18 +530,36 @@ function draw(){
           <line x1="${x2}" y1="0" x2="${x2}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>`;
   }
 
-  /* tip regions */
+  /* tips live on the ruler strip only — the lanes stay clean for annotations */
   if(tipsOn) (S.tips||[]).forEach(tp => {
     const x = (tp.bar-1)*S.beats*ppb, w = (tp.beats||8)*ppb;
-    s += `<rect x="${x}" y="${RULER}" width="${w}" height="${H-RULER}" fill="#D4A04A" fill-opacity=".05"/>
-          <line x1="${x}" y1="${RULER}" x2="${x}" y2="${H}" stroke="#D4A04A" stroke-opacity=".4"/>`;
+    s += `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="${RULER}" fill="#D4A04A" fill-opacity=".16"/>
+          <rect x="${x.toFixed(1)}" y="${RULER-2.5}" width="${w.toFixed(1)}" height="2.5" fill="#D4A04A" fill-opacity=".85"/>
+          <circle cx="${x.toFixed(1)}" cy="6" r="2.6" fill="#D4A04A"/>`;
   });
+
+  /* the lane being annotated, and the region being dragged */
+  if(annotating && hoverLane !== null){
+    const y0 = RULER + hoverLane*LANE;
+    s += `<rect x="0" y="${y0}" width="${W}" height="${LANE}" fill="#fff" fill-opacity=".035"/>
+          <line x1="0" y1="${y0}" x2="${W}" y2="${y0}" stroke="#D4A04A" stroke-opacity=".35"/>
+          <line x1="0" y1="${y0+LANE}" x2="${W}" y2="${y0+LANE}" stroke="#D4A04A" stroke-opacity=".35"/>`;
+  }
+  if(dragSel){
+    const y0 = RULER + dragSel.lane*LANE;
+    const x = (dragSel.from-1)*S.beats*ppb, w = Math.max((dragSel.to-dragSel.from)*S.beats*ppb, 2);
+    const c = ROLE_COLOR[dragSel.role] || '#D4A04A';
+    s += `<rect x="${x.toFixed(1)}" y="${y0+1}" width="${w.toFixed(1)}" height="${LANE-2}" rx="4"
+            fill="${c}" fill-opacity=".22" stroke="${c}" stroke-opacity=".9" stroke-dasharray="4 3"/>
+          <text x="${(x+6).toFixed(1)}" y="${(y0+15).toFixed(1)}" fill="${c}" font-size="10"
+            font-weight="700" font-family="DM Sans">${fmtBar(dragSel.from)} – ${fmtBar(dragSel.to)}</text>`;
+  }
 
   /* role regions, behind the notes */
   if(sideOn) (ANN.roles||[]).forEach(rr => {
     if(!roleFilter.has(rr.role)) return;
     const i = S.tracks.findIndex(t => t.id === rr.track); if(i < 0) return;
-    const x = (rr.from-1)*S.beats*ppb, w = (rr.to - rr.from + 1)*S.beats*ppb;
+    const x = (rr.from-1)*S.beats*ppb, w = (rr.to - rr.from)*S.beats*ppb;
     const y0 = RULER + i*LANE, c = ROLE_COLOR[rr.role] || '#8FB4E0';
     const sel = selTrack === rr.track;
     s += `<rect x="${x.toFixed(1)}" y="${y0+1}" width="${w.toFixed(1)}" height="${LANE-2}" rx="4"
@@ -640,6 +658,7 @@ let ANN = {sections:[], roles:[]};
 let roleFilter = new Set(ROLES);      // which roles are highlighted
 let selTrack = null;                  // track pinned in the sidebar
 let annotating = false, editing = null;
+let dragSel = null, hoverLane = null, lastRole = 'melody';
 
 async function loadAnnotations(){
   try { ANN = await (await fetch('annotations.json')).json(); }
@@ -647,10 +666,11 @@ async function loadAnnotations(){
   buildRoleChips(); drawSidebar();
 }
 
-const barNow = () => Math.floor(position()/60*S.tempo/S.beats) + 1;
+const barPos = () => position()/60*S.tempo/S.beats + 1;   // fractional bar
+const barNow = () => Math.floor(barPos());
 const sectionAt = b => ANN.sections.find(x => b >= x.bar && b <= x.to) || null;
-const rolesAt = b => ANN.roles.filter(r => b >= r.from && b <= r.to);
-const roleFor = (trackId, b) => ANN.roles.find(r => r.track === trackId && b >= r.from && b <= r.to) || null;
+const rolesAt = b => ANN.roles.filter(r => b >= r.from && b < r.to);
+const roleFor = (trackId, b) => ANN.roles.find(r => r.track === trackId && b >= r.from && b < r.to) || null;
 
 function buildRoleChips(){
   const wrap = $('rolechips'); wrap.innerHTML = '';
@@ -676,7 +696,7 @@ function buildRoleChips(){
       b.onclick = () => {
         [...ae.children].forEach(c => { c.setAttribute('aria-pressed','false'); c.style.background='transparent'; });
         b.setAttribute('aria-pressed','true'); b.style.background = ROLE_COLOR[r];
-        if(editing) editing.role = r;
+        if(editing){ editing.role = r; lastRole = r; }
       };
       ae.appendChild(b);
     });
@@ -694,12 +714,12 @@ function drawSidebar(force){
   $('s-name').textContent = sec ? sec.name : '—';
   $('s-note').textContent = sec ? sec.note : 'No section written for this bar yet.';
 
-  const here = rolesAt(b);
+  const here = rolesAt(barPos());
   const list = $('s-list'); list.innerHTML = '';
   const order = S.tracks.filter(t => here.some(r => r.track === t.id));
   const others = S.tracks.filter(t => !order.includes(t));
   [...order, ...others].forEach(t => {
-    const r = roleFor(t.id, b);
+    const r = roleFor(t.id, barPos());
     const row = document.createElement('div');
     row.className = 'srow' + (selTrack === t.id ? ' sel' : '');
     row.style.setProperty('--c', r ? ROLE_COLOR[r.role] : famColor(t.family));
@@ -742,7 +762,7 @@ function laneAt(clientY){
 function openEditor(trackId, fromBar, toBar, existing){
   editing = existing || {track:trackId, from:fromBar, to:toBar, role:'melody', note:''};
   const t = S.tracks.find(x => x.id === trackId);
-  $('ae-where').textContent = `${t.name} · bars ${editing.from}–${editing.to}`;
+  $('ae-where').textContent = `${t.name} · bar ${fmtBar(editing.from)} to ${fmtBar(editing.to)}`;
   $('ae-note').value = editing.note || '';
   [...$('ae-roles').children].forEach(c => {
     const on = c.dataset.role === editing.role;
@@ -769,6 +789,8 @@ $('ann-btn').onclick = function(){
   annotating = !annotating;
   this.setAttribute('aria-pressed', String(annotating));
   document.body.classList.toggle('annotating', annotating);
+  if(!annotating){ hoverLane = null; dragSel = null; }
+  draw();
   if(annotating && !$('side').classList.contains('on')) $('tips-btn').click();
   drawSidebar(true);
 };
@@ -918,30 +940,63 @@ $('loop-btn').onclick = function(){
   });
 })();
 
-/* annotate: drag across a lane to create a role region */
+/* annotate: drag across a lane to create a role region.
+   Positions snap to the half bar — fine enough for a pickup or an upbeat entry,
+   coarse enough that you never have to be precise with the mouse. */
+const SNAP = 0.5;                                   // bars
+const snap = v => Math.round(v/SNAP)*SNAP;
+const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
+
 (function annDrag(){
-  const l = $('lanes'); let dragging=false, track=null, fromBar=0;
+  const l = $('lanes'); let dragging=false, track=null, anchor=0;
   const barAt = e => {
     const r = $('grid').getBoundingClientRect();
-    return Math.max(1, Math.floor((e.clientX - r.left)/(S.beats*ppb)) + 1);
+    return Math.max(1, snap((e.clientX - r.left)/(S.beats*ppb) + 1));
   };
+  const laneIndexAt = y => {
+    const r = $('grid').getBoundingClientRect();
+    const i = Math.floor((y - r.top - RULER)/LANE);
+    return (i >= 0 && i < S.tracks.length) ? i : null;
+  };
+
+  l.addEventListener('pointermove', e => {
+    if(!annotating) return;
+    if(dragging){
+      const b = barAt(e);
+      dragSel.from = Math.min(anchor, b);
+      dragSel.to   = Math.max(anchor, b);
+      if(dragSel.to - dragSel.from < SNAP) dragSel.to = dragSel.from + SNAP;
+      draw();
+      return;
+    }
+    const li = laneIndexAt(e.clientY);
+    if(li !== hoverLane){ hoverLane = li; draw(); }
+  });
+  l.addEventListener('pointerleave', () => {
+    if(hoverLane !== null && !dragging){ hoverLane = null; draw(); }
+  });
+
   l.addEventListener('pointerdown', e => {
     if(!annotating) return;
     const r = $('grid').getBoundingClientRect();
     if(e.clientY - r.top < RULER) return;
-    const t = laneAt(e.clientY); if(!t) return;
-    const b = barAt(e);
-    const hit = ANN.roles.find(x => x.track===t.id && b>=x.from && b<=x.to);
+    const li = laneIndexAt(e.clientY); if(li === null) return;
+    const t = S.tracks[li], b = barAt(e);
+    const hit = ANN.roles.find(x => x.track===t.id && b>=x.from && b<x.to);
     if(hit){ selTrack=t.id; openEditor(t.id, hit.from, hit.to, hit); drawSidebar(true); return; }
-    dragging = true; track = t; fromBar = b;
+    dragging = true; track = t; anchor = b; hoverLane = li;
+    dragSel = {lane:li, from:b, to:b+SNAP, role:lastRole};
+    draw();
     e.preventDefault(); l.setPointerCapture(e.pointerId);
   });
+
   l.addEventListener('pointerup', e => {
     if(!dragging) return;
     dragging = false;
-    const b = barAt(e);
+    const from = dragSel.from, to = dragSel.to;
+    dragSel = null; draw();
     selTrack = track.id;
-    openEditor(track.id, Math.min(fromBar,b), Math.max(fromBar,b));
+    openEditor(track.id, from, to);
     drawSidebar(true);
   });
 })();
