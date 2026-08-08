@@ -12,6 +12,11 @@
 </head>
 <body>
 <div class="atl" id="atl">
+  <!-- Family hover footage, home page only. One <video> per family that has a
+       clip, all preload="none" so nothing downloads until a card is hovered.
+       The dark gradient sits ABOVE the video: to see the players better lower
+       the video opacity, never lighten the gradient, or the headline goes. -->
+  <div class="atl-famvid" id="atl-famvid" aria-hidden="true"></div>
   <div class="atl-grain"></div>
   <div class="atl-atmos"></div>
 
