@@ -297,7 +297,7 @@ function viewInstrument(id){
             <div class="atl-plate-art">${PLATES[id] || ''}</div>
             ${it.model ? `
             <div class="atl-plate-3d">
-              <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}"
+              <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}&amp;embed=1"
                 title="Interactive 3D ${esc(it.name)}" loading="lazy" allow="fullscreen"></iframe>
               <div class="atl-plate-3d-fail">The 3D viewer is not deployed yet.</div>
             </div>` : ''}
@@ -450,7 +450,7 @@ function wirePlateSwitch(){
           f.addEventListener('load', () => {
             let ok = false;
             try { ok = !!f.contentDocument.getElementById('stage'); } catch(_){ ok = true; }
-            if(!ok) f.style.display = 'none';
+            if(!ok){ f.style.display = 'none'; f.closest('.atl-plate-3d').classList.add('is-fail'); }
           }, {once:true});
         }
       }

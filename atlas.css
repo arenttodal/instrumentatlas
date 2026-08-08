@@ -206,11 +206,16 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate-switch button:hover{color:#fff}
 .atl-plate-switch button[aria-pressed="true"]{color:#0A0C14;
   background:linear-gradient(135deg,var(--gold) 0%,var(--gold-deep) 100%)}
-.atl-plate-3d{position:relative;aspect-ratio:4/5;border-radius:6px;overflow:hidden;background:#0A0E18;
+/* transparent: the embedded viewer renders on alpha, so the plate's own
+   gradient reads straight through instead of a second darker rectangle */
+.atl-plate-3d{position:relative;aspect-ratio:4/5;border-radius:6px;overflow:hidden;background:transparent;
   margin:6px 0 18px;display:none}
 .atl-plate-3d iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2}
-.atl-plate-3d-fail{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+/* hidden until the iframe actually fails — the viewer renders on alpha now,
+   so anything left underneath it would read straight through the model */
+.atl-plate-3d-fail{position:absolute;inset:0;z-index:1;display:none;align-items:center;justify-content:center;
   padding:24px;text-align:center;font-size:12px;color:#5E606A;line-height:1.6}
+.atl-plate-3d.is-fail .atl-plate-3d-fail{display:flex}
 .atl-plate[data-view="3d"] .atl-plate-art{display:none}
 .atl-plate[data-view="3d"] .atl-plate-3d{display:block}
 .atl-plate[data-view="3d"] .atl-cap-2d{display:none}
