@@ -234,9 +234,11 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 /* ============================================================================
    1. DATA. Instruments, materials, hotspots.
    Hotspots are POINTS IN MODEL SPACE with a radius, not geometry. Models are
-   normalised at export (centred on origin, longest axis = 1.0), so every
-   coordinate below sits in the same -0.5…0.5 space regardless of source model.
+   normalised at export (centred on origin, longest axis = 2.0), so every
+   coordinate below sits in the same -1.0…1.0 space regardless of source model.
    Place new ones with ?author=1: click the model, paste from the console.
+   rotY turns the model so its front faces the opening camera. The bowed
+   strings are modelled back-to-front and need 180; the brass do not.
    ============================================================================ */
 
 const MATERIALS = {
@@ -248,7 +250,7 @@ const MATERIALS = {
 const INSTRUMENTS = {
   cello: {
     name:'Cello', file:'cello.glb', keepMaterials:true,
-    dist:1.9, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:180,
     credit:'&ldquo;Cello Sketchfab&rdquo; by Limpskin · <a href="https://skfb.ly/pICFS" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: re-centred and normalised',
     hotspots:[
       {id:'scroll', label:'Scroll', pos:[0,0.47,0], radius:0.07,
@@ -283,7 +285,7 @@ const INSTRUMENTS = {
 
   horn: {
     name:'French horn', file:'horn.glb', material:'brass',
-    dist:1.9, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:0,
     credit:'&ldquo;French Horn&rdquo; by Bethanycrandallart · <a href="https://skfb.ly/6TxEP" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 90k triangles, brass material applied',
     hotspots:[
       {id:'mouthpiece', label:'Mouthpiece', pos:[-0.35,0.12,0.05], radius:0.07,
@@ -318,7 +320,7 @@ const INSTRUMENTS = {
 
   trumpet: {
     name:'Trumpet', file:'trumpet.glb', material:'brass',
-    dist:1.7, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:0,
     credit:'&ldquo;B&#9837; Trumpet Model&rdquo; by Pakaku · <a href="https://skfb.ly/otwwn" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 110k triangles, brass material applied',
     hotspots:[
       {id:'mouthpiece', label:'Mouthpiece', pos:[-0.46,0.02,0], radius:0.06,
@@ -347,7 +349,7 @@ const INSTRUMENTS = {
 
   violin: {
     name:'Violin', file:'violin.glb', material:'wood',
-    dist:1.9, target:[0,0,0], rotY:0,
+    target:[0,0,0], rotY:180,
     credit:'&ldquo;Violin Texturing&rdquo; by ilushandro · <a href="https://skfb.ly/oAVFz" target="_blank" rel="noopener">Sketchfab</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · modified: decimated to 100k triangles, varnished-wood material applied',
     hotspots:[
       {id:'scroll', label:'Scroll', pos:[0,0.46,0], radius:0.07,
@@ -452,6 +454,37 @@ controls.autoRotate = !reduced; controls.autoRotateSpeed = 0.5;
 const loader = new GLTFLoader();
 let model = null, hotspots = [], markers = [], activeId = null;
 
+/* Frame from the model's own bounds rather than a hand-tuned distance. The
+   four .glb files are all normalised to a longest axis of 2, but their
+   proportions are nothing alike: the cello is tall and narrow, the horn wide
+   and deep. One fixed distance cropped the cello top and bottom while leaving
+   the trumpet adrift in an empty frame. Width is measured across the diagonal
+   of the footprint, so nothing clips as the model orbits. The contact shadow
+   is placed on the model's actual underside for the same reason: at a fixed
+   y it floated across the middle of the taller instruments. */
+function frameModel(inst){
+  const bb     = new THREE.Box3().setFromObject(model);
+  const size   = bb.getSize(new THREE.Vector3());
+  const centre = bb.getCenter(new THREE.Vector3());
+  const vFov   = THREE.MathUtils.degToRad(camera.fov);
+  const hFov   = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+  const fit    = Math.max(
+    (size.y / 2) / Math.tan(vFov / 2),
+    (Math.hypot(size.x, size.z) / 2) / Math.tan(hFov / 2)
+  ) * (inst.zoom || 1.1);
+
+  controls.target.copy(centre).add(new THREE.Vector3(...(inst.target || [0,0,0])));
+  camera.position.copy(controls.target)
+    .add(new THREE.Vector3(0.55, 0.28, 0.8).normalize().multiplyScalar(fit));
+  controls.minDistance = fit * 0.3;
+  controls.maxDistance = fit * 2.4;
+  controls.update();
+
+  shadow.position.y = bb.min.y - 0.02;
+  const foot = Math.max(size.x, size.z) * 1.7 / 2.4;
+  shadow.scale.set(foot, foot, 1);
+}
+
 /* ---------- proximity glow: highlight is distance to a point, not geometry ---------- */
 const GLOW = { center:new THREE.Vector3(999,999,999), radius:0.0001, strength:0.0 };
 
@@ -522,9 +555,7 @@ function loadInstrument(key_){
       `${inst.name} · ${Math.round(tris/1000)}k triangles`;
     document.getElementById('credit').innerHTML = inst.credit;
 
-    camera.position.set(inst.dist*0.55, inst.dist*0.28, inst.dist*0.8);
-    controls.target.set(...inst.target);
-    controls.update();
+    frameModel(inst);
 
     setProgress(1);
     window.__viewerBooted = true;
