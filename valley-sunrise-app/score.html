@@ -1161,7 +1161,20 @@ $('pre-save').onclick = () => {
   activePreset = {kind:'custom', name};
   buildPresetMenu();
 };
-$('pre-btn').onclick = e => { e.stopPropagation(); $('pmenu').classList.toggle('on'); };
+/* only one menu may be open at a time */
+function openMenu(id){
+  const map = {dmenu:'disp-btn', pmenu:'pre-btn'};
+  Object.keys(map).forEach(m => {
+    const el = $(m), on = (m === id) && !el.classList.contains('on');
+    el.classList.toggle('on', on);
+    $(map[m]).setAttribute('aria-pressed', String(on));
+  });
+}
+function closeMenus(){
+  ['dmenu','pmenu'].forEach(m => $(m).classList.remove('on'));
+  ['disp-btn','pre-btn'].forEach(b => $(b).setAttribute('aria-pressed','false'));
+}
+$('pre-btn').onclick = e => { e.stopPropagation(); openMenu('pmenu'); };
 
 
 function applyDisplay(){
@@ -1184,12 +1197,8 @@ document.querySelectorAll('.dgroup').forEach(g => {
     b.onclick = () => { DISP[g.dataset.key] = b.dataset.v; saveDisp(); applyDisplay(); };
   });
 });
-$('disp-btn').onclick = e => { e.stopPropagation(); $('dmenu').classList.toggle('on'); };
-document.addEventListener('click', e => {
-  if(!e.target.closest('.menu-wrap')){
-    $('dmenu').classList.remove('on'); $('pmenu').classList.remove('on');
-  }
-});
+$('disp-btn').onclick = e => { e.stopPropagation(); openMenu('dmenu'); };
+document.addEventListener('click', e => { if(!e.target.closest('.menu-wrap')) closeMenus(); });
 
 /* ---------- the bottom strip ---------- */
 function drawInfoBar(){
@@ -1496,6 +1505,7 @@ addEventListener('keydown', e => {
     e.preventDefault(); playing ? pause() : play();
   }
   if(e.key === 'Escape'){
+    closeMenus();
     hideTip();
     if(editing) closeEditor();
   }
