@@ -43,7 +43,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .status{font-size:11px;color:var(--gold);min-width:120px}
 
 /* right sidebar */
-body.has-side .arr{grid-template-columns:var(--head-w) 1fr}
+/* the sidebar occupies the arrangement area only — the header and transport
+   stay fully visible and clickable at all times */
+body.has-side .arr{margin-right:340px}
 .side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:8;overflow-y:auto;
   background:rgba(9,13,22,.97);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
   border-left:1px solid var(--hair);transform:translateX(100%);transition:transform .34s cubic-bezier(.16,1,.3,1)}
@@ -240,6 +242,11 @@ const muted = new Set();
 let loopA = null, loopB = null, loopOn = false;   // loop points, in beats
 
 const $ = id => document.getElementById(id);
+
+function placeSide(){
+  const arr = document.querySelector('.arr');
+  if(arr) $('side').style.top = Math.round(arr.getBoundingClientRect().top) + 'px';
+}
 const audible = id => (typeof audibleTrack === 'function') ? audibleTrack(id) : !muted.has(id);
 
 /* ---------- load the score description ---------- */
@@ -253,7 +260,7 @@ async function boot(){
   duration = S.duration;
   $('t-title').textContent = S.title;
   $('t-sub').textContent = `${S.tracks.length} stems · ${S.bars} bars · \u2669 ${Math.round(S.tempo)}`;
-  buildHeads(); fitLanes(); layout(); draw(); drawMini(); paintScrubTips();
+  buildHeads(); fitLanes(); layout(); draw(); drawMini(); paintScrubTips(); placeSide();
   await loadAnnotations();
   $('boot').classList.add('gone');
   tick();
@@ -901,8 +908,9 @@ $('lanes').addEventListener('click', e => {
 $('tips-btn').onclick = function(){
   tipsOn = sideOn = !tipsOn;
   this.setAttribute('aria-pressed', String(tipsOn));
-  $('side').classList.toggle('on', sideOn);
   document.body.classList.toggle('has-side', sideOn);
+  placeSide();
+  $('side').classList.toggle('on', sideOn);
   if(!tipsOn){
     $('tip-panel').classList.remove('on'); openTip = null;
     $('ann-edit').classList.remove('on');
@@ -1053,7 +1061,7 @@ $('lanes').addEventListener('scroll', syncMiniView, {passive:true});
   m.addEventListener('pointermove', e => { if(down) go(e); });
   m.addEventListener('pointerup',   () => { down = false; });
 })();
-addEventListener('resize', () => { layout(); draw(); syncMiniView(); });
+addEventListener('resize', () => { placeSide(); layout(); draw(); syncMiniView(); });
 addEventListener('keydown', e => {
   /* if a button has focus, the browser fires its click on space too — let that
      one through instead of handling it twice */
