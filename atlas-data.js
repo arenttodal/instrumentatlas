@@ -301,6 +301,44 @@ const INSTRUMENTS = {
     prev:'clarinet', next:''
   },
 
+  trumpet:{
+    family:'brass', name:'Trumpet', latin:'Tromba',
+    epithet:'Bright, cylindrical, and built to be heard', status:'live',
+    summary:'Cylindrical bore for most of its length, flaring only at the bell. It is the acoustic opposite of the horn, and the reason it reads as brilliant and forward where the horn reads as warm. Three piston valves fill in the chromatic gaps between the natural harmonics.',
+    range:{lo:54, hi:84, note:'F♯3 – C6 sounding', transposition:'In B♭, written a tone higher'},
+    timbre:0.88,
+    facts:[['Sounding range','F♯3 – C6'],['Section size','3–6','players'],['Transposition','In B♭ (and C)']],
+    registers:[
+      {label:'Low register', pitch:'F♯3 – B♭3', text:'Dark, round and a little unfocused. Rarely used for anything prominent.'},
+      {label:'Middle register', pitch:'B3 – G5', text:'Full, brilliant and secure. Fanfares, melodies and everything else.'},
+      {label:'High register', pitch:'A5 – C6', text:'Penetrating and physically demanding. Reliable from good players, but it costs them, so do not park a section up here.'}
+    ],
+    characteristics:[
+      'Cylindrical bore emphasises odd harmonics, giving the bright, cutting tone.',
+      'Straight mutes, cup mutes and harmon mutes each change the colour completely.',
+      'Double and triple tonguing make rapid repeated notes idiomatic.',
+      'Valve combinations run progressively sharp, corrected by slide triggers while playing.'
+    ],
+    articulations:['Legato','Marcato','Staccato','Double tonguing','Flutter tongue','Rips','Straight mute','Harmon mute'],
+    blends:[
+      {id:'trombone', label:'Trombone', note:'Same bright family; a unified brass choir'},
+      {id:'oboe', label:'Oboe', note:'Both penetrating; the pairing is sharper than either alone'},
+      {id:'viola', label:'Viola', note:'Strings take the edge off the brass'},
+      {id:'horn', label:'Horn', note:'Contrast rather than blend: bright over round'}
+    ],
+    limits:[
+      'Sustained high playing tires players quickly. Write rests or you will not get the last chorus.',
+      'Loud trumpets cover everything. Balance by writing less, not by marking everyone else louder.',
+      'Remember the transposition: written C sounds B♭.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Open vs muted', note:'The same figure, straight mute and open', dur:'0:16'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:18'}
+    ],
+    prev:'', next:'horn'
+  },
+
   horn:{
     family:'brass', name:'Horn', latin:'Corno / French horn',
     model:'horn',
@@ -340,6 +378,82 @@ const INSTRUMENTS = {
       {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:15'}
     ],
     prev:'trumpet', next:'trombone'
+  },
+
+  trombone:{
+    family:'brass', name:'Trombone', latin:'Trombone',
+    epithet:'The only orchestral brass with no valves, and the only one that can truly glissando', status:'live',
+    summary:'A slide instead of valves, which means genuinely continuous pitch and perfect intonation in the player’s hands rather than the instrument’s. Its tone stays remarkably consistent across the whole range, and in the low register at full volume it is the most threatening sound in the orchestra.',
+    range:{lo:40, hi:74, note:'E2 – D5', transposition:'Non-transposing'},
+    timbre:0.66,
+    facts:[['Sounding range','E2 – D5'],['Section size','3–6','players'],['Notation','Bass and tenor clef']],
+    registers:[
+      {label:'Low register', pitch:'E2 – B♭2', text:'Dark and threatening at volume, mysterious when soft. The warning register.'},
+      {label:'Middle register', pitch:'B2 – B♭3', text:'Full, noble and even. The heart of the section’s chordal writing.'},
+      {label:'High register', pitch:'B3 – D5', text:'Brilliant and heroic, and increasingly effortful. Bass trombonists live lower; the tenors carry this.'}
+    ],
+    characteristics:[
+      'Seven slide positions, continuously variable. The only brass that can play a true glissando.',
+      'Tone is unusually homogeneous across the range, unlike clarinet or bassoon.',
+      'Rapid passagework is genuinely difficult, because the slide has to travel.',
+      'Sections usually pair two tenors with one bass trombone.'
+    ],
+    articulations:['Legato','Marcato','Staccato','Glissando','Flutter tongue','Straight mute','Plunger'],
+    blends:[
+      {id:'trumpet', label:'Trumpet', note:'The core brass choir sound'},
+      {id:'tuba', label:'Tuba', note:'Anchors the bottom of the brass chord'},
+      {id:'horn', label:'Horn', note:'Round against bright; use deliberately'},
+      {id:'double-bass', label:'Double basses', note:'Weight under a low brass line'}
+    ],
+    limits:[
+      'Fast runs fight the slide. Write lines, not passagework.',
+      'Legato across positions needs care: a natural slur is only possible between certain notes.',
+      'Three trombones at full volume will bury a string section without effort.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Glissando and legato', note:'What the slide can and cannot join', dur:'0:14'},
+      {label:'Section chord, soft and loud', note:'The same voicing at both extremes', dur:'0:16'}
+    ],
+    prev:'horn', next:'tuba'
+  },
+
+  tuba:{
+    family:'brass', name:'Tuba', latin:'Tuba',
+    epithet:'The foundation of the brass, and far more agile than it looks', status:'live',
+    summary:'The largest and lowest brass instrument, usually one to a section. Its job is the bottom of the brass chord, but its middle register is soft, full and surprisingly nimble. The comic-lumbering reputation says more about how it is written for than about what it can do.',
+    range:{lo:26, hi:65, note:'D1 – F4', transposition:'Non-transposing'},
+    timbre:0.20,
+    facts:[['Sounding range','D1 – F4'],['Section size','1–2','players'],['Notation','Bass clef, concert pitch']],
+    registers:[
+      {label:'Low register', pitch:'D1 – G1', text:'Enormous and slow to speak. Playable only softly at the very bottom, but it projects further than it sounds close up.'},
+      {label:'Middle register', pitch:'A1 – B♭2', text:'Full, warm and the most used part of the instrument. Genuinely agile here.'},
+      {label:'High register', pitch:'B2 – F4', text:'Focused and almost tenor-like. An underused colour, and effective in solo writing.'}
+    ],
+    characteristics:[
+      'Consumes enormous quantities of air, so phrases need more breathing room than any other brass.',
+      'One player supports an entire brass section, so balance sits on them alone.',
+      'Attacks in the lowest octave take time to speak. Write ahead of the beat if precision matters.',
+      'Doubling with double basses and contrabassoon is the standard orchestral bass foundation.'
+    ],
+    articulations:['Legato','Marcato','Staccato','Flutter tongue','Mute'],
+    blends:[
+      {id:'trombone', label:'Trombone', note:'Completes the brass chord from the bottom'},
+      {id:'double-bass', label:'Double basses', note:'The orchestral floor'},
+      {id:'bassoon', label:'Bassoon', note:'Woody definition under the weight'},
+      {id:'timpani', label:'Timpani', note:'Attack under sustained low brass'}
+    ],
+    limits:[
+      'Fast repeated articulation in the bottom octave will not speak cleanly. Simplify it.',
+      'Give it air. A tuba part with no rests is unplayable regardless of how it looks.',
+      'Unison with the double basses muddies. An octave apart keeps both audible.'
+    ],
+    demos:[
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:14'},
+      {label:'Melodic middle register', note:'The part of the instrument nobody writes for', dur:'0:15'}
+    ],
+    prev:'trombone', next:''
   },
 
   cello:{
@@ -536,9 +650,6 @@ const INSTRUMENTS = {
   },
 
   /* ---------- PLANNED (menu only) ---------- */
-  trumpet:{family:'brass',name:'Trumpet',status:'plan',range:{lo:54,hi:82},timbre:0.88},
-  trombone:{family:'brass',name:'Trombone',status:'plan',range:{lo:40,hi:72},timbre:0.66},
-  tuba:{family:'brass',name:'Tuba',status:'plan',range:{lo:26,hi:65},timbre:0.20},
   timpani:{family:'percussion',name:'Timpani',status:'plan',range:{lo:29,hi:53},timbre:0.22},
   cymbals:{family:'percussion',name:'Cymbals',status:'plan',range:{lo:60,hi:96},timbre:0.92},
   'snare-drum':{family:'percussion',name:'Snare Drum',status:'plan',range:{lo:58,hi:80},timbre:0.85},
@@ -756,6 +867,83 @@ const PLATES = {
     </g>
   </svg>`,
 
+  /* Brass. Drawn as tubing rather than as objects: the trumpet lies on a
+     diagonal so its cylindrical run is visible end to end, the trombone shows
+     slide and bell as two separate tube systems, and the tuba stands upright
+     because that is the only way its bell reads at this size. */
+  trumpet:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g transform="rotate(-30 150 260)" stroke-width="1.3">
+      <ellipse cx="30" cy="234" rx="9" ry="6" opacity=".9"/>
+      <path d="M39 230h74M39 240h74" opacity=".9"/>
+      <g opacity=".92">
+        <rect x="113" y="212" width="16" height="56" rx="8"/>
+        <rect x="136" y="212" width="16" height="56" rx="8"/>
+        <rect x="159" y="212" width="16" height="56" rx="8"/>
+        <line x1="121" y1="212" x2="121" y2="198"/><circle cx="121" cy="192" r="5"/>
+        <line x1="144" y1="212" x2="144" y2="198"/><circle cx="144" cy="192" r="5"/>
+        <line x1="167" y1="212" x2="167" y2="198"/><circle cx="167" cy="192" r="5"/>
+      </g>
+      <path d="M175 228h38M175 244h38" opacity=".9"/>
+      <path d="M121 268v24c0 8 6 12 14 12h22" opacity=".55"/>
+      <path d="M167 268v16h30" opacity=".55"/>
+      <path d="M213 226C232 222 250 210 262 190" opacity=".92"/>
+      <path d="M213 246C232 250 250 262 262 282" opacity=".92"/>
+      <ellipse cx="262" cy="236" rx="8" ry="46" opacity=".95"/>
+      <ellipse cx="262" cy="236" rx="4.5" ry="31" opacity=".3"/>
+    </g>
+    <g opacity=".2" stroke-width=".8">
+      <path d="M92 452c36-16 68-46 94-80"/><path d="M104 464c40-18 76-52 104-90"/>
+    </g>
+  </svg>`,
+
+  trombone:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g transform="rotate(-32 150 260)" stroke-width="1.3">
+      <ellipse cx="62" cy="250" rx="8" ry="36" opacity=".95"/>
+      <ellipse cx="62" cy="250" rx="5" ry="24" opacity=".3"/>
+      <path d="M62 214C84 222 104 232 122 240" opacity=".92"/>
+      <path d="M62 286C84 278 104 268 122 260" opacity=".92"/>
+      <path d="M122 240h116" opacity=".9"/>
+      <path d="M122 260h116" opacity=".9"/>
+      <path d="M238 240c15 0 22 5 22 10s-7 10-22 10" opacity=".9"/>
+      <path d="M112 286h126" opacity=".85"/>
+      <path d="M112 304h126" opacity=".85"/>
+      <path d="M238 286c13 0 19 4 19 9s-6 9-19 9" opacity=".85"/>
+      <path d="M132 286v18M226 286v18" opacity=".45"/>
+      <path d="M112 295H88" opacity=".85"/>
+      <ellipse cx="80" cy="295" rx="8" ry="5.5" opacity=".9"/>
+    </g>
+    <g opacity=".2" stroke-width=".8">
+      <path d="M96 456c36-18 68-48 92-82"/><path d="M108 468c40-20 76-54 102-92"/>
+    </g>
+  </svg>`,
+
+  tuba:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
+    <g stroke-width="1.3">
+      <ellipse cx="132" cy="92" rx="52" ry="16" opacity=".95"/>
+      <ellipse cx="132" cy="92" rx="36" ry="11" opacity=".3"/>
+      <path d="M80 92c6 46 20 76 32 96" opacity=".92"/>
+      <path d="M184 92c-6 44-16 70-26 92" opacity=".92"/>
+      <path d="M112 188c-6 40-7 108 0 148" opacity=".9"/>
+      <path d="M158 184c7 40 8 112 1 152" opacity=".9"/>
+      <path d="M112 336c4 30 16 46 24 46s21-16 23-46" opacity=".92"/>
+      <path d="M159 208h10M159 258h10" opacity=".55"/>
+      <g opacity=".92">
+        <rect x="164" y="196" width="16" height="54" rx="8"/>
+        <rect x="186" y="192" width="16" height="54" rx="8"/>
+        <rect x="208" y="188" width="16" height="54" rx="8"/>
+        <line x1="172" y1="196" x2="172" y2="182"/><circle cx="172" cy="176" r="5"/>
+        <line x1="194" y1="192" x2="194" y2="178"/><circle cx="194" cy="172" r="5"/>
+        <line x1="216" y1="188" x2="216" y2="174"/><circle cx="216" cy="168" r="5"/>
+      </g>
+      <path d="M224 194c17-3 27-13 31-27" opacity=".85"/>
+      <ellipse cx="257" cy="159" rx="8" ry="6" transform="rotate(-34 257 159)" opacity=".9"/>
+      <path d="M166 250v22h56v-26" opacity=".5"/>
+    </g>
+    <g opacity=".2" stroke-width=".8">
+      <path d="M244 316c9 30 9 68-4 96"/><path d="M252 308c9 34 9 76-4 108"/>
+    </g>
+  </svg>`,
+
   horn:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g stroke-width="1.3">
       <circle cx="142" cy="250" r="92" opacity=".9"/>
@@ -832,6 +1020,9 @@ const THUMBS = {
   oboe:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M20 4v6"/><path d="M17 10L13 38"/><path d="M23 10l4 28"/><path d="M13 38c-1 5-3 7-4 9M27 38c1 5 3 7 4 9"/><ellipse cx="20" cy="47" rx="11" ry="3"/><g opacity=".5"><circle cx="20" cy="20" r="1.6"/><circle cx="20" cy="30" r="1.6"/></g></svg>`,
   clarinet:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><path d="M17 11c0-5 1-8 3-9 2 1 3 4 3 9"/><path d="M17 11v27M23 11v27"/><path d="M17 38c-2 5-4 7-6 9M23 38c2 5 4 7 6 9"/><ellipse cx="20" cy="47" rx="10" ry="3"/><g opacity=".5"><circle cx="20" cy="19" r="1.6"/><circle cx="20" cy="29" r="1.6"/></g></svg>`,
   bassoon:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><ellipse cx="26" cy="6" rx="4" ry="1.8"/><path d="M22 6v34M30 6v34"/><path d="M11 15v25M18 15v25"/><path d="M11 40c0 5 4 8 9.5 8s9.5-3 9.5-8"/><path d="M13 15c-2-5-5-7-8-8"/></svg>`,
+  trumpet:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-30 20 26)"><circle cx="5" cy="23" r="1.8"/><path d="M7 23h6"/><rect x="13" y="19.5" width="3" height="8" rx="1.5"/><rect x="17.5" y="19.5" width="3" height="8" rx="1.5"/><rect x="22" y="19.5" width="3" height="8" rx="1.5"/><path d="M25.5 23h4"/><path d="M29.5 20.5c3-1 5-3 6-5M29.5 25.5c3 1 5 3 6 5"/><ellipse cx="35.5" cy="23" rx="1.6" ry="5.5"/></g></svg>`,
+  trombone:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-32 20 26)"><ellipse cx="5" cy="22" rx="1.8" ry="6"/><path d="M5 16c4 2 8 4 11 5M5 28c4-2 8-4 11-5"/><path d="M16 21h17c2.5 0 3.5 1 3.5 2s-1 2-3.5 2H16"/><path d="M14 29h19c2 0 3 .8 3 1.8s-1 1.8-3 1.8H14"/><path d="M14 29v3.6"/></g></svg>`,
+  tuba:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><ellipse cx="17" cy="9" rx="9" ry="3"/><path d="M8 9c1 8 3 14 5 19M26 9c-1 8-3 13-4 18"/><path d="M13 28c-2 7-2 14 0 20M22 26c2 7 2 15 0 22"/><path d="M13 48c1 3 3 4 5 4s4-1 4-4"/><g opacity=".8"><rect x="24" y="24" width="3" height="8" rx="1.5"/><rect x="28" y="22" width="3" height="8" rx="1.5"/></g></svg>`,
   horn:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><circle cx="18" cy="23" r="13"/><circle cx="18" cy="23" r="8" opacity=".5"/><ellipse cx="29" cy="41" rx="8" ry="4" transform="rotate(-24 29 41)"/></svg>`,
   violin: stringThumb({t:16, u:5, n:5}),
   viola: stringThumb({t:17, u:6, n:6}),
