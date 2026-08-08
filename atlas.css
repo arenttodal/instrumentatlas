@@ -21,6 +21,8 @@ body{background:#080C14}
   --text-dim:#7E808A;
   --hair:rgba(255,255,255,.07);
   --hair-gold:rgba(212,160,74,.22);
+  --page-top:64px;    /* one offset for home, family and instrument pages */
+  --plate-art-h:341px; /* drives BOTH the engraving and the 3D box */
   font-family:'DM Sans',-apple-system,sans-serif;
   font-size:17px;color:var(--text);background:var(--bg);line-height:1.7;
   -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;min-height:100vh;
@@ -66,7 +68,11 @@ body{background:#080C14}
 .atl-nav.is-sub .atl-nav-title,.atl-nav.is-sub .atl-nav-div{display:none}
 /* the announcement bar belongs to the collection front page; inside the atlas it
    is just 32px of vertical space taken from the content */
-.atl-topbar.is-hidden,.atl-hero-topline.is-hidden{display:none}
+/* Sub-pages hide the topbar but keep its box, so the first headline sits at
+   the same height on every page. Collapsing it moved family and instrument
+   pages 33px up relative to home, which is half of why they started high. */
+.atl-topbar.is-hidden{visibility:hidden}
+.atl-hero-topline.is-hidden{display:none}
 .atl-nav-sep{display:none;width:1px;height:18px;background:var(--hair);flex:0 0 auto}
 .atl-nav-crumb{display:none;min-width:0}
 .atl-nav.is-sub .atl-nav-sep,.atl-nav.is-sub .atl-nav-crumb{display:flex}
@@ -128,7 +134,7 @@ body{background:#080C14}
 .atl-topline{height:2px;background:linear-gradient(90deg,transparent 12%,rgba(74,140,212,.6) 40%,rgba(100,170,230,.4) 62%,transparent 88%)}
 
 /* --- hero --- */
-.atl-home{min-height:calc(100vh - 92px);display:flex;flex-direction:column;justify-content:center;padding:44px 0 56px}
+.atl-home{min-height:calc(100vh - 92px);display:flex;flex-direction:column;padding:var(--page-top) 0 56px}
 .atl-hero{position:relative;margin-bottom:46px}
 .atl-hero h1{font-size:clamp(38px,4.6vw,64px);line-height:1.04;margin:18px 0 20px}
 .atl-hero h1 span{display:block}
@@ -184,7 +190,7 @@ body{background:#080C14}
 .atl-seat-row.is-off b{color:var(--text-dim);font-size:15px}
 
 /* --- family page: tabs --- */
-.atl-fampage{min-height:calc(100vh - 60px);display:flex;flex-direction:column;padding:30px 0 44px}
+.atl-fampage{min-height:calc(100vh - 60px);display:flex;flex-direction:column;padding:var(--page-top) 0 44px}
 /* Section headings. Note the .atl prefix: these are <h3>, and the shared
    `.atl h1,.atl h2,.atl h3,.atl h4` rule is (0,1,1), so a bare class loses to
    it. Without the extra class this rendered as Playfair at 12.5px uppercase
@@ -231,10 +237,11 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
   background:linear-gradient(135deg,var(--gold) 0%,var(--gold-deep) 100%)}
 /* transparent: the embedded viewer renders on alpha, so the plate's own
    gradient reads straight through instead of a second darker rectangle */
-/* 11/12 is chosen so this box and the 2D engraving below resolve to the same
-   height at the same column width. They swap in place, and the caption and the
-   facts under them do not move when the toggle is used. */
-.atl-plate-3d{position:relative;aspect-ratio:11/12;border-radius:6px;overflow:hidden;background:transparent;
+/* Both views are given the same explicit height, so they swap in place and the
+   caption and facts below never move. Previously this was an aspect-ratio here
+   and a max-width on the SVG, two numbers that had to be kept in agreement by
+   hand and only matched at one column width. */
+.atl-plate-3d{position:relative;height:var(--plate-art-h);border-radius:6px;overflow:hidden;background:transparent;
   margin:6px 0 18px;display:none}
 .atl-plate-3d iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2}
 /* hidden until the iframe actually fails — the viewer renders on alpha now,
@@ -248,9 +255,9 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate[data-view="2d"] .atl-cap-3d{display:none}
 
 /* --- instrument page: headline and tabs share the top line --- */
-.atl-instpage{padding:30px 0 44px}
+.atl-instpage{padding:var(--page-top) 0 44px}
 .atl-insthead{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;
-  border-bottom:1px solid var(--hair);padding-bottom:20px;margin-bottom:32px}
+  border-bottom:1px solid var(--hair);padding-bottom:18px;margin-bottom:26px}
 .atl-insthead h1{font-size:clamp(34px,4.2vw,54px);line-height:1.02;margin:6px 0 0;letter-spacing:-.6px}
 .atl-insthead .atl-eyebrow{margin-bottom:0}
 .atl-insthead .atl-tabs{border-bottom:none;margin:0;gap:22px}
@@ -326,8 +333,8 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate::before,.atl-plate::after{content:'';position:absolute;width:12px;height:12px;border:1px solid var(--hair-gold)}
 .atl-plate::before{top:9px;left:9px;border-right:none;border-bottom:none}
 .atl-plate::after{bottom:9px;right:9px;border-left:none;border-top:none}
-.atl-plate-art{display:flex;justify-content:center;padding:6px 0 18px}
-.atl-plate-art svg{width:100%;max-width:230px;height:auto}   /* 230 × 520/300 matches the 3D box */
+.atl-plate-art{display:flex;justify-content:center;padding:6px 0 18px;height:calc(var(--plate-art-h) + 24px)}
+.atl-plate-art svg{height:var(--plate-art-h);width:auto;max-width:100%}
 .atl-plate-cap{border-top:1px solid var(--hair);padding-top:14px;text-align:center}
 .atl-plate-cap .no{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
 .atl-plate-cap .nm{font-family:'Playfair Display',serif;font-style:italic;font-size:19px;color:#fff;margin-top:6px}
@@ -471,7 +478,7 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-tabs{gap:22px}
   .atl-ticks button{font-size:8px;letter-spacing:.3px}
   .atl-seat{padding:20px}
-  .atl-plate-art svg{max-width:210px}
+  .atl-plate-art svg{height:auto;max-height:var(--plate-art-h)}
   .atl-plate{padding:24px 20px 18px}
   .atl-demo{flex-wrap:wrap;gap:12px}
   .atl-wave{display:none}
