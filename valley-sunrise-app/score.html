@@ -54,18 +54,23 @@ body.has-side .arr{grid-template-columns:var(--head-w) 1fr}
 .side-sec p{font-size:13.5px;line-height:1.6;color:var(--text);font-weight:300}
 .side-roles{padding:16px 20px 14px;border-bottom:1px solid var(--hair)}
 .rolechips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.rolechip{padding:5px 11px;border:1px solid var(--hair);border-radius:100px;font-size:10.5px;
-  font-weight:700;letter-spacing:.6px;color:var(--dim);cursor:pointer;transition:all .2s;text-transform:capitalize}
-.rolechip[aria-pressed="true"]{color:#0A0C14;border-color:transparent}
-.side-list{padding:8px 12px 12px}
-.srow{display:flex;gap:10px;padding:11px 8px;border-radius:8px;cursor:pointer;transition:background .2s}
-.srow:hover{background:rgba(255,255,255,.03)}
-.srow.sel{background:rgba(212,160,74,.08)}
-.srow .dot{width:3px;border-radius:2px;flex:0 0 auto;background:var(--c)}
-.srow .txt{min-width:0}
-.srow b{display:block;font-size:13px;color:#fff;font-weight:500}
-.srow .role{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.srow p{font-size:12.5px;line-height:1.55;color:var(--dim);margin-top:5px;font-weight:300}
+.rolechip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--hair);
+  border-radius:100px;font-size:10.5px;font-weight:700;letter-spacing:.6px;color:var(--faint);
+  cursor:pointer;transition:all .2s;text-transform:capitalize}
+.rolechip::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.55}
+.rolechip[aria-pressed="true"]{color:#fff;border-color:rgba(255,255,255,.22)}
+.side-list{padding:16px 20px 10px}
+.rgroup{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:baseline;
+  padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.rgroup:last-of-type{border-bottom:none}
+.rlabel{font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+.rnames{display:flex;flex-wrap:wrap;gap:4px 10px}
+.rname{font-size:13px;color:var(--text);font-weight:400;padding:0;text-align:left;
+  border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.rname:hover{color:#fff;border-bottom-color:var(--hair)}
+.rname.sel{color:var(--gold);border-bottom-color:var(--hair-gold)}
+.rnote{font-size:12.5px;line-height:1.6;color:var(--dim);font-weight:300;
+  padding:2px 0 10px;border-bottom:1px solid rgba(255,255,255,.05)}
 .side-foot{padding:12px 20px 24px;font-size:11px;color:var(--faint);line-height:1.6}
 .side-foot button{margin-top:8px}
 
@@ -649,9 +654,15 @@ function syncMiniView(){
    and export the file — so authoring never means hand-editing JSON.
    ============================================================================ */
 var sideOn = false;
+/* One accent, then neutrals. Melody is the only thing that gets the gold;
+   everything else steps down through the app's blues and greys so the chart
+   reads as a hierarchy rather than a set of unrelated colours. */
 const ROLE_COLOR = {
-  melody:'#D4A04A', counter:'#E0885E', harmony:'#6C9BD8',
-  texture:'#9B8FD4', rhythm:'#5FB89A'
+  melody:'#D4A04A',    // gold — the thing you are meant to follow
+  counter:'#C6A97C',   // muted sand, clearly related to gold but quieter
+  harmony:'#6E8FB8',   // soft blue
+  texture:'#5C6B7C',   // slate
+  rhythm:'#8B94A2'     // grey
 };
 const ROLES = Object.keys(ROLE_COLOR);
 let ANN = {sections:[], roles:[]};
@@ -678,7 +689,7 @@ function buildRoleChips(){
     const b = document.createElement('button');
     b.className = 'rolechip'; b.textContent = r === 'counter' ? 'counter-melody' : r;
     b.setAttribute('aria-pressed', String(roleFilter.has(r)));
-    b.style.background = roleFilter.has(r) ? ROLE_COLOR[r] : 'transparent';
+    b.style.color = roleFilter.has(r) ? ROLE_COLOR[r] : '';
     b.onclick = () => {
       roleFilter.has(r) ? roleFilter.delete(r) : roleFilter.add(r);
       b.setAttribute('aria-pressed', String(roleFilter.has(r)));
@@ -694,8 +705,8 @@ function buildRoleChips(){
       b.className = 'rolechip'; b.dataset.role = r;
       b.textContent = r === 'counter' ? 'counter' : r;
       b.onclick = () => {
-        [...ae.children].forEach(c => { c.setAttribute('aria-pressed','false'); c.style.background='transparent'; });
-        b.setAttribute('aria-pressed','true'); b.style.background = ROLE_COLOR[r];
+        [...ae.children].forEach(c => { c.setAttribute('aria-pressed','false'); c.style.color=''; });
+        b.setAttribute('aria-pressed','true'); b.style.color = ROLE_COLOR[r];
         if(editing){ editing.role = r; lastRole = r; }
       };
       ae.appendChild(b);
@@ -706,45 +717,67 @@ function buildRoleChips(){
 let lastBar = -1;
 function drawSidebar(force){
   if(!S) return;
-  const b = barNow();
-  if(b === lastBar && !force) { markCurrentRow(); return; }
+  const bp = barPos(), b = Math.floor(bp);
+  if(b === lastBar && !force) return;
   lastBar = b;
+
   const sec = sectionAt(b);
   $('s-bars').textContent = sec ? `Bars ${sec.bar}–${sec.to}` : `Bar ${b}`;
   $('s-name').textContent = sec ? sec.name : '—';
   $('s-note').textContent = sec ? sec.note : 'No section written for this bar yet.';
 
-  const here = rolesAt(barPos());
+  /* group what is happening by role, and list the instruments doing it */
+  const here = rolesAt(bp);
+  const byRole = new Map();
+  ROLES.forEach(r => byRole.set(r, []));
+  here.forEach(r => {
+    const t = S.tracks.find(x => x.id === r.track);
+    if(t) byRole.get(r.role).push({t, r});
+  });
+
   const list = $('s-list'); list.innerHTML = '';
-  const order = S.tracks.filter(t => here.some(r => r.track === t.id));
-  const others = S.tracks.filter(t => !order.includes(t));
-  [...order, ...others].forEach(t => {
-    const r = roleFor(t.id, barPos());
-    const row = document.createElement('div');
-    row.className = 'srow' + (selTrack === t.id ? ' sel' : '');
-    row.style.setProperty('--c', r ? ROLE_COLOR[r.role] : famColor(t.family));
-    row.innerHTML = `<span class="dot"></span><span class="txt">
-      <b>${t.name}</b>
-      ${r ? `<span class="role" style="color:${ROLE_COLOR[r.role]}">${r.role==='counter'?'counter-melody':r.role}</span>` : ''}
-      ${r ? `<p>${r.note}</p>` : (selTrack===t.id ? '<p>No note written for this instrument here.</p>' : '')}
-    </span>`;
-    row.onclick = () => {
-      selTrack = selTrack === t.id ? null : t.id;
-      if(annotating && selTrack) openEditor(t.id, sec ? sec.bar : b, sec ? sec.to : b);
-      drawSidebar(true);
+  let any = false;
+  ROLES.forEach(role => {
+    const items = byRole.get(role);
+    if(!items.length) return;
+    any = true;
+    const g = document.createElement('div');
+    g.className = 'rgroup';
+    g.innerHTML = `<span class="rlabel" style="color:${ROLE_COLOR[role]}">${role==='counter'?'Counter-melody':role}</span>
+      <span class="rnames">${items.map(({t}) =>
+        `<button class="rname${selTrack===t.id?' sel':''}" data-id="${t.id}">${t.name}</button>`).join('')}</span>`;
+    list.appendChild(g);
+    if(selTrack){
+      const hit = items.find(({t}) => t.id === selTrack);
+      if(hit && hit.r.note){
+        const p = document.createElement('p');
+        p.className = 'rnote'; p.textContent = hit.r.note;
+        list.appendChild(p);
+      }
+    }
+  });
+  if(!any){
+    const p = document.createElement('p');
+    p.className = 'rnote'; p.textContent = 'Nothing annotated at this bar yet.';
+    list.appendChild(p);
+  }
+
+  list.querySelectorAll('.rname').forEach(btn => {
+    btn.onclick = () => {
+      selTrack = selTrack === btn.dataset.id ? null : btn.dataset.id;
+      if(annotating && selTrack && sec) openEditor(selTrack, sec.bar, sec.to + 1);
+      draw(); drawSidebar(true);
     };
-    list.appendChild(row);
   });
 
   $('s-foot').innerHTML = annotating
-    ? `<b style="color:var(--gold)">Annotate mode.</b> Drag on a lane to make a region, or click an instrument above to write about this section.
+    ? `<b style="color:var(--gold)">Annotate mode.</b> Drag on a lane to make a region.
        <button class="btn" id="exp">Export annotations.json</button>`
-    : `Click an instrument to pin it. Toggle a role to highlight where it happens.`;
+    : `Click an instrument for its note. Toggle a role to see where it happens.`;
   const exp = $('exp'); if(exp) exp.onclick = exportAnn;
 }
-function markCurrentRow(){
-  [...$('s-list').querySelectorAll('.srow')].forEach(r => r.classList.toggle('sel', false));
-}
+
+
 
 function exportAnn(){
   const blob = new Blob([JSON.stringify(ANN, null, 1)], {type:'application/json'});
@@ -767,7 +800,7 @@ function openEditor(trackId, fromBar, toBar, existing){
   [...$('ae-roles').children].forEach(c => {
     const on = c.dataset.role === editing.role;
     c.setAttribute('aria-pressed', String(on));
-    c.style.background = on ? ROLE_COLOR[c.dataset.role] : 'transparent';
+    c.style.color = on ? ROLE_COLOR[c.dataset.role] : '';
   });
   $('ann-edit').classList.add('on');
 }
