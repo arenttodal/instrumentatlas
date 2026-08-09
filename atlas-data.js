@@ -399,9 +399,12 @@ const INSTRUMENTS = {
       'Written a fifth above sounding pitch: irrelevant for mockups, essential the moment you print parts.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:18'},
-      {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:15'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25',
+       src:'audio/instruments/horn/signature-phrase.aac'},
+      {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27',
+       src:'audio/instruments/horn/register-comparison.aac'},
+      {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:08',
+       src:'audio/instruments/horn/with-cello.aac'}
     ],
     prev:'trumpet', next:'trombone'
   },
