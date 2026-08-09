@@ -1,0 +1,334 @@
+{
+ "sections": [
+  {
+   "bar": 1,
+   "to": 7,
+   "name": "Intro",
+   "note": "D minor, atmosphere and a string bed \u2014 almost nothing, which is what makes everything later feel large."
+  },
+  {
+   "bar": 8,
+   "to": 16,
+   "name": "First theme",
+   "note": "The oboe takes the melody and the low strings give the harmony a floor."
+  },
+  {
+   "bar": 17,
+   "to": 24,
+   "name": "Growth",
+   "note": "More lanes join, but the violins are still being withheld."
+  },
+  {
+   "bar": 25,
+   "to": 30,
+   "name": "First wave",
+   "note": "Violins finally enter, already mid-build \u2014 ten lanes playing."
+  },
+  {
+   "bar": 31,
+   "to": 35,
+   "name": "Pull back",
+   "note": "Straight from the peak down to three lanes, with one empty bar as a reset."
+  },
+  {
+   "bar": 36,
+   "to": 46,
+   "name": "Rebuild",
+   "note": "The same material returns thinner, and moves forward faster than the first build."
+  },
+  {
+   "bar": 47,
+   "to": 55,
+   "name": "Second build",
+   "note": "Four lanes to ten in six bars \u2014 half the time the first build took."
+  },
+  {
+   "bar": 56,
+   "to": 65,
+   "name": "Finale",
+   "note": "Full orchestra, densest bars in the piece, arriving on D Lydian."
+  }
+ ],
+ "roles": [
+  {
+   "track": "strings",
+   "from": 1,
+   "to": 8,
+   "role": "texture",
+   "note": "Sustained bed, no rhythm and no movement. It exists to be something for the flute to sit on."
+  },
+  {
+   "track": "flute",
+   "from": 1,
+   "to": 8,
+   "role": "texture",
+   "note": "Fragments rather than a line \u2014 short gestures in the gaps, establishing colour before any melody exists."
+  },
+  {
+   "track": "choir",
+   "from": 1,
+   "to": 8,
+   "role": "texture",
+   "note": "Wordless pad well below the strings. You feel it more than hear it."
+  },
+  {
+   "track": "reeds",
+   "from": 8,
+   "to": 17,
+   "role": "melody",
+   "note": "Solo oboe takes the first real melody. Reedy and exposed, and it carries over the texture without needing volume."
+  },
+  {
+   "track": "strings",
+   "from": 8,
+   "to": 17,
+   "role": "harmony",
+   "note": "The bed becomes functional harmony as the bass arrives \u2014 same sound, different job."
+  },
+  {
+   "track": "cello",
+   "from": 8,
+   "to": 17,
+   "role": "harmony",
+   "note": "Enters with the bass to give the floating harmony a floor."
+  },
+  {
+   "track": "bass",
+   "from": 8,
+   "to": 17,
+   "role": "harmony",
+   "note": "Root motion. The first time the piece has a bottom."
+  },
+  {
+   "track": "horn",
+   "from": 8,
+   "to": 17,
+   "role": "counter",
+   "note": "Quiet horn line answering the oboe in the gaps rather than doubling it."
+  },
+  {
+   "track": "flute",
+   "from": 17,
+   "to": 25,
+   "role": "texture",
+   "note": "Runs and figuration filling the space above the melody \u2014 movement without adding a third tune."
+  },
+  {
+   "track": "cello",
+   "from": 17,
+   "to": 25,
+   "role": "counter",
+   "note": "Cello moves from harmony to a real countermelody underneath the theme."
+  },
+  {
+   "track": "perc",
+   "from": 17,
+   "to": 25,
+   "role": "rhythm",
+   "note": "First percussion. Sparse accents marking the phrase ends."
+  },
+  {
+   "track": "lowbrass",
+   "from": 17,
+   "to": 25,
+   "role": "harmony",
+   "note": "Trombones and tuba thicken the bottom without changing the harmony."
+  },
+  {
+   "track": "violin-1",
+   "from": 25,
+   "to": 31,
+   "role": "melody",
+   "note": "Violins take the theme for the first time, twenty-four bars in, and arrive already in the middle of a build."
+  },
+  {
+   "track": "violin-2",
+   "from": 25,
+   "to": 31,
+   "role": "melody",
+   "note": "Doubling Violin I a third or an octave below \u2014 weight rather than a separate line."
+  },
+  {
+   "track": "flute",
+   "from": 25,
+   "to": 31,
+   "role": "counter",
+   "note": "Fast runs against the violin melody. Same register, different rhythm, so both stay audible."
+  },
+  {
+   "track": "choir",
+   "from": 25,
+   "to": 31,
+   "role": "harmony",
+   "note": "Choir moves into the chord, adding body without adding attack."
+  },
+  {
+   "track": "perc",
+   "from": 25,
+   "to": 31,
+   "role": "rhythm",
+   "note": "Rhythm becomes structural rather than decorative."
+  },
+  {
+   "track": "horn",
+   "from": 25,
+   "to": 31,
+   "role": "harmony",
+   "note": "Horns hold the middle of the chord and glue the woodwinds to the brass."
+  },
+  {
+   "track": "strings",
+   "from": 31,
+   "to": 36,
+   "role": "texture",
+   "note": "Everything strips back to a bed again. The contrast is the point."
+  },
+  {
+   "track": "reeds",
+   "from": 31,
+   "to": 36,
+   "role": "melody",
+   "note": "A fragment of the theme, alone, as a reminder of where the piece came from."
+  },
+  {
+   "track": "cello",
+   "from": 36,
+   "to": 47,
+   "role": "melody",
+   "note": "Cello carries the theme in its singing register \u2014 the same tune, darker."
+  },
+  {
+   "track": "flute",
+   "from": 36,
+   "to": 47,
+   "role": "texture",
+   "note": "Sparse figuration returns first, as it did in the intro."
+  },
+  {
+   "track": "violin-2",
+   "from": 36,
+   "to": 47,
+   "role": "harmony",
+   "note": "Inner harmony under the cello line, deliberately not the melody this time."
+  },
+  {
+   "track": "perc",
+   "from": 36,
+   "to": 47,
+   "role": "rhythm",
+   "note": "Pulse returns and starts pushing forward."
+  },
+  {
+   "track": "violin-1",
+   "from": 47,
+   "to": 56,
+   "role": "melody",
+   "note": "Theme back in the violins, higher and more insistent."
+  },
+  {
+   "track": "lowbrass",
+   "from": 47,
+   "to": 56,
+   "role": "harmony",
+   "note": "Low brass enters properly. From here the bottom never leaves."
+  },
+  {
+   "track": "horn",
+   "from": 47,
+   "to": 56,
+   "role": "counter",
+   "note": "Horn countermelody cutting across the violins \u2014 the pairing that makes the build feel heroic."
+  },
+  {
+   "track": "choir",
+   "from": 47,
+   "to": 56,
+   "role": "harmony",
+   "note": "Choir doubles the harmony an octave up, widening everything."
+  },
+  {
+   "track": "perc",
+   "from": 47,
+   "to": 56,
+   "role": "rhythm",
+   "note": "Rhythmic drive accelerates into the finale."
+  },
+  {
+   "track": "violin-1",
+   "from": 56,
+   "to": 66,
+   "role": "melody",
+   "note": "Full-force theme, top of the register, D Lydian. The raised fourth is what makes it read as brighter than major."
+  },
+  {
+   "track": "trumpet",
+   "from": 56,
+   "to": 66,
+   "role": "melody",
+   "note": "Trumpets finally do real work \u2014 held back for fifty-five bars so their entry lands."
+  },
+  {
+   "track": "flute",
+   "from": 56,
+   "to": 66,
+   "role": "texture",
+   "note": "Runs at the very top, adding brilliance rather than notes you can follow."
+  },
+  {
+   "track": "horn",
+   "from": 56,
+   "to": 66,
+   "role": "harmony",
+   "note": "Horns fill the middle of the chord, the thing that stops a tutti sounding hollow."
+  },
+  {
+   "track": "lowbrass",
+   "from": 56,
+   "to": 66,
+   "role": "harmony",
+   "note": "Full weight underneath. Trombones and tuba are what make the finale feel like size rather than volume."
+  },
+  {
+   "track": "choir",
+   "from": 56,
+   "to": 66,
+   "role": "harmony",
+   "note": "Choir on the chord, and the most obvious signal that this is the destination."
+  },
+  {
+   "track": "cello",
+   "from": 56,
+   "to": 66,
+   "role": "harmony",
+   "note": "Doubling the bass in octaves for definition at the bottom."
+  },
+  {
+   "track": "bass",
+   "from": 56,
+   "to": 66,
+   "role": "harmony",
+   "note": "Root motion, octave below the cello."
+  },
+  {
+   "track": "perc",
+   "from": 56,
+   "to": 66,
+   "role": "rhythm",
+   "note": "Everything the percussion has been saving."
+  },
+  {
+   "track": "violin-2",
+   "from": 56,
+   "to": 66,
+   "role": "melody",
+   "note": "Doubling Violin I an octave below through the climax."
+  },
+  {
+   "track": "reeds",
+   "from": 56,
+   "to": 66,
+   "role": "texture",
+   "note": "Reeds are inside the tutti rather than leading it \u2014 colour, not line."
+  }
+ ]
+}

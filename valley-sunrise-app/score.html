@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valley Sunrise — Score</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#080C14;--gold:#D4A04A;--gold-deep:#C08830;--text:#BEC0C8;--dim:#7E808A;
+  --faint:#4E505A;--hair:rgba(255,255,255,.08);--hair-gold:rgba(212,160,74,.26);--head-w:190px}
+html,body{height:100%;background:var(--bg);overflow:hidden}
+body{font-family:'DM Sans',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column}
+h1{font-family:'Playfair Display',serif;font-weight:500;color:#fff;font-size:20px;letter-spacing:-.2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:22px;
+  padding:13px 22px;border-bottom:1px solid var(--hair);flex:0 0 auto}
+.title{display:flex;align-items:baseline;gap:14px;min-width:0}
+.title span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4E505A}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 14px;border:1px solid var(--hair);border-radius:100px;font-size:11.5px;color:var(--dim);
+  transition:all .2s;white-space:nowrap}
+.ico{position:relative;width:34px;height:34px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--hair);border-radius:9px;color:var(--dim);background:transparent;
+  transition:color .22s ease,border-color .22s ease,background .22s ease}
+.ico svg{width:17px;height:17px;display:block}
+.ico:hover{color:#fff;border-color:rgba(255,255,255,.2)}
+.ico[aria-pressed="true"]{color:var(--gold);border-color:var(--hair-gold);background:rgba(212,160,74,.10)}
+.ico[aria-pressed="true"]::after{content:'';position:absolute;left:50%;bottom:-5px;width:3px;height:3px;
+  margin-left:-1.5px;border-radius:50%;background:var(--gold)}
+.tools{gap:6px}
+.tools .zoom{margin-left:2px}
+.btn:hover{border-color:var(--hair-gold);color:#fff}
+.btn[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
+.zoom{display:flex;align-items:stretch;height:34px;border:1px solid var(--hair);border-radius:9px;overflow:hidden}
+.zoom button{padding:0 11px;font-size:12px;color:var(--dim);display:flex;align-items:center;
+  transition:color .16s ease,background .16s ease}
+.zoom button + button{border-left:1px solid var(--hair)}
+.zoom button:hover{color:#fff;background:rgba(255,255,255,.045)}
+
+/* transport */
+.bar{display:flex;align-items:center;gap:18px;padding:11px 22px;border-bottom:1px solid var(--hair);flex:0 0 auto}
+.play{width:38px;height:38px;flex:0 0 auto;border-radius:50%;border:1px solid var(--hair-gold);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;transition:all .2s}
+.play:hover{background:rgba(212,160,74,.14);transform:scale(1.05)}
+.scrub{flex:1 1 auto;height:4px;background:rgba(255,255,255,.09);border-radius:3px;position:relative;cursor:pointer}
+.scrub i{position:absolute;inset:0 auto 0 0;width:0;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold))}
+.scrub .tipmark{position:absolute;top:-4px;width:2px;height:12px;background:var(--gold);opacity:.55;border-radius:1px}
+.clock{font-size:11.5px;color:var(--dim);font-variant-numeric:tabular-nums;letter-spacing:.3px;min-width:140px;text-align:right}
+.status{font-size:11px;color:var(--gold);min-width:104px;letter-spacing:.2px}
+
+/* the preset field sits apart from the icon cluster */
+.preset-wrap{margin-right:2px}
+/* label and value sit side by side on one baseline, divided by a hairline */
+.preset-field{display:flex;align-items:center;gap:0;height:34px;padding:0 9px 0 12px;
+  border:1px solid var(--hair);border-radius:9px;background:transparent;
+  transition:border-color .2s ease,background .2s ease}
+.preset-field:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.035)}
+.preset-field[aria-expanded="true"]{border-color:var(--hair-gold);background:rgba(212,160,74,.09)}
+.pf-text{display:flex;flex-direction:row;align-items:center;flex:0 0 auto}
+.pf-label{flex:0 0 auto;font-size:8px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
+  color:#43454F;line-height:1;padding-right:10px;margin-right:10px;
+  border-right:1px solid var(--hair)}
+/* fixed width, sized to the longest label ("Counter-melody only"), so the field
+   never resizes as presets change — longer custom names ellipsis instead */
+.pf-value{display:block;font-size:12px;color:#fff;font-weight:500;letter-spacing:.1px;
+  line-height:1;width:126px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preset-field.custom .pf-value{color:var(--gold)}
+.pf-chev{color:#4E505A;flex:0 0 auto;margin-left:9px;transition:transform .22s ease,color .2s ease}
+.preset-field:hover .pf-chev{color:var(--dim)}
+.preset-field[aria-expanded="true"] .pf-chev{transform:rotate(180deg);color:var(--gold)}
+.tools-sep{width:1px;height:20px;background:var(--hair);margin:0 5px}
+
+/* display + preset menus */
+.menu-wrap{position:relative}
+.dmenu{position:absolute;right:0;top:calc(100% + 10px);width:236px;max-height:72vh;overflow-y:auto;
+  padding:6px;z-index:30;
+  background:rgba(12,17,27,.985);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border:1px solid var(--hair);border-radius:12px;box-shadow:0 22px 54px rgba(0,0,0,.62);
+  opacity:0;visibility:hidden;transform:translateY(-6px) scale(.985);transform-origin:top right;
+  transition:opacity .2s ease,transform .22s cubic-bezier(.16,1,.3,1),visibility .22s}
+.dmenu.on{opacity:1;visibility:visible;transform:none}
+.dmenu.wide{width:250px;right:auto;left:0;transform-origin:top left}
+.dmenu::-webkit-scrollbar{width:6px}
+.dmenu::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+
+.dgroup{padding:10px 8px 8px}
+.dgroup + .dgroup{border-top:1px solid rgba(255,255,255,.06)}
+.dlabel{display:block;font-size:8.5px;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;
+  color:#4E505A;margin:0 0 9px 2px;line-height:1.4}
+.dgroup button{position:relative;display:block;width:100%;text-align:left;
+  padding:7px 10px;border-radius:7px;font-size:13px;line-height:1.35;color:var(--dim);
+  transition:color .16s ease,background .16s ease}
+.dgroup button + button{margin-top:1px}
+.dgroup button:hover{color:#fff;background:rgba(255,255,255,.045)}
+.dgroup button[aria-pressed="true"]{color:var(--gold);background:rgba(212,160,74,.11)}
+.dgroup button[aria-pressed="true"]::before{content:'';position:absolute;left:3px;top:50%;
+  width:2px;height:13px;margin-top:-6.5px;border-radius:1px;background:var(--gold)}
+#pre-save{color:var(--text)}
+#pre-save:hover{color:var(--gold)}
+
+.pkey{float:right;font-style:normal;font-size:9px;font-weight:700;letter-spacing:.5px;color:#3E404A;
+  border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:1px 5px;margin-left:8px;line-height:1.4}
+.dgroup button[aria-pressed="true"] .pkey{color:var(--gold);border-color:var(--hair-gold)}
+.prow{display:flex;align-items:center;gap:3px}
+.prow + .prow{margin-top:1px}
+.prow > button:first-child{flex:1 1 auto}
+.pdel{flex:0 0 auto;width:26px;height:26px;border-radius:6px;color:#43454F;font-size:14px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:color .16s ease,background .16s ease}
+.pdel:hover{color:#C0603A;background:rgba(192,96,58,.14)}
+
+/* bottom strip */
+.infobar{position:fixed;left:0;right:0;bottom:0;z-index:7;display:none;align-items:stretch;
+  padding:0;height:66px;
+  background:rgba(10,14,23,.97);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border-top:1px solid var(--hair)}
+body.info-bottom .infobar{display:flex}
+body.info-bottom .arr{padding-bottom:66px}
+
+/* section — the anchor, so it gets the serif and the most weight */
+.ib-sec{flex:0 0 auto;width:210px;display:flex;flex-direction:column;justify-content:center;
+  gap:4px;padding:0 24px;border-right:1px solid var(--hair)}
+.ib-sec .eyebrow{display:block;font-size:8.5px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:#4E505A;line-height:1}
+.ib-sec b{display:block;font-family:'Playfair Display',serif;font-size:18px;color:#fff;
+  font-weight:500;line-height:1.1;letter-spacing:-.2px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+
+/* roles — a tidy label column so the instrument names align vertically */
+.ib-roles{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;
+  flex-wrap:wrap;align-content:center;gap:2px 30px;min-width:0;padding:9px 26px;max-height:66px}
+.ibr{display:flex;align-items:baseline;gap:10px;min-width:0;line-height:1.45}
+.ibr i{font-style:normal;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  flex:0 0 auto;width:58px;text-align:right;opacity:.95}
+.ibr span{font-size:12.5px;color:var(--text);font-weight:300;letter-spacing:.1px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* note — fixed column so the strip never reflows as text changes */
+.ib-note{flex:0 0 330px;display:flex;align-items:center;font-size:12px;line-height:1.55;
+  color:var(--dim);font-weight:300;padding:0 24px;border-left:1px solid var(--hair)}
+.ib-note span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* corner card */
+.corner{position:fixed;right:22px;bottom:22px;z-index:9;width:304px;padding:18px 20px 19px;
+  background:rgba(12,17,27,.975);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border:1px solid var(--hair);border-radius:13px;box-shadow:0 20px 50px rgba(0,0,0,.58);
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .22s ease,transform .26s cubic-bezier(.16,1,.3,1),visibility .26s;
+  pointer-events:none}
+body.info-bottom .corner{bottom:78px}
+.corner.on{opacity:1;visibility:visible;transform:none}
+.corner .eyebrow{display:flex;align-items:center;gap:7px;font-size:8.5px;font-weight:700;
+  letter-spacing:1.9px;text-transform:uppercase;line-height:1.4}
+.corner .eyebrow::before{content:'';width:14px;height:2px;border-radius:1px;background:currentColor}
+.corner b{display:block;font-family:'Playfair Display',serif;font-size:19px;color:#fff;font-weight:500;
+  line-height:1.2;margin:10px 0 4px}
+.corner .meta{display:block;font-size:10.5px;letter-spacing:.3px;color:#4E505A;margin-bottom:10px}
+.corner p{font-size:13px;line-height:1.66;color:var(--text);font-weight:300}
+
+/* right sidebar */
+/* Everything below the header narrows by the sidebar width, so the transport,
+   the minimap and the arrangement all share one right edge. */
+body.has-side .bar,
+body.has-side .mini,
+body.has-side .arr{margin-right:340px}
+
+.side{position:fixed;right:0;top:0;bottom:0;width:340px;z-index:8;
+  display:flex;flex-direction:column;
+  background:linear-gradient(180deg,rgba(11,16,26,.985) 0%,rgba(9,13,22,.985) 100%);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border-left:1px solid var(--hair);transform:translateX(100%);
+  transition:transform .34s cubic-bezier(.16,1,.3,1)}
+.side.on{transform:none}
+.side .eyebrow{font-size:9px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold)}
+
+/* section header */
+.side-sec{flex:0 0 auto;padding:24px 24px 20px}
+.side-sec h2{font-family:'Playfair Display',serif;font-size:25px;color:#fff;font-weight:500;
+  line-height:1.14;letter-spacing:-.3px;margin:9px 0 11px}
+.side-sec p{font-size:13.5px;line-height:1.62;color:#9A9CA4;font-weight:300}
+
+/* role filters — quiet until active */
+.side-roles{flex:0 0 auto;padding:0 24px 18px}
+.rolechips{display:flex;flex-wrap:wrap;gap:4px 6px}
+.rolechip{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:none;border-radius:6px;
+  font-size:10.5px;font-weight:500;letter-spacing:.2px;color:#5E606A;background:transparent;
+  cursor:pointer;transition:color .2s ease,background .2s ease;text-transform:capitalize}
+.rolechip::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;
+  opacity:.4;transition:opacity .2s ease}
+.rolechip:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.rolechip[aria-pressed="true"]{color:var(--text);background:rgba(255,255,255,.045)}
+.rolechip[aria-pressed="true"]::before{opacity:1}
+
+/* what each family is doing, grouped by role */
+.side-list{flex:1 1 auto;overflow-y:auto;min-height:0;padding:4px 24px 16px;
+  border-top:1px solid var(--hair);scrollbar-width:thin}
+.side-list::-webkit-scrollbar{width:6px}
+.side-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+.rgroup{padding:15px 0 0}
+.rgroup + .rgroup{border-top:1px solid rgba(255,255,255,.045);margin-top:14px}
+.rlabel{display:flex;align-items:center;gap:7px;font-size:9px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.rlabel::before{content:'';width:14px;height:2px;border-radius:1px;background:currentColor}
+.rnames{display:flex;flex-direction:column;gap:1px}
+.rname{display:block;width:100%;text-align:left;font-size:14px;color:var(--text);font-weight:400;
+  padding:5px 8px;margin-left:-8px;border-radius:6px;line-height:1.35;
+  transition:color .18s ease,background .18s ease}
+.rname:hover{color:#fff;background:rgba(255,255,255,.035)}
+.rname.sel{color:#fff;background:rgba(212,160,74,.10)}
+.rnote{font-size:12.5px;line-height:1.65;color:var(--dim);font-weight:300;
+  margin:8px 0 2px 4px;padding-left:12px;border-left:1px solid var(--hair-gold)}
+.rempty{font-size:12.5px;color:#4E505A;font-weight:300;padding:18px 0}
+
+/* footer */
+.side-foot{flex:0 0 auto;padding:12px 24px 14px;font-size:11px;color:#4E505A;line-height:1.6;
+  border-top:1px solid var(--hair)}
+.side-foot .btn{margin-top:9px;width:100%;text-align:center}
+
+/* the tip, pinned to the bottom so it never moves anything above it */
+.side-tip{flex:0 0 auto;height:200px;margin:0;padding:18px 24px;overflow-y:auto;
+  border-top:1px solid var(--hair-gold);background:rgba(212,160,74,.055);
+  opacity:0;visibility:hidden;transition:opacity .32s ease,visibility .32s}
+.side-tip.on{opacity:1;visibility:visible}
+.side-tip h3{font-family:'Playfair Display',serif;font-size:18px;color:#fff;font-weight:500;
+  margin:8px 0 9px;line-height:1.24}
+.side-tip p{font-size:13px;line-height:1.62;color:var(--text);font-weight:300}
+.side-tip .acts{margin-top:13px;display:flex;gap:6px}
+
+/* annotate editor */
+.ann-edit{position:fixed;right:356px;bottom:24px;width:300px;z-index:9;padding:16px;
+  background:rgba(9,13,22,.97);border:1px solid var(--hair-gold);border-radius:12px;
+  box-shadow:0 20px 50px rgba(0,0,0,.6);display:none}
+.ann-edit.on{display:block}
+.ann-edit textarea{width:100%;height:72px;margin-top:10px;padding:9px;background:rgba(255,255,255,.04);
+  border:1px solid var(--hair);border-radius:8px;color:#fff;font:inherit;font-size:12.5px;resize:vertical}
+.ae-btns{display:flex;gap:6px;margin-top:10px}
+body.annotating .lanes{cursor:crosshair}
+
+/* minimap */
+.mini{position:relative;height:46px;flex:0 0 auto;border-bottom:1px solid var(--hair);
+  background:rgba(255,255,255,.012);cursor:pointer;overflow:hidden}
+.mini svg{position:absolute;inset:0;width:100%;height:100%}
+.mini-view{position:absolute;top:0;bottom:0;border:1px solid var(--hair-gold);
+  background:rgba(212,160,74,.10);pointer-events:none;border-radius:2px}
+.mini-ph{position:absolute;top:0;bottom:0;width:1px;background:var(--gold);pointer-events:none}
+
+/* arrangement */
+.arr{flex:1 1 auto;display:grid;grid-template-columns:var(--head-w) 1fr;min-height:0}
+.heads{position:relative;border-right:1px solid var(--hair);overflow:hidden;background:rgba(255,255,255,.012)}
+.heads-inner{will-change:transform}
+/* the bar ruler stays put while the lanes scroll under it */
+#ruler{position:sticky;top:0;z-index:3;display:block;background:#0A0E17}
+.ruler-pad{height:36px;border-bottom:1px solid var(--hair)}
+.head{position:relative;display:flex;align-items:center;gap:8px;padding:0 11px 0 15px;
+  border-bottom:1px solid rgba(255,255,255,.04)}
+.fam{position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:var(--c);
+  opacity:.9;transition:opacity .2s}
+.head[data-off="1"] .fam{opacity:.2}
+.head b{flex:1 1 auto;font-size:12.5px;color:#fff;font-weight:500;letter-spacing:.1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.head[data-off="1"] b{color:var(--faint)}
+.ms{display:flex;gap:3px;flex:0 0 auto}
+.ms button{width:19px;height:19px;border-radius:4px;border:1px solid var(--hair);font-size:8.5px;
+  font-weight:700;color:var(--faint);display:flex;align-items:center;justify-content:center;transition:all .18s}
+.ms button:hover{color:#fff;border-color:var(--hair-gold)}
+.head[data-muted="1"] .m{background:#C0603A;border-color:#C0603A;color:#0A0C14}
+.head[data-solo="1"] .s{background:var(--c);border-color:var(--c);color:#0A0C14}
+.lanes{position:relative;overflow:auto;scrollbar-width:thin}
+.loopband{position:absolute;top:0;height:24px;background:rgba(212,160,74,.18);
+  border-left:1px solid var(--gold);border-right:1px solid var(--gold);pointer-events:none}
+.lanes svg{display:block}
+.ph{position:absolute;top:0;width:1px;background:var(--gold);pointer-events:none;z-index:4;
+  box-shadow:0 0 10px rgba(212,160,74,.8)}
+.ph::before{content:'';position:absolute;top:0;left:-4px;border-left:4.5px solid transparent;
+  border-right:4.5px solid transparent;border-top:7px solid var(--gold)}
+
+/* tips */
+
+.boot{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:14px;background:var(--bg);transition:opacity .4s}
+.boot.gone{opacity:0;pointer-events:none}
+.boot .n{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--gold)}
+.boot .s{font-size:12px;color:var(--dim);max-width:420px;text-align:center;line-height:1.6}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="title"><h1 id="t-title">Valley Sunrise</h1><span id="t-sub"></span></div>
+  <div class="tools">
+    <div class="menu-wrap preset-wrap">
+      <button class="preset-field" id="pre-btn" aria-haspopup="true" aria-expanded="false" title="Stem presets">
+        <span class="pf-text">
+          <span class="pf-label">Preset</span>
+          <span class="pf-value" id="pre-current">All stems</span>
+        </span>
+        <svg class="pf-chev" viewBox="0 0 10 6" fill="none" width="10" height="6">
+          <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="dmenu wide" id="pmenu">
+        <div class="dgroup"><span class="dlabel">Everything</span>
+          <div id="pre-all"></div></div>
+        <div class="dgroup"><span class="dlabel">By family</span><div id="pre-fams"></div></div>
+        <div class="dgroup"><span class="dlabel">By role — follows the section</span><div id="pre-roles"></div></div>
+        <div class="dgroup" id="pre-saved-group"><span class="dlabel">Saved</span><div id="pre-saved"></div></div>
+        <div class="dgroup"><button id="pre-save">Save current mix…</button></div>
+      </div>
+    </div>
+    <span class="tools-sep"></span>
+    <button class="ico" id="tips-btn" aria-pressed="false" title="Tips and roles (T)" aria-label="Tips">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3a6 6 0 0 0-3.6 10.8c.6.45.9 1.1.9 1.8v.4h5.4v-.4c0-.7.3-1.35.9-1.8A6 6 0 0 0 12 3z"/>
+        <path d="M10.2 19h3.6"/><path d="M10.8 21.2h2.4"/>
+      </svg>
+    </button>
+    <button class="ico" id="follow-btn" aria-pressed="true" title="Follow the playhead (F)" aria-label="Follow playhead">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5.5v13"/><path d="M9.4 5.5h5.2l-2.6 2.6z" fill="currentColor" stroke="none"/>
+        <path d="M4 12h3"/><path d="M17 12h3"/>
+      </svg>
+    </button>
+    <button class="ico" id="loop-btn" aria-pressed="false" title="Loop region (L)" aria-label="Loop">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6.5 9.5V9a3 3 0 0 1 3-3h8"/><path d="M15 3.5L17.8 6 15 8.5"/>
+        <path d="M17.5 14.5V15a3 3 0 0 1-3 3h-8"/><path d="M9 20.5L6.2 18 9 15.5"/>
+      </svg>
+    </button>
+    <div class="menu-wrap">
+      <button class="ico" id="disp-btn" title="Display options" aria-label="Display options">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <circle cx="12" cy="12" r="2.6"/><path d="M12 4v2.2M12 17.8V20M4 12h2.2M17.8 12H20"/>
+          <path d="M6.4 6.4l1.6 1.6M16 16l1.6 1.6M17.6 6.4L16 8M8 16l-1.6 1.6"/>
+        </svg>
+      </button>
+      <div class="dmenu" id="dmenu">
+        <div class="dgroup" data-key="info">
+          <span class="dlabel">Where the notes appear</span>
+          <button data-v="bottom">Bottom strip</button>
+          <button data-v="corner">Corner card</button>
+          <button data-v="side">Right sidebar</button>
+        </div>
+        <div class="dgroup" data-key="regions">
+          <span class="dlabel">Show role regions</span>
+          <button data-v="hover">On hover only</button>
+          <button data-v="always">Always</button>
+          <button data-v="off">Never</button>
+        </div>
+        <div class="dgroup" data-key="style">
+          <span class="dlabel">How they are marked</span>
+          <button data-v="tint">Tint the notes</button>
+          <button data-v="underline">Underline</button>
+          <button data-v="spotlight">Spotlight</button>
+          <button data-v="box">Box</button>
+        </div>
+      </div>
+    </div>
+    <button class="ico" id="ann-btn" aria-pressed="false" title="Annotate — drag on a lane (A)" aria-label="Annotate">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 19h3.2L19.3 7.9a2.3 2.3 0 0 0-3.2-3.2L5 15.8V19z"/><path d="M14.8 6l3.2 3.2"/>
+      </svg>
+    </button>
+    <div class="zoom" title="Horizontal zoom"><button id="zoom-out">&minus;</button><button id="zoom-fit">Fit</button><button id="zoom-in">+</button></div>
+    <div class="zoom" title="Track height"><button id="vz-out">&#8597;&minus;</button><button id="vz-in">&#8597;+</button></div>
+  </div>
+</div>
+
+<div class="bar">
+  <button class="play" id="play"><svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg></button>
+  <div class="scrub" id="scrub"><i id="scrub-fill"></i></div>
+  <div class="status" id="status"></div>
+  <div class="clock" id="clock">1.1.0 · 0:00 / 0:00</div>
+</div>
+
+<div class="infobar" id="infobar">
+  <div class="ib-sec"><span class="eyebrow" id="ib-bars"></span><b id="ib-name"></b></div>
+  <div class="ib-roles" id="ib-roles"></div>
+  <div class="ib-note" id="ib-note"></div>
+</div>
+
+<div class="corner" id="corner">
+  <span class="eyebrow" id="co-role"></span>
+  <b id="co-name"></b>
+  <span class="meta" id="co-meta"></span>
+  <p id="co-note"></p>
+</div>
+
+<div class="mini" id="mini" title="Whole piece — drag to move the view">
+  <svg id="mini-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="mini-view" id="mini-view"></div>
+  <div class="mini-ph" id="mini-ph"></div>
+</div>
+
+<div class="arr">
+  <div class="heads" id="heads">
+    <div class="ruler-pad"></div>
+    <div class="heads-inner" id="heads-inner"></div>
+  </div>
+  <div class="lanes" id="lanes">
+    <svg id="ruler" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg id="grid" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="ph" id="ph" style="left:0"></div>
+  </div>
+</div>
+
+<aside class="side" id="side">
+  <div class="side-sec">
+    <div class="eyebrow" id="s-bars"></div>
+    <h2 id="s-name"></h2>
+    <p id="s-note"></p>
+  </div>
+  <div class="side-roles"><div class="rolechips" id="rolechips"></div></div>
+  <div class="side-list" id="s-list"></div>
+  <div class="side-foot" id="s-foot"></div>
+  <div class="side-tip" id="side-tip">
+    <div class="eyebrow" id="tip-bar"></div>
+    <h3 id="tip-title"></h3>
+    <p id="tip-body"></p>
+    <div class="acts" id="tip-acts"></div>
+  </div>
+</aside>
+
+<div class="ann-edit" id="ann-edit">
+  <div class="eyebrow" id="ae-where"></div>
+  <div class="rolechips" id="ae-roles"></div>
+  <textarea id="ae-note" placeholder="What is this instrument doing here?"></textarea>
+  <div class="ae-btns">
+    <button class="btn" id="ae-save">Save</button>
+    <button class="btn" id="ae-del">Delete</button>
+    <button class="btn" id="ae-cancel">Cancel</button>
+  </div>
+</div>
+
+
+<div class="boot" id="boot">
+  <div class="n" id="boot-n">Valley Sunrise</div>
+  <div class="s" id="boot-s">Loading score…</div>
+</div>
+
+<script>
+/* ============================================================================
+   SCORE PLAYER
+   ----------------------------------------------------------------------------
+   Twelve stems, two minutes. The naive approach — decode everything to 48 kHz
+   stereo up front — costs 550 MB of RAM and kills the tab. Two things avoid it:
+
+     · the AudioContext runs at 32 kHz, so decodeAudioData resamples on the way in,
+       which costs a third of the memory for no audible difference here
+     · stems decode lazily, only when they first become audible, and start at the
+       current transport position so they drop in sample-aligned mid-playback
+
+   Playback is always stereo. Summing an orchestral mix to mono comb-filters the
+   reverb and sounds like a fault, which is not a trade worth any amount of RAM.
+
+   Everything is scheduled against one clock, so mute/solo never restarts anything.
+   ============================================================================ */
+
+const EXTS = ['aac','wav','m4a'];
+let S = null;                       // the score
+let ctx = null, buffers = new Map();
+let playing = false, startTime = 0, offset = 0, duration = 0;
+const muted = new Set();
+let loopA = null, loopB = null, loopOn = false;   // loop points, in beats
+
+const $ = id => document.getElementById(id);
+
+function placeSide(){
+  const head = document.querySelector('.top');
+  if(head) $('side').style.top = Math.round(head.getBoundingClientRect().bottom) + 'px';
+}
+const audible = id => (typeof audibleTrack === 'function') ? audibleTrack(id) : !muted.has(id);
+
+/* ---------- load the score description ---------- */
+async function boot(){
+  try {
+    S = await (await fetch('score.json')).json();
+  } catch(e){
+    $('boot-s').innerHTML = 'Could not load <b>score.json</b> — it must sit beside this page, served over http://';
+    return;
+  }
+  duration = S.duration;
+  $('t-title').textContent = S.title;
+  $('t-sub').textContent = `${S.tracks.length} stems · ${S.bars} bars · \u2669 ${Math.round(S.tempo)}`;
+  buildHeads(); fitLanes(); layout(); draw(); drawMini(); paintScrubTips(); placeSide();
+  await loadAnnotations();
+  applyDisplay(); buildPresetMenu();
+  $('boot').classList.add('gone');
+  tick();
+}
+
+/* ---------- audio ----------------------------------------------------------
+   Every playing node is registered in LIVE. Nothing is ever replaced silently:
+   a node is created only through startNode(), and killed only through
+   killNode()/killAll(), both of which go through the registry. The previous
+   version stored nodes in a Map keyed by track id and overwrote entries, so a
+   second play() left the first set of sources running with no reference to them
+   — audible as phasing, as solo failing to isolate, and as sound continuing
+   after stop.
+   -------------------------------------------------------------------------- */
+const LIVE = new Set();               // {id, src, gain}
+let starting = false;                 // re-entrancy guard for play()
+
+function ensureCtx(){
+  if(ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)({sampleRate:32000});
+}
+
+async function fetchStem(t){
+  for(const e of EXTS){
+    const url = `${S.audioBase}${t.file || t.id}.${e}`;
+    try { const r = await fetch(url); if(r.ok) return await r.arrayBuffer(); } catch(_){}
+  }
+  throw new Error('no audio for ' + t.id);
+}
+
+async function decode(t){
+  if(buffers.has(t.id)) return buffers.get(t.id);
+  const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
+  buffers.set(t.id, buf);
+  duration = Math.max(duration, buf.duration);
+  return buf;
+}
+
+function killNode(n){
+  try { n.src.onended = null; n.src.stop(); } catch(_){}
+  try { n.src.disconnect(); n.gain.disconnect(); } catch(_){}
+  LIVE.delete(n);
+}
+function killTrack(id){ [...LIVE].forEach(n => { if(n.id === id) killNode(n); }); }
+function killAll(){ [...LIVE].forEach(killNode); LIVE.clear(); }
+function nodeFor(id){ return [...LIVE].find(n => n.id === id) || null; }
+
+/* one place that ever creates a source */
+function loopSecs(){
+  if(!loopOn || loopA === null || loopB === null) return null;
+  const a = loopA*60/S.tempo, b = loopB*60/S.tempo;
+  return (b - a > 0.2) ? [a, b] : null;
+}
+
+function startNode(t, at, when, gainValue){
+  killTrack(t.id);                       // never two nodes for one track
+  const b = buffers.get(t.id); if(!b) return null;
+  const src = ctx.createBufferSource(); src.buffer = b;
+  const L = loopSecs();
+  if(L){ src.loop = true; src.loopStart = L[0]; src.loopEnd = Math.min(L[1], b.duration); }
+  const gain = ctx.createGain(); gain.gain.value = gainValue;
+  src.connect(gain).connect(ctx.destination);
+  const n = {id:t.id, src, gain};
+  src.onended = () => LIVE.delete(n);
+  src.start(when, Math.max(0, Math.min(at, b.duration - 0.01)));
+  LIVE.add(n);
+  return n;
+}
+
+async function play(){
+  if(playing || starting) return;
+  starting = true;
+  try {
+    ensureCtx();
+    if(ctx.state === 'suspended') await ctx.resume();
+    killAll();                            // belt and braces
+    const want = S.tracks.filter(t => audible(t.id));
+    let n = 0;
+    for(const t of want){
+      await decode(t); n++;
+      $('status').textContent = `decoding ${n}/${want.length}`;
+    }
+    $('status').textContent = '';
+    const at = Math.min(offset, duration - 0.05);
+    const when = ctx.currentTime + 0.08;
+    startTime = when - at;
+    S.tracks.forEach(t => {
+      if(buffers.has(t.id)) startNode(t, at, when, audible(t.id) ? 1 : 0);
+    });
+    playing = true; setPlayIcon();
+  } catch(err){
+    $('status').textContent = 'audio error — see console';
+    console.error(err);
+  } finally { starting = false; }
+}
+
+function pause(){
+  if(!playing) return;
+  offset = position();
+  playing = false;
+  killAll();
+  setPlayIcon();
+}
+function position(){
+  if(!playing || !ctx) return offset;
+  let p = ctx.currentTime - startTime;
+  const L = loopSecs();
+  if(L && p > L[1]) p = L[0] + ((p - L[0]) % (L[1] - L[0]));
+  return Math.min(p, duration);
+}
+
+function setPlayIcon(){
+  $('play').innerHTML = playing
+    ? '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><rect width="4" height="14" rx="1"/><rect x="8" width="4" height="14" rx="1"/></svg>'
+    : '<svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg>';
+}
+
+/* gain-only changes; a newly audible track decodes and joins at the current
+   position rather than restarting anything */
+let applying = false;
+async function applyGains(){
+  draw(); refreshOff(); drawMini();
+  if(!playing || applying) return;
+  applying = true;
+  try {
+    const now = ctx.currentTime;
+    LIVE.forEach(n => {
+      const target = audible(n.id) ? 1 : 0;
+      n.gain.gain.cancelScheduledValues(now);
+      n.gain.gain.setValueAtTime(n.gain.gain.value, now);
+      n.gain.gain.linearRampToValueAtTime(target, now + 0.03);
+    });
+    for(const t of S.tracks){
+      if(audible(t.id) && !nodeFor(t.id)){
+        $('status').textContent = 'adding ' + t.name + '…';
+        await decode(t);
+        if(!playing) break;
+        const at = position() + 0.06;
+        const node = startNode(t, at, ctx.currentTime + 0.06, 0);
+        if(node) node.gain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.12);
+        $('status').textContent = '';
+      }
+    }
+  } finally { applying = false; }
+}
+
+function seek(sec){
+  const was = playing;
+  killAll();
+  playing = false;
+  offset = Math.max(0, Math.min(sec, duration - 0.05));
+  setPlayIcon();
+  render();
+  if(was) play();
+}
+
+/* ---------- layout ---------------------------------------------------------
+   Lane height is a variable, not a constant, and notes are placed on a real
+   pitch scale within each lane rather than squeezed into a few pixels. Vertical
+   zoom changes the lane height; horizontal zoom changes pixels-per-beat and
+   anchors on the mouse, the way a DAW does.
+   -------------------------------------------------------------------------- */
+const RULER = 36;   // bar numbers on one row, section names on the next
+let LANE = 40;                         // lane height, changed by vertical zoom
+let ppb = 8;                           // pixels per beat
+const MIN_PPB = 1.2, MAX_PPB = 90, MIN_LANE = 22, MAX_LANE = 150;
+
+const totalBeats = () => S.bars * S.beats;
+const gridW = () => totalBeats() * ppb;
+const gridH = () => RULER + S.tracks.length * LANE;
+
+function layout(){
+  [...$('heads-inner').querySelectorAll('.head')].forEach(r => r.style.height = LANE + 'px');
+  $('ph').style.height = (RULER + S.tracks.length*LANE) + 'px';
+  syncHeadScroll();
+}
+
+/* the instrument names must move with the lanes when scrolling vertically */
+function syncHeadScroll(){
+  const hi = $('heads-inner'), l = $('lanes');
+  if(hi && l) hi.style.transform = `translateY(${-l.scrollTop}px)`;
+}
+
+/* zoom horizontally about a fixed point on screen, so the bar under the cursor
+   stays under the cursor */
+function zoomAt(factor, clientX){
+  const l = $('lanes');
+  const rect = l.getBoundingClientRect();
+  const px = (clientX === undefined ? rect.width/2 : clientX - rect.left);
+  const beatUnder = (l.scrollLeft + px) / ppb;
+  ppb = Math.max(MIN_PPB, Math.min(ppb * factor, MAX_PPB));
+  layout(); draw();
+  l.scrollLeft = Math.max(0, beatUnder * ppb - px);
+  drawMini();
+}
+function fitZoom(){
+  ppb = Math.max(MIN_PPB, ($('lanes').clientWidth - 24) / totalBeats());
+  layout(); draw(); $('lanes').scrollLeft = 0; drawMini();
+}
+function vzoom(mult){
+  LANE = Math.max(MIN_LANE, Math.min(LANE * mult, MAX_LANE));
+  layout(); draw(); drawMini();
+}
+/* on load, size the lanes so the whole stack just fills the window */
+function fitLanes(){
+  const avail = $('lanes').clientHeight - RULER - 8;
+  LANE = Math.max(MIN_LANE, Math.min(avail / S.tracks.length, MAX_LANE));
+  layout();
+}
+
+/* ---------- track headers ---------- */
+const solos = new Set();               // additive solo, like a mixer
+function audibleTrack(id){
+  /* standard mixer behaviour: solo narrows the field, mute always wins */
+  if(muted.has(id)) return false;
+  return solos.size ? solos.has(id) : true;
+}
+
+function buildHeads(){
+  const h = $('heads-inner');
+  S.tracks.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'head'; row.style.height = LANE + 'px';
+    row.style.setProperty('--c', famColor(t.family));
+    row.dataset.muted = '0'; row.dataset.solo = '0'; row.dataset.off = '0';
+    row.innerHTML = `<span class="fam"></span><b>${t.name}</b>
+      <span class="ms"><button class="m" title="Mute">M</button><button class="s" title="Solo">S</button></span>`;
+    row.querySelector('.m').onclick = e => {
+      e.stopPropagation();
+      tempSolo = null;
+      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; }
+      buildPresetMenu();
+      muted.has(t.id) ? muted.delete(t.id) : muted.add(t.id);
+      row.dataset.muted = muted.has(t.id) ? '1' : '0';
+      applyGains();
+    };
+    row.querySelector('.s').onclick = e => {
+      e.stopPropagation();
+      tempSolo = null;
+      if(activePreset && activePreset.kind !== 'custom'){ activePreset = null; }
+      buildPresetMenu();
+      /* alt-click solos exclusively, plain click adds to the solo group */
+      if(e.altKey){ solos.clear(); solos.add(t.id); }
+      else solos.has(t.id) ? solos.delete(t.id) : solos.add(t.id);
+      syncHeads(); applyGains();
+    };
+    row.ondblclick = e => {
+      if(e.target.closest('.ms')) return;
+      toggleTempSolo(t.id);
+    };
+    h.appendChild(row);
+  });
+}
+function syncHeads(){
+  [...$('heads-inner').querySelectorAll('.head')].forEach((r,i) => {
+    const id = S.tracks[i].id;
+    r.dataset.solo  = solos.has(id) ? '1' : '0';
+    r.dataset.muted = muted.has(id) ? '1' : '0';
+    r.dataset.off   = audibleTrack(id) ? '0' : '1';
+  });
+}
+function refreshOff(){ syncHeads(); }
+
+const FAM = {woodwinds:'#6FB7E8',brass:'#D4A04A',strings:'#CF5F52',
+             percussion:'#9B8FD4',choir:'#7FD1B9'};
+const famColor = f => FAM[f] || '#8FB4E0';
+
+/* ---------- draw ---------- */
+function draw(){
+  const W = gridW(), H = S.tracks.length * LANE;     // body only; ruler is separate
+  let r = '', s = '';
+
+  /* ---- ruler (its own sticky svg, so it survives vertical scrolling) ---- */
+  for(let bar = 0; bar < S.bars; bar++){
+    const x = bar * S.beats * ppb, major = bar % 4 === 0;
+    r += `<line x1="${x.toFixed(1)}" y1="${RULER-7}" x2="${x.toFixed(1)}" y2="${RULER}" stroke="#fff" stroke-opacity="${major?'.22':'.1'}"/>`;
+    if(major || ppb > 12)
+      r += `<text x="${(x+4).toFixed(1)}" y="12" fill="#5E606A" font-size="9" font-family="DM Sans" font-weight="700">${bar+1}</text>`;
+  }
+  if(DISP.regions !== 'off') (ANN.sections||[]).forEach((sec,i) => {
+    const x = (sec.bar-1)*S.beats*ppb, w = (sec.to - sec.bar + 1)*S.beats*ppb;
+    if(w < 26) return;                                  // too narrow to letter
+    r += `<line x1="${x.toFixed(1)}" y1="17" x2="${x.toFixed(1)}" y2="${RULER}" stroke="#fff" stroke-opacity=".26"/>
+          <clipPath id="sc${i}"><rect x="${x.toFixed(1)}" y="17" width="${(w-6).toFixed(1)}" height="${RULER-17}"/></clipPath>
+          <text clip-path="url(#sc${i})" x="${(x+6).toFixed(1)}" y="30" fill="#7E808A" font-size="9"
+            font-weight="700" font-family="DM Sans" letter-spacing="1.3">${sec.name.toUpperCase()}</text>`;
+  });
+
+  if(tipsOn) (S.tips||[]).forEach(tp => {
+    const x = (tp.bar-1)*S.beats*ppb, w = (tp.beats||8)*ppb;
+    r += `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="14" fill="#D4A04A" fill-opacity=".16"/>
+          <rect x="${x.toFixed(1)}" y="12" width="${w.toFixed(1)}" height="2" fill="#D4A04A" fill-opacity=".85"/>
+          <circle cx="${x.toFixed(1)}" cy="6" r="2.6" fill="#D4A04A"/>`;
+  });
+  if(loopOn && loopA !== null && loopB !== null){
+    const x1 = loopA*ppb, x2 = loopB*ppb;
+    r += `<rect x="${x1}" y="0" width="${x2-x1}" height="${RULER}" fill="#D4A04A" fill-opacity=".22"/>`;
+  }
+  r += `<line x1="0" y1="${RULER-0.5}" x2="${W}" y2="${RULER-0.5}" stroke="#fff" stroke-opacity=".08"/>`;
+  const rs = $('ruler');
+  rs.setAttribute('width', W); rs.setAttribute('height', RULER);
+  rs.setAttribute('viewBox', `0 0 ${W} ${RULER}`); rs.innerHTML = r;
+
+  /* ---- bars and beats ---- */
+  for(let bar = 0; bar < S.bars; bar++){
+    const x = bar * S.beats * ppb, major = bar % 4 === 0;
+    s += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity="${major?'.11':'.045'}"/>`;
+    if(ppb > 26) for(let bt = 1; bt < S.beats; bt++){
+      const bx = x + bt*ppb;
+      s += `<line x1="${bx.toFixed(1)}" y1="0" x2="${bx.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".022"/>`;
+    }
+  }
+
+  if(loopOn && loopA !== null && loopB !== null){
+    const x1 = loopA*ppb, x2 = loopB*ppb;
+    s += `<rect x="${x1}" y="0" width="${x2-x1}" height="${H}" fill="#D4A04A" fill-opacity=".07"/>
+          <line x1="${x1}" y1="0" x2="${x1}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>
+          <line x1="${x2}" y1="0" x2="${x2}" y2="${H}" stroke="#D4A04A" stroke-opacity=".7"/>`;
+  }
+
+  /* the lane being annotated, and the region being dragged */
+  if(annotating && hoverLane !== null){
+    const y0 = hoverLane*LANE;
+    s += `<rect x="0" y="${y0}" width="${W}" height="${LANE}" fill="#fff" fill-opacity=".035"/>
+          <line x1="0" y1="${y0}" x2="${W}" y2="${y0}" stroke="#D4A04A" stroke-opacity=".35"/>
+          <line x1="0" y1="${y0+LANE}" x2="${W}" y2="${y0+LANE}" stroke="#D4A04A" stroke-opacity=".35"/>`;
+  }
+  if(dragSel){
+    const y0 = dragSel.lane*LANE;
+    const x = (dragSel.from-1)*S.beats*ppb, w = Math.max((dragSel.to-dragSel.from)*S.beats*ppb, 2);
+    const c = ROLE_COLOR[dragSel.role] || '#D4A04A';
+    s += `<rect x="${x.toFixed(1)}" y="${y0+1}" width="${w.toFixed(1)}" height="${LANE-2}" rx="4"
+            fill="${c}" fill-opacity=".22" stroke="${c}" stroke-opacity=".9" stroke-dasharray="4 3"/>
+          <text x="${(x+6).toFixed(1)}" y="${(y0+15).toFixed(1)}" fill="${c}" font-size="10"
+            font-weight="700" font-family="DM Sans">${fmtBar(dragSel.from)} – ${fmtBar(dragSel.to)}</text>`;
+  }
+
+  /* which regions are shown at all */
+  const shown = (ANN.roles||[]).filter(rr => {
+    if(DISP.regions === 'off' || !roleFilter.has(rr.role)) return false;
+    if(DISP.regions === 'hover'){
+      if(annotating) return true;
+      if(!hoverInfo) return false;
+      const i = S.tracks.findIndex(t => t.id === rr.track);
+      return i === hoverInfo.lane && hoverInfo.bar >= rr.from && hoverInfo.bar < rr.to;
+    }
+    return true;
+  });
+
+  /* role marks, in whichever style is selected */
+  shown.forEach(rr => {
+    const i = S.tracks.findIndex(t => t.id === rr.track); if(i < 0) return;
+    const x = (rr.from-1)*S.beats*ppb, w = (rr.to - rr.from)*S.beats*ppb;
+    const y0 = i*LANE, c = ROLE_COLOR[rr.role] || '#8FB4E0';
+    const sel = selTrack === rr.track;
+
+    if(DISP.style === 'box'){
+      s += `<rect x="${x.toFixed(1)}" y="${y0+1}" width="${w.toFixed(1)}" height="${LANE-2}" rx="4"
+        fill="${c}" fill-opacity="${sel?.20:.10}" stroke="${c}" stroke-opacity="${sel?.75:.35}"/>`;
+    } else if(DISP.style === 'underline'){
+      s += `<rect x="${x.toFixed(1)}" y="${(y0+LANE-3.5)}" width="${w.toFixed(1)}" height="2" rx="1"
+        fill="${c}" fill-opacity="${sel?1:.7}"/>`;
+    } else if(DISP.style === 'spotlight'){
+      s += `<rect x="${x.toFixed(1)}" y="${y0}" width="${w.toFixed(1)}" height="${LANE}"
+        fill="${c}" fill-opacity=".055"/>`;
+    }
+    /* 'tint' draws nothing here — the notes themselves take the colour */
+
+    if(DISP.style !== 'tint' && w > 54 && LANE >= 34)
+      s += `<text x="${(x+7).toFixed(1)}" y="${(y0+13).toFixed(1)}" fill="${c}" fill-opacity=".8"
+        font-size="9" font-weight="700" font-family="DM Sans" letter-spacing=".6">${rr.role==='counter'?'COUNTER':rr.role.toUpperCase()}</text>`;
+  });
+
+  /* section boundaries — lines only; the names are on the ruler */
+  if(DISP.regions !== 'off') (ANN.sections||[]).forEach(sec => {
+    const x = (sec.bar-1)*S.beats*ppb;
+    s += `<line x1="${x.toFixed(1)}" y1="0" x2="${x.toFixed(1)}" y2="${H}" stroke="#fff" stroke-opacity=".2" stroke-dasharray="3 4"/>`;
+  });
+
+  /* lanes */
+  S.tracks.forEach((t,i) => {
+    const y0 = i*LANE;
+    s += `<line x1="0" y1="${y0+LANE}" x2="${W}" y2="${y0+LANE}" stroke="#fff" stroke-opacity=".035"/>`;
+    if(!t.notes.length) return;
+    const on = audibleTrack(t.id), col = famColor(t.family);
+    const ps = t.notes.map(n => n[2]);
+    let lo = Math.min(...ps), hi = Math.max(...ps);
+    lo -= 2; hi += 2;
+    const span = Math.max(hi - lo, 6), inner = LANE - 8;
+    const nh = Math.max(2, Math.min(inner/span * 1.1, 9));
+    const yFor = p => y0 + 4 + (1 - (p - lo)/span) * (inner - nh);
+    if(LANE >= 46){
+      for(let p = Math.ceil(lo/12)*12; p <= hi; p += 12)
+        s += `<line x1="0" y1="${(yFor(p)+nh/2).toFixed(1)}" x2="${W}" y2="${(yFor(p)+nh/2).toFixed(1)}" stroke="${col}" stroke-opacity=".07"/>`;
+    }
+    /* regions covering this lane, for note-level styling */
+    const mine = shown.filter(rr => rr.track === t.id);
+    const spotting = DISP.style === 'spotlight' && shown.length > 0;
+    t.notes.forEach(([st,du,p]) => {
+      const x = st*ppb, w = Math.max(du*ppb - 1, 1.5);
+      const bar = st/S.beats + 1;
+      const rr = mine.find(r => bar >= r.from - 0.001 && bar < r.to);
+      let fill = col, op = on ? .95 : .12;
+      if(rr && DISP.style === 'tint'){ fill = ROLE_COLOR[rr.role]; op = on ? 1 : .14; }
+      else if(spotting){ op = on ? (rr ? 1 : .18) : .1; if(rr) fill = ROLE_COLOR[rr.role]; }
+      s += `<rect x="${x.toFixed(1)}" y="${yFor(p).toFixed(1)}" width="${w.toFixed(1)}" height="${nh.toFixed(1)}" rx="${(nh/2.5).toFixed(1)}"
+        fill="${fill}" fill-opacity="${op}"/>`;
+    });
+  });
+
+  const g = $('grid');
+  g.innerHTML = s;
+  g.setAttribute('width', W); g.setAttribute('height', H);
+  g.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  $('ph').style.height = (RULER + H) + 'px';
+}
+
+/* ---------- minimap ---------- */
+function drawMini(){
+  const svg = $('mini-svg'); if(!svg || !S) return;
+  const W = 1000, H = 46, tb = totalBeats();
+  const rows = S.tracks.length;
+  let s = '';
+  S.tracks.forEach((t,i) => {
+    const col = famColor(t.family);
+    const y0 = (i/rows)*H, h = Math.max(H/rows - 0.6, 1);
+    t.notes.forEach(([st,du]) => {
+      s += `<rect x="${(st/tb*W).toFixed(2)}" y="${y0.toFixed(2)}" width="${Math.max(du/tb*W,0.6).toFixed(2)}"
+        height="${h.toFixed(2)}" fill="${col}" fill-opacity="${audibleTrack(t.id)?.8:.15}"/>`;
+    });
+  });
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('preserveAspectRatio','none');
+  svg.innerHTML = s;
+  syncMiniView();
+}
+function syncMiniView(){
+  const l = $('lanes'), m = $('mini-view');
+  if(!m || !gridW()) return;
+  const frac = l.clientWidth / gridW(), left = l.scrollLeft / gridW();
+  m.style.left = (left*100) + '%';
+  m.style.width = Math.min(frac*100, 100) + '%';
+}
+
+
+/* ============================================================================
+   ROLES, SECTIONS, SIDEBAR AND ANNOTATION
+   ----------------------------------------------------------------------------
+   annotations.json holds two lists:
+     sections  [{bar,to,name,note}]                       what is happening here
+     roles     [{track,from,to,role,note}]                what THIS instrument does
+   Annotate mode lets you drag a region on a lane, pick a role, write the note,
+   and export the file — so authoring never means hand-editing JSON.
+   ============================================================================ */
+var sideOn = false;
+/* One accent, then neutrals. Melody is the only thing that gets the gold;
+   everything else steps down through the app's blues and greys so the chart
+   reads as a hierarchy rather than a set of unrelated colours. */
+const ROLE_COLOR = {
+  melody:'#D4A04A',    // gold — the thing you are meant to follow
+  counter:'#C6A97C',   // muted sand, clearly related to gold but quieter
+  harmony:'#6E8FB8',   // soft blue
+  texture:'#5C6B7C',   // slate
+  rhythm:'#8B94A2'     // grey
+};
+const ROLES = Object.keys(ROLE_COLOR);
+let ANN = {sections:[], roles:[]};
+let roleFilter = new Set(ROLES);      // which roles are highlighted
+let selTrack = null;                  // track pinned in the sidebar
+let annotating = false, editing = null;
+
+/* display settings — remembered between visits */
+const DEF = {info:'bottom', regions:'hover', style:'tint'};
+let DISP = Object.assign({}, DEF, JSON.parse(localStorage.getItem('vs-display') || '{}'));
+function saveDisp(){ localStorage.setItem('vs-display', JSON.stringify(DISP)); }
+
+/* which lane and bar the mouse is over, for hover-only modes */
+let hoverInfo = null;   // {lane, bar}
+let dragSel = null, hoverLane = null, lastRole = 'melody';
+
+async function loadAnnotations(){
+  try { ANN = await (await fetch('annotations.json')).json(); }
+  catch(_){ ANN = {sections:[], roles:[]}; }
+  buildRoleChips(); drawSidebar();
+}
+
+const barPos = () => position()/60*S.tempo/S.beats + 1;   // fractional bar
+const barNow = () => Math.floor(barPos());
+const sectionAt = b => ANN.sections.find(x => b >= x.bar && b <= x.to) || null;
+const rolesAt = b => ANN.roles.filter(r => b >= r.from && b < r.to);
+const roleFor = (trackId, b) => ANN.roles.find(r => r.track === trackId && b >= r.from && b < r.to) || null;
+
+function buildRoleChips(){
+  const wrap = $('rolechips'); wrap.innerHTML = '';
+  ROLES.forEach(r => {
+    const b = document.createElement('button');
+    b.className = 'rolechip'; b.textContent = r === 'counter' ? 'counter-melody' : r;
+    b.setAttribute('aria-pressed', String(roleFilter.has(r)));
+    b.style.color = roleFilter.has(r) ? ROLE_COLOR[r] : '';
+    b.onclick = () => {
+      roleFilter.has(r) ? roleFilter.delete(r) : roleFilter.add(r);
+      b.setAttribute('aria-pressed', String(roleFilter.has(r)));
+      /* only the dot carries the role colour — the button keeps its default
+         pressed background, set in CSS */
+      b.style.color = roleFilter.has(r) ? ROLE_COLOR[r] : '';
+      draw();
+    };
+    wrap.appendChild(b);
+  });
+  const ae = $('ae-roles'); if(ae){
+    ae.innerHTML = '';
+    ROLES.forEach(r => {
+      const b = document.createElement('button');
+      b.className = 'rolechip'; b.dataset.role = r;
+      b.textContent = r === 'counter' ? 'counter' : r;
+      b.onclick = () => {
+        [...ae.children].forEach(c => { c.setAttribute('aria-pressed','false'); c.style.color=''; });
+        b.setAttribute('aria-pressed','true'); b.style.color = ROLE_COLOR[r];
+        if(editing){ editing.role = r; lastRole = r; if(dragSel){ dragSel.role = r; draw(); } }
+      };
+      ae.appendChild(b);
+    });
+  }
+}
+
+let lastBar = -1;
+function drawSidebar(force){
+  if(!S) return;
+  const bp = barPos(), b = Math.floor(bp);
+  if(b === lastBar && !force) return;
+  lastBar = b;
+
+  const sec = sectionAt(b);
+  $('s-bars').textContent = sec ? `Bars ${sec.bar}–${sec.to}` : `Bar ${b}`;
+  $('s-name').textContent = sec ? sec.name : '—';
+  $('s-note').textContent = sec ? sec.note : 'No section written for this bar yet.';
+
+  /* group what is happening by role, and list the instruments doing it */
+  const here = rolesAt(bp);
+  const byRole = new Map();
+  ROLES.forEach(r => byRole.set(r, []));
+  here.forEach(r => {
+    const t = S.tracks.find(x => x.id === r.track);
+    if(t) byRole.get(r.role).push({t, r});
+  });
+
+  const list = $('s-list'); list.innerHTML = '';
+  let any = false;
+  ROLES.forEach(role => {
+    const items = byRole.get(role);
+    if(!items.length) return;
+    any = true;
+    const g = document.createElement('div');
+    g.className = 'rgroup';
+    g.innerHTML =
+      `<div class="rlabel" style="color:${ROLE_COLOR[role]}">${role==='counter'?'Counter-melody':role}</div>` +
+      `<div class="rnames">${items.map(({t,r}) =>
+        `<button class="rname${selTrack===t.id?' sel':''}" data-id="${t.id}">${t.name}</button>` +
+        (selTrack===t.id && r.note ? `<p class="rnote">${r.note}</p>` : '')
+      ).join('')}</div>`;
+    list.appendChild(g);
+  });
+  if(!any){
+    const p = document.createElement('p');
+    p.className = 'rempty';
+    p.textContent = annotating
+      ? 'Nothing here yet — drag on a lane to add the first region.'
+      : 'Nothing annotated at this bar.';
+    list.appendChild(p);
+  }
+
+  list.querySelectorAll('.rname').forEach(btn => {
+    btn.onclick = () => {
+      selTrack = selTrack === btn.dataset.id ? null : btn.dataset.id;
+      if(annotating && selTrack && sec) openEditor(selTrack, sec.bar, sec.to + 1);
+      draw(); drawSidebar(true);
+    };
+  });
+
+  $('s-foot').innerHTML = annotating
+    ? `Drag across a lane to add a region, or click one to edit it.
+       <button class="btn" id="exp">Export annotations.json</button>`
+    : `Select an instrument to read what it is doing here.`;
+  const exp = $('exp'); if(exp) exp.onclick = exportAnn;
+}
+
+
+
+function exportAnn(){
+  const blob = new Blob([JSON.stringify(ANN, null, 1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'annotations.json'; a.click();
+}
+
+/* ---- annotate: drag a region on a lane ---- */
+function laneAt(clientY){
+  const r = $('grid').getBoundingClientRect();
+  const i = Math.floor((clientY - r.top) / LANE);
+  return (i >= 0 && i < S.tracks.length) ? S.tracks[i] : null;
+}
+function openEditor(trackId, fromBar, toBar, existing){
+  editing = existing || {track:trackId, from:fromBar, to:toBar, role:'melody', note:''};
+  const t = S.tracks.find(x => x.id === trackId);
+  $('ae-where').textContent = `${t.name} · bar ${fmtBar(editing.from)} to ${fmtBar(editing.to)}`;
+  $('ae-note').value = editing.note || '';
+  [...$('ae-roles').children].forEach(c => {
+    const on = c.dataset.role === editing.role;
+    c.setAttribute('aria-pressed', String(on));
+    c.style.color = on ? ROLE_COLOR[c.dataset.role] : '';
+  });
+  $('ann-edit').classList.add('on');
+}
+function closeEditor(){
+  $('ann-edit').classList.remove('on');
+  editing = null; dragSel = null;
+  draw();
+}
+$('ae-cancel').onclick = closeEditor;
+$('ae-save').onclick = () => {
+  if(!editing) return;
+  editing.note = $('ae-note').value.trim();
+  if(!ANN.roles.includes(editing)) ANN.roles.push(editing);
+  closeEditor(); drawSidebar(true);
+};
+$('ae-del').onclick = () => {
+  if(editing){ ANN.roles = ANN.roles.filter(r => r !== editing); }
+  closeEditor(); drawSidebar(true);
+};
+
+
+/* ============================================================================
+   STEM PRESETS
+   ----------------------------------------------------------------------------
+   Family presets are fixed sets of tracks. Role presets are not — "melody only"
+   means whatever is carrying the melody *at this point in the piece*, so it
+   re-solos itself as the playhead crosses into a new section. Custom presets
+   store whatever is currently soloed and muted, in localStorage.
+   ============================================================================ */
+let activePreset = null;                 // {kind:'family'|'role'|'custom', value}
+/* double-click any lane to hear it alone; double-click again to put the mix back
+   exactly as it was, preset and all */
+let tempSolo = null;                     // {id, prev:{solos,muted,preset,section}}
+let presetSection = null;                // section the role preset was last applied for
+
+function savedPresets(){
+  try { return JSON.parse(localStorage.getItem('vs-presets') || '[]'); }
+  catch(_){ return []; }
+}
+function writePresets(list){ localStorage.setItem('vs-presets', JSON.stringify(list)); }
+
+function toggleTempSolo(id){
+  if(tempSolo && tempSolo.id === id){ releaseTempSolo(); return; }
+  const prev = tempSolo ? tempSolo.prev : {
+    solos:[...solos], muted:[...muted], preset:activePreset, section:presetSection
+  };
+  tempSolo = {id, prev};
+  solos.clear(); muted.clear(); solos.add(id);
+  syncHeads(); applyGains(); buildPresetMenu(); draw();
+}
+function releaseTempSolo(){
+  if(!tempSolo) return;
+  const p = tempSolo.prev; tempSolo = null;
+  solos.clear(); muted.clear();
+  p.solos.forEach(x => solos.add(x));
+  p.muted.forEach(x => muted.add(x));
+  activePreset = p.preset; presetSection = p.section;
+  syncHeads(); applyGains(); buildPresetMenu(); draw();
+}
+
+function setMix(soloIds){
+  solos.clear(); muted.clear();
+  soloIds.forEach(id => solos.add(id));
+  syncHeads(); applyGains();
+}
+
+function applyPreset(p){
+  tempSolo = null;
+  activePreset = p;
+  presetSection = null;
+  if(!p){
+    solos.clear(); muted.clear(); syncHeads(); applyGains();
+  } else if(p.kind === 'family'){
+    setMix(S.tracks.filter(t => t.family === p.value).map(t => t.id));
+  } else if(p.kind === 'role'){
+    applyRolePreset(true);
+  } else if(p.kind === 'custom'){
+    solos.clear(); muted.clear();
+    (p.solos||[]).forEach(id => solos.add(id));
+    (p.muted||[]).forEach(id => muted.add(id));
+    syncHeads(); applyGains();
+  }
+  buildPresetMenu();
+}
+
+/* re-solo as the piece moves into a new section */
+function applyRolePreset(force){
+  if(!activePreset || activePreset.kind !== 'role') return;
+  const b = Math.floor(barPos());
+  const sec = sectionAt(b);
+  const key = sec ? sec.name : 'bar' + b;
+  if(key === presetSection && !force) return;
+  presetSection = key;
+  const ids = rolesAt(barPos()).filter(r => r.role === activePreset.value).map(r => r.track);
+  if(ids.length) setMix(ids);
+  else { solos.clear(); muted.clear(); syncHeads(); applyGains(); }
+}
+
+/* the menu order and the number-key order are the same list, so a shortcut can
+   never point at something different from what is on screen */
+function presetItems(){
+  const cap = w => w[0].toUpperCase() + w.slice(1);
+  const fams = [...new Set(S.tracks.map(t => t.family))];
+  const items = [{
+    id:'all', label:'All stems', active: !activePreset && !solos.size && !muted.size,
+    run(){ solos.clear(); muted.clear(); activePreset = null; presetSection = null;
+           tempSolo = null; syncHeads(); applyGains(); buildPresetMenu(); }
+  }];
+  fams.forEach(f => items.push({
+    id:'fam:'+f, label: cap(f) + ' only',
+    active: !!activePreset && activePreset.kind === 'family' && activePreset.value === f,
+    run(){ applyPreset({kind:'family', value:f}); }
+  }));
+  ROLES.forEach(r => items.push({
+    id:'role:'+r,
+    label: (r === 'counter' ? 'Counter-melody' : cap(r)) + ' only',
+    active: !!activePreset && activePreset.kind === 'role' && activePreset.value === r,
+    run(){ applyPreset({kind:'role', value:r}); }
+  }));
+  savedPresets().forEach((p,i) => items.push({
+    id:'saved:'+i, label:p.name, saved:i,
+    active: !!activePreset && activePreset.kind === 'custom' && activePreset.name === p.name,
+    run(){ applyPreset(Object.assign({kind:'custom'}, p)); }
+  }));
+  return items;
+}
+
+function buildPresetMenu(){
+  const items = presetItems();
+  const hint = i => i < 10 ? `<em class="pkey">${i === 9 ? 0 : i+1}</em>` : '';
+  const btn = (it,i) =>
+    `<button data-run="${i}" aria-pressed="${it.active}">${it.label}${hint(i)}</button>`;
+
+  $('pre-all').innerHTML = btn(items[0], 0);
+  const fams = items.filter(x => x.id.startsWith('fam:'));
+  const roles = items.filter(x => x.id.startsWith('role:'));
+  const saved = items.filter(x => x.id.startsWith('saved:'));
+
+  $('pre-fams').innerHTML  = fams.map(it => btn(it, items.indexOf(it))).join('');
+  $('pre-roles').innerHTML = roles.map(it => btn(it, items.indexOf(it))).join('');
+  $('pre-saved-group').style.display = saved.length ? '' : 'none';
+  $('pre-saved').innerHTML = saved.map(it =>
+    `<div class="prow">${btn(it, items.indexOf(it))}
+       <button class="pdel" data-del="${it.saved}" title="Delete">&times;</button></div>`).join('');
+
+  $('pmenu').querySelectorAll('[data-run]').forEach(b =>
+    b.onclick = () => { items[+b.dataset.run].run(); closeMenus(); });
+  $('pre-saved').querySelectorAll('[data-del]').forEach(b =>
+    b.onclick = e => {
+      e.stopPropagation();
+      const l = savedPresets(); l.splice(+b.dataset.del, 1); writePresets(l); buildPresetMenu();
+    });
+
+
+  /* the field always names what you are listening to */
+  const cap = w => w[0].toUpperCase() + w.slice(1);
+  const untouched = !solos.size && !muted.size;
+  let label = 'Custom mix', custom = true;
+  if(tempSolo){
+    const t = S.tracks.find(x => x.id === tempSolo.id);
+    $('pre-current').textContent = 'Solo · ' + (t ? t.name : '');
+    $('pre-btn').classList.add('custom');
+    return;
+  }
+  if(!activePreset){ label = untouched ? 'All stems' : 'Custom mix'; custom = !untouched; }
+  else if(activePreset.kind === 'family') label = cap(activePreset.value) + ' only';
+  else if(activePreset.kind === 'role')
+    label = (activePreset.value === 'counter' ? 'Counter-melody' : cap(activePreset.value)) + ' only';
+  else if(activePreset.kind === 'custom') label = activePreset.name;
+  $('pre-current').textContent = label;
+  $('pre-btn').classList.toggle('custom', custom);
+}
+
+$('pre-save').onclick = () => {
+  const name = prompt('Name this mix', 'My mix');
+  if(!name) return;
+  const list = savedPresets();
+  list.push({name, solos:[...solos], muted:[...muted]});
+  writePresets(list);
+  activePreset = {kind:'custom', name};
+  buildPresetMenu();
+};
+/* only one menu may be open at a time */
+function openMenu(id){
+  const map = {dmenu:'disp-btn', pmenu:'pre-btn'};
+  Object.keys(map).forEach(m => {
+    const el = $(m), on = (m === id) && !el.classList.contains('on');
+    el.classList.toggle('on', on);
+    const btn = $(map[m]);
+    btn.setAttribute(m === 'pmenu' ? 'aria-expanded' : 'aria-pressed', String(on));
+  });
+}
+function closeMenus(){
+  ['dmenu','pmenu'].forEach(m => $(m).classList.remove('on'));
+  $('disp-btn').setAttribute('aria-pressed','false');
+  $('pre-btn').setAttribute('aria-expanded','false');
+}
+$('pre-btn').onclick = e => { e.stopPropagation(); openMenu('pmenu'); };
+
+
+function applyDisplay(){
+  document.body.classList.toggle('info-bottom', DISP.info === 'bottom');
+  const wantSide = DISP.info === 'side' && tipsOn;
+  document.body.classList.toggle('has-side', wantSide);
+  placeSide();
+  $('side').classList.toggle('on', wantSide);
+  if(DISP.info !== 'corner') $('corner').classList.remove('on');
+  document.querySelectorAll('.dgroup').forEach(g => {
+    const key = g.dataset.key;
+    g.querySelectorAll('button').forEach(b =>
+      b.setAttribute('aria-pressed', String(DISP[key] === b.dataset.v)));
+  });
+  layout(); draw(); syncMiniView(); drawInfoBar();
+}
+
+document.querySelectorAll('.dgroup').forEach(g => {
+  g.querySelectorAll('button').forEach(b => {
+    b.onclick = () => { DISP[g.dataset.key] = b.dataset.v; saveDisp(); applyDisplay(); };
+  });
+});
+$('disp-btn').onclick = e => { e.stopPropagation(); openMenu('dmenu'); };
+document.addEventListener('click', e => { if(!e.target.closest('.menu-wrap')) closeMenus(); });
+
+
+/* ---------- the bottom strip ---------- */
+function drawInfoBar(){
+  if(!S || DISP.info !== 'bottom') return;
+  const bp = barPos(), b = Math.floor(bp);
+  const sec = sectionAt(b);
+  $('ib-bars').textContent = sec ? `Bars ${sec.bar}–${sec.to}` : `Bar ${b}`;
+  $('ib-name').textContent = sec ? sec.name : '—';
+
+  const here = rolesAt(bp), byRole = new Map();
+  here.forEach(r => {
+    if(!roleFilter.has(r.role)) return;
+    const t = S.tracks.find(x => x.id === r.track); if(!t) return;
+    (byRole.get(r.role) || byRole.set(r.role, []).get(r.role)).push(t.name);
+  });
+  $('ib-roles').innerHTML = ROLES.filter(r => byRole.has(r)).map(r =>
+    `<span class="ibr"><i style="color:${ROLE_COLOR[r]}">${r==='counter'?'counter':r}</i>
+     <span>${byRole.get(r).join(', ')}</span></span>`).join('') ||
+    '<span class="ibr"><span>Nothing annotated here.</span></span>';
+
+  /* hovering a lane shows that instrument's note; otherwise the section summary */
+  let note = sec ? sec.note : '';
+  if(hoverInfo){
+    const t = S.tracks[hoverInfo.lane];
+    const r = t && roleFor(t.id, hoverInfo.bar);
+    if(r) note = `${t.name} — ${r.note}`;
+  }
+  $('ib-note').innerHTML = `<span>${note ? note.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) : ''}</span>`;
+}
+
+/* ---------- the corner card ---------- */
+function drawCorner(){
+  if(DISP.info !== 'corner'){ return; }
+  const c = $('corner');
+  if(!hoverInfo){ c.classList.remove('on'); return; }
+  const t = S.tracks[hoverInfo.lane];
+  const r = t && roleFor(t.id, hoverInfo.bar);
+  if(!r){ c.classList.remove('on'); return; }
+  $('co-role').textContent = r.role === 'counter' ? 'Counter-melody' : r.role;
+  $('co-role').style.color = ROLE_COLOR[r.role];
+  $('co-name').textContent = t.name;
+  $('co-meta').textContent = `Bars ${fmtBar(r.from)}–${fmtBar(r.to)}`;
+  $('co-note').textContent = r.note || 'No note written yet.';
+  c.classList.add('on');
+}
+
+$('ann-btn').onclick = function(){
+  annotating = !annotating;
+  this.setAttribute('aria-pressed', String(annotating));
+  document.body.classList.toggle('annotating', annotating);
+ 
+  if(!annotating){ hoverLane = null; if(editing) closeEditor(); dragSel = null; }
+  draw();
+  if(annotating && !$('side').classList.contains('on')) $('tips-btn').click();
+  drawSidebar(true);
+};
+
+/* ---------- tips ---------- */
+let tipsOn = false, followOn = true, openTip = null;
+function paintScrubTips(){
+  const el = $('scrub');
+  [...el.querySelectorAll('.tipmark')].forEach(n => n.remove());
+  if(!tipsOn) return;
+  (S.tips||[]).forEach(tp => {
+    const secs = (tp.bar-1)*S.beats*60/S.tempo;
+    const m = document.createElement('div');
+    m.className = 'tipmark'; m.style.left = (secs/duration*100) + '%';
+    m.title = tp.title; m.onclick = e => { e.stopPropagation(); showTip(tp); };
+    el.appendChild(m);
+  });
+}
+function showTip(tp){
+  openTip = tp;
+  $('side-tip').classList.add('on');
+  $('tip-bar').textContent = 'Tip · bar ' + tp.bar;
+  $('tip-title').textContent = tp.title;
+  $('tip-body').textContent = tp.body;
+  const acts = $('tip-acts'); acts.innerHTML = '';
+  if(tp.action && tp.action.solo){
+    const b = document.createElement('button');
+    b.className = 'btn'; b.textContent = tp.action.solo.length ? 'Hear it alone' : 'Hear everything';
+    b.onclick = () => {
+      muted.clear(); solos.clear();
+      if(tp.action.solo.length) tp.action.solo.forEach(id => solos.add(id));
+      syncHeads(); applyGains();
+    };
+    acts.appendChild(b);
+  }
+}
+function hideTip(){ $('side-tip').classList.remove('on'); openTip = null; }
+
+/* ---------- loop ---------- */
+function render(){
+  const p = position();
+  $('scrub-fill').style.width = (p/duration*100) + '%';
+  const beats = p/60*S.tempo;
+  const bar = Math.floor(beats/S.beats)+1, bt = Math.floor(beats%S.beats)+1;
+  const tk = Math.floor((beats%1)*10);
+  const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  $('clock').textContent = `${bar}.${bt}.${tk} · ${fmt(p)} / ${fmt(duration)}`;
+  const x = beats*ppb;
+  $('ph').style.left = x + 'px';
+  $('mini-ph').style.left = (p/duration*100) + '%';
+  if(sideOn) drawSidebar();
+  if(DISP.info === 'bottom') drawInfoBar();
+  if(activePreset && activePreset.kind === 'role') applyRolePreset(false);
+  if(playing && followOn){
+    const l = $('lanes'), margin = l.clientWidth*0.4;
+    if(x - l.scrollLeft > margin || x < l.scrollLeft) l.scrollLeft = Math.max(0, x - margin);
+  }
+  if(tipsOn && playing){
+    const cur = (S.tips||[]).find(tp => {
+      const a = (tp.bar-1)*S.beats, b = a + (tp.beats||8);
+      return beats >= a && beats < b;
+    });
+    if(cur && cur !== openTip) showTip(cur);
+    else if(!cur && openTip) hideTip();
+  }
+}
+function tick(){ if(S) render(); requestAnimationFrame(tick); }
+
+/* ---------- controls ---------- */
+$('play').onclick = function(){ this.blur(); playing ? pause() : play(); };
+$('scrub').onclick = e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  seek((e.clientX - r.left)/r.width*duration);
+};
+$('lanes').addEventListener('click', e => {
+  if(e.target.closest('.ph') || annotating) return;
+  if(e.detail > 1) return;                 // part of a double-click
+  const r = $('grid').getBoundingClientRect();
+  const beats = (e.clientX - r.left)/ppb;
+  if(beats >= 0) seek(beats*60/S.tempo);
+});
+$('tips-btn').onclick = function(){
+  tipsOn = sideOn = !tipsOn;
+  this.setAttribute('aria-pressed', String(tipsOn));
+  applyDisplay();
+  if(!tipsOn){ hideTip(); $('ann-edit').classList.remove('on'); }
+  paintScrubTips(); draw(); drawSidebar(true);
+  setTimeout(() => { layout(); draw(); syncMiniView(); }, 360);
+};
+$('follow-btn').onclick = function(){
+  followOn = !followOn; this.setAttribute('aria-pressed', String(followOn));
+};
+$('zoom-in').onclick  = () => { ppb = Math.min(ppb*1.6, 60); layout(); draw(); };
+$('zoom-out').onclick = () => { ppb = Math.max(ppb/1.6, 1.5); layout(); draw(); };
+$('zoom-fit').onclick = fitZoom;
+$('vz-in').onclick  = () => vzoom(1.35);
+$('vz-out').onclick = () => vzoom(1/1.35);
+
+$('loop-btn').onclick = function(){
+  loopOn = !loopOn;
+  this.setAttribute('aria-pressed', String(loopOn));
+  if(loopOn){
+    if(loopA === null){                    // no region yet: take the current 8 bars
+      const beat = position()/60*S.tempo;
+      loopA = Math.floor(beat/(S.beats*4))*S.beats*4;
+      loopB = loopA + S.beats*8;
+    }
+  } else {
+    loopA = loopB = null;                  // turning it off clears the region
+  }
+  draw();
+  if(playing) seek(position());
+};
+
+/* drag on the ruler to set a loop region */
+(function ruler(){
+  const l = $('lanes'); let dragging = false, from = 0;
+  const beatAt = e => {
+    const r = $('ruler').getBoundingClientRect();
+    return Math.max(0, (e.clientX - r.left)/ppb);
+  };
+  l.addEventListener('pointerdown', e => {
+    if(!e.target.closest('#ruler')) return;        // only the ruler strip
+    if(annotating) return;
+    dragging = true; from = beatAt(e);
+    loopA = from; loopB = from; draw();
+    l.setPointerCapture(e.pointerId);
+  });
+  l.addEventListener('pointermove', e => {
+    if(!dragging) return;
+    const b = beatAt(e);
+    loopA = Math.min(from, b); loopB = Math.max(from, b);
+    draw();
+  });
+  l.addEventListener('pointerup', e => {
+    if(!dragging) return;
+    dragging = false;
+    if(loopB - loopA < 1){ loopA = loopB = null; }
+    else if(!loopOn){ loopOn = true; $('loop-btn').setAttribute('aria-pressed','true'); }
+    draw();
+    if(playing) seek(position());
+  });
+})();
+
+/* annotate: drag across a lane to create a role region.
+   Positions snap to the half bar — fine enough for a pickup or an upbeat entry,
+   coarse enough that you never have to be precise with the mouse. */
+const SNAP = 0.5;                                   // bars
+const snap = v => Math.round(v/SNAP)*SNAP;
+const fmtBar = v => Number.isInteger(v) ? String(v) : (Math.floor(v) + '½');
+
+(function annDrag(){
+  const l = $('lanes'); let dragging=false, track=null, anchor=0;
+  const barAt = e => {
+    const r = $('grid').getBoundingClientRect();
+    return Math.max(1, snap((e.clientX - r.left)/(S.beats*ppb) + 1));
+  };
+  const laneIndexAt = y => {
+    const r = $('grid').getBoundingClientRect();
+    const i = Math.floor((y - r.top)/LANE);
+    return (i >= 0 && i < S.tracks.length) ? i : null;
+  };
+
+  l.addEventListener('pointermove', e => {
+    /* hover tracking drives the corner card, the bottom strip note and
+       hover-only region display */
+    const li = laneIndexAt(e.clientY);
+    const gr = $('grid').getBoundingClientRect();
+    const bar = Math.floor((e.clientX - gr.left)/(S.beats*ppb)) + 1;
+    const next = (li === null) ? null : {lane:li, bar};
+    const changed = JSON.stringify(next) !== JSON.stringify(hoverInfo);
+    hoverInfo = next;
+    if(changed){ drawCorner(); drawInfoBar(); if(DISP.regions === 'hover') draw(); }
+
+    if(!annotating) return;
+    if(dragging){
+      const b = barAt(e);
+      dragSel.from = Math.min(anchor, b);
+      dragSel.to   = Math.max(anchor, b);
+      if(dragSel.to - dragSel.from < SNAP) dragSel.to = dragSel.from + SNAP;
+      draw();
+      return;
+    }
+    const lane = laneIndexAt(e.clientY);
+    if(lane !== hoverLane){ hoverLane = lane; draw(); }
+  });
+  l.addEventListener('pointerleave', () => {
+    hoverInfo = null; drawCorner(); drawInfoBar();
+    if(!dragging){ hoverLane = null; draw(); }
+    else draw();
+  });
+
+  l.addEventListener('pointerdown', e => {
+    if(!annotating) return;
+    if(e.target.closest('#ruler')) return;
+    const li = laneIndexAt(e.clientY); if(li === null) return;
+    const t = S.tracks[li], b = barAt(e);
+    const hit = ANN.roles.find(x => x.track===t.id && b>=x.from && b<x.to);
+    if(hit){
+      selTrack = t.id;
+      dragSel = {lane:li, from:hit.from, to:hit.to, role:hit.role};
+      openEditor(t.id, hit.from, hit.to, hit);
+      draw(); drawSidebar(true); return;
+    }
+    dragging = true; track = t; anchor = b; hoverLane = li;
+    dragSel = {lane:li, from:b, to:b+SNAP, role:lastRole};
+    draw();
+    e.preventDefault(); l.setPointerCapture(e.pointerId);
+  });
+
+  l.addEventListener('pointerup', e => {
+    if(!dragging) return;
+    dragging = false;
+    /* leave dragSel in place — it stays drawn until the editor is saved or
+       dismissed, so you can see what you are writing about */
+    selTrack = track.id;
+    openEditor(track.id, dragSel.from, dragSel.to);
+    drawSidebar(true);
+  });
+})();
+
+/* double-click a lane to solo it temporarily */
+$('lanes').addEventListener('dblclick', e => {
+  if(annotating || e.target.closest('#ruler')) return;
+  const t = laneAt(e.clientY);
+  if(t) toggleTempSolo(t.id);
+});
+
+/* wheel: plain scrolls, shift scrolls horizontally, cmd/ctrl zooms */
+$('lanes').addEventListener('wheel', e => {
+  if(e.ctrlKey || e.metaKey){
+    e.preventDefault();
+    zoomAt(e.deltaY < 0 ? 1.12 : 1/1.12, e.clientX);
+  } else if(e.shiftKey){
+    e.preventDefault();
+    $('lanes').scrollLeft += e.deltaY;
+  }
+}, {passive:false});
+$('lanes').addEventListener('scroll', () => { syncMiniView(); syncHeadScroll(); }, {passive:true});
+
+/* minimap drag */
+(function minimap(){
+  const m = $('mini'); let down = false;
+  const go = e => {
+    const r = m.getBoundingClientRect();
+    const frac = Math.max(0, Math.min((e.clientX - r.left)/r.width, 1));
+    const l = $('lanes');
+    l.scrollLeft = Math.max(0, frac*gridW() - l.clientWidth/2);
+    syncMiniView();
+  };
+  m.addEventListener('pointerdown', e => { down = true; go(e); m.setPointerCapture(e.pointerId); });
+  m.addEventListener('pointermove', e => { if(down) go(e); });
+  m.addEventListener('pointerup',   () => { down = false; });
+})();
+addEventListener('resize', () => { placeSide(); layout(); draw(); syncMiniView(); });
+addEventListener('keydown', e => {
+  /* space is playback, always — blur whatever has focus so the browser does not
+     also fire that button's click */
+  if(e.code === 'Space'){
+    e.preventDefault();
+    if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    playing ? pause() : play();
+  }
+  if(e.key === 'Escape'){
+    releaseTempSolo();
+    closeMenus();
+    hideTip();
+    if(editing) closeEditor();
+  }
+  if(e.key === 'ArrowRight'){ e.preventDefault(); seek(position() + (e.shiftKey ? 10 : S.beats*60/S.tempo)); }
+  if(e.key === 'ArrowLeft'){  e.preventDefault(); seek(Math.max(0, position() - (e.shiftKey ? 10 : S.beats*60/S.tempo))); }
+  if(e.key === 'Home'){ e.preventDefault(); seek(0); }
+  if(e.key === '+' || e.key === '='){ zoomAt(1.3); }
+  if(e.key === '-'){ zoomAt(1/1.3); }
+  if(e.key === 'l' || e.key === 'L'){ $('loop-btn').click(); }
+  if(e.key === 't' || e.key === 'T'){ $('tips-btn').click(); }
+  if(e.key === 'f' || e.key === 'F'){ $('follow-btn').click(); }
+  if(e.key === 'a' || e.key === 'A'){ $('ann-btn').click(); }
+  if(e.key === ')'){ fitZoom(); }   /* shift+0 */
+  /* 1-9 and 0 pick the first ten presets, in menu order */
+  if(/^[0-9]$/.test(e.key) && !e.metaKey && !e.ctrlKey){
+    const idx = e.key === '0' ? 9 : (+e.key - 1);
+    const item = presetItems()[idx];
+    if(item){ item.run(); closeMenus(); }
+  }
+  if(e.key === 'Backspace'){ solos.clear(); muted.clear(); syncHeads(); applyGains(); }
+});
+
+boot().then(() => setTimeout(() => { fitLanes(); fitZoom(); }, 80));
+</script>
+</body>
+</html>
