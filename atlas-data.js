@@ -237,9 +237,12 @@ const INSTRUMENTS = {
       'Long unbroken lines are a breathing problem in reverse: players need somewhere to exhale.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:18'},
-      {label:'Solo over strings', note:'Why it carries', dur:'0:15'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23',
+       src:'audio/instruments/oboe/signature-phrase.aac'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14',
+       src:'audio/instruments/oboe/register-comparison.aac'},
+      {label:'Solo over strings', note:'Why it carries', dur:'0:10',
+       src:'audio/instruments/oboe/over-strings.aac'}
     ],
     prev:'flute', next:'clarinet'
   },
