@@ -671,9 +671,74 @@ function route(path){
   window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
   observeFades();
   wireFamilyVideo(parts.length === 0);
+  wireRails(currentFamily, currentInstrument);
   /* the demo rows the player was pointing at have just been destroyed */
   if(typeof stopDemo === 'function') stopDemo();
 }
+
+/* ============================================================================
+   SIBLING RAILS
+   ----------------------------------------------------------------------------
+   A chevron and a small label tucked into each margin, for stepping sideways
+   through the atlas without going back up a level.
+
+   Families cycle in FAMILIES order and wrap, so left of Strings is Percussion.
+   Instruments cycle through every live instrument in family order and also
+   wrap, which means the ends of a family lead into the next one rather than
+   into nothing: that is the difference between these and the prev/next pager
+   at the foot of the Details tab, which deliberately stops at the family edge.
+   ============================================================================ */
+function railOrder(){
+  return FAMILIES.flatMap(f => f.members.filter(m => INSTRUMENTS[m] && INSTRUMENTS[m].status === 'live'));
+}
+
+function railTargets(famId, instId){
+  if(instId){
+    const all = railOrder(), i = all.indexOf(instId);
+    if(i < 0) return null;
+    const at = k => {
+      const id = all[(k + all.length) % all.length], it = INSTRUMENTS[id];
+      return { href:`#/${it.family}/${id}`, name:it.name,
+               kicker: it.family === famId ? '' : famOf(it.family).name };
+    };
+    return { prev: at(i - 1), next: at(i + 1) };
+  }
+  if(famId){
+    const i = FAMILIES.findIndex(f => f.id === famId);
+    if(i < 0) return null;
+    const at = k => {
+      const f = FAMILIES[(k + FAMILIES.length) % FAMILIES.length];
+      return { href:`#/${f.id}`, name:f.name, kicker:'' };
+    };
+    return { prev: at(i - 1), next: at(i + 1) };
+  }
+  return null;   /* home has no siblings */
+}
+
+function wireRails(famId, instId){
+  const L = document.getElementById('atl-rail-l'), R = document.getElementById('atl-rail-r');
+  if(!L || !R) return;
+  const t = railTargets(famId, instId);
+  [L, R].forEach(el => { el.hidden = !t; });
+  if(!t) return;
+  const chev = d => `<svg width="9" height="15" viewBox="0 0 9 15" fill="none" aria-hidden="true"><path d="${
+    d === 'l' ? 'M7.5 1.5L1.5 7.5l6 6' : 'M1.5 1.5l6 6-6 6'}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const label = x => `<span class="atl-rail-txt">${x.kicker ? `<i>${esc(x.kicker)}</i>` : ''}<b>${esc(x.name)}</b></span>`;
+  L.href = t.prev.href; L.innerHTML = chev('l') + label(t.prev);
+  L.setAttribute('aria-label', 'Previous: ' + t.prev.name);
+  R.href = t.next.href; R.innerHTML = label(t.next) + chev('r');
+  R.setAttribute('aria-label', 'Next: ' + t.next.name);
+}
+
+/* arrow keys do the same thing, as long as nothing is being typed into */
+addEventListener('keydown', e => {
+  if(e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  if(e.metaKey || e.ctrlKey || e.altKey) return;
+  const t = e.target;
+  if(t && (t.matches('input, textarea, select, [contenteditable]') || t.closest('.atl-dock'))) return;
+  const rail = document.getElementById(e.key === 'ArrowLeft' ? 'atl-rail-l' : 'atl-rail-r');
+  if(rail && !rail.hidden && rail.href){ e.preventDefault(); location.hash = rail.getAttribute('href'); }
+});
 
 /* ============================================================================
    FAMILY HOVER FOOTAGE

@@ -49,6 +49,12 @@
 
   <main class="atl-main" id="atl-view"></main>
 
+  <!-- Sibling rails. Viewport chrome rather than page content, so they live
+       out here and are refilled on each route instead of being rebuilt with
+       the view. Empty on the home page, which has no siblings. -->
+  <a class="atl-rail atl-rail-l" id="atl-rail-l" hidden></a>
+  <a class="atl-rail atl-rail-r" id="atl-rail-r" hidden></a>
+
   <!-- The studio dock is rendered once, here, deliberately OUTSIDE #atl-view.
        Routing replaces the contents of #atl-view on every navigation; if the
        dock lived in there, playback would stop the moment you clicked a link.
