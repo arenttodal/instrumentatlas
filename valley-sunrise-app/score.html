@@ -701,7 +701,11 @@ function fitLanes(){
 
 /* ---------- track headers ---------- */
 const solos = new Set();               // additive solo, like a mixer
-function audibleTrack(id){ return solos.size ? solos.has(id) : !muted.has(id); }
+function audibleTrack(id){
+  /* standard mixer behaviour: solo narrows the field, mute always wins */
+  if(muted.has(id)) return false;
+  return solos.size ? solos.has(id) : true;
+}
 
 function buildHeads(){
   const h = $('heads-inner');
@@ -1188,7 +1192,8 @@ function applyRolePreset(force){
   if(key === presetSection && !force) return;
   presetSection = key;
   const ids = rolesAt(barPos()).filter(r => r.role === activePreset.value).map(r => r.track);
-  setMix(ids.length ? ids : S.tracks.map(t => t.id));
+  if(ids.length) setMix(ids);
+  else { solos.clear(); muted.clear(); syncHeads(); applyGains(); }
 }
 
 /* the menu order and the number-key order are the same list, so a shortcut can
