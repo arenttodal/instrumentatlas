@@ -354,6 +354,9 @@ const INSTRUMENTS = {
       'Loud trumpets cover everything. Balance by writing less, not by marking everyone else louder.',
       'Remember the transposition: written C sounds B♭.'
     ],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:08', file:'register-comparison'},
@@ -433,6 +436,9 @@ const INSTRUMENTS = {
       'Legato across positions needs care: a natural slur is only possible between certain notes.',
       'Three trombones at full volume will bury a string section without effort.'
     ],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Glissando and legato', note:'What the slide can and cannot join', dur:'0:05', file:'glissando-and-legato'},
@@ -1302,51 +1308,9 @@ const PLATES = {
      diagonal so its cylindrical run is visible end to end, the trombone shows
      slide and bell as two separate tube systems, and the tuba stands upright
      because that is the only way its bell reads at this size. */
-  trumpet:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g transform="rotate(-30 150 260)" stroke-width="1.3">
-      <ellipse cx="30" cy="234" rx="9" ry="6" opacity=".9"/>
-      <path d="M39 230h74M39 240h74" opacity=".9"/>
-      <g opacity=".92">
-        <rect x="113" y="212" width="16" height="56" rx="8"/>
-        <rect x="136" y="212" width="16" height="56" rx="8"/>
-        <rect x="159" y="212" width="16" height="56" rx="8"/>
-        <line x1="121" y1="212" x2="121" y2="198"/><circle cx="121" cy="192" r="5"/>
-        <line x1="144" y1="212" x2="144" y2="198"/><circle cx="144" cy="192" r="5"/>
-        <line x1="167" y1="212" x2="167" y2="198"/><circle cx="167" cy="192" r="5"/>
-      </g>
-      <path d="M175 228h38M175 244h38" opacity=".9"/>
-      <path d="M121 268v24c0 8 6 12 14 12h22" opacity=".55"/>
-      <path d="M167 268v16h30" opacity=".55"/>
-      <path d="M213 226C232 222 250 210 262 190" opacity=".92"/>
-      <path d="M213 246C232 250 250 262 262 282" opacity=".92"/>
-      <ellipse cx="262" cy="236" rx="8" ry="46" opacity=".95"/>
-      <ellipse cx="262" cy="236" rx="4.5" ry="31" opacity=".3"/>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M92 452c36-16 68-46 94-80"/><path d="M104 464c40-18 76-52 104-90"/>
-    </g>
-  </svg>`,
+  trumpet:{img:'plates/trumpet.png'},
 
-  trombone:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g transform="rotate(-32 150 260)" stroke-width="1.3">
-      <ellipse cx="62" cy="250" rx="8" ry="36" opacity=".95"/>
-      <ellipse cx="62" cy="250" rx="5" ry="24" opacity=".3"/>
-      <path d="M62 214C84 222 104 232 122 240" opacity=".92"/>
-      <path d="M62 286C84 278 104 268 122 260" opacity=".92"/>
-      <path d="M122 240h116" opacity=".9"/>
-      <path d="M122 260h116" opacity=".9"/>
-      <path d="M238 240c15 0 22 5 22 10s-7 10-22 10" opacity=".9"/>
-      <path d="M112 286h126" opacity=".85"/>
-      <path d="M112 304h126" opacity=".85"/>
-      <path d="M238 286c13 0 19 4 19 9s-6 9-19 9" opacity=".85"/>
-      <path d="M132 286v18M226 286v18" opacity=".45"/>
-      <path d="M112 295H88" opacity=".85"/>
-      <ellipse cx="80" cy="295" rx="8" ry="5.5" opacity=".9"/>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M96 456c36-18 68-48 92-82"/><path d="M108 468c40-20 76-54 102-92"/>
-    </g>
-  </svg>`,
+  trombone:{img:'plates/trombone.png'},
 
   tuba:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g stroke-width="1.3">

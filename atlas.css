@@ -336,6 +336,10 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate-art{display:flex;justify-content:center;padding:6px 0 18px;height:calc(var(--plate-art-h) + 24px)}
 .atl-plate-art svg,
 .atl-plate-art img{height:var(--plate-art-h);width:auto;max-width:100%}
+/* A landscape engraving, a trumpet lying on its side, is wider than the column
+   at full plate height. max-width clamps the box but not the picture, so
+   object-fit keeps the drawing in proportion inside it instead of squashing. */
+.atl-plate-art img{object-fit:contain}
 .atl-plate-cap{border-top:1px solid var(--hair);padding-top:14px;text-align:center}
 .atl-plate-cap .no{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
 .atl-plate-cap .nm{font-family:'Playfair Display',serif;font-style:italic;font-size:19px;color:#fff;margin-top:6px}
