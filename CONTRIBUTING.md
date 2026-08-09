@@ -285,6 +285,25 @@ replaces the placeholder string.
   It is otherwise the better violin: 14.6k triangles against 100k, 462 KB
   against 1.86 MB, and it includes a bow. Re-export it upright and it should
   replace `violin.glb`.
+- **horn, trumpet and violin cannot be textured.** Those three `.glb` files
+  contain no materials, no textures, no images, and critically **no UV
+  coordinates and no vertex normals**. A texture map has nothing to sample
+  against without UVs, so no amount of work in the viewer can give them a
+  surface: they will read as flat colour until the asset itself changes. This
+  is why they look plastic next to the cello, whose file carries five real maps
+  (baseColor, metallicRoughness, normal, emissive, AO).
+
+  | model | materials | textures | UVs | normals |
+  |---|---|---|---|---|
+  | cello | 1 | 5 | yes | no |
+  | viola, bassoon, clarinet | 1 | 1 (baseColor only) | yes | yes |
+  | violin2 | 2 | 0 | yes | yes |
+  | **horn, trumpet, violin** | **0** | **0** | **no** | **no** |
+
+  Three ways out, cheapest first: replace those models with textured ones;
+  UV-unwrap and bake in Blender; or implement triplanar projection in the
+  viewer's shader, which fakes UVs from world position and is the only fix that
+  needs no new asset.
 - **Hotspot coordinates are estimates** for every instrument, and all of them
   were written against the wrong model space (see invariant 11). Redo them with
   `viewer/instruments.html?i=<id>&author=1`, double-clicking each part.
