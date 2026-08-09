@@ -338,11 +338,14 @@ function viewInstrument(id){
       <!-- OVERVIEW -->
       <div class="atl-panel is-active" data-panel="overview">
         <section class="atl-inst-top">
-          <div class="atl-plate atl-fade" data-view="${it.model ? '3d' : '2d'}">
+          <!-- 2D is the default view on every instrument, including the ones
+               with a model. The 3D iframe is only fetched when the toggle is
+               used, so a page with a model now costs nothing until asked. -->
+          <div class="atl-plate atl-fade" data-view="2d">
             ${it.model ? `
             <div class="atl-plate-switch" role="group" aria-label="Plate view">
-              <button type="button" data-pv="2d" aria-pressed="false">2D</button>
-              <button type="button" data-pv="3d" aria-pressed="true">3D</button>
+              <button type="button" data-pv="2d" aria-pressed="true">2D</button>
+              <button type="button" data-pv="3d" aria-pressed="false">3D</button>
             </div>` : ''}
             <div class="atl-plate-art">${plateArt(id)}</div>
             ${it.model ? `
