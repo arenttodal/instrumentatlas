@@ -15,6 +15,9 @@ const famOf = id => FAMILIES.find(f => f.id === id);
 const liveIds = () => Object.keys(INSTRUMENTS).filter(k => INSTRUMENTS[k].status === 'live');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+/* the only place that knows where a family's demo audio lives */
+const FAM_AUDIO = (famId, file) => `${AUDIO.base}families/${famId}/${file}.${AUDIO.ext}`;
+
 /* ============================================================================
    4. VIEWS
    ============================================================================ */
@@ -52,6 +55,15 @@ function viewFamily(fam){
             <div class="atl-eyebrow">The Orchestra</div>
             <h1>${esc(fam.name)}</h1>
             <p class="lede">${esc(fam.lede)}</p>
+            ${(fam.demos && fam.demos.length) ? `
+            <div class="atl-fam-demos">
+              ${fam.demos.map(d => `
+                <button class="atl-fam-demo" data-src="${esc(FAM_AUDIO(fam.id, d.file))}" title="${esc(d.note)}">
+                  <svg width="7" height="9" viewBox="0 0 7 9" fill="currentColor" aria-hidden="true"><path d="M0 0l7 4.5L0 9z"/></svg>
+                  <span>${esc(d.label)}</span>
+                  <i class="atl-fam-demo-prog"></i>
+                </button>`).join('')}
+            </div>` : ''}
           </div>
 
           <h3 class="atl-blockhead" style="margin-top:30px">What defines the family</h3>
@@ -795,7 +807,7 @@ function demoAudio(){
   if(PLAYER.el) return PLAYER.el;
   const a = new Audio();
   a.preload = 'none';
-  a.addEventListener('timeupdate', paintWave);
+  a.addEventListener('timeupdate', paintProgress);
   a.addEventListener('ended', () => stopDemo());
   a.addEventListener('error', () => {
     if(PLAYER.row) PLAYER.row.classList.add('is-missing');
@@ -811,13 +823,19 @@ function demoAudio(){
   return a;
 }
 
-/* light the waveform bars up to the current position, touching the DOM only
-   when the number of lit bars actually changes */
-function paintWave(){
+/* Show progress on whatever the playing element happens to carry: an
+   instrument row lights its waveform bars, a family pill grows the line under
+   it. One player, two readouts, rather than two players. The bar version only
+   touches the DOM when the number of lit bars changes. */
+function paintProgress(){
   const a = PLAYER.el, row = PLAYER.row;
   if(!a || !row || !isFinite(a.duration) || !a.duration) return;
+  const frac = a.currentTime / a.duration;
+  const line = row.querySelector('.atl-fam-demo-prog');
+  if(line){ line.style.transform = `scaleX(${frac})`; return; }
   const bars = row.querySelectorAll('.atl-wave i');
-  const n = Math.round((a.currentTime / a.duration) * bars.length);
+  if(!bars.length) return;
+  const n = Math.round(frac * bars.length);
   if(n === PLAYER.lit) return;
   PLAYER.lit = n;
   bars.forEach((b, i) => b.classList.toggle('is-lit', i < n));
@@ -829,6 +847,8 @@ function stopDemo(){
   if(PLAYER.row){
     PLAYER.row.classList.remove('is-playing');
     PLAYER.row.querySelectorAll('.atl-wave i').forEach(b => b.classList.remove('is-lit'));
+    const line = PLAYER.row.querySelector('.atl-fam-demo-prog');
+    if(line) line.style.transform = 'scaleX(0)';
   }
   PLAYER.row = null;
   PLAYER.lit = -1;
@@ -838,11 +858,12 @@ function playDemo(row){
   const src = row.dataset.src;
   if(!src) return;
   const a = demoAudio();
-  if(PLAYER.row === row && !a.paused){ a.pause(); row.classList.remove('is-playing'); return; }
-  if(PLAYER.row === row && a.paused && a.currentTime > 0){
-    row.classList.add('is-playing');
-    a.play().catch(() => {});
-    return;
+  if(PLAYER.row === row){
+    /* a pill stops outright when you click the one that is playing; a row keeps
+       its pause-and-resume, because it shows a position you can return to */
+    if(row.classList.contains('atl-fam-demo')){ stopDemo(); return; }
+    if(!a.paused){ a.pause(); row.classList.remove('is-playing'); return; }
+    if(a.currentTime > 0){ row.classList.add('is-playing'); a.play().catch(() => {}); return; }
   }
   stopDemo();
   /* and the other way round: starting a clip pauses the studio dock */
@@ -855,9 +876,9 @@ function playDemo(row){
 }
 
 document.addEventListener('click', e => {
-  const btn = e.target.closest('.atl-play');
+  const btn = e.target.closest('.atl-play, .atl-fam-demo');
   if(!btn) return;
-  const row = btn.closest('.atl-demo');
+  const row = btn.classList.contains('atl-fam-demo') ? btn : btn.closest('.atl-demo');
   if(!row) return;
   if(row.dataset.src){ playDemo(row); return; }
   const note = document.getElementById('atl-audio-note');
