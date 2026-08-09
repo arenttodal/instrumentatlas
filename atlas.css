@@ -416,8 +416,8 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
      this the rails are visible but unclickable */
   .atl-rail{position:fixed;top:50%;transform:translateY(-50%);z-index:20;
     display:flex;align-items:center;gap:8px;padding:12px 4px;
-    color:var(--text-dim);opacity:.24;text-decoration:none;
-    transition:opacity .28s ease,color .28s ease}
+    color:var(--text-dim);opacity:.1;text-decoration:none;
+    transition:opacity .34s ease,color .34s ease}
   .atl-rail[hidden]{display:none}
   .atl-rail:hover,.atl-rail:focus-visible{opacity:1;color:var(--gold)}
   .atl-rail-l{left:12px}
