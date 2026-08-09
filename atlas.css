@@ -334,7 +334,8 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate::before{top:9px;left:9px;border-right:none;border-bottom:none}
 .atl-plate::after{bottom:9px;right:9px;border-left:none;border-top:none}
 .atl-plate-art{display:flex;justify-content:center;padding:6px 0 18px;height:calc(var(--plate-art-h) + 24px)}
-.atl-plate-art svg{height:var(--plate-art-h);width:auto;max-width:100%}
+.atl-plate-art svg,
+.atl-plate-art img{height:var(--plate-art-h);width:auto;max-width:100%}
 .atl-plate-cap{border-top:1px solid var(--hair);padding-top:14px;text-align:center}
 .atl-plate-cap .no{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
 .atl-plate-cap .nm{font-family:'Playfair Display',serif;font-style:italic;font-size:19px;color:#fff;margin-top:6px}
@@ -513,7 +514,8 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-tabs{gap:22px}
   .atl-ticks button{font-size:8px;letter-spacing:.3px}
   .atl-seat{padding:20px}
-  .atl-plate-art svg{height:auto;max-height:var(--plate-art-h)}
+  .atl-plate-art svg,
+  .atl-plate-art img{height:auto;max-height:var(--plate-art-h)}
   .atl-plate{padding:24px 20px 18px}
   .atl-demo{flex-wrap:wrap;gap:12px}
   .atl-wave{display:none}

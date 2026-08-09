@@ -279,6 +279,27 @@ function initFamily(famId){
   initEnsemble(famId, 4);
 }
 
+/* A PLATES entry is either an inline SVG string, which is the placeholder line
+   art, or {img:'plates/<id>.png'}, which is a converted engraving. Both forms
+   go in the same frame with the same corner ticks and the same caption block;
+   only the artwork and the credit line differ, so plates can be replaced one
+   instrument at a time. */
+const hasPlateImg = id => !!PLATES[id] && typeof PLATES[id] === 'object' && PLATES[id].img;
+
+function plateArt(id){
+  const p = PLATES[id];
+  if(!p) return '';
+  if(typeof p === 'string') return p;
+  return p.img ? `<img src="${esc(p.img)}" alt="" loading="lazy">` : '';
+}
+
+function plateCap(id, it){
+  if(!hasPlateImg(id)){
+    return `<div class="src atl-cap-2d">Placeholder line art. Final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>`;
+  }
+  return it.plateCredit ? `<div class="src atl-cap-2d">${esc(it.plateCredit)}</div>` : '';
+}
+
 function viewInstrument(id){
   const it = INSTRUMENTS[id], fam = famOf(it.family);
   const bars = n => Array.from({length:n}, () => `<i style="height:${4 + Math.random()*18}px"></i>`).join('');
@@ -320,7 +341,7 @@ function viewInstrument(id){
               <button type="button" data-pv="2d" aria-pressed="false">2D</button>
               <button type="button" data-pv="3d" aria-pressed="true">3D</button>
             </div>` : ''}
-            <div class="atl-plate-art">${PLATES[id] || ''}</div>
+            <div class="atl-plate-art">${plateArt(id)}</div>
             ${it.model ? `
             <div class="atl-plate-3d">
               <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}&amp;embed=1"
@@ -330,7 +351,7 @@ function viewInstrument(id){
             <div class="atl-plate-cap">
               <div class="no">${esc(fam.name)} family</div>
               <div class="nm">${esc(it.latin)}</div>
-              <div class="src atl-cap-2d">Placeholder line art. Final plate to be a public-domain engraving via <a href="https://www.metmuseum.org/hubs/open-access" target="_blank" rel="noopener">The Met (CC0)</a></div>
+              ${plateCap(id, it)}
               ${it.model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')}${it.modelSource ? ` · <a href="${esc(it.modelSource)}" target="_blank" rel="noopener">Sketchfab</a>` : ''} · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
             </div>
             <div class="atl-plate-facts">

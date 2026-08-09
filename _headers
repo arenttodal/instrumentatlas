@@ -16,6 +16,11 @@
 /audio/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Converted engravings. Rebuilding one from plates-source/ keeps the file name,
+# so bump the name if a plate is ever re-cut after going live.
+/plates/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # Family hover footage. Only fetched on hover, but fetched once.
 /video/*
   Cache-Control: public, max-age=31536000, immutable

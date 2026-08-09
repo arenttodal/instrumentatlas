@@ -236,6 +236,9 @@ const INSTRUMENTS = {
       'It will not disappear into a chord. If you need blend, use clarinet.',
       'Long unbroken lines are a breathing problem in reverse: players need somewhere to exhale.'
     ],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23',
        src:'audio/instruments/oboe/signature-phrase.aac'},
@@ -396,9 +399,12 @@ const INSTRUMENTS = {
       'Written a fifth above sounding pitch: irrelevant for mockups, essential the moment you print parts.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:18'},
-      {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:15'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25',
+       src:'audio/instruments/horn/signature-phrase.aac'},
+      {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27',
+       src:'audio/instruments/horn/register-comparison.aac'},
+      {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:08',
+       src:'audio/instruments/horn/with-cello.aac'}
     ],
     prev:'trumpet', next:'trombone'
   },
@@ -1114,29 +1120,10 @@ const PLATES = {
     </g>
   </svg>`,
 
-  oboe:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <path d="M146 94l4-32 4 32" opacity=".9"/>
-      <path d="M144 94h12" opacity=".6"/>
-      <path d="M143 96L133 384" opacity=".92"/>
-      <path d="M157 96L167 384" opacity=".92"/>
-      <path d="M141 154h18M138 250h24" opacity=".5"/>
-      <g opacity=".85">
-        <ellipse cx="150" cy="186" rx="6" ry="5"/><ellipse cx="150" cy="214" rx="6" ry="5"/>
-        <ellipse cx="150" cy="286" rx="6.5" ry="5.5"/><ellipse cx="150" cy="318" rx="6.5" ry="5.5"/>
-      </g>
-      <g opacity=".5" stroke-width="1">
-        <path d="M139 172h-8v28h8"/><path d="M161 232h8v26h-8"/><path d="M137 300h-9v34h9"/>
-      </g>
-      <path d="M133 384c-4 22-10 36-15 46" opacity=".92"/>
-      <path d="M167 384c4 22 10 36 15 46" opacity=".92"/>
-      <ellipse cx="150" cy="432" rx="32" ry="9" opacity=".95"/>
-      <ellipse cx="150" cy="432" rx="22" ry="6" opacity=".35"/>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M206 300c8 30 8 66-4 94"/><path d="M214 292c8 34 8 74-4 106"/>
-    </g>
-  </svg>`,
+  /* A converted engraving rather than placeholder line art. Both forms are
+     valid here: an SVG string, or {img} for a plate built by tools/plates.py
+     from plates-source/. See plateArt() in atlas.js. */
+  oboe:{img:'plates/oboe.png'},
 
   clarinet:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g stroke-width="1.3">
