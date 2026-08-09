@@ -404,6 +404,35 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-pager a:hover b{color:var(--gold)}
 .atl-pager .r{text-align:right;margin-left:auto}
 
+/* --- sibling rails ---
+   Fixed in the outer margin, deliberately faint until you go looking for
+   them. The content column is 1220px wide at most, so the rails are only
+   shown once there is gutter to put them in: a chevron alone from 1200px,
+   chevron plus label from 1460px, nothing below that. They are never allowed
+   to sit over the text. */
+.atl-rail{display:none}
+@media (min-width:1200px){
+  /* above .atl-main, which is z-index 10 and spans the full width: without
+     this the rails are visible but unclickable */
+  .atl-rail{position:fixed;top:50%;transform:translateY(-50%);z-index:20;
+    display:flex;align-items:center;gap:8px;padding:12px 4px;
+    color:var(--text-dim);opacity:.24;text-decoration:none;
+    transition:opacity .28s ease,color .28s ease}
+  .atl-rail[hidden]{display:none}
+  .atl-rail:hover,.atl-rail:focus-visible{opacity:1;color:var(--gold)}
+  .atl-rail-l{left:max(14px,calc(50% - 610px - 136px))}
+  .atl-rail-r{right:max(14px,calc(50% - 610px - 136px));justify-content:flex-end;text-align:right}
+  .atl-rail svg{flex:0 0 auto}
+  .atl-rail-txt{display:none;min-width:0;max-width:110px}
+  .atl-rail-txt i{display:block;font-style:normal;font-size:8.5px;font-weight:700;
+    letter-spacing:1.8px;text-transform:uppercase;color:var(--gold);opacity:.8;margin-bottom:3px}
+  .atl-rail-txt b{display:block;font-size:10px;font-weight:700;letter-spacing:1.9px;
+    text-transform:uppercase;line-height:1.35}
+}
+@media (min-width:1460px){
+  .atl-rail-txt{display:block}
+}
+
 /* --- footer / credits --- */
 .atl-foot{border-top:1px solid var(--hair);padding:44px 0 60px;position:relative;z-index:10}
 .atl-foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px}
