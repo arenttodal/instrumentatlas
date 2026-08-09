@@ -25,6 +25,7 @@ Two things here are deliberate and easy to undo by accident:
 """
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -40,9 +41,8 @@ GOLD = '#D4A04A'      # --gold in atlas.css. The plates are the only place it
                       # is baked into a file rather than read from a variable.
 LONG_SIDE = 1400
 MARGIN_PCT = 3.0      # of the long side, applied evenly on all four sides
-INK = 248             # luminance at or below this counts as line work when
-                      # trimming, which ignores scanner grey without eating
-                      # the faintest strokes
+FLOOR = 4             # headroom above the measured paper level, in 0-255. Any
+                      # higher and the faintest strokes start disappearing
 
 
 def rel(path):
@@ -74,6 +74,31 @@ def known_ids():
     return set(re.findall(r"^  '?([a-z0-9-]+)'?\s*:\s*\{", block.group(1), re.M))
 
 
+def load_options(src_dir):
+    """Per source overrides, if plates-source/options.json exists:
+
+        { "oboe": { "crop": [44, 44, 43, 122] } }
+
+    crop is an inset in pixels from the left, top, right and bottom edges,
+    for sources that arrive with a frame, a caption or anything else that is
+    not the instrument. Everything else about a plate is uniform, so this file
+    stays empty until a source needs it."""
+    path = src_dir / 'options.json'
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding='utf-8'))
+    except (OSError, ValueError) as err:
+        sys.exit(f'{path}: {err}')
+
+
+def crop_arg(value):
+    parts = [p.strip() for p in value.split(',')]
+    if len(parts) != 4 or not all(p.lstrip('-').isdigit() for p in parts):
+        raise argparse.ArgumentTypeError('expected four integers: left,top,right,bottom')
+    return [int(p) for p in parts]
+
+
 def paper_is_light(grey):
     """True when the four corners are paper rather than ink. Sources are meant
     to be black on white; this catches one handed to us the other way round."""
@@ -82,7 +107,32 @@ def paper_is_light(grey):
     return sum(corners) / len(corners) > 127
 
 
-def convert(src, out, colour, long_side, margin_pct):
+def border_level(img):
+    """Median luminance of the outermost ring: the paper, whatever shade it is."""
+    w, h = img.size
+    px = img.load()
+    ring = ([px[x, 0] for x in range(0, w, 5)] + [px[x, h - 1] for x in range(0, w, 5)] +
+            [px[0, y] for y in range(0, h, 5)] + [px[w - 1, y] for y in range(0, h, 5)])
+    ring.sort()
+    return ring[len(ring) // 2]
+
+
+def lift_black(alpha):
+    """Pull the paper to fully transparent without flattening the line work.
+
+    A source whose background is near-black rather than black leaves every
+    pixel faintly gold, which reads as a grey box behind the drawing. This
+    subtracts the measured paper level and rescales what is left, so the paper
+    goes to zero while the strokes keep their gradation. It is a black point,
+    not a threshold: nothing above the paper is rounded to on or off."""
+    lo = min(250, border_level(alpha) + FLOOR)
+    if lo <= 0:
+        return alpha, 0
+    scale = 255 / (255 - lo)
+    return alpha.point(lambda p: 0 if p <= lo else min(255, round((p - lo) * scale))), lo
+
+
+def convert(src, out, colour, long_side, margin_pct, crop=None):
     with Image.open(src) as im:
         im.load()
         # Flatten onto white first: a source saved with transparency would
@@ -94,18 +144,22 @@ def convert(src, out, colour, long_side, margin_pct):
         else:
             grey = im.convert('L')
 
+    if crop:
+        l, t, r, b = crop
+        grey = grey.crop((l, t, grey.width - r, grey.height - b))
+
     inverted_source = not paper_is_light(grey)
     if inverted_source:
         grey = ImageChops.invert(grey)
 
-    # Trim. getbbox() finds non-zero pixels, so build a mask that is non-zero
-    # exactly where there is ink and use it purely to measure; the crop is
-    # taken from the untouched greyscale, so no line weight is lost.
-    box = grey.point(lambda p: 255 if p <= INK else 0).getbbox()
-    if box:
-        grey = grey.crop(box)
-
     alpha = ImageChops.invert(grey)   # line work light, paper black
+    alpha, floor = lift_black(alpha)
+
+    # Trim to the drawing. The paper is now exactly zero, so the bounding box
+    # of anything non-zero is the line work and nothing else.
+    box = alpha.getbbox()
+    if box:
+        alpha = alpha.crop(box)
 
     margin = max(1, round(max(alpha.size) * margin_pct / 100))
     padded = Image.new('L', (alpha.width + margin * 2, alpha.height + margin * 2), 0)
@@ -120,7 +174,7 @@ def convert(src, out, colour, long_side, margin_pct):
 
     out.parent.mkdir(parents=True, exist_ok=True)
     plate.save(out, 'PNG', optimize=True)
-    return size, out.stat().st_size, inverted_source
+    return size, out.stat().st_size, inverted_source, floor
 
 
 def main(argv=None):
@@ -132,6 +186,8 @@ def main(argv=None):
     ap.add_argument('--size', type=int, default=LONG_SIDE, help='long side in px')
     ap.add_argument('--margin', type=float, default=MARGIN_PCT, help='margin, %% of long side')
     ap.add_argument('--gold', type=hex_rgb, default=hex_rgb(GOLD))
+    ap.add_argument('--crop', type=crop_arg, metavar='L,T,R,B',
+                    help='inset in px, overriding options.json for this run')
     ap.add_argument('--force', action='store_true', help='rebuild up to date plates')
     args = ap.parse_args(argv)
 
@@ -148,6 +204,7 @@ def main(argv=None):
         sys.exit(f'nothing to do: no matching PNGs in {args.src}')
 
     ids = known_ids()
+    options = load_options(args.src)
     built = 0
     for src in sources:
         out = args.out / f'{src.stem}.png'
@@ -157,8 +214,17 @@ def main(argv=None):
         if not args.force and out.exists() and out.stat().st_mtime >= src.stat().st_mtime:
             print(f'  =  {rel(out)} up to date')
             continue
-        size, nbytes, flipped = convert(src, out, args.gold, args.size, args.margin)
-        note = '  (source was light on dark, inverted back)' if flipped else ''
+        crop = args.crop or options.get(src.stem, {}).get('crop')
+        size, nbytes, flipped, floor = convert(src, out, args.gold, args.size,
+                                               args.margin, crop)
+        notes = []
+        if crop:
+            notes.append(f'cropped {",".join(str(c) for c in crop)}')
+        if flipped:
+            notes.append('source was light on dark')
+        if floor:
+            notes.append(f'paper lifted off {floor}')
+        note = ('  (' + '; '.join(notes) + ')') if notes else ''
         print(f'  ok {rel(out)}  {size[0]}x{size[1]}  {nbytes / 1024:.0f} KB{note}')
         if nbytes > 300 * 1024:
             print(f'  !  {out.name} is over the 300 KB budget')
