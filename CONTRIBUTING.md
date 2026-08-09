@@ -37,6 +37,7 @@ Pages redeploys in ~20 seconds.
 | Model attribution | **cello and horn only.** viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" |
 | Studio | Theme 1 only, 3 tracks, 7 renders |
 | Instrument audio | **cello only.** The other nineteen show the placeholder line |
+| Family audio | **none rendered yet.** All four families have `demos` wired; the twelve files at `audio/families/<id>/` are still to come |
 | Plate artwork | Placeholder gold line art, to be replaced with public-domain engravings |
 | Family footage | strings, woodwinds, brass. Percussion has none, by design |
 | Gallery videos | Shared placeholder set of nine; per-instrument sets not yet chosen |
@@ -96,6 +97,8 @@ Every family's `sizes` array must have exactly six entries, in this order.
   lede,                    // one or two sentences
   role: [ '<b>Lead.</b> Explanation.', … ],   // HTML allowed, 3–5 items
   video,                   // optional: hover footage for the home page card
+  demos,                   // optional: [{label, note, file}] × 3, played as
+                           // pills under the lede. No key renders nothing.
   smallName,               // what tier 0 means for this family
   sizes: { instrumentId: [t0,t1,t2,t3,t4,t5] },  // number, or '16 + 14'
   members: [ instrumentId, … ]                    // order shown everywhere
@@ -104,6 +107,12 @@ Every family's `sizes` array must have exactly six entries, in this order.
 `sizes` keys **must exactly match** `members`, or the ensemble table renders
 undefined rows. A `'16 + 14'` string means two desks (Violin I and II) and is
 summed for totals. A family with no `video` key simply fades nothing in.
+
+Family demo audio resolves as `audio/families/<familyId>/<file>.aac`, built in
+one place (`FAM_AUDIO` in `atlas.js`). The pills share the instrument pages'
+player rather than carrying a second implementation: one `Audio` object serves
+both, so a family clip and an instrument clip can never sound at once, and
+either one pauses the studio dock when it starts.
 
 ### `INSTRUMENTS`: the bulk of the work
 ```js
@@ -285,6 +294,25 @@ replaces the placeholder string.
   It is otherwise the better violin: 14.6k triangles against 100k, 462 KB
   against 1.86 MB, and it includes a bow. Re-export it upright and it should
   replace `violin.glb`.
+- **horn, trumpet and violin cannot be textured.** Those three `.glb` files
+  contain no materials, no textures, no images, and critically **no UV
+  coordinates and no vertex normals**. A texture map has nothing to sample
+  against without UVs, so no amount of work in the viewer can give them a
+  surface: they will read as flat colour until the asset itself changes. This
+  is why they look plastic next to the cello, whose file carries five real maps
+  (baseColor, metallicRoughness, normal, emissive, AO).
+
+  | model | materials | textures | UVs | normals |
+  |---|---|---|---|---|
+  | cello | 1 | 5 | yes | no |
+  | viola, bassoon, clarinet | 1 | 1 (baseColor only) | yes | yes |
+  | violin2 | 2 | 0 | yes | yes |
+  | **horn, trumpet, violin** | **0** | **0** | **no** | **no** |
+
+  Three ways out, cheapest first: replace those models with textured ones;
+  UV-unwrap and bake in Blender; or implement triplanar projection in the
+  viewer's shader, which fakes UVs from world position and is the only fix that
+  needs no new asset.
 - **Hotspot coordinates are estimates** for every instrument, and all of them
   were written against the wrong model space (see invariant 11). Redo them with
   `viewer/instruments.html?i=<id>&author=1`, double-clicking each part.
@@ -326,7 +354,14 @@ for(const [pid,p] of Object.entries(PA)) p.tracks.forEach(t=>{
   if(!I[t.instrument]) bad.push('passage track '+t.instrument);
   t.variants.forEach(v=>{ const f=A.base+pid+'/'+v.file+'.'+A.ext;
     if(!fs.existsSync(f)) bad.push('missing render '+f); }); });
+/* family demo audio is expected to be missing until it is rendered, so it is
+   reported as pending rather than as a failure */
+const pending=[];
+F.forEach(f=>(f.demos||[]).forEach(d=>{
+  const p='audio/families/'+f.id+'/'+d.file+'.aac';
+  if(!fs.existsSync(p)) pending.push(p); }));
 console.log(bad.length?'FINDINGS:\n  '+bad.join('\n  '):'all checks pass');
+if(pending.length) console.log('pending family audio ('+pending.length+'):\n  '+pending.join('\n  '));
 console.log('live '+Object.values(I).filter(i=>i.status==='live').length+' of '+Object.keys(I).length);
 "
 ```

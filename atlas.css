@@ -652,3 +652,27 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 
 @media (hover:none){ .atl-famvid{display:none} }
 @media (prefers-reduced-motion:reduce){ .atl-famvid{display:none} }
+
+/* ============================================================================
+   FAMILY DEMO PILLS
+   ----------------------------------------------------------------------------
+   A single row under the family lede. Weighted to match the role chips beside
+   them rather than the instrument page's demo rows, because these sit inside
+   running text and should not compete with the headline. The progress line is
+   a scaled child rather than an animated width, so it costs no layout.
+   ============================================================================ */
+.atl-fam-demos{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.atl .atl-fam-demo{position:relative;display:inline-flex;align-items:center;gap:8px;
+  padding:7px 14px 8px;border:1px solid var(--hair);border-radius:100px;background:transparent;
+  font-size:12px;font-weight:500;color:var(--text-dim);cursor:pointer;overflow:hidden;
+  transition:border-color .22s,color .22s,background .22s}
+.atl .atl-fam-demo:hover{border-color:var(--hair-gold);color:#fff}
+.atl .atl-fam-demo svg{flex:0 0 auto;opacity:.7;transition:opacity .22s}
+.atl .atl-fam-demo:hover svg{opacity:1}
+.atl .atl-fam-demo.is-playing{border-color:var(--gold);color:#fff;background:rgba(212,160,74,.08)}
+.atl .atl-fam-demo.is-playing svg{opacity:1;color:var(--gold)}
+.atl .atl-fam-demo.is-missing{opacity:.45}
+/* 2px gold line under the active pill, driven by transform so it never reflows */
+.atl-fam-demo-prog{position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold));
+  transform:scaleX(0);transform-origin:left center;pointer-events:none}

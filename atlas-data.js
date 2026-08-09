@@ -44,6 +44,11 @@ const FAMILIES = [
       '<b>Multiple notes at once.</b> Double and triple stops, within limits.',
       '<b>Range shapes colour.</b> Dark and warm below, bright and penetrating above.'
     ],
+    demos:[
+      {label:'The whole section', note:'All five parts, one line, no doubling', file:'section'},
+      {label:'Divisi', note:'The same chord split across the desks', file:'divisi'},
+      {label:'Arco and pizzicato', note:'The same figure, both articulations', file:'articulation'}
+    ],
     smallName:'String quartet',
     sizes:{
       violin:       ['1 + 1','6 + 5','8 + 6','12 + 10','16 + 14','20 + 20'],
@@ -61,6 +66,11 @@ const FAMILIES = [
       '<b>Fast and intricate.</b> Runs and arpeggios are idiomatic, not a stretch.',
       '<b>One note at a time.</b> Monophonic, but arpeggios cover harmonic ground.',
       '<b>Breath is structural.</b> Phrases need rests, or the mockup stops sounding human.'
+    ],
+    demos:[
+      {label:'The whole section', note:'Paired winds, one chord', file:'section'},
+      {label:'Solo against tutti', note:'One oboe over the full band', file:'solo'},
+      {label:'Doubled at the octave', note:'Flute over clarinet, then apart', file:'doubling'}
     ],
     smallName:'Wind quintet (with one horn)',
     sizes:{
@@ -80,6 +90,11 @@ const FAMILIES = [
       '<b>Breathing is non-negotiable.</b> Continuous melodies need breaks written in.',
       '<b>Fast runs fight the mechanics.</b> Especially on trombone.'
     ],
+    demos:[
+      {label:'The whole section', note:'Four parts, one chord, full weight', file:'section'},
+      {label:'Conical and cylindrical', note:'Horns, then trumpets, on the same line', file:'bore'},
+      {label:'Muted and open', note:'The same phrase both ways', file:'mutes'}
+    ],
     smallName:'Brass quintet',
     sizes:{
       trumpet:  [2, 2, 2, 3, 4, 6],
@@ -95,6 +110,11 @@ const FAMILIES = [
       '<b>Pitched or unpitched.</b> Timpani, glockenspiel and celesta carry pitch; snare, bass drum and cymbals do not.',
       '<b>Timing is everything.</b> Ten milliseconds late reads as a mistake in a way a string entry never does.',
       '<b>One player, many instruments.</b> Parts move between instruments constantly.'
+    ],
+    demos:[
+      {label:'Pitched and unpitched', note:'Timpani, then the drums behind them', file:'pitched'},
+      {label:'One stroke, full decay', note:'Tam-tam and cymbal, unedited', file:'decay'},
+      {label:'Under a tutti', note:'The same bar with the section and without', file:'tutti'}
     ],
     smallName:'No standard orchestral grouping at this size',
     sizes:{
