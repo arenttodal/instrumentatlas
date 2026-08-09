@@ -199,9 +199,9 @@ const INSTRUMENTS = {
       'Long unbroken lines expose the mockup. Write the breath in.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:18'},
-      {label:'With violins in octaves', note:'The doubling, isolated then in context', dur:'0:15'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:12', file:'register-comparison'},
+      {label:'With violins in octaves', note:'The doubling, isolated then in context', dur:'0:14', file:'with-violins'}
     ],
     prev:'piccolo', next:'oboe'
   },
@@ -240,12 +240,9 @@ const INSTRUMENTS = {
        convention as the model credits: pending means do not publish. */
     plateCredit:'Attribution pending, do not publish',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23',
-       src:'audio/instruments/oboe/signature-phrase.aac'},
-      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14',
-       src:'audio/instruments/oboe/register-comparison.aac'},
-      {label:'Solo over strings', note:'Why it carries', dur:'0:10',
-       src:'audio/instruments/oboe/over-strings.aac'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14', file:'register-comparison'},
+      {label:'Solo over strings', note:'Why it carries', dur:'0:11', file:'over-strings'}
     ],
     prev:'flute', next:'clarinet'
   },
@@ -320,9 +317,9 @@ const INSTRUMENTS = {
       'It cannot compete with brass on volume. If you need weight there, add players, not dynamics.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:18'},
-      {label:'With cello in octaves', note:'The doubling that gives the low line its wood', dur:'0:15'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:11', file:'register-comparison'},
+      {label:'With oboe', note:'Two double reeds fusing into a colour neither makes alone', dur:'0:10', file:'with-oboe'}
     ],
     prev:'clarinet', next:''
   },
@@ -358,9 +355,9 @@ const INSTRUMENTS = {
       'Remember the transposition: written C sounds B♭.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Open vs muted', note:'The same figure, straight mute and open', dur:'0:16'},
-      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:18'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:08', file:'register-comparison'},
+      {label:'With trombone', note:'Both cylindrical bore, so it thickens without changing the colour', dur:'0:09', file:'with-trombone'}
     ],
     prev:'', next:'horn'
   },
@@ -399,12 +396,9 @@ const INSTRUMENTS = {
       'Written a fifth above sounding pitch: irrelevant for mockups, essential the moment you print parts.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25',
-       src:'audio/instruments/horn/signature-phrase.aac'},
-      {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27',
-       src:'audio/instruments/horn/register-comparison.aac'},
-      {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:08',
-       src:'audio/instruments/horn/with-cello.aac'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27', file:'register-comparison'},
+      {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:08', file:'with-cello'}
     ],
     prev:'trumpet', next:'trombone'
   },
@@ -440,9 +434,9 @@ const INSTRUMENTS = {
       'Three trombones at full volume will bury a string section without effort.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Glissando and legato', note:'What the slide can and cannot join', dur:'0:14'},
-      {label:'Section chord, soft and loud', note:'The same voicing at both extremes', dur:'0:16'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
+      {label:'Glissando and legato', note:'What the slide can and cannot join', dur:'0:05', file:'glissando-and-legato'},
+      {label:'Section chord, soft and loud', note:'The same voicing at both extremes', dur:'0:11', file:'section-soft-and-loud'}
     ],
     prev:'horn', next:'tuba'
   },
@@ -478,9 +472,9 @@ const INSTRUMENTS = {
       'Unison with the double basses muddies. An octave apart keeps both audible.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:14'},
-      {label:'Melodic middle register', note:'The part of the instrument nobody writes for', dur:'0:15'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
+      {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:11', file:'low-register-speaking-time'},
+      {label:'Melodic middle register', note:'The part of the instrument nobody writes for', dur:'0:09', file:'melodic-middle-register'}
     ],
     prev:'trombone', next:''
   },
@@ -518,15 +512,10 @@ const INSTRUMENTS = {
       'Extreme high register is exposed and unforgiving for less experienced players.',
       'Doubling basses at the unison muddies; octaves keep the bottom clear.'
     ],
-    /* File names are inconsistently capitalised on purpose: that is how they
-       were uploaded, and Cloudflare serves paths case-sensitively. */
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23',
-       src:'audio/instruments/Celloexample1.aac'},
-      {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20',
-       src:'audio/instruments/Celloexample2.aac'},
-      {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:23',
-       src:'audio/instruments/CelloExample3.aac'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
+      {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
+      {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:23', file:'with-horn'}
     ],
     prev:'viola', next:'double-bass'
   },
@@ -565,9 +554,9 @@ const INSTRUMENTS = {
       'Too much divisi and the section stops sounding like a section.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:20'},
-      {label:'Section vs solo', note:'One player, then sixteen', dur:'0:16'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:15', file:'string-by-string'},
+      {label:'Section vs solo', note:'One player, then sixteen', dur:'0:09', file:'section-vs-solo'}
     ],
     prev:'', next:'viola'
   },
@@ -605,9 +594,9 @@ const INSTRUMENTS = {
       'Do not simply write violin parts a fifth lower; the register changes what sits well.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Against the violin', note:'The same line on both, back to back', dur:'0:16'},
-      {label:'With clarinet', note:'Where the two timbres become one', dur:'0:14'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
+      {label:'Against the violin', note:'The same line on both, back to back', dur:'0:10', file:'against-the-violin'},
+      {label:'With clarinet', note:'Where the two timbres become one', dur:'0:10', file:'with-clarinet'}
     ],
     prev:'violin', next:'cello'
   },
@@ -643,9 +632,9 @@ const INSTRUMENTS = {
       'Remember the transposition when you print parts: written E1 sounds E0, below the piano.'
     ],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:14'},
-      {label:'With cello in octaves', note:'Why the pairing is standard', dur:'0:16'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
+      {label:'With cello in octaves', note:'Why the pairing is standard', dur:'0:10', file:'with-cello-octaves'}
     ],
     prev:'cello', next:'harp'
   },

@@ -36,9 +36,9 @@ Pages redeploys in ~20 seconds.
 | 3D models | 8 `.glb`. cello, horn, viola, violin wired to plates; trumpet, bassoon, clarinet, violin2 in the viewer only |
 | Model attribution | **cello and horn only.** viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" |
 | Studio | Theme 1 only, 3 tracks, 7 renders |
-| Instrument audio | **cello only.** The other nineteen show the placeholder line |
+| Instrument audio | 11 of 20: cello, oboe, horn, violin, viola, double bass, bassoon, flute, tuba, trombone, trumpet. The other nine show the placeholder line |
 | Family audio | **none rendered yet.** All four families have `demos` wired; the twelve files at `audio/families/<id>/` are still to come |
-| Plate artwork | Placeholder gold line art, to be replaced with public-domain engravings |
+| Plate artwork | Placeholder gold line art everywhere except the oboe, which is a converted engraving. Its credit is still pending |
 | Family footage | strings, woodwinds, brass. Percussion has none, by design |
 | Gallery videos | Shared placeholder set of nine; per-instrument sets not yet chosen |
 
@@ -132,7 +132,7 @@ id: {
   articulations:   [ string, … ],
   blends: [{id, label, note}, …],   // id MUST be a real instrument
   limits: [ string, ×3 ],           // what goes wrong, not what goes right
-  demos:  [{label, note, dur, src?}, …],   // src omitted = inert player
+  demos:  [{label, note, dur, file?}, …],  // file omitted = inert player
   prev, next        // pager, '' to end a chain
 }
 ```
@@ -338,7 +338,8 @@ for(const [id,it] of Object.entries(I)){
   ['prev','next'].forEach(k=>{ if(it[k]&&!I[it[k]]) bad.push(k+' '+id+' -> '+it[k]); });
   if(it.status==='live'){ if(!P[id]) bad.push('no plate '+id); if(!T[id]) bad.push('no thumb '+id); }
   if(it.model&&!it.modelCredit) bad.push('model without credit '+id);
-  (it.demos||[]).forEach(d=>{ if(d.src&&!fs.existsSync(d.src)) bad.push('missing audio '+d.src); });
+  (it.demos||[]).forEach(d=>{ if(!d.file) return; const f=A.base+'instruments/'+id+'/'+d.file+'.'+A.ext;
+    if(!fs.existsSync(f)) bad.push('missing audio '+f); });
   const f=F.find(x=>x.id===it.family);
   if(!f) bad.push(id+' unknown family'); else if(!f.members.includes(id)) bad.push(id+' not in members');
 }
@@ -418,12 +419,13 @@ python3 -m http.server 8000
 
 ### Connect audio for an instrument
 
-> Files are at `audio/instruments/`. Add a `src` to each entry in that
-> instrument's `demos` array, using the file names exactly as uploaded, because
-> Cloudflare serves paths case-sensitively. Playback is already implemented in
-> `atlas.js`: one reused `Audio` object, progress in the waveform bars, route
-> changes stop it, and a demo without a `src` stays inert. Update `dur` to the
-> real lengths.
+> Files go at `audio/instruments/<instrumentId>/<slug>.aac`. Add `file:'<slug>'`
+> to each entry in that instrument's `demos` array. Never write a path: the only
+> place that builds one is `INST_AUDIO()` in `atlas.js`. Playback is already
+> implemented there: one reused `Audio` object, progress in the waveform bars,
+> route changes stop it, and a demo without a `file` stays inert. Update `dur`
+> to the real lengths, though the player corrects the display from the file
+> itself once a clip has loaded.
 
 ### Restyle something
 

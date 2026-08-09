@@ -15,8 +15,11 @@ const famOf = id => FAMILIES.find(f => f.id === id);
 const liveIds = () => Object.keys(INSTRUMENTS).filter(k => INSTRUMENTS[k].status === 'live');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* the only place that knows where a family's demo audio lives */
-const FAM_AUDIO = (famId, file) => `${AUDIO.base}families/${famId}/${file}.${AUDIO.ext}`;
+/* the only two places that know where demo audio lives. Every clip is
+   <base>/<kind>/<id>/<file>.<ext>, so a new instrument needs a folder and a
+   file slug in the data, never a path. */
+const FAM_AUDIO  = (famId, file)  => `${AUDIO.base}families/${famId}/${file}.${AUDIO.ext}`;
+const INST_AUDIO = (instId, file) => `${AUDIO.base}instruments/${instId}/${file}.${AUDIO.ext}`;
 
 /* ============================================================================
    4. VIEWS
@@ -335,11 +338,14 @@ function viewInstrument(id){
       <!-- OVERVIEW -->
       <div class="atl-panel is-active" data-panel="overview">
         <section class="atl-inst-top">
-          <div class="atl-plate atl-fade" data-view="${it.model ? '3d' : '2d'}">
+          <!-- 2D is the default view on every instrument, including the ones
+               with a model. The 3D iframe is only fetched when the toggle is
+               used, so a page with a model now costs nothing until asked. -->
+          <div class="atl-plate atl-fade" data-view="2d">
             ${it.model ? `
             <div class="atl-plate-switch" role="group" aria-label="Plate view">
-              <button type="button" data-pv="2d" aria-pressed="false">2D</button>
-              <button type="button" data-pv="3d" aria-pressed="true">3D</button>
+              <button type="button" data-pv="2d" aria-pressed="true">2D</button>
+              <button type="button" data-pv="3d" aria-pressed="false">3D</button>
             </div>` : ''}
             <div class="atl-plate-art">${plateArt(id)}</div>
             ${it.model ? `
@@ -363,17 +369,17 @@ function viewInstrument(id){
             <p class="summary">${esc(it.summary)}</p>
             <div class="atl-demos">
               <div class="atl-label" style="margin-bottom:12px">Listen</div>
-              ${it.demos.map(d => `
-                <div class="atl-demo${d.src ? ' is-playable' : ''}"${d.src ? ` data-src="${esc(d.src)}"` : ''}>
-                  <button class="atl-play" aria-label="Play ${esc(d.label)}"${d.src ? '' : ' aria-disabled="true"'}>
+              ${it.demos.map(d => { const src = d.file ? INST_AUDIO(id, d.file) : ''; return `
+                <div class="atl-demo${src ? ' is-playable' : ''}"${src ? ` data-src="${esc(src)}"` : ''}>
+                  <button class="atl-play" aria-label="Play ${esc(d.label)}"${src ? '' : ' aria-disabled="true"'}>
                     <svg class="ico-play" width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
                     <svg class="ico-pause" width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true"><rect x="0" y="0" width="4" height="14" rx="1"/><rect x="8" y="0" width="4" height="14" rx="1"/></svg>
                   </button>
                   <div class="atl-demo-meta"><b>${esc(d.label)}</b><span>${esc(d.note)}</span></div>
                   <div class="atl-wave">${bars(22)}</div>
                   <span class="atl-demo-dur">${esc(d.dur)}</span>
-                </div>`).join('')}
-              ${it.demos.some(d => d.src) ? '' :
+                </div>`; }).join('')}
+              ${it.demos.some(d => d.file) ? '' :
                 `<div class="atl-demo-note" id="atl-audio-note">Audio connects in the next build. Layout only for now.</div>`}
             </div>
           </div>
