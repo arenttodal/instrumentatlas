@@ -60,7 +60,7 @@ const FAMILIES = [
     members:['violin','viola','cello','double-bass','harp'] },
 
   { id:'woodwinds', name:'Woodwinds', tagline:'The overlooked colours', video:'video/woodwinds.mp4',
-    lede:'Beautiful and versatile, and routinely forgotten in modern epic writing. Learn to write for them and you add depth and character that staccato strings and choir cannot reach.',
+    lede:'Beautiful and versatile, able to play everything from lyrical melodies, to quick runs and arpeggios, and ultra soft airy textures. Often overlooked in modern epic writing, but adds colors and textures that breathe a ton of life into orchestrations.',
     role:[
       '<b>Two mechanisms.</b> Edge-tone flutes, and reeds: single (clarinet) or double (oboe, bassoon).',
       '<b>Fast and intricate.</b> Runs and arpeggios are idiomatic, not a stretch.',
