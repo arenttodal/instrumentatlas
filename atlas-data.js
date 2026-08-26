@@ -133,7 +133,7 @@ const INSTRUMENTS = {
   piccolo:{
     family:'woodwinds', name:'Piccolo', latin:'Ottavino',
     epithet:'The loudest instrument in the orchestra, by a distance', status:'live',
-    summary:'Half the length of a flute and sounding an octave above it, the piccolo occupies the top of the orchestral range alone. One player can cut through a full tutti, which is exactly why it is written sparingly. It has no dynamic hiding place.',
+    summary:'The highest pitched instrument in the woodwind family, and in the entire orchestra. It has a very penetrating and shrill quality when played loud, yet a soft and sweet tone when played softly. Good for huge tutti statements, but should be used sparingly, as it is very tiresome to listen to.',
     range:{lo:74, hi:108, note:'D5 – C8', transposition:'Sounds an octave higher than written'},
     timbre:0.95,
     facts:[['Sounding range','D5 – C8'],['Section size','1–2','players'],['Transposition','Octave above written']],
@@ -171,7 +171,7 @@ const INSTRUMENTS = {
   flute:{
     family:'woodwinds', name:'Flute', latin:'Flauto traverso',
     epithet:'Round, warm, and quietly everywhere', status:'live',
-    summary:'An edge-tone instrument with a rich, full middle range and a brilliant, penetrating top. Equally effective carrying a solo line and doubling violins, which is where you will hear it most often without noticing it.',
+    summary:'An edge-tone instrument. It has a rich and full tone in its middle range, and a more brilliant and penetrating higher register. Can be used effectively as a solo instrument, as well as for doubling other instruments of the orchestra.',
     range:{lo:60, hi:96, note:'C4 – C7', transposition:'Non-transposing'},
     timbre:0.72,
     facts:[['Sounding range','C4 – C7'],['Section size','2–4','players'],['Transposition','Concert pitch']],
@@ -209,7 +209,7 @@ const INSTRUMENTS = {
   oboe:{
     family:'woodwinds', name:'Oboe', latin:'Oboe',
     epithet:'The instrument the orchestra tunes to, and the one that sounds most like a voice', status:'live',
-    summary:'A double reed with a narrow conical bore, which produces the most penetrating and least blendable tone colour in the woodwind section. That penetration is why it gives the tuning A, and why a single oboe can carry a melody over a full string section without effort.',
+    summary:'A double reed woodwind instrument, with a nasal and bright tone colour. The expressive middle register is often used both for sad, melancholic themes as well as joyful melodies. It has a very characteristic quality, both good for solo melodies and for doubling other orchestral instruments.',
     range:{lo:58, hi:91, note:'B♭3 – G6', transposition:'Non-transposing'},
     timbre:0.80,
     facts:[['Sounding range','B♭3 – G6'],['Section size','2–4','players'],['Transposition','Concert pitch']],
@@ -250,7 +250,7 @@ const INSTRUMENTS = {
   clarinet:{
     family:'woodwinds', name:'Clarinet', latin:'Clarinetto',
     epithet:'The widest dynamic range in the orchestra, and the best blender in it', status:'live',
-    summary:'A single reed with a cylindrical bore, which makes it behave unlike everything around it: it overblows at the twelfth rather than the octave, and its registers have genuinely different characters. It can play quieter than any other wind instrument and still be heard.',
+    summary:'A single reed instrument with a mellow, warm and expressive tone colour. Very effective for playing smooth and expressive legato passages. It is quite similar to the human voice, and can effectively express desperation, love, joy and mourning.',
     range:{lo:50, hi:91, note:'D3 – G6 sounding', transposition:'In B♭, written a tone higher'},
     timbre:0.55,
     facts:[['Sounding range','D3 – G6'],['Section size','2–4','players'],['Transposition','In B♭ (and A)']],
@@ -289,7 +289,7 @@ const INSTRUMENTS = {
   bassoon:{
     family:'woodwinds', name:'Bassoon', latin:'Fagotto',
     epithet:'The bass of the woodwind section, and its most characterful tenor', status:'live',
-    summary:'A double reed like the oboe but far less penetrating, with registers that differ more sharply than any other woodwind. It plays the bass line of the wind section, doubles the low strings for weight, and, in its middle register, has one of the most distinctive solo voices in the orchestra.',
+    summary:'A tenor and bass instrument, with a double reed mouthpiece like the oboe. Though the two instruments are similar, the bassoon is not as penetrating and sharp as its little brother. The differences between its registers are very clear and pronounced, one of the true characteristics of the bassoon.',
     range:{lo:34, hi:75, note:'B♭1 – E♭5', transposition:'Non-transposing'},
     timbre:0.30,
     facts:[['Sounding range','B♭1 – E♭5'],['Section size','2–4','players'],['Notation','Bass and tenor clef']],
@@ -327,7 +327,7 @@ const INSTRUMENTS = {
   trumpet:{
     family:'brass', name:'Trumpet', latin:'Tromba',
     epithet:'Bright, cylindrical, and built to be heard', status:'live',
-    summary:'Cylindrical bore for most of its length, flaring only at the bell. It is the acoustic opposite of the horn, and the reason it reads as brilliant and forward where the horn reads as warm. Three piston valves fill in the chromatic gaps between the natural harmonics.',
+    summary:'Has a bright, powerful and brilliant sound quality. It is the smallest member of the brass family, and its characteristic sound makes it perfect for heroic and powerful themes. Usually tuned in C or B♭.',
     range:{lo:54, hi:84, note:'F♯3 – C6 sounding', transposition:'In B♭, written a tone higher'},
     timbre:0.88,
     facts:[['Sounding range','F♯3 – C6'],['Section size','3–6','players'],['Transposition','In B♭ (and C)']],
@@ -371,7 +371,7 @@ const INSTRUMENTS = {
     modelCredit:'“French Horn” by Bethanycrandallart · modified: decimated and re-materialled',
     modelSource:'https://skfb.ly/6TxEP',
     epithet:'The brass instrument that behaves like a woodwind', status:'live',
-    summary:'Conical bore, which makes it mellow and round where trumpets and trombones are bright and penetrating. The reason it blends with woodwinds and cellos as happily as with its own family, and the reason heroic themes keep landing on it.',
+    summary:'Has a full, clear and round quality to it. Where the trumpet and trombone are cylindrical bored and bright, the horn is conical, which gives it a more mellow and full tone colour, and lets it blend with woodwinds and cellos as easily as with its own family.',
     range:{lo:41, hi:77, note:'F2 – F5 sounding', transposition:'In F, written a fifth higher'},
     timbre:0.40,
     facts:[['Sounding range','F2 – F5'],['Section size','4–8','players'],['Transposition','In F']],
@@ -409,7 +409,7 @@ const INSTRUMENTS = {
   trombone:{
     family:'brass', name:'Trombone', latin:'Trombone',
     epithet:'The only orchestral brass with no valves, and the only one that can truly glissando', status:'live',
-    summary:'A slide instead of valves, which means genuinely continuous pitch and perfect intonation in the player’s hands rather than the instrument’s. Its tone stays remarkably consistent across the whole range, and in the low register at full volume it is the most threatening sound in the orchestra.',
+    summary:'Has a sound that remains homogenous for the entire range, unlike instruments like the clarinet and bassoon. At middle and higher dynamic levels it is heroic, brilliant and mighty, and has the characteristic brass sound.',
     range:{lo:40, hi:74, note:'E2 – D5', transposition:'Non-transposing'},
     timbre:0.66,
     facts:[['Sounding range','E2 – D5'],['Section size','3–6','players'],['Notation','Bass and tenor clef']],
@@ -450,7 +450,7 @@ const INSTRUMENTS = {
   tuba:{
     family:'brass', name:'Tuba', latin:'Tuba',
     epithet:'The foundation of the brass, and far more agile than it looks', status:'live',
-    summary:'The largest and lowest brass instrument, usually one to a section. Its job is the bottom of the brass chord, but its middle register is soft, full and surprisingly nimble. The comic-lumbering reputation says more about how it is written for than about what it can do.',
+    summary:'The biggest and lowest pitched brass instrument in the orchestra. The lowest notes can only be played very softly, but project very well. The middle register is very full and soft sounding, and also the most used.',
     range:{lo:26, hi:65, note:'D1 – F4', transposition:'Non-transposing'},
     timbre:0.20,
     facts:[['Sounding range','D1 – F4'],['Section size','1–2','players'],['Notation','Bass clef, concert pitch']],
@@ -491,7 +491,7 @@ const INSTRUMENTS = {
     modelCredit:'“Cello Sketchfab” by Limpskin · modified: re-centred and normalised',
     modelSource:'https://skfb.ly/pICFS',
     epithet:'Tenor voice, bass foundation, both at once', status:'live',
-    summary:'The tenor and bass instrument of the violin family. Full and rich down low, lyrical and singing up high, which is why it doubles basses for weight in one bar and carries the counter-melody in the next.',
+    summary:'The tenor and bass instrument of the violin family. Has an even lower range than the viola, able to produce a full and rich sound.',
     range:{lo:36, hi:81, note:'C2 – A5', transposition:'Non-transposing'},
     timbre:0.35,
     facts:[['Sounding range','C2 – A5'],['Section size','10','players'],['Transposition','Concert pitch']],
@@ -532,7 +532,7 @@ const INSTRUMENTS = {
     modelCredit:'“Violin Texturing” by ilushandro · modified: decimated and re-materialled',
     modelSource:'https://skfb.ly/oAVFz',
     epithet:'The voice the orchestra is built around', status:'live',
-    summary:'The smallest and highest of the family, and the most numerous instrument on stage, with thirty or more of them in a full orchestra, split into two sections. Almost every symphonic texture is organised around what the violins are doing.',
+    summary:'The smallest and highest pitched instrument of the string family. There can be up to 30 violins in an orchestra, which is more than any other instrument in the ensemble. The four strings are tuned in GDAE.',
     range:{lo:55, hi:100, note:'G3 – E7', transposition:'Non-transposing'},
     timbre:0.78,
     facts:[['Sounding range','G3 – E7'],['Section size','16 + 14','players'],['Transposition','Concert pitch']],
@@ -572,7 +572,7 @@ const INSTRUMENTS = {
     model:'viola',
     modelCredit:'Attribution pending, do not publish',
     epithet:'The inner voice, and the one nobody notices working', status:'live',
-    summary:'A fifth below the violin, and darker than the size difference suggests. The body is acoustically too small for its tuning, which is exactly where its throaty, slightly veiled character comes from. Most orchestral writing uses it to fill the middle, where nothing else quite reaches.',
+    summary:'The bigger brother of the violin. Has a darker timbre compared to the violin’s brighter quality. Tuned in CGDA, a fifth lower than his little brother.',
     range:{lo:48, hi:88, note:'C3 – E6', transposition:'Non-transposing'},
     timbre:0.52,
     facts:[['Sounding range','C3 – E6'],['Section size','12','players'],['Notation','Alto clef']],
@@ -610,7 +610,7 @@ const INSTRUMENTS = {
   'double-bass':{
     family:'strings', name:'Double Bass', latin:'Contrabasso',
     epithet:'The floor everything else stands on', status:'live',
-    summary:'Not actually a member of the violin family. Sloped shoulders and fourths tuning give it away as a descendant of the viol. It sounds an octave lower than written, and doubling the cellos in octaves is so standard that most orchestral bass lines assume it.',
+    summary:'Actually not a part of the violin family, which is violin, viola and cello. Its timbre is dark, powerful, broad and dull, and it is able to play in a very low register due to its huge size. It has the bass role of the orchestra.',
     range:{lo:28, hi:67, note:'E1 – G4 sounding', transposition:'Sounds an octave lower than written'},
     timbre:0.18,
     facts:[['Sounding range','E1 – G4'],['Section size','8','players'],['Transposition','Octave below written']],
@@ -648,7 +648,7 @@ const INSTRUMENTS = {
   harp:{
     family:'strings', name:'Harp', latin:'Arpa',
     epithet:'Diatonic by design, chromatic only with planning', status:'live',
-    summary:'Forty-seven strings and seven pedals, each pedal controlling every octave of one note name. That single mechanical fact governs everything you can and cannot write for it. The harp is not a keyboard you pluck, and treating it as one is the most common mistake in orchestral writing.',
+    summary:'One of the oldest and most widespread instruments in the world, played by plucking strings that are attached to a wooden frame and soundbox. A harp player is able to play both melodic lines and chords. It is a diatonic instrument, and uses foot pedals to alter pitches, making a C a C♯ or a C♭ for instance, so a chromatic scale is very hard to play on the harp. Its sound is gentle, clear, mellow and flowing.',
     range:{lo:24, hi:103, note:'C1 – G7', transposition:'Non-transposing'},
     timbre:0.60,
     facts:[['Sounding range','C1 – G7'],['Section size','1–2','players'],['Pedals','7 · three positions']],
@@ -690,7 +690,7 @@ const INSTRUMENTS = {
   timpani:{
     family:'percussion', name:'Timpani', latin:'Timpani',
     epithet:'The only orchestral drums that play notes, and the oldest member of the section', status:'live',
-    summary:'Usually four drums of different sizes, tuned by pedal and played by a specialist. They carry rhythm, harmony and pitch at once, which is why the timpani part is the one percussion line composers write first and cut last.',
+    summary:'A big bowl-looking drum, and the loudest instrument in the entire orchestra. It is a pitched instrument, and the player changes the notes by stretching and loosening the drum heads with a foot pedal. Usually four different timpani of different sizes are used. It is very central to the orchestral percussion, since it can play rhythm, melody and harmony.',
     range:{lo:38, hi:57, note:'D2 – A3 across four drums', transposition:'Non-transposing'},
     timbre:0.22,
     facts:[['Range','D2 – A3'],['Drums','4','typical'],['Tuning','Pedal, during play']],
@@ -728,7 +728,7 @@ const INSTRUMENTS = {
   cymbals:{
     family:'percussion', name:'Cymbals', latin:'Piatti',
     epithet:'The orchestra’s exclamation mark', status:'live',
-    summary:'Two plates crashed together, or one suspended and struck. Unpitched but enormously wide-spectrum, which is why a single crash reads as the loudest moment in a piece regardless of what else is playing. Used once, it lands. Used often, it stops meaning anything.',
+    summary:'Can be played by either striking one plate against the other, or being struck with a stick or mallet. The loud sound is usually used to accentuate musical climaxes, and can rise above the entire orchestra. It is very effective when used sparingly.',
     range:{lo:60, hi:96, note:'Unpitched. Broadband, with the energy weighted high', transposition:'Non-transposing'},
     timbre:0.92,
     facts:[['Pitch','Unpitched'],['Types','Crash, suspended, hi-hat'],['Players','1–2']],
@@ -766,7 +766,7 @@ const INSTRUMENTS = {
   'snare-drum':{
     family:'percussion', name:'Snare Drum', latin:'Tamburo militare',
     epithet:'Military ancestry, and the sharpest attack in the orchestra', status:'live',
-    summary:'A small cylindrical drum with wire snares stretched across the lower head, which buzz on every stroke and give it its characteristic rattle. Its attack is sharp enough to define rhythm for the entire orchestra, which is why it drives marches, builds tension and cuts through anything.',
+    summary:'The smallest of the cylindrical drums, and extremely common in all western music styles. It is also a very important part of the orchestral percussion family. Due to its small size, the sound is very bright, sharp and penetrating.',
     range:{lo:58, hi:80, note:'Unpitched. Bright, with high-mid energy', transposition:'Non-transposing'},
     timbre:0.85,
     facts:[['Pitch','Unpitched'],['Players','1'],['Snares','On or off']],
@@ -804,7 +804,7 @@ const INSTRUMENTS = {
   'bass-drum':{
     family:'percussion', name:'Bass Drum', latin:'Gran cassa',
     epithet:'Felt more than heard, which is exactly the point', status:'live',
-    summary:'The largest drum in the orchestra, usually a single instrument mounted on a stand and struck with a large soft beater. It contributes almost no pitch and an enormous amount of physical weight. At climaxes it is the difference between loud and overwhelming.',
+    summary:'An important instrument in both western popular music and orchestral works. It is very effective for marking the rhythm, and covers the bass register of the percussion section. It has a huge range, from subtle to super loud, and most often only one bass drum is required. The sound is quite dark, full, mighty and thunderous.',
     range:{lo:24, hi:40, note:'Unpitched. Very low, felt as much as heard', transposition:'Non-transposing'},
     timbre:0.10,
     facts:[['Pitch','Unpitched'],['Drums','1','typical'],['Players','1']],
@@ -842,7 +842,7 @@ const INSTRUMENTS = {
   gong:{
     family:'percussion', name:'Gong', latin:'Tam-tam',
     epithet:'One stroke, and the sound keeps arriving for half a minute', status:'live',
-    summary:'A large suspended metal disc, struck with a soft beater. Strictly, a tam-tam is unpitched and a gong is tuned, and orchestras almost always mean the former. Its sound blooms slowly after the strike rather than decaying from it, which no other instrument does.',
+    summary:'A huge round metal plate hanging with a knob in the centre. It has a definite pitch, and adds an exotic flavour to the music. It has a very full sounding and round tone, and gongs of different sizes can be used to play entire melodies.',
     range:{lo:30, hi:60, note:'Unpitched. Broadband, and it blooms after the strike', transposition:'Non-transposing'},
     timbre:0.45,
     facts:[['Pitch','Unpitched (tam-tam)'],['Players','1'],['Decay','20–30','seconds']],
@@ -880,7 +880,7 @@ const INSTRUMENTS = {
   celesta:{
     family:'percussion', name:'Celesta', latin:'Celesta',
     epithet:'A piano action striking metal bars, and the sound of everything enchanted', status:'live',
-    summary:'Invented in 1886, played from a keyboard, with hammers striking steel plates over wooden resonators. Tchaikovsky used it for the Sugar Plum Fairy before anyone else could get hold of one, and it has meant magic ever since. That specificity of association is both its gift and its trap.',
+    summary:'Invented during the 19th century. It is played as a piano, but has a percussive, yet heavenly sound. A famous usage of this instrument is the Prologue and Hedwig’s Theme from the Harry Potter series. The celesta parts are usually very quick and lively and require a very skilled player.',
     range:{lo:60, hi:108, note:'C4 – C8 sounding', transposition:'Sounds an octave higher than written'},
     timbre:0.86,
     facts:[['Sounding range','C4 – C8'],['Players','1'],['Transposition','Octave above written']],
