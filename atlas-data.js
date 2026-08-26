@@ -83,7 +83,7 @@ const FAMILIES = [
     members:['piccolo','flute','oboe','clarinet','bassoon'] },
 
   { id:'brass', name:'Brass', tagline:'The powerhouse', video:'video/brass.mp4',
-    lede:'Melodies that carry, chords that feel immense, and enough weight to cover the whole orchestra at will. With that power comes the responsibility to balance it.',
+    lede:'Heroic melodies, intense stabs and rips, and massive chords and tutti statements that can overpower all the other orchestral tonal instruments. Dynamic, rich, and surprisingly versatile.',
     role:[
       '<b>Lips, not reeds.</b> Pitch comes from lip tension and air pressure, so higher usually means louder.',
       '<b>Bore shapes tone.</b> Cylindrical (trumpet, trombone) is bright and penetrating; conical (horn) is mellow and round.',
