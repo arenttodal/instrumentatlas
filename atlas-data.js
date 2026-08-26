@@ -36,7 +36,7 @@ const TIERS = [
 
 const FAMILIES = [
   { id:'strings', name:'Strings', tagline:'The bread and butter', video:'video/strings.mp4',
-    lede:'The most versatile family in the orchestra: staccato chase scenes, sweeping romantic themes, harmonic beds, rhythmic accents. Usually where a symphonic piece begins.',
+    lede:'The most versatile family in the orchestra: staccato chase scenes, sweeping romantic themes, harmonic beds, rhythmic accents. The bread and butter of orchestral writing.',
     role:[
       '<b>Pitch flexibility.</b> Any pitch in range, including microtones and glissandi.',
       '<b>No breathing.</b> Sustained lines can run indefinitely.',
