@@ -365,8 +365,7 @@ function viewInstrument(id){
             </div>
           </div>
           <div class="atl-inst-id atl-fade" style="transition-delay:90ms">
-            <!-- The epithet is deliberately not rendered. The field is still on
-                 every instrument in atlas-data.js, so putting it back is one line. -->
+            <div class="epithet">${esc(it.epithet)}</div>
             <p class="summary">${esc(it.summary)}</p>
             <div class="atl-demos">
               <div class="atl-label" style="margin-bottom:12px">Listen</div>
