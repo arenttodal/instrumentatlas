@@ -454,14 +454,8 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-foot .fine{margin-top:28px;padding-top:20px;border-top:1px solid var(--hair);font-size:12px;color:#4E505A}
 
 /* --- timbre page --- */
-.atl-timbre-head{display:grid;grid-template-columns:1.25fr .75fr;gap:56px;align-items:start;margin-bottom:26px}
+.atl-timbre-head{margin-bottom:26px}
 .atl-timbre-lede{font-size:15px;line-height:1.65;color:#9A9CA4;font-weight:300;max-width:600px}
-.atl-timbre-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);
-  border:1px solid var(--hair);border-radius:8px;overflow:hidden}
-.atl-timbre-stats div{background:#080C14;padding:14px 14px}
-.atl-timbre-stats span{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.8px;
-  text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
-.atl-timbre-stats b{font-family:'Playfair Display',serif;font-size:17px;color:#fff;font-weight:600;line-height:1.2}
 .atl-timbre-chart{border:1px solid var(--hair);border-radius:12px;padding:14px 10px 10px;
   background:rgba(255,255,255,.015)}
 .atl-timbre-chart svg{width:100%;height:auto;display:block;overflow:visible}
@@ -480,7 +474,6 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-plate{max-width:440px}
   .atl-cols{grid-template-columns:1fr;gap:36px}
   .atl-ovw{grid-template-columns:1fr;gap:34px}
-  .atl-timbre-head{grid-template-columns:1fr;gap:24px}
   .atl-model-head{flex-direction:column;gap:16px}
   .atl-fampage{min-height:0;padding:30px 0 48px}
   .atl-home{min-height:0;padding:40px 0 56px}
@@ -509,8 +502,7 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-fam-grid,.atl-inst-grid,.atl-detail,.atl-foot-grid,.atl-gallery{grid-template-columns:1fr}
   .atl-strip{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   .atl-detail{gap:34px;padding:36px 0}
-  .atl-timbre-stats{grid-template-columns:1fr}
-  .atl-timbre-chart{padding:10px 4px 6px}
+    .atl-timbre-chart{padding:10px 4px 6px}
   .atl-timbre-key{gap:14px;font-size:10px}
   .atl-menu{position:fixed;left:12px;right:12px;top:64px;width:auto;max-height:72vh;overflow:auto;
     grid-template-columns:1fr;gap:18px;padding:20px}

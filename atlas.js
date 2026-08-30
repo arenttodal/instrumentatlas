@@ -365,7 +365,8 @@ function viewInstrument(id){
             </div>
           </div>
           <div class="atl-inst-id atl-fade" style="transition-delay:90ms">
-            <div class="epithet">${esc(it.epithet)}</div>
+            <!-- The epithet is deliberately not rendered. The field is still on
+                 every instrument in atlas-data.js, so putting it back is one line. -->
             <p class="summary">${esc(it.summary)}</p>
             <div class="atl-demos">
               <div class="atl-label" style="margin-bottom:12px">Listen</div>
@@ -395,11 +396,6 @@ function viewInstrument(id){
               covered at the bottom, bright and penetrating at the top. Every instrument in the collection is
               plotted, because the useful question is never how ${esc(it.name.toLowerCase())} sounds on its own,
               but what it sits next to.</p>
-          </div>
-          <div class="atl-timbre-stats">
-            <div><span>Sounding range</span><b id="atl-t-range">–</b></div>
-            <div><span>Span</span><b id="atl-t-span">–</b></div>
-            <div><span>Brightness rank</span><b id="atl-t-rank">–</b></div>
           </div>
         </div>
         <div class="atl-timbre-chart"><svg id="atl-timbre-svg" role="img"
@@ -629,12 +625,6 @@ function renderTimbre(id){
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = grid + body + axes;
 
-  const brighter = Object.keys(INSTRUMENTS).filter(k => INSTRUMENTS[k].timbre > it.timbre).length;
-  const total = Object.keys(INSTRUMENTS).length;
-  const setTxt = (el,v) => { const n = document.getElementById(el); if(n) n.textContent = v; };
-  setTxt('atl-t-range', `${midiName(it.range.lo)} – ${midiName(it.range.hi)}`);
-  setTxt('atl-t-span', `${it.range.hi - it.range.lo} semitones`);
-  setTxt('atl-t-rank', `${brighter + 1} of ${total}`);
 }
 
 /* ============================================================================
