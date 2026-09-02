@@ -45,9 +45,9 @@ const FAMILIES = [
       '<b>Range shapes colour.</b> Dark and warm below, bright and penetrating above.'
     ],
     demos:[
-      {label:'The whole section', note:'All five parts, one line, no doubling', file:'section'},
-      {label:'Divisi', note:'The same chord split across the desks', file:'divisi'},
-      {label:'Arco and pizzicato', note:'The same figure, both articulations', file:'articulation'}
+      {label:'Mozart 40', note:'High violins carrying a fast, urgent melody', file:'mozart-40'},
+      {label:'Beethoven 5', note:'The full string section playing the opening theme in perfect unison', file:'beethoven-5'},
+      {label:'Tchaikovsky 4', note:'The entire string section pizzicato, plucked rather than bowed', file:'tchaikovsky-4'}
     ],
     smallName:'String quartet',
     sizes:{
@@ -68,9 +68,9 @@ const FAMILIES = [
       '<b>Breath is structural.</b> Phrases need rests, or the mockup stops sounding human.'
     ],
     demos:[
-      {label:'The whole section', note:'Paired winds, one chord', file:'section'},
-      {label:'Solo against tutti', note:'One oboe over the full band', file:'solo'},
-      {label:'Doubled at the octave', note:'Flute over clarinet, then apart', file:'doubling'}
+      {label:'Beethoven 6', note:'Flute, oboe and clarinet as a trio, imitating birdsong', file:'beethoven-6'},
+      {label:'Tchaikovsky 4', note:'A fast, playful melody played by the woodwinds alone', file:'tchaikovsky-4'},
+      {label:'Beethoven 5', note:'A single exposed oboe, slow and completely alone', file:'beethoven-5'}
     ],
     smallName:'Wind quintet (with one horn)',
     sizes:{
@@ -91,9 +91,9 @@ const FAMILIES = [
       '<b>Fast runs fight the mechanics.</b> Especially on trombone.'
     ],
     demos:[
-      {label:'The whole section', note:'Four parts, one chord, full weight', file:'section'},
-      {label:'Conical and cylindrical', note:'Horns, then trumpets, on the same line', file:'bore'},
-      {label:'Muted and open', note:'The same phrase both ways', file:'mutes'}
+      {label:'Beethoven 5', note:'Four horns blasting a powerful thematic transition', file:'beethoven-5'},
+      {label:'The Moldau', note:'Horns and trumpets playing a loud hunting fanfare', file:'smetana-moldau'},
+      {label:'Dvořák 9', note:'Trumpets and trombones blasting a heavy, dark melody', file:'dvorak-9'}
     ],
     smallName:'Brass quintet',
     sizes:{
@@ -112,9 +112,9 @@ const FAMILIES = [
       '<b>One player, many instruments.</b> Parts move between instruments constantly.'
     ],
     demos:[
-      {label:'Pitched and unpitched', note:'Timpani, then the drums behind them', file:'pitched'},
-      {label:'One stroke, full decay', note:'Tam-tam and cymbal, unedited', file:'decay'},
-      {label:'Under a tutti', note:'The same bar with the section and without', file:'tutti'}
+      {label:'The Moldau', note:'A high metal triangle keeping time on the off-beats', file:'smetana-moldau'},
+      {label:'Dvořák 9, I', note:'Deep, rumbling timpani rolls driving the orchestral rhythm', file:'dvorak-9-i'},
+      {label:'Dvořák 9, IV', note:'Sharp cymbal crashes and heavy bass drum thuds', file:'dvorak-9-iv'}
     ],
     smallName:'No standard orchestral grouping at this size',
     sizes:{
