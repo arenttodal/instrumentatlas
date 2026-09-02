@@ -37,10 +37,10 @@ Pages redeploys in ~20 seconds.
 | Model attribution | **cello and horn only.** viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" |
 | Studio | Theme 1 only, 3 tracks, 7 renders |
 | Instrument audio | 11 of 20: cello, oboe, horn, violin, viola, double bass, bassoon, flute, tuba, trombone, trumpet. The other nine show the placeholder line |
-| Family audio | **none rendered yet.** All four families have `demos` wired; the twelve files at `audio/families/<id>/` are still to come |
+| Family audio | all twelve done, three per family, at `audio/families/<id>/` |
 | Plate artwork | Converted engravings for oboe, trumpet and trombone, all three with credits still pending. The other seventeen are placeholder gold line art |
+| Gallery | 29 videos, six per instrument. Ids came from search results and were never opened: run `tools/gallery-check.py` |
 | Family footage | strings, woodwinds, brass. Percussion has none, by design |
-| Gallery videos | Shared placeholder set of nine; per-instrument sets not yet chosen |
 
 ---
 
