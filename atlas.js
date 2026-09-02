@@ -39,7 +39,7 @@ function viewHome(){
             <div class="atl-fam-arc">${miniArc(f.id)}</div>
             <h3>${esc(f.name)}</h3>
             <p>${esc(f.tagline)}</p>
-            <div class="count">${f.members.length} instruments · ${f.members.filter(m=>INSTRUMENTS[m]&&INSTRUMENTS[m].status==='live').length} ready</div>
+            <div class="count">${f.members.length} instruments</div>
           </a>`).join('')}
       </div>
     </div>
