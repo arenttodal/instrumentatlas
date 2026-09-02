@@ -997,7 +997,9 @@ const GALLERY = [
   {v:'8UfpgT9FMAk', title:'Holst, The Planets: Mars, the Bringer of War', perf:'Berliner Philharmoniker · Herbert von Karajan', why:'The col legno ostinato against sustained brass: two layers, total clarity', chan:'Universal Music Group'},
   {v:'sHsFIv8VA7w', title:'Mahler, Symphony No. 2, "Resurrection"', perf:'Concertgebouworkest · Mariss Jansons', why:'Extremes of dynamic range, from near-silence to full forces', chan:'Concertgebouworkest'},
   {v:'j2Hk2SZGrRY', title:'Mahler, Symphony No. 8, "Symphony of a Thousand"', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'What the Maximum tier on the ensemble slider actually looks like', chan:'Berliner Philharmoniker'},
-  {v:'GrrvAHhWKIw', title:'Mahler, Symphony No. 9', perf:'Berliner Philharmoniker · Kirill Petrenko', why:'Late-Romantic orchestration at its most transparent', chan:'Berliner Philharmoniker'}
+  {v:'GrrvAHhWKIw', title:'Mahler, Symphony No. 9', perf:'Berliner Philharmoniker · Kirill Petrenko', why:'Late-Romantic orchestration at its most transparent', chan:'Berliner Philharmoniker'},
+  {v:'waP1N446Zb0', title:'Britten, The Young Person’s Guide to the Orchestra', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'Every family and most of these instruments, introduced one at a time and then fugued together', chan:'Berliner Philharmoniker'},
+  {v:'GxqZ8CEoujU', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'}
 ];
 
 /* ============================================================================
