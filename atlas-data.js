@@ -160,6 +160,7 @@ const INSTRUMENTS = {
       'The bottom octave will not project. If you need that range, write for flute.',
       'Doubling a quiet passage with piccolo does not make it prettier, it makes it a piccolo solo.'
     ],
+    gallery:['wFJCDxcrqsc','GxqZ8CEoujU','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Against the flute', note:'The same figure, an octave apart', dur:'0:16'},
@@ -198,6 +199,7 @@ const INSTRUMENTS = {
       'Doubling a soft flute with a trumpet clashes. Group by tone colour, not by range.',
       'Long unbroken lines expose the mockup. Write the breath in.'
     ],
+    gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','GxqZ8CEoujU','P_1N6_O254g','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:12', file:'register-comparison'},
@@ -239,6 +241,7 @@ const INSTRUMENTS = {
     /* Shown under the plate in place of the placeholder line. Same wording
        convention as the model credits: pending means do not publish. */
     plateCredit:'Attribution pending, do not publish',
+    gallery:['r87w1RFT4hg','ki0xu6Gl9Nc','P_1N6_O254g','9aDEq3u5huA','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14', file:'register-comparison'},
@@ -278,6 +281,7 @@ const INSTRUMENTS = {
       'Remember the transposition when printing parts: a B♭ instrument, written a tone above sounding.',
       'Rapid register crossings over the break are awkward; give the player somewhere to move.'
     ],
+    gallery:['VGvuUOtHGkk','6exoB7IW8qw','ki0xu6Gl9Nc','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Chalumeau to clarion', note:'The same figure across the break', dur:'0:18'},
@@ -316,6 +320,7 @@ const INSTRUMENTS = {
       'Very high writing is possible but exposed and effortful; use it for effect, not for range.',
       'It cannot compete with brass on volume. If you need weight there, add players, not dynamics.'
     ],
+    gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:11', file:'register-comparison'},
@@ -357,6 +362,7 @@ const INSTRUMENTS = {
     /* Shown under the plate in place of the placeholder line. Same wording
        convention as the model credits: pending means do not publish. */
     plateCredit:'Attribution pending, do not publish',
+    gallery:['bwQumQpug_E','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:08', file:'register-comparison'},
@@ -398,6 +404,7 @@ const INSTRUMENTS = {
       'Eight horns in unison will bury the rest of the orchestra. Balance deliberately.',
       'Written a fifth above sounding pitch: irrelevant for mockups, essential the moment you print parts.'
     ],
+    gallery:['n5gUu65Pmrk','b4rfWegZi_M','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27', file:'register-comparison'},
@@ -439,6 +446,7 @@ const INSTRUMENTS = {
     /* Shown under the plate in place of the placeholder line. Same wording
        convention as the model credits: pending means do not publish. */
     plateCredit:'Attribution pending, do not publish',
+    gallery:['6wRKpdM9ra8','6exoB7IW8qw','GxqZ8CEoujU','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Glissando and legato', note:'What the slide can and cannot join', dur:'0:05', file:'glissando-and-legato'},
@@ -477,6 +485,7 @@ const INSTRUMENTS = {
       'Give it air. A tuba part with no rests is unplayable regardless of how it looks.',
       'Unison with the double basses muddies. An octave apart keeps both audible.'
     ],
+    gallery:['HP5xhyPn58U','JEi23_uSGNE','8UfpgT9FMAk','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:11', file:'low-register-speaking-time'},
@@ -518,6 +527,7 @@ const INSTRUMENTS = {
       'Extreme high register is exposed and unforgiving for less experienced players.',
       'Doubling basses at the unison muddies; octaves keep the bottom clear.'
     ],
+    gallery:['clK9rM9JoIs','P_1N6_O254g','GrrvAHhWKIw','sHsFIv8VA7w','a9UApyClFKA','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
@@ -559,6 +569,7 @@ const INSTRUMENTS = {
       'Sustained writing above B6 tires players and turns shrill; use it for a moment, not a phrase.',
       'Too much divisi and the section stops sounding like a section.'
     ],
+    gallery:['6exoB7IW8qw','9aDEq3u5huA','a9UApyClFKA','GrrvAHhWKIw','sHsFIv8VA7w','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:15', file:'string-by-string'},
@@ -599,6 +610,7 @@ const INSTRUMENTS = {
       'Exposed high writing is unforgiving: beautiful when it works, painful when it does not.',
       'Do not simply write violin parts a fifth lower; the register changes what sits well.'
     ],
+    gallery:['zWn_7R4B-aI','6exoB7IW8qw','GrrvAHhWKIw','9aDEq3u5huA','sHsFIv8VA7w','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Against the violin', note:'The same line on both, back to back', dur:'0:10', file:'against-the-violin'},
@@ -637,6 +649,7 @@ const INSTRUMENTS = {
       'Doubling cellos in unison rather than octaves wastes both. Octaves keep the bottom clear.',
       'Remember the transposition when you print parts: written E1 sounds E0, below the piano.'
     ],
+    gallery:['clK9rM9JoIs','a9UApyClFKA','ghkljW0ZmJU','sHsFIv8VA7w','hvPlV56VtFs','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
@@ -675,6 +688,7 @@ const INSTRUMENTS = {
       'Repeated notes are awkward; the same string cannot be replucked quickly and cleanly.',
       'Write pedal changes into rests, or ask a harpist. This is the section where composers most often write the unplayable.'
     ],
+    gallery:['HP5xhyPn58U','6exoB7IW8qw','fEGNNuEM3Fc','sHsFIv8VA7w','GrrvAHhWKIw','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Glissando, three tunings', note:'The same sweep with different pedal settings', dur:'0:18'},
@@ -717,6 +731,7 @@ const INSTRUMENTS = {
       'Notes outside the drum sizes on stage are simply unplayable. Check the pitches you actually need.',
       'A timpani roll under a quiet passage is not quiet. It is the loudest thing in the orchestra at will.'
     ],
+    gallery:['HP5xhyPn58U','ki0xu6Gl9Nc','8UfpgT9FMAk','pGdtkUiKaA8','ghkljW0ZmJU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Felt vs wood mallets', note:'The same figure, two sticks', dur:'0:14'},
@@ -755,6 +770,7 @@ const INSTRUMENTS = {
       'You cannot make it quiet by writing p. You make it quiet with a smaller pair or a mallet.',
       'Nothing after a crash will be heard for about a second. Plan the bar around it.'
     ],
+    gallery:['JEi23_uSGNE','8UfpgT9FMAk','pGdtkUiKaA8','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
     demos:[
       {label:'Crash, suspended and choked', note:'The three ways it is played', dur:'0:14'},
       {label:'Roll from silence', note:'The crescendo that covers an orchestra', dur:'0:16'},
@@ -793,6 +809,7 @@ const INSTRUMENTS = {
       'A roll under a quiet string passage will dominate unless carefully controlled.',
       'Specify snares on or off. The difference is large and players will ask.'
     ],
+    gallery:['GxqZ8CEoujU','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
     demos:[
       {label:'Snares on and off', note:'The same pattern, both settings', dur:'0:14'},
       {label:'Roll and crescendo', note:'The buzz sustained and built', dur:'0:14'},
@@ -831,6 +848,7 @@ const INSTRUMENTS = {
       'Long decay means fast rhythms turn into a wash. Write sparse parts and damp where needed.',
       'It will not be heard on small speakers, only felt on large ones. Do not rely on it to carry information.'
     ],
+    gallery:['ghkljW0ZmJU','8UfpgT9FMAk','JEi23_uSGNE','j2Hk2SZGrRY','HP5xhyPn58U','waP1N446Zb0'],
     demos:[
       {label:'Soft, full and damped', note:'Three strokes, three instruments', dur:'0:14'},
       {label:'Roll and crescendo', note:'The slow build', dur:'0:16'},
@@ -869,6 +887,7 @@ const INSTRUMENTS = {
       'It cannot be stopped quickly without an audible damping noise.',
       'Its associations are strong and specific. One stroke reads as significant whether you meant it or not.'
     ],
+    gallery:['HP5xhyPn58U','JEi23_uSGNE','j2Hk2SZGrRY','sHsFIv8VA7w','ghkljW0ZmJU','waP1N446Zb0'],
     demos:[
       {label:'Soft to full stroke', note:'The bloom, at both dynamics', dur:'0:18'},
       {label:'Full decay, unedited', note:'How long it actually takes', dur:'0:30'},
@@ -907,6 +926,7 @@ const INSTRUMENTS = {
       'The bottom octave is weak enough to be barely worth using.',
       'Its associations are extremely strong. Any celesta line reads as magical whether or not you want it to.'
     ],
+    gallery:['gumy04TFPBk','HP5xhyPn58U','clK9rM9JoIs','JEi23_uSGNE','j2Hk2SZGrRY','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:16'},
@@ -999,7 +1019,25 @@ const GALLERY = [
   {v:'j2Hk2SZGrRY', title:'Mahler, Symphony No. 8, "Symphony of a Thousand"', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'What the Maximum tier on the ensemble slider actually looks like', chan:'Berliner Philharmoniker'},
   {v:'GrrvAHhWKIw', title:'Mahler, Symphony No. 9', perf:'Berliner Philharmoniker · Kirill Petrenko', why:'Late-Romantic orchestration at its most transparent', chan:'Berliner Philharmoniker'},
   {v:'waP1N446Zb0', title:'Britten, The Young Person’s Guide to the Orchestra', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'Every family and most of these instruments, introduced one at a time and then fugued together', chan:'Berliner Philharmoniker'},
-  {v:'GxqZ8CEoujU', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'}
+  {v:'GxqZ8CEoujU', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'},
+  {v:'ki0xu6Gl9Nc', title:'Prokofiev, Peter and the Wolf (with score)', perf:'Vancouver Symphony Orchestra · Bramwell Tovey', why:'Every solo instrument given a character, with the score on screen as it plays', chan:'Concert upload'},
+  {v:'6exoB7IW8qw', title:'Rimsky-Korsakov, Scheherazade', perf:'hr-Sinfonieorchester · Alain Altinoglu', why:'The concertmaster returns as a character, and almost every principal gets a solo', chan:'hr-Sinfonieorchester'},
+  {v:'ghkljW0ZmJU', title:'Stravinsky, The Rite of Spring', perf:'London Symphony Orchestra · Sir Simon Rattle', why:'Opens on a bassoon at the very top of its range, and never stops rethinking the orchestra', chan:'London Symphony Orchestra'},
+  {v:'clK9rM9JoIs', title:'Saint-Saëns, The Carnival of the Animals', perf:'Omaha Symphony · Ankush Kumar Bahl', why:'Written as instrument portraits: the swan is a cello, the elephant a double bass', chan:'Omaha Symphony'},
+  {v:'fEGNNuEM3Fc', title:'Mahler, Symphony No. 5', perf:'hr-Sinfonieorchester · Andrés Orozco-Estrada', why:'Opens on a solo trumpet, and hands the third movement to an obbligato horn', chan:'hr-Sinfonieorchester'},
+  {v:'b4rfWegZi_M', title:'Tchaikovsky, Symphony No. 5', perf:'hr-Sinfonieorchester · Roderick Cox', why:'The slow movement carries the most famous horn solo in the repertoire', chan:'hr-Sinfonieorchester'},
+  {v:'HP5xhyPn58U', title:'Holst, The Planets', perf:'hr-Sinfonieorchester · Hugh Wolff', why:'The full percussion battery, organ, two harps, and a tuba that has to carry Uranus', chan:'hr-Sinfonieorchester'},
+  {v:'6wRKpdM9ra8', title:'Mahler, Symphony No. 3', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'The first movement gives the trombone the longest solo in the symphonic repertoire', chan:'Berliner Philharmoniker'},
+  {v:'no6vSquaeIQ', title:'Debussy, Prélude à l’après-midi d’un faune', perf:'Minnesota Orchestra · Thomas Søndergård', why:'The flute solo that begins modern orchestration', chan:'Minnesota Orchestra'},
+  {v:'8NVnPEsT__Y', title:'Ibert, Flute Concerto', perf:'hr-Sinfonieorchester · Clara Andrada de la Calle · Jaime Martín', why:'The flute as a soloist rather than a colour, at full stretch', chan:'hr-Sinfonieorchester'},
+  {v:'r87w1RFT4hg', title:'Bacri, Notturno for oboe and string orchestra', perf:'hr-Sinfonieorchester · François Leleux', why:'An oboe carrying a whole movement over strings, filmed close', chan:'hr-Sinfonieorchester'},
+  {v:'wFJCDxcrqsc', title:'Sousa, The Stars and Stripes Forever', perf:'West Point Band, five piccolos', why:'The piccolo obbligato everyone knows, played by a whole row of them', chan:'West Point Band'},
+  {v:'zWn_7R4B-aI', title:'Berlioz, Harold en Italie', perf:'Wolfram Christ, viola · Berliner Philharmoniker · Lorin Maazel', why:'A symphony with a solo viola running through it, which almost nothing else does', chan:'Concert upload'},
+  {v:'bwQumQpug_E', title:'Mahler, Symphony No. 5, the opening trumpet solo', perf:'Gábor Tarkövi · Berliner Philharmoniker', why:'One player alone, setting up seventy minutes of music', chan:'Concert upload'},
+  {v:'n5gUu65Pmrk', title:'Tchaikovsky, Symphony No. 5, the horn solo', perf:'Marc Gruber · Frankfurt Radio Symphony', why:'Filmed on the player: what the horn’s middle register is for', chan:'hr-Sinfonieorchester'},
+  {v:'gumy04TFPBk', title:'Tchaikovsky, Dance of the Sugar Plum Fairy', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'The celesta’s debut, and still the sound everyone reaches for', chan:'Berliner Philharmoniker'},
+  {v:'VGvuUOtHGkk', title:'Gershwin, Rhapsody in Blue (1924 recording)', perf:'Paul Whiteman Orchestra · George Gershwin, piano', why:'The clarinet glissando as first recorded, a year after it was written', chan:'Concert upload'},
+  {v:'JEi23_uSGNE', title:'Holst, The Planets', perf:'Singapore Symphony Orchestra · Andrew Litton', why:'A second reading, filmed close enough to watch the percussion section work', chan:'Singapore Symphony Orchestra'}
 ];
 
 /* ============================================================================

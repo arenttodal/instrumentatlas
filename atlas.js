@@ -459,7 +459,7 @@ function viewInstrument(id){
               </div>
             </div>`).join('')}
         </div>
-        <p class="atl-gallery-note">Videos are embedded through YouTube's own player and remain hosted on the rights holders' channels, and nothing is copied or re-uploaded. Each card credits the performing orchestra, conductor and uploading channel, and links back to the source. Placeholder set for now; each instrument gets its own selection.</p>
+        <p class="atl-gallery-note">Videos are embedded through YouTube's own player and remain hosted on the rights holders' channels, and nothing is copied or re-uploaded. Each card credits the performing orchestra, conductor and uploading channel, and links back to the source. Six per instrument, chosen to show it working inside an orchestra rather than in isolation.</p>
       </div>
 
     </div>
