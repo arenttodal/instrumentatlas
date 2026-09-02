@@ -454,7 +454,8 @@ function viewInstrument(id){
               <div class="atl-vid-meta">
                 <b>${esc(g.title)}</b>
                 <span class="perf">${esc(g.perf)}</span>
-                <span class="why">${esc(g.why)}</span>
+                <!-- g.why is not rendered. The field is still on every entry in
+                     GALLERY, so restoring the line is one span. -->
                 <span class="cred">${esc(g.chan)} · <a href="https://www.youtube.com/watch?v=${esc(g.v)}" target="_blank" rel="noopener">Watch on YouTube</a></span>
               </div>
             </div>`).join('')}
