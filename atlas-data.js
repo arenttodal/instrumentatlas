@@ -449,8 +449,8 @@ const INSTRUMENTS = {
     gallery:['6wRKpdM9ra8','6exoB7IW8qw','GxqZ8CEoujU','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
-      {label:'Glissando and legato', note:'What the slide can and cannot join', dur:'0:05', file:'glissando-and-legato'},
-      {label:'Section chord, soft and loud', note:'The same voicing at both extremes', dur:'0:11', file:'section-soft-and-loud'}
+      {label:'Rips', note:'Quick explanation of an octave rip', dur:'0:05', file:'glissando-and-legato'},
+      {label:'Section chord, soft and loud', note:'Showcasing the dynamics of the trombone', dur:'0:11', file:'section-soft-and-loud'}
     ],
     prev:'horn', next:'tuba'
   },
@@ -926,7 +926,7 @@ const INSTRUMENTS = {
       'The bottom octave is weak enough to be barely worth using.',
       'Its associations are extremely strong. Any celesta line reads as magical whether or not you want it to.'
     ],
-    gallery:['gumy04TFPBk','HP5xhyPn58U','clK9rM9JoIs','JEi23_uSGNE','j2Hk2SZGrRY','waP1N446Zb0'],
+    gallery:['gumy04TFPBk','qsCZP3wdF4w','2EsNGS9vYe8','YB_PTA4dGws','clK9rM9JoIs','j2Hk2SZGrRY'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:16'},
@@ -1037,7 +1037,10 @@ const GALLERY = [
   {v:'n5gUu65Pmrk', title:'Tchaikovsky, Symphony No. 5, the horn solo', perf:'Marc Gruber · Frankfurt Radio Symphony', why:'Filmed on the player: what the horn’s middle register is for', chan:'hr-Sinfonieorchester'},
   {v:'gumy04TFPBk', title:'Tchaikovsky, Dance of the Sugar Plum Fairy', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'The celesta’s debut, and still the sound everyone reaches for', chan:'Berliner Philharmoniker'},
   {v:'VGvuUOtHGkk', title:'Gershwin, Rhapsody in Blue (1924 recording)', perf:'Paul Whiteman Orchestra · George Gershwin, piano', why:'The clarinet glissando as first recorded, a year after it was written', chan:'Concert upload'},
-  {v:'JEi23_uSGNE', title:'Holst, The Planets', perf:'Singapore Symphony Orchestra · Andrew Litton', why:'A second reading, filmed close enough to watch the percussion section work', chan:'Singapore Symphony Orchestra'}
+  {v:'JEi23_uSGNE', title:'Holst, The Planets', perf:'Singapore Symphony Orchestra · Andrew Litton', why:'A second reading, filmed close enough to watch the percussion section work', chan:'Singapore Symphony Orchestra'},
+  {v:'qsCZP3wdF4w', title:'John Williams, Hedwig’s Theme', perf:'Wiener Philharmoniker · John Williams · Anne-Sophie Mutter', why:'The celesta melody the whole world knows, played by the orchestra it was written for', chan:'Deutsche Grammophon'},
+  {v:'2EsNGS9vYe8', title:'Bartók, Music for Strings, Percussion and Celesta', perf:'Oslo Philharmonic · Vasily Petrenko', why:'The celesta is in the title, and Bartók treats it as a third section rather than a colour', chan:'Oslo Philharmonic'},
+  {v:'YB_PTA4dGws', title:'Bartók, Music for Strings, Percussion and Celesta', perf:'Berliner Philharmoniker · Pierre Boulez', why:'A second reading of the piece that made the celesta a structural instrument', chan:'Berliner Philharmoniker'}
 ];
 
 /* ============================================================================

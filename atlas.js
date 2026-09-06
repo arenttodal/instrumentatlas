@@ -39,7 +39,7 @@ function viewHome(){
             <div class="atl-fam-arc">${miniArc(f.id)}</div>
             <h3>${esc(f.name)}</h3>
             <p>${esc(f.tagline)}</p>
-            <div class="count">${f.members.length} instruments · ${f.members.filter(m=>INSTRUMENTS[m]&&INSTRUMENTS[m].status==='live').length} ready</div>
+            <div class="count">${f.members.length} instruments</div>
           </a>`).join('')}
       </div>
     </div>
@@ -454,7 +454,8 @@ function viewInstrument(id){
               <div class="atl-vid-meta">
                 <b>${esc(g.title)}</b>
                 <span class="perf">${esc(g.perf)}</span>
-                <span class="why">${esc(g.why)}</span>
+                <!-- g.why is not rendered. The field is still on every entry in
+                     GALLERY, so restoring the line is one span. -->
                 <span class="cred">${esc(g.chan)} · <a href="https://www.youtube.com/watch?v=${esc(g.v)}" target="_blank" rel="noopener">Watch on YouTube</a></span>
               </div>
             </div>`).join('')}
