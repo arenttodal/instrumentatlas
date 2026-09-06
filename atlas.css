@@ -21,6 +21,13 @@ body{background:#080C14}
   --text-dim:#7E808A;
   --hair:rgba(255,255,255,.07);
   --hair-gold:rgba(212,160,74,.22);
+  /* Elevation. The page is --bg; anything that is a panel sits one clear step
+     above it and carries --edge rather than --hair, so a card reads as a card
+     instead of as a slightly different patch of the same field. --panel-hi is
+     the hovered row inside a panel. */
+  --panel:#0E141F;
+  --panel-hi:#141C2A;
+  --edge:rgba(255,255,255,.09);
   --page-top:64px;    /* one offset for home, family and instrument pages */
   --plate-art-h:341px; /* drives BOTH the engraving and the 3D box */
   font-family:'DM Sans',-apple-system,sans-serif;
@@ -54,9 +61,13 @@ body{background:#080C14}
   padding:7px 16px;min-height:32px;text-align:center;
   background:linear-gradient(135deg,var(--gold) 0%,var(--gold-deep) 100%);color:#0A0C14;
   font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
+/* The bar has a ground at all times, so the page has a top edge to hang from
+   rather than starting in mid air. Scrolling only deepens it. */
 .atl-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;
-  padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}
-.atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
+  padding:14px 32px;background:rgba(9,13,22,.72);border-bottom:1px solid var(--hair);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  transition:background .35s ease,border-color .35s ease}
+.atl-nav.is-stuck{background:rgba(8,12,20,.93);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom-color:var(--edge)}
 .atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
 .atl-logo{height:15px;width:auto;object-fit:contain}
 .atl-logo-fallback{font-family:'Playfair Display',serif;font-size:19px;color:#fff;letter-spacing:.5px}
@@ -264,7 +275,7 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-insthead .atl-tab{padding:0 0 4px;font-size:9px;letter-spacing:1.5px}
 .atl-insthead .atl-tab[aria-selected="true"]::after{bottom:-12px;height:1.5px}
 .atl-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.atl-vid{border:1px solid var(--hair);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.02);
+.atl-vid{border:1px solid var(--edge);border-radius:10px;overflow:hidden;background:var(--panel);
   transition:border-color .3s ease,background .3s ease;display:flex;flex-direction:column}
 .atl-vid:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03)}
 .atl-vid-frame{position:relative;aspect-ratio:16/9;background:#0A0E18;cursor:pointer;overflow:hidden}
@@ -327,9 +338,9 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 
 /* --- instrument page: the plate --- */
 .atl-inst-top{display:grid;grid-template-columns:minmax(0,420px) 1fr;gap:56px;align-items:start;padding:0}
-.atl-plate{position:relative;border:1px solid var(--hair);border-radius:4px;padding:30px 26px 22px;background:
+.atl-plate{position:relative;border:1px solid var(--edge);border-radius:10px;padding:30px 26px 22px;background:
   radial-gradient(ellipse at 50% 38%,rgba(74,140,212,.10) 0%,transparent 62%),
-  linear-gradient(180deg,rgba(255,255,255,.022) 0%,rgba(255,255,255,0) 70%)}
+  var(--panel)}
 .atl-plate::before,.atl-plate::after{content:'';position:absolute;width:12px;height:12px;border:1px solid var(--hair-gold)}
 .atl-plate::before{top:9px;left:9px;border-right:none;border-bottom:none}
 .atl-plate::after{bottom:9px;right:9px;border-left:none;border-top:none}
@@ -359,9 +370,17 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-plate-facts b em{font-style:normal;font-size:11px;color:var(--text-dim);font-weight:400}
 
 /* --- audio demos --- */
-.atl-demos{margin-top:34px;border-top:1px solid var(--hair);padding-top:26px}
-.atl-demo{display:flex;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid var(--hair)}
+.atl-demos{margin-top:34px;border:1px solid var(--edge);border-radius:10px;background:var(--panel);overflow:hidden}
+/* the section head sits inside the panel, on its own ground, the way a table
+   header does in the references */
+.atl-demos-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 18px;border-bottom:1px solid var(--edge);background:rgba(255,255,255,.015)}
+.atl-demos-head .n{font-size:10.5px;font-weight:700;letter-spacing:1.6px;color:#4E505A}
+.atl-demo{display:flex;align-items:center;gap:16px;min-height:62px;padding:11px 18px;
+  border-bottom:1px solid var(--edge);transition:background .18s ease}
 .atl-demo:last-of-type{border-bottom:none}
+.atl-demo.is-playable:hover{background:var(--panel-hi)}
+.atl-demo.is-playing{background:var(--panel-hi)}
 .atl-play{width:38px;height:38px;flex:0 0 auto;border-radius:50%;border:1px solid var(--hair-gold);color:var(--gold);
   display:flex;align-items:center;justify-content:center;transition:background .25s,transform .2s}
 .atl-play:hover{background:rgba(212,160,74,.12);transform:scale(1.06)}
@@ -382,7 +401,7 @@ a.atl-sc:hover .atl-sc-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-demo.is-playing .atl-play .ico-pause{display:block}
 .atl-demo.is-missing .atl-demo-meta b{color:var(--text-dim)}
 .atl-demo.is-missing .atl-play{opacity:.4}
-.atl-demo-note{font-size:12px;color:#4E505A;margin-top:14px;letter-spacing:.3px}
+.atl-demo-note{font-size:12px;color:#4E505A;padding:12px 18px;letter-spacing:.3px;border-top:1px solid var(--edge)}
 
 /* --- detail blocks --- */
 .atl-detail{display:grid;grid-template-columns:repeat(2,1fr);gap:48px 56px;padding:56px 0}
@@ -456,8 +475,8 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 /* --- timbre page --- */
 .atl-timbre-head{margin-bottom:26px}
 .atl-timbre-lede{font-size:15px;line-height:1.65;color:#9A9CA4;font-weight:300;max-width:600px}
-.atl-timbre-chart{border:1px solid var(--hair);border-radius:12px;padding:14px 10px 10px;
-  background:rgba(255,255,255,.015)}
+.atl-timbre-chart{border:1px solid var(--edge);border-radius:12px;padding:14px 10px 10px;
+  background:var(--panel)}
 .atl-timbre-chart svg{width:100%;height:auto;display:block;overflow:visible}
 .atl-timbre-key{display:flex;gap:26px;flex-wrap:wrap;margin-top:16px;font-size:11px;color:#5E606A;letter-spacing:.3px}
 .atl-timbre-key i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:8px}
@@ -513,7 +532,7 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-plate-art svg,
   .atl-plate-art img{height:auto;max-height:var(--plate-art-h)}
   .atl-plate{padding:24px 20px 18px}
-  .atl-demo{flex-wrap:wrap;gap:12px}
+  .atl-demo{flex-wrap:wrap;gap:12px;min-height:0;padding:13px 14px}
   .atl-wave{display:none}
   .atl-pager{gap:24px}
   .atl-pager .r{text-align:left;margin-left:0}

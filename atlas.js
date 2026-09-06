@@ -368,7 +368,10 @@ function viewInstrument(id){
             <div class="epithet">${esc(it.epithet)}</div>
             <p class="summary">${esc(it.summary)}</p>
             <div class="atl-demos">
-              <div class="atl-label" style="margin-bottom:12px">Listen</div>
+              <div class="atl-demos-head">
+                <span class="atl-label">Listen</span>
+                <span class="n">${it.demos.filter(d => d.file).length} of ${it.demos.length}</span>
+              </div>
               ${it.demos.map(d => { const src = d.file ? INST_AUDIO(id, d.file) : ''; return `
                 <div class="atl-demo${src ? ' is-playable' : ''}"${src ? ` data-src="${esc(src)}"` : ''}>
                   <button class="atl-play" aria-label="Play ${esc(d.label)}"${src ? '' : ' aria-disabled="true"'}>
