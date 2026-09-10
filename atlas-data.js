@@ -161,6 +161,9 @@ const INSTRUMENTS = {
       'Doubling a quiet passage with piccolo does not make it prettier, it makes it a piccolo solo.'
     ],
     gallery:['wFJCDxcrqsc','GxqZ8CEoujU','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Against the flute', note:'The same figure, an octave apart', dur:'0:16'},
@@ -200,6 +203,9 @@ const INSTRUMENTS = {
       'Long unbroken lines expose the mockup. Write the breath in.'
     ],
     gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','GxqZ8CEoujU','P_1N6_O254g','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:12', file:'register-comparison'},
@@ -282,10 +288,13 @@ const INSTRUMENTS = {
       'Rapid register crossings over the break are awkward; give the player somewhere to move.'
     ],
     gallery:['VGvuUOtHGkk','6exoB7IW8qw','ki0xu6Gl9Nc','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Chalumeau to clarion', note:'The same figure across the break', dur:'0:18'},
-      {label:'Diminuendo to nothing', note:'The fade no other wind instrument can match', dur:'0:12'}
+      {label:'Sustained', note:'Long held tones', dur:'0:06', file:'sustained'},
+      {label:'Staccato', note:'Short, separated notes', dur:'0:05', file:'staccato'},
+      {label:'Trills', note:'Trilled figures', dur:'0:04', file:'trills'}
     ],
     prev:'oboe', next:'bassoon'
   },
@@ -321,6 +330,9 @@ const INSTRUMENTS = {
       'It cannot compete with brass on volume. If you need weight there, add players, not dynamics.'
     ],
     gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:11', file:'register-comparison'},
@@ -405,6 +417,9 @@ const INSTRUMENTS = {
       'Written a fifth above sounding pitch: irrelevant for mockups, essential the moment you print parts.'
     ],
     gallery:['n5gUu65Pmrk','b4rfWegZi_M','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27', file:'register-comparison'},
@@ -486,6 +501,9 @@ const INSTRUMENTS = {
       'Unison with the double basses muddies. An octave apart keeps both audible.'
     ],
     gallery:['HP5xhyPn58U','JEi23_uSGNE','8UfpgT9FMAk','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:11', file:'low-register-speaking-time'},
@@ -528,6 +546,9 @@ const INSTRUMENTS = {
       'Doubling basses at the unison muddies; octaves keep the bottom clear.'
     ],
     gallery:['clK9rM9JoIs','P_1N6_O254g','GrrvAHhWKIw','sHsFIv8VA7w','a9UApyClFKA','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
@@ -570,6 +591,9 @@ const INSTRUMENTS = {
       'Too much divisi and the section stops sounding like a section.'
     ],
     gallery:['6exoB7IW8qw','9aDEq3u5huA','a9UApyClFKA','GrrvAHhWKIw','sHsFIv8VA7w','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:15', file:'string-by-string'},
@@ -611,6 +635,9 @@ const INSTRUMENTS = {
       'Do not simply write violin parts a fifth lower; the register changes what sits well.'
     ],
     gallery:['zWn_7R4B-aI','6exoB7IW8qw','GrrvAHhWKIw','9aDEq3u5huA','sHsFIv8VA7w','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Against the violin', note:'The same line on both, back to back', dur:'0:10', file:'against-the-violin'},
@@ -650,6 +677,9 @@ const INSTRUMENTS = {
       'Remember the transposition when you print parts: written E1 sounds E0, below the piano.'
     ],
     gallery:['clK9rM9JoIs','a9UApyClFKA','ghkljW0ZmJU','sHsFIv8VA7w','hvPlV56VtFs','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
@@ -732,6 +762,9 @@ const INSTRUMENTS = {
       'A timpani roll under a quiet passage is not quiet. It is the loudest thing in the orchestra at will.'
     ],
     gallery:['HP5xhyPn58U','ki0xu6Gl9Nc','8UfpgT9FMAk','pGdtkUiKaA8','ghkljW0ZmJU','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Felt vs wood mallets', note:'The same figure, two sticks', dur:'0:14'},
@@ -771,6 +804,9 @@ const INSTRUMENTS = {
       'Nothing after a crash will be heard for about a second. Plan the bar around it.'
     ],
     gallery:['JEi23_uSGNE','8UfpgT9FMAk','pGdtkUiKaA8','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Crash, suspended and choked', note:'The three ways it is played', dur:'0:14'},
       {label:'Roll from silence', note:'The crescendo that covers an orchestra', dur:'0:16'},
@@ -888,6 +924,9 @@ const INSTRUMENTS = {
       'Its associations are strong and specific. One stroke reads as significant whether you meant it or not.'
     ],
     gallery:['HP5xhyPn58U','JEi23_uSGNE','j2Hk2SZGrRY','sHsFIv8VA7w','ghkljW0ZmJU','waP1N446Zb0'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Soft to full stroke', note:'The bloom, at both dynamics', dur:'0:18'},
       {label:'Full decay, unedited', note:'How long it actually takes', dur:'0:30'},
@@ -927,6 +966,9 @@ const INSTRUMENTS = {
       'Its associations are extremely strong. Any celesta line reads as magical whether or not you want it to.'
     ],
     gallery:['gumy04TFPBk','qsCZP3wdF4w','2EsNGS9vYe8','YB_PTA4dGws','clK9rM9JoIs','j2Hk2SZGrRY'],
+    /* Shown under the plate in place of the placeholder line. Same wording
+       convention as the model credits: pending means do not publish. */
+    plateCredit:'Attribution pending, do not publish',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:16'},
@@ -1106,163 +1148,14 @@ function stringThumb(o){
 }
 
 const PLATES = {
-  flute:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g transform="rotate(-38 150 260)" stroke-width="1.3">
-      <rect x="40" y="243" width="222" height="26" rx="13" opacity=".85"/>
-      <line x1="72" y1="243" x2="72" y2="269" opacity=".5"/>
-      <line x1="196" y1="243" x2="196" y2="269" opacity=".5"/>
-      <ellipse cx="56" cy="256" rx="7" ry="5" opacity=".9"/>
-      <path d="M40 250c-6 3-6 9 0 12" opacity=".6"/>
-      <g opacity=".9">
-        <ellipse cx="92" cy="256" rx="7.5" ry="7"/><ellipse cx="112" cy="256" rx="7.5" ry="7"/>
-        <ellipse cx="132" cy="256" rx="7.5" ry="7"/><ellipse cx="158" cy="256" rx="7.5" ry="7"/>
-        <ellipse cx="178" cy="256" rx="7.5" ry="7"/><ellipse cx="214" cy="256" rx="6.5" ry="6"/>
-        <ellipse cx="232" cy="256" rx="6.5" ry="6"/>
-      </g>
-      <g opacity=".45" stroke-width="1">
-        <line x1="86" y1="243" x2="98" y2="243"/><line x1="126" y1="243" x2="138" y2="243"/>
-        <line x1="172" y1="243" x2="184" y2="243"/>
-        <line x1="104" y1="269" x2="120" y2="269"/><line x1="152" y1="269" x2="166" y2="269"/>
-      </g>
-      <path d="M248 246c8 4 8 20 0 24" opacity=".7"/>
-    </g>
-    <g opacity=".22" stroke-width=".8">
-      <path d="M60 470c40-20 78-52 110-92"/><path d="M74 482c44-22 86-58 120-102"/>
-    </g>
-  </svg>`,
-
-  /* Woodwinds. The flute and piccolo lie diagonally because they are played
-     across the body; the reeds stand upright. Conical bores (oboe, bassoon)
-     have visibly diverging sides, the cylindrical clarinet has parallel ones,
-     the same distinction the entries talk about. */
-  piccolo:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g transform="rotate(-38 150 260)" stroke-width="1.3">
-      <rect x="60" y="244" width="180" height="24" rx="12" opacity=".85"/>
-      <line x1="96" y1="244" x2="96" y2="268" opacity=".5"/>
-      <line x1="204" y1="244" x2="204" y2="268" opacity=".5"/>
-      <ellipse cx="76" cy="256" rx="6.5" ry="4.6" opacity=".9"/>
-      <path d="M60 248c-6 2-6 14 0 16" opacity=".6"/>
-      <g opacity=".9">
-        <ellipse cx="116" cy="256" rx="6.4" ry="6"/><ellipse cx="134" cy="256" rx="6.4" ry="6"/>
-        <ellipse cx="152" cy="256" rx="6.4" ry="6"/><ellipse cx="176" cy="256" rx="6.4" ry="6"/>
-        <ellipse cx="194" cy="256" rx="6.4" ry="6"/><ellipse cx="216" cy="256" rx="5.4" ry="5"/>
-      </g>
-      <g opacity=".45" stroke-width="1">
-        <line x1="110" y1="244" x2="122" y2="244"/><line x1="146" y1="244" x2="158" y2="244"/>
-        <line x1="126" y1="268" x2="142" y2="268"/><line x1="170" y1="268" x2="184" y2="268"/>
-      </g>
-      <path d="M228 247c7 3 7 15 0 18" opacity=".7"/>
-    </g>
-    <g opacity=".22" stroke-width=".8">
-      <path d="M96 452c34-16 66-44 92-78"/><path d="M108 464c38-18 74-50 102-88"/>
-    </g>
-  </svg>`,
-
-  /* A converted engraving rather than placeholder line art. Both forms are
-     valid here: an SVG string, or {img} for a plate built by tools/plates.py
-     from plates-source/. See plateArt() in atlas.js. */
+  flute:{img:'plates/flute.png'},
+  piccolo:{img:'plates/piccolo.png'},
   oboe:{img:'plates/oboe.png'},
 
-  clarinet:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <path d="M143 104c0-26 3-44 7-50 4 6 7 24 7 50" opacity=".9"/>
-      <path d="M143 86h14M143 94h14" opacity=".45"/>
-      <rect x="141" y="104" width="18" height="26" rx="4" opacity=".85"/>
-      <path d="M143 130v258M157 130v258" opacity=".92"/>
-      <path d="M141 256h18" opacity=".5"/>
-      <g opacity=".85">
-        <ellipse cx="150" cy="164" rx="6" ry="5"/><ellipse cx="150" cy="192" rx="6" ry="5"/>
-        <ellipse cx="150" cy="220" rx="6" ry="5"/><ellipse cx="150" cy="292" rx="6" ry="5"/>
-        <ellipse cx="150" cy="322" rx="6" ry="5"/>
-      </g>
-      <g opacity=".5" stroke-width="1">
-        <path d="M141 150h-9v26h9"/><path d="M159 206h9v28h-9"/><path d="M141 306h-9v32h9"/>
-      </g>
-      <path d="M143 388c-6 26-14 42-21 52" opacity=".92"/>
-      <path d="M157 388c6 26 14 42 21 52" opacity=".92"/>
-      <ellipse cx="150" cy="442" rx="30" ry="9" opacity=".95"/>
-      <ellipse cx="150" cy="442" rx="20" ry="6" opacity=".35"/>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M204 306c8 30 8 64-4 92"/><path d="M212 298c8 34 8 72-4 104"/>
-    </g>
-  </svg>`,
-
-  bassoon:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <ellipse cx="168" cy="92" rx="17" ry="7" opacity=".95"/>
-      <path d="M151 92c1 22 4 36 7 46" opacity=".9"/>
-      <path d="M185 92c-1 22-4 36-7 46" opacity=".9"/>
-      <path d="M158 138v290M178 138v290" opacity=".92"/>
-      <path d="M124 200v228M140 200v228" opacity=".92"/>
-      <path d="M124 428v18c0 17 12 27 27 27s27-10 27-27v-18" opacity=".92"/>
-      <path d="M140 428v14c0 6 5 9 11 9s11-3 11-9v-14" opacity=".55"/>
-      <path d="M132 200c-6-26-22-46-42-54" opacity=".9"/>
-      <path d="M90 146l-12-6" opacity=".85"/>
-      <path d="M78 140l-11-7M78 140l-9-9" opacity=".8"/>
-      <path d="M156 176h24M156 300h24M122 264h20" opacity=".45"/>
-      <g opacity=".85">
-        <ellipse cx="132" cy="228" rx="5.5" ry="4.5"/><ellipse cx="132" cy="300" rx="5.5" ry="4.5"/>
-        <ellipse cx="168" cy="212" rx="5.5" ry="4.5"/><ellipse cx="168" cy="356" rx="5.5" ry="4.5"/>
-      </g>
-      <g opacity=".5" stroke-width="1">
-        <path d="M124 246h-9v34h9"/><path d="M178 236h9v40h-9"/><path d="M140 330h9v30h-9"/>
-      </g>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M212 300c8 30 8 66-4 94"/><path d="M220 292c8 34 8 74-4 106"/>
-    </g>
-  </svg>`,
-
-  /* Percussion. These are objects rather than tubes, so they are drawn as
-     objects: a struck surface, the thing holding it up, and whatever strikes
-     it. The stand matters as much as the instrument for recognising them at
-     this size. */
-  timpani:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <ellipse cx="150" cy="196" rx="96" ry="34" opacity=".95"/>
-      <ellipse cx="150" cy="196" rx="80" ry="27" opacity=".35"/>
-      <path d="M54 196c2 62 26 112 50 136" opacity=".92"/>
-      <path d="M246 196c-2 62-26 112-50 136" opacity=".92"/>
-      <path d="M104 332c14 12 28 18 46 18s32-6 46-18" opacity=".92"/>
-      <g opacity=".55">
-        <path d="M66 216v22M96 228v20M150 232v20M204 228v20M234 216v22"/>
-        <circle cx="66" cy="243" r="4"/><circle cx="96" cy="253" r="4"/><circle cx="150" cy="257" r="4"/>
-        <circle cx="204" cy="253" r="4"/><circle cx="234" cy="243" r="4"/>
-      </g>
-      <path d="M150 350v54" opacity=".85"/>
-      <path d="M108 424l42-20 42 20" opacity=".8"/>
-      <path d="M96 434h108" opacity=".7"/>
-      <path d="M150 404v30" opacity=".6"/>
-      <g opacity=".75">
-        <line x1="214" y1="122" x2="248" y2="176"/><ellipse cx="212" cy="116" rx="9" ry="7" transform="rotate(-58 212 116)"/>
-        <line x1="238" y1="108" x2="266" y2="158"/><ellipse cx="236" cy="102" rx="9" ry="7" transform="rotate(-58 236 102)"/>
-      </g>
-    </g>
-    <g opacity=".2" stroke-width=".8"><path d="M262 250c9 30 9 66-4 94"/><path d="M270 242c9 34 9 74-4 106"/></g>
-  </svg>`,
-
-  cymbals:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <path d="M40 214c30-26 70-40 110-40s80 14 110 40" opacity=".95"/>
-      <path d="M40 214c30 14 70 22 110 22s80-8 110-22" opacity=".92"/>
-      <ellipse cx="150" cy="180" rx="24" ry="9" opacity=".8"/>
-      <circle cx="150" cy="180" r="3" opacity=".7"/>
-      <path d="M150 189v230" opacity=".85"/>
-      <path d="M108 440l42-24 42 24" opacity=".8"/>
-      <path d="M92 452h116" opacity=".7"/>
-      <path d="M150 419v33" opacity=".6"/>
-      <g opacity=".4">
-        <path d="M74 224c26 10 50 16 76 18M226 224c-26 10-50 16-76 18"/>
-      </g>
-      <g opacity=".75">
-        <line x1="246" y1="288" x2="212" y2="230"/>
-        <path d="M250 296c8-4 10-14 4-20-6-5-14-2-16 5" opacity=".9"/>
-      </g>
-    </g>
-    <g opacity=".2" stroke-width=".8"><path d="M52 300c-10 28-12 62-4 92"/><path d="M44 292c-12 32-14 70-4 104"/></g>
-  </svg>`,
-
+  clarinet:{img:'plates/clarinet.png'},
+  bassoon:{img:'plates/bassoon.png'},
+  timpani:{img:'plates/timpani.png'},
+  cymbals:{img:'plates/cymbals.png'},
   'snare-drum':`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g stroke-width="1.3">
       <ellipse cx="150" cy="196" rx="86" ry="30" opacity=".95"/>
@@ -1305,110 +1198,17 @@ const PLATES = {
     <g opacity=".2" stroke-width=".8"><path d="M28 258c-12 26-16 58-10 88"/></g>
   </svg>`,
 
-  gong:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <circle cx="150" cy="230" r="106" opacity=".95"/>
-      <circle cx="150" cy="230" r="92" opacity=".3"/>
-      <circle cx="150" cy="230" r="58" opacity=".22"/>
-      <circle cx="150" cy="230" r="26" opacity=".35"/>
-      <path d="M150 124V96" opacity=".7"/>
-      <path d="M52 96h196" opacity=".9"/>
-      <path d="M52 96v330M248 96v330" opacity=".9"/>
-      <path d="M22 434h60M218 434h60" opacity=".75"/>
-      <path d="M52 426l-14 8M248 426l14 8" opacity=".55"/>
-      <g opacity=".8">
-        <line x1="196" y1="286" x2="248" y2="336"/>
-        <ellipse cx="190" cy="280" rx="15" ry="12" transform="rotate(-42 190 280)"/>
-      </g>
-    </g>
-    <g opacity=".2" stroke-width=".8"><path d="M270 200c12 34 12 76-4 110"/></g>
-  </svg>`,
-
-  celesta:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <path d="M52 148h196v148H52z" opacity=".95"/>
-      <path d="M52 176h196" opacity=".5"/>
-      <path d="M64 296h172v34H64z" opacity=".9"/>
-      <g opacity=".55">
-        <path d="M78 296v34M96 296v34M114 296v34M132 296v34M150 296v34M168 296v34M186 296v34M204 296v34M222 296v34"/>
-      </g>
-      <g opacity=".85">
-        <path d="M72 296v20h10v-20zM104 296v20h10v-20zM122 296v20h10v-20z"/>
-        <path d="M158 296v20h10v-20zM190 296v20h10v-20zM208 296v20h10v-20z"/>
-      </g>
-      <g opacity=".35">
-        <path d="M72 196v66M92 196v66M112 196v66M132 196v66M152 196v66M172 196v66M192 196v66M212 196v66M232 196v66"/>
-      </g>
-      <path d="M70 330v82M230 330v82" opacity=".85"/>
-      <path d="M56 412h28M216 412h28" opacity=".7"/>
-      <path d="M70 356h160" opacity=".4"/>
-      <path d="M116 148v-16h68v16" opacity=".6"/>
-    </g>
-    <g opacity=".2" stroke-width=".8"><path d="M262 232c10 30 10 66-4 96"/><path d="M270 224c10 34 10 74-4 108"/></g>
-  </svg>`,
-
-  /* Brass. Drawn as tubing rather than as objects: the trumpet lies on a
-     diagonal so its cylindrical run is visible end to end, the trombone shows
-     slide and bell as two separate tube systems, and the tuba stands upright
-     because that is the only way its bell reads at this size. */
+  gong:{img:'plates/gong.png'},
+  celesta:{img:'plates/celesta.png'},
   trumpet:{img:'plates/trumpet.png'},
 
   trombone:{img:'plates/trombone.png'},
 
-  tuba:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <ellipse cx="132" cy="92" rx="52" ry="16" opacity=".95"/>
-      <ellipse cx="132" cy="92" rx="36" ry="11" opacity=".3"/>
-      <path d="M80 92c6 46 20 76 32 96" opacity=".92"/>
-      <path d="M184 92c-6 44-16 70-26 92" opacity=".92"/>
-      <path d="M112 188c-6 40-7 108 0 148" opacity=".9"/>
-      <path d="M158 184c7 40 8 112 1 152" opacity=".9"/>
-      <path d="M112 336c4 30 16 46 24 46s21-16 23-46" opacity=".92"/>
-      <path d="M159 208h10M159 258h10" opacity=".55"/>
-      <g opacity=".92">
-        <rect x="164" y="196" width="16" height="54" rx="8"/>
-        <rect x="186" y="192" width="16" height="54" rx="8"/>
-        <rect x="208" y="188" width="16" height="54" rx="8"/>
-        <line x1="172" y1="196" x2="172" y2="182"/><circle cx="172" cy="176" r="5"/>
-        <line x1="194" y1="192" x2="194" y2="178"/><circle cx="194" cy="172" r="5"/>
-        <line x1="216" y1="188" x2="216" y2="174"/><circle cx="216" cy="168" r="5"/>
-      </g>
-      <path d="M224 194c17-3 27-13 31-27" opacity=".85"/>
-      <ellipse cx="257" cy="159" rx="8" ry="6" transform="rotate(-34 257 159)" opacity=".9"/>
-      <path d="M166 250v22h56v-26" opacity=".5"/>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M244 316c9 30 9 68-4 96"/><path d="M252 308c9 34 9 76-4 108"/>
-    </g>
-  </svg>`,
-
-  horn:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <circle cx="142" cy="250" r="92" opacity=".9"/>
-      <circle cx="142" cy="250" r="72" opacity=".55"/>
-      <circle cx="142" cy="250" r="54" opacity=".3"/>
-      <path d="M60 208c-14-16-30-28-46-32" opacity=".85"/>
-      <path d="M14 176c-8-2-12-8-6-13 5-4 12-1 14 5" opacity=".85"/>
-      <g opacity=".9">
-        <rect x="96" y="146" width="17" height="34" rx="8"/>
-        <rect x="120" y="140" width="17" height="34" rx="8"/>
-        <rect x="144" y="140" width="17" height="34" rx="8"/>
-        <line x1="104" y1="146" x2="104" y2="132"/><line x1="128" y1="140" x2="128" y2="126"/>
-        <line x1="152" y1="140" x2="152" y2="126"/>
-      </g>
-      <path d="M196 306c22 16 44 44 56 78" opacity=".9"/>
-      <path d="M166 330c14 22 30 52 36 84" opacity=".9"/>
-      <ellipse cx="228" cy="410" rx="42" ry="20" transform="rotate(-24 228 410)" opacity=".95"/>
-      <ellipse cx="228" cy="410" rx="30" ry="14" transform="rotate(-24 228 410)" opacity=".35"/>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M212 384c6 6 10 14 12 22"/><path d="M224 376c6 6 10 14 12 22"/><path d="M236 370c6 6 10 14 12 22"/>
-    </g>
-  </svg>`,
-
-  violin: stringPlate({top:196, bot:452, upper:58, waist:26, lower:60, neckTop:96, tail:40, chinrest:true}),
-  viola:  stringPlate({top:186, bot:462, upper:62, waist:28, lower:64, neckTop:88, tail:44}),
-  'double-bass': stringPlate({top:170, bot:470, upper:66, waist:30, lower:70, neckTop:64, tail:50, sloped:true, pin:40}),
+  tuba:{img:'plates/tuba.png'},
+  horn:{img:'plates/horn.png'},
+  violin:{img:'plates/violin.png'},
+  viola:{img:'plates/viola.png'},
+  'double-bass':{img:'plates/double-bass.png'},
   harp:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
     <g stroke-width="1.3">
       <path d="M78 470V150c0-42 34-78 76-88" opacity=".92"/>
@@ -1428,29 +1228,7 @@ const PLATES = {
     </g>
     <g opacity=".2" stroke-width=".8"><path d="M244 300c8 30 8 66-4 94"/><path d="M252 292c8 34 8 74-4 106"/></g>
   </svg>`,
-  cello:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <path d="M150 168c22 0 40 20 39 44-1 22-19 28-24 40-6 14 20 24 30 52 12 34 4 88-45 88" opacity=".92"/>
-      <path d="M150 168c-22 0-40 20-39 44 1 22 19 28 24 40 6 14-20 24-30 52-12 34-4 88 45 88" opacity=".92"/>
-      <path d="M150 168V96" opacity=".8"/>
-      <path d="M137 96c0-22 5-38 13-44 8 6 13 22 13 44" opacity=".8"/>
-      <path d="M150 52c-8-6-12-14-6-19 6-4 12 0 12 7" opacity=".75"/>
-      <g opacity=".5"><line x1="141" y1="72" x2="132" y2="70"/><line x1="159" y1="72" x2="168" y2="70"/>
-        <line x1="141" y1="84" x2="132" y2="82"/><line x1="159" y1="84" x2="168" y2="82"/></g>
-      <g opacity=".55"><line x1="145" y1="96" x2="145" y2="300"/><line x1="149" y1="96" x2="149" y2="300"/>
-        <line x1="153" y1="96" x2="153" y2="300"/><line x1="157" y1="96" x2="157" y2="300"/></g>
-      <path d="M132 300h36" opacity=".9"/>
-      <path d="M136 300l-4 10M164 300l4 10" opacity=".6"/>
-      <path d="M124 262c-6 4-6 14-1 18 4 3 9 1 10-4" opacity=".85"/>
-      <path d="M176 262c6 4 6 14 1 18-4 3-9 1-10-4" opacity=".85"/>
-      <path d="M150 312v46m-14 0h28l-6 34h-16z" opacity=".7"/>
-      <path d="M150 392v76" opacity=".8"/>
-      <line x1="132" y1="470" x2="168" y2="470" opacity=".7"/>
-    </g>
-    <g opacity=".2" stroke-width=".8">
-      <path d="M186 250c6 26 6 58-4 82"/><path d="M194 244c8 30 8 66-4 94"/>
-    </g>
-  </svg>`
+  cello:{img:'plates/cello.png'},
 };
 const THUMBS = {
   flute:`<svg viewBox="0 0 40 52" fill="none" stroke="#D4A04A" stroke-width="1.1" opacity=".85"><g transform="rotate(-38 20 26)"><rect x="3" y="22" width="34" height="7" rx="3.5"/><circle cx="12" cy="25.5" r="2"/><circle cx="19" cy="25.5" r="2"/><circle cx="26" cy="25.5" r="2"/></g></svg>`,

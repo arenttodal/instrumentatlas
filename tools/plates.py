@@ -43,6 +43,10 @@ LONG_SIDE = 1400
 MARGIN_PCT = 3.0      # of the long side, applied evenly on all four sides
 FLOOR = 4             # headroom above the measured paper level, in 0-255. Any
                       # higher and the faintest strokes start disappearing
+BUDGET = 300 * 1024   # per plate. The atlas ships a lot of these
+FLOOR_SIDE = 600      # never shrink past this chasing the budget. The plate is
+                      # drawn 341px tall, so even the floor is comfortably above
+                      # what a 2x screen asks for
 
 
 def rel(path):
@@ -132,7 +136,7 @@ def lift_black(alpha):
     return alpha.point(lambda p: 0 if p <= lo else min(255, round((p - lo) * scale))), lo
 
 
-def convert(src, out, colour, long_side, margin_pct, crop=None):
+def convert(src, out, colour, long_side, margin_pct, crop=None, budget=BUDGET):
     with Image.open(src) as im:
         im.load()
         # Flatten onto white first: a source saved with transparency would
@@ -165,16 +169,35 @@ def convert(src, out, colour, long_side, margin_pct, crop=None):
     padded = Image.new('L', (alpha.width + margin * 2, alpha.height + margin * 2), 0)
     padded.paste(alpha, (margin, margin))
 
-    scale = long_side / max(padded.size)
-    size = (max(1, round(padded.width * scale)), max(1, round(padded.height * scale)))
-    padded = padded.resize(size, Image.LANCZOS)
-
-    plate = Image.new('RGBA', size, colour + (0,))
-    plate.putalpha(padded)            # solid fill, drawing as the mask
-
     out.parent.mkdir(parents=True, exist_ok=True)
-    plate.save(out, 'PNG', optimize=True)
-    return size, out.stat().st_size, inverted_source, floor
+    side = long_side
+    while True:
+        scale = side / max(padded.size)
+        size = (max(1, round(padded.width * scale)), max(1, round(padded.height * scale)))
+        write_plate(padded.resize(size, Image.LANCZOS), colour, out)
+        nbytes = out.stat().st_size
+        # A busy engraving carries far more partial alpha than a sparse one and
+        # can be three times the size at the same pixel count. Rather than
+        # thresholding the alpha, which is what makes a plate look cut out, the
+        # long side comes down until the file fits. The plate is only ever drawn
+        # 341px tall, so there is a lot of headroom before this shows.
+        if nbytes <= budget or side <= FLOOR_SIDE:
+            break
+        side = max(FLOOR_SIDE, int(side * (budget / nbytes) ** 0.5 * 0.97))
+    return size, nbytes, inverted_source, floor, side
+
+
+def write_plate(alpha, colour, out):
+    """Gold masked by the drawing, written as a palette PNG.
+
+    Every pixel carries the same RGB, so a 256 entry palette of one colour with
+    a tRNS table of 0..255 says exactly what an RGBA image would: one byte per
+    pixel instead of four, no loss of alpha resolution, and about a third off
+    the file. Nothing is quantised; the palette index IS the alpha."""
+    plate = Image.new('P', alpha.size)
+    plate.frombytes(alpha.tobytes())
+    plate.putpalette(list(colour) * 256)
+    plate.save(out, 'PNG', optimize=True, transparency=bytes(range(256)))
 
 
 def main(argv=None):
@@ -186,6 +209,7 @@ def main(argv=None):
     ap.add_argument('--size', type=int, default=LONG_SIDE, help='long side in px')
     ap.add_argument('--margin', type=float, default=MARGIN_PCT, help='margin, %% of long side')
     ap.add_argument('--gold', type=hex_rgb, default=hex_rgb(GOLD))
+    ap.add_argument('--budget', type=int, default=BUDGET, help='max bytes per plate')
     ap.add_argument('--crop', type=crop_arg, metavar='L,T,R,B',
                     help='inset in px, overriding options.json for this run')
     ap.add_argument('--force', action='store_true', help='rebuild up to date plates')
@@ -215,8 +239,8 @@ def main(argv=None):
             print(f'  =  {rel(out)} up to date')
             continue
         crop = args.crop or options.get(src.stem, {}).get('crop')
-        size, nbytes, flipped, floor = convert(src, out, args.gold, args.size,
-                                               args.margin, crop)
+        size, nbytes, flipped, floor, side = convert(src, out, args.gold, args.size,
+                                                    args.margin, crop, args.budget)
         notes = []
         if crop:
             notes.append(f'cropped {",".join(str(c) for c in crop)}')
@@ -224,10 +248,12 @@ def main(argv=None):
             notes.append('source was light on dark')
         if floor:
             notes.append(f'paper lifted off {floor}')
+        if side != args.size:
+            notes.append(f'shrunk to {side}px for the budget')
         note = ('  (' + '; '.join(notes) + ')') if notes else ''
         print(f'  ok {rel(out)}  {size[0]}x{size[1]}  {nbytes / 1024:.0f} KB{note}')
-        if nbytes > 300 * 1024:
-            print(f'  !  {out.name} is over the 300 KB budget')
+        if nbytes > args.budget:
+            print(f'  !  {out.name} is {nbytes // 1024} KB, over budget even at {FLOOR_SIDE}px')
         built += 1
 
     print(f'{built} plate{"" if built == 1 else "s"} written to {rel(args.out)}')
