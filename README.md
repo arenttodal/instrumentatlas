@@ -11,7 +11,7 @@ Static files. No build step, no dependencies, no npm.
 ├── atlas.css         all styles
 ├── atlas-data.js     ← the file you edit: families, instruments, ensembles,
 │                       studio passages, gallery
-├── atlas.js          rendering, router, seating map, timbre chart, demo players
+├── atlas.js          rendering, router, seating map, frequency map, demo players
 ├── atlas-studio.js   the studio dock: audio engine, transport, piano roll
 ├── _headers          Cloudflare caching + framing rules
 ├── audio/            studio renders and per-instrument demo clips
@@ -99,12 +99,12 @@ Everything is in `atlas-data.js`.
 
 1. Find the instrument's stub in `INSTRUMENTS` (they all exist already with
    `status:'plan'`), and fill it out following `flute`, `horn` or `cello` as the
-   model: `summary`, `range`, `timbre`, `facts`, `registers`, `characteristics`,
-   `articulations`, `blends`, `limits`, `demos`, `prev`/`next`
+   model: `summary`, `range`, `timbre`, `harmonics`, `facts`, `registers`,
+   `characteristics`, `articulations`, `blends`, `demos`, `prev`/`next`
 2. Change `status:'plan'` to `status:'live'`
 3. Add plate artwork to `PLATES` and a small icon to `THUMBS`, both keyed by id
 
-It appears in the menu, the family page and the timbre chart automatically. The
+It appears in the menu, the family page and the frequency map automatically. The
 counts on the home page and family pages are computed, not typed.
 
 ### Giving it a 3D model
