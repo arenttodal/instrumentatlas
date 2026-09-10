@@ -401,6 +401,9 @@ a.atl-sc:hover .atl-sc-art img{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 
 /* --- detail blocks --- */
 .atl-detail{display:grid;grid-template-columns:repeat(2,1fr);gap:48px 56px;padding:56px 0}
+/* With only articulations and blends left, two equal columns leave the right
+   one empty. One column, held to a reading measure. */
+.atl-detail-2{grid-template-columns:minmax(0,640px);padding:40px 0}
 .atl-block h3{font-size:13px;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
   color:var(--gold);padding-bottom:12px;margin-bottom:18px;border-bottom:1px solid var(--hair)}
 .atl-reg{padding:14px 0;border-bottom:1px solid var(--hair)}
@@ -469,8 +472,6 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 .atl-foot .fine{margin-top:28px;padding-top:20px;border-top:1px solid var(--hair);font-size:12px;color:#4E505A}
 
 /* --- timbre page --- */
-.atl-timbre-head{margin-bottom:26px}
-.atl-timbre-lede{font-size:15px;line-height:1.65;color:#9A9CA4;font-weight:300;max-width:600px}
 .atl-timbre-chart{border:1px solid var(--hair);border-radius:12px;padding:14px 10px 10px;
   background:rgba(255,255,255,.015)}
 .atl-timbre-chart svg{width:100%;height:auto;display:block;overflow:visible}

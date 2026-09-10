@@ -46,11 +46,11 @@ function viewHome(){
   </section>`;
 }
 
-/* The strip on a family page shows the same engraving as the instrument's own
-   plate, at a fraction of the size, from plates/thumbs/. An instrument still on
-   placeholder line art falls back to its THUMBS svg. */
+/* The strip uses the icons, not the engravings. The plates are detailed
+   drawings with hatching and, at the 34px this box gives them, a piccolo is
+   five pixels wide and a flute is a horizontal smear. The icons were drawn for
+   this size. plates/thumbs/ is still generated if that decision is revisited. */
 function stripArt(id){
-  if(hasPlateImg(id)) return `<img src="plates/thumbs/${esc(id)}.png" alt="" loading="lazy">`;
   return THUMBS[id] || `<svg viewBox="0 0 40 52" fill="none" stroke="#4B4D57" stroke-width="1.1"><rect x="12" y="10" width="16" height="32" rx="8"/></svg>`;
 }
 
@@ -392,15 +392,9 @@ function viewInstrument(id){
 
       <!-- TIMBRE -->
       <div class="atl-panel" data-panel="timbre">
-        <div class="atl-timbre-head">
-          <div>
-            <h3 class="atl-blockhead">Range and tone colour, against the orchestra</h3>
-            <p class="atl-timbre-lede">Horizontal is pitch. Vertical is brightness of tone colour: dark and
-              covered at the bottom, bright and penetrating at the top. Every instrument in the collection is
-              plotted, because the useful question is never how ${esc(it.name.toLowerCase())} sounds on its own,
-              but what it sits next to.</p>
-          </div>
-        </div>
+        <!-- The chart is left to speak for itself: the axes are labelled on it,
+             and the heading and explanation that used to sit here were written
+             for the slot rather than taken from the source. -->
         <div class="atl-timbre-chart"><svg id="atl-timbre-svg" role="img"
           aria-label="Range and timbre of every instrument, with ${esc(it.name)} highlighted"></svg></div>
         <div class="atl-timbre-key">
@@ -411,19 +405,11 @@ function viewInstrument(id){
 
       <!-- DETAILS -->
       <div class="atl-panel" data-panel="details">
-        <div class="atl-detail">
-          <div class="atl-block">
-            <h3>Tone colour by register</h3>
-            ${it.registers.map(r => `
-              <div class="atl-reg">
-                <div class="atl-reg-top"><b>${esc(r.label)}</b><span>${esc(r.pitch)}</span></div>
-                <p>${esc(r.text)}</p>
-              </div>`).join('')}
-          </div>
-          <div class="atl-block">
-            <h3>Characteristics</h3>
-            <ul class="atl-list">${it.characteristics.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
-          </div>
+        <!-- Register descriptions, characteristics and limits are no longer
+             shown. They were written for the slot rather than taken from the
+             source the rest of the page now comes from. The fields are still
+             on every instrument in atlas-data.js. -->
+        <div class="atl-detail atl-detail-2">
           <div class="atl-block">
             <h3>Articulations</h3>
             <div class="atl-chips">${it.articulations.map(a => `<span class="atl-chip">${esc(a)}</span>`).join('')}</div>
@@ -437,10 +423,6 @@ function viewInstrument(id){
                   : `<span class="atl-chip" title="${esc(b.note)}" style="opacity:.6">${esc(b.label)}</span>`;
               }).join('')}
             </div>
-          </div>
-          <div class="atl-block">
-            <h3>Limits &amp; common mistakes</h3>
-            <ul class="atl-list atl-warn">${it.limits.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
           </div>
         </div>
         <div class="atl-pager">${rel(it.prev, 'l')}${rel(it.next, 'r')}</div>

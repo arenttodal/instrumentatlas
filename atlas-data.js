@@ -693,10 +693,11 @@ const INSTRUMENTS = {
       'Write pedal changes into rests, or ask a harpist. This is the section where composers most often write the unplayable.'
     ],
     gallery:['HP5xhyPn58U','6exoB7IW8qw','fEGNNuEM3Fc','sHsFIv8VA7w','GrrvAHhWKIw','waP1N446Zb0'],
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Glissando, three tunings', note:'The same sweep with different pedal settings', dur:'0:18'},
-      {label:'With flute', note:'The pairing that defines the colour', dur:'0:14'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Glissando', note:'A sweep across the strings', dur:'0:08', file:'glissando'},
+      {label:'Range', note:'Low to high across the instrument', dur:'0:08', file:'range'}
     ],
     prev:'double-bass', next:''
   },
@@ -738,9 +739,9 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','ki0xu6Gl9Nc','8UfpgT9FMAk','pGdtkUiKaA8','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Felt vs wood mallets', note:'The same figure, two sticks', dur:'0:14'},
-      {label:'Roll and crescendo', note:'From nothing to the top of the dynamic', dur:'0:16'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:14', file:'signature-phrase'},
+      {label:'Phrase', note:'A short rhythmic figure', dur:'0:07', file:'phrase'},
+      {label:'Roll', note:'A sustained roll', dur:'0:04', file:'roll'}
     ],
     prev:'', next:'cymbals'
   },
@@ -778,9 +779,7 @@ const INSTRUMENTS = {
     gallery:['JEi23_uSGNE','8UfpgT9FMAk','pGdtkUiKaA8','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Crash, suspended and choked', note:'The three ways it is played', dur:'0:14'},
-      {label:'Roll from silence', note:'The crescendo that covers an orchestra', dur:'0:16'},
-      {label:'With bass drum', note:'The pairing, isolated then in context', dur:'0:12'}
+      {label:'Strike', note:'A single crash', dur:'0:08', file:'strike'}
     ],
     prev:'timpani', next:'snare-drum'
   },
@@ -816,10 +815,10 @@ const INSTRUMENTS = {
       'Specify snares on or off. The difference is large and players will ask.'
     ],
     gallery:['GxqZ8CEoujU','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Snares on and off', note:'The same pattern, both settings', dur:'0:14'},
-      {label:'Roll and crescendo', note:'The buzz sustained and built', dur:'0:14'},
-      {label:'March pattern in context', note:'What the instrument was built for', dur:'0:16'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:06', file:'signature-phrase'},
+      {label:'Roll', note:'A sustained roll', dur:'0:04', file:'roll'}
     ],
     prev:'cymbals', next:'bass-drum'
   },
@@ -855,10 +854,10 @@ const INSTRUMENTS = {
       'It will not be heard on small speakers, only felt on large ones. Do not rely on it to carry information.'
     ],
     gallery:['ghkljW0ZmJU','8UfpgT9FMAk','JEi23_uSGNE','j2Hk2SZGrRY','HP5xhyPn58U','waP1N446Zb0'],
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Soft, full and damped', note:'Three strokes, three instruments', dur:'0:14'},
-      {label:'Roll and crescendo', note:'The slow build', dur:'0:16'},
-      {label:'Under a tutti', note:'With and without, same bar', dur:'0:12'}
+      {label:'Strokes', note:'Struck notes', dur:'0:10', file:'strokes'},
+      {label:'Roll', note:'A sustained roll', dur:'0:05', file:'roll'}
     ],
     prev:'snare-drum', next:'gong'
   },
@@ -896,9 +895,7 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','JEi23_uSGNE','j2Hk2SZGrRY','sHsFIv8VA7w','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Soft to full stroke', note:'The bloom, at both dynamics', dur:'0:18'},
-      {label:'Full decay, unedited', note:'How long it actually takes', dur:'0:30'},
-      {label:'Under low strings', note:'Where the two blend into one sound', dur:'0:16'}
+      {label:'Strike', note:'A single stroke', dur:'0:10', file:'strike'}
     ],
     prev:'bass-drum', next:'celesta'
   },
@@ -936,9 +933,9 @@ const INSTRUMENTS = {
     gallery:['gumy04TFPBk','qsCZP3wdF4w','2EsNGS9vYe8','YB_PTA4dGws','clK9rM9JoIs','j2Hk2SZGrRY'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:16'},
-      {label:'With harp', note:'The doubling that makes it audible', dur:'0:14'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Phrase', note:'A short melodic line', dur:'0:13', file:'phrase'},
+      {label:'Run', note:'A fast run', dur:'0:06', file:'run'}
     ],
     prev:'gong', next:''
   }
@@ -1122,48 +1119,8 @@ const PLATES = {
   bassoon:{img:'plates/bassoon.png'},
   timpani:{img:'plates/timpani.png'},
   cymbals:{img:'plates/cymbals.png'},
-  'snare-drum':`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <ellipse cx="150" cy="196" rx="86" ry="30" opacity=".95"/>
-      <ellipse cx="150" cy="196" rx="72" ry="24" opacity=".35"/>
-      <path d="M64 196v66M236 196v66" opacity=".92"/>
-      <path d="M64 262c0 17 39 30 86 30s86-13 86-30" opacity=".92"/>
-      <g opacity=".5">
-        <path d="M78 206v50M112 214v52M150 216v54M188 214v52M222 206v50"/>
-        <path d="M74 206h8M108 214h8M146 216h8M184 214h8M218 206h8"/>
-      </g>
-      <g opacity=".45"><path d="M92 272h116M96 280h108"/></g>
-      <path d="M92 292l-24 108M208 292l24 108" opacity=".8"/>
-      <path d="M150 292v112" opacity=".8"/>
-      <path d="M64 412h172" opacity=".7"/>
-      <g opacity=".75">
-        <line x1="196" y1="120" x2="228" y2="168"/><circle cx="232" cy="174" r="5"/>
-        <line x1="218" y1="110" x2="248" y2="156"/><circle cx="252" cy="162" r="5"/>
-      </g>
-    </g>
-    <g opacity=".2" stroke-width=".8"><path d="M46 300c-10 28-12 62-4 92"/><path d="M38 292c-12 32-14 70-4 104"/></g>
-  </svg>`,
-
-  'bass-drum':`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <circle cx="150" cy="242" r="118" opacity=".95"/>
-      <circle cx="150" cy="242" r="104" opacity=".4"/>
-      <circle cx="150" cy="242" r="96" opacity=".2"/>
-      <g opacity=".5">
-        <path d="M150 124v-14M150 360v14M32 242h-14M268 242h14"/>
-        <path d="M67 159l-10-10M233 159l10-10M67 325l-10 10M233 325l10 10"/>
-      </g>
-      <path d="M46 316L34 424M254 316l12 108" opacity=".8"/>
-      <path d="M28 430h56M216 430h56" opacity=".7"/>
-      <path d="M56 350v76M244 350v76" opacity=".5"/>
-      <g opacity=".8">
-        <line x1="196" y1="196" x2="252" y2="150"/>
-        <ellipse cx="190" cy="201" rx="14" ry="11" transform="rotate(-40 190 201)"/>
-      </g>
-    </g>
-    <g opacity=".2" stroke-width=".8"><path d="M28 258c-12 26-16 58-10 88"/></g>
-  </svg>`,
-
+  'snare-drum':{img:'plates/snare-drum.png'},
+  'bass-drum':{img:'plates/bass-drum.png'},
   gong:{img:'plates/gong.png'},
   celesta:{img:'plates/celesta.png'},
   trumpet:{img:'plates/trumpet.png'},
@@ -1175,25 +1132,7 @@ const PLATES = {
   violin:{img:'plates/violin.png'},
   viola:{img:'plates/viola.png'},
   'double-bass':{img:'plates/double-bass.png'},
-  harp:`<svg viewBox="0 0 300 520" fill="none" stroke="#D4A04A" stroke-linecap="round">
-    <g stroke-width="1.3">
-      <path d="M78 470V150c0-42 34-78 76-88" opacity=".92"/>
-      <path d="M154 62c26 0 40 18 44 46l30 300" opacity=".92"/>
-      <path d="M78 470h170" opacity=".85"/>
-      <path d="M92 470l24-8" opacity=".5"/>
-      <path d="M150 56c8-6 18-4 20 4 2 7-4 12-11 11" opacity=".7"/>
-      <g opacity=".45" stroke-width=".9">
-        <line x1="88" y1="446" x2="152" y2="118"/><line x1="100" y1="446" x2="160" y2="132"/>
-        <line x1="112" y1="446" x2="168" y2="150"/><line x1="124" y1="446" x2="176" y2="172"/>
-        <line x1="136" y1="446" x2="184" y2="198"/><line x1="148" y1="446" x2="191" y2="228"/>
-        <line x1="160" y1="446" x2="197" y2="262"/><line x1="172" y1="446" x2="203" y2="300"/>
-        <line x1="184" y1="446" x2="209" y2="340"/><line x1="196" y1="446" x2="214" y2="382"/>
-      </g>
-      <path d="M116 486v22M210 486v22" opacity=".6"/>
-      <path d="M104 508h124" opacity=".55"/>
-    </g>
-    <g opacity=".2" stroke-width=".8"><path d="M244 300c8 30 8 66-4 94"/><path d="M252 292c8 34 8 74-4 106"/></g>
-  </svg>`,
+  harp:{img:'plates/harp.png'},
   cello:{img:'plates/cello.png'},
 };
 const THUMBS = {
