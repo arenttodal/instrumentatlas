@@ -47,6 +47,8 @@ BUDGET = 300 * 1024   # per plate. The atlas ships a lot of these
 FLOOR_SIDE = 600      # never shrink past this chasing the budget. The plate is
                       # drawn 341px tall, so even the floor is comfortably above
                       # what a 2x screen asks for
+THUMB_SIDE = 200      # the family strip draws these about 34px tall, so 200 is
+                      # already generous on a 2x screen
 
 
 def rel(path):
@@ -136,7 +138,8 @@ def lift_black(alpha):
     return alpha.point(lambda p: 0 if p <= lo else min(255, round((p - lo) * scale))), lo
 
 
-def convert(src, out, colour, long_side, margin_pct, crop=None, budget=BUDGET):
+def convert(src, out, colour, long_side, margin_pct, crop=None, budget=BUDGET,
+            thumb=None, thumb_side=THUMB_SIDE):
     with Image.open(src) as im:
         im.load()
         # Flatten onto white first: a source saved with transparency would
@@ -184,6 +187,16 @@ def convert(src, out, colour, long_side, margin_pct, crop=None, budget=BUDGET):
         if nbytes <= budget or side <= FLOOR_SIDE:
             break
         side = max(FLOOR_SIDE, int(side * (budget / nbytes) ** 0.5 * 0.97))
+
+    # The family strip wants the same drawing at a fraction of the size. Sending
+    # the full plate there would be forty times the pixels it draws, and six of
+    # them on one page.
+    if thumb:
+        thumb.parent.mkdir(parents=True, exist_ok=True)
+        tscale = thumb_side / max(padded.size)
+        tsize = (max(1, round(padded.width * tscale)), max(1, round(padded.height * tscale)))
+        write_plate(padded.resize(tsize, Image.LANCZOS), colour, thumb)
+
     return size, nbytes, inverted_source, floor, side
 
 
@@ -239,8 +252,9 @@ def main(argv=None):
             print(f'  =  {rel(out)} up to date')
             continue
         crop = args.crop or options.get(src.stem, {}).get('crop')
+        thumb = args.out / 'thumbs' / f'{src.stem}.png'
         size, nbytes, flipped, floor, side = convert(src, out, args.gold, args.size,
-                                                    args.margin, crop, args.budget)
+                                                    args.margin, crop, args.budget, thumb)
         notes = []
         if crop:
             notes.append(f'cropped {",".join(str(c) for c in crop)}')
