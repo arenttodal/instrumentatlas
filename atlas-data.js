@@ -161,9 +161,7 @@ const INSTRUMENTS = {
       'Doubling a quiet passage with piccolo does not make it prettier, it makes it a piccolo solo.'
     ],
     gallery:['wFJCDxcrqsc','GxqZ8CEoujU','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Against the flute', note:'The same figure, an octave apart', dur:'0:16'},
@@ -203,9 +201,7 @@ const INSTRUMENTS = {
       'Long unbroken lines expose the mockup. Write the breath in.'
     ],
     gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','GxqZ8CEoujU','P_1N6_O254g','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:12', file:'register-comparison'},
@@ -244,9 +240,7 @@ const INSTRUMENTS = {
       'It will not disappear into a chord. If you need blend, use clarinet.',
       'Long unbroken lines are a breathing problem in reverse: players need somewhere to exhale.'
     ],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     gallery:['r87w1RFT4hg','ki0xu6Gl9Nc','P_1N6_O254g','9aDEq3u5huA','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
@@ -288,9 +282,7 @@ const INSTRUMENTS = {
       'Rapid register crossings over the break are awkward; give the player somewhere to move.'
     ],
     gallery:['VGvuUOtHGkk','6exoB7IW8qw','ki0xu6Gl9Nc','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Sustained', note:'Long held tones', dur:'0:06', file:'sustained'},
       {label:'Staccato', note:'Short, separated notes', dur:'0:05', file:'staccato'},
@@ -330,9 +322,7 @@ const INSTRUMENTS = {
       'It cannot compete with brass on volume. If you need weight there, add players, not dynamics.'
     ],
     gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:11', file:'register-comparison'},
@@ -371,9 +361,7 @@ const INSTRUMENTS = {
       'Loud trumpets cover everything. Balance by writing less, not by marking everyone else louder.',
       'Remember the transposition: written C sounds B♭.'
     ],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     gallery:['bwQumQpug_E','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
@@ -417,9 +405,7 @@ const INSTRUMENTS = {
       'Written a fifth above sounding pitch: irrelevant for mockups, essential the moment you print parts.'
     ],
     gallery:['n5gUu65Pmrk','b4rfWegZi_M','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27', file:'register-comparison'},
@@ -458,9 +444,7 @@ const INSTRUMENTS = {
       'Legato across positions needs care: a natural slur is only possible between certain notes.',
       'Three trombones at full volume will bury a string section without effort.'
     ],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     gallery:['6wRKpdM9ra8','6exoB7IW8qw','GxqZ8CEoujU','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
@@ -501,9 +485,7 @@ const INSTRUMENTS = {
       'Unison with the double basses muddies. An octave apart keeps both audible.'
     ],
     gallery:['HP5xhyPn58U','JEi23_uSGNE','8UfpgT9FMAk','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after an 1855 instrument in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:11', file:'low-register-speaking-time'},
@@ -546,9 +528,7 @@ const INSTRUMENTS = {
       'Doubling basses at the unison muddies; octaves keep the bottom clear.'
     ],
     gallery:['clK9rM9JoIs','P_1N6_O254g','GrrvAHhWKIw','sHsFIv8VA7w','a9UApyClFKA','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
@@ -591,9 +571,7 @@ const INSTRUMENTS = {
       'Too much divisi and the section stops sounding like a section.'
     ],
     gallery:['6exoB7IW8qw','9aDEq3u5huA','a9UApyClFKA','GrrvAHhWKIw','sHsFIv8VA7w','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:15', file:'string-by-string'},
@@ -635,9 +613,7 @@ const INSTRUMENTS = {
       'Do not simply write violin parts a fifth lower; the register changes what sits well.'
     ],
     gallery:['zWn_7R4B-aI','6exoB7IW8qw','GrrvAHhWKIw','9aDEq3u5huA','sHsFIv8VA7w','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
       {label:'Against the violin', note:'The same line on both, back to back', dur:'0:10', file:'against-the-violin'},
@@ -677,9 +653,7 @@ const INSTRUMENTS = {
       'Remember the transposition when you print parts: written E1 sounds E0, below the piano.'
     ],
     gallery:['clK9rM9JoIs','a9UApyClFKA','ghkljW0ZmJU','sHsFIv8VA7w','hvPlV56VtFs','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
@@ -762,9 +736,7 @@ const INSTRUMENTS = {
       'A timpani roll under a quiet passage is not quiet. It is the loudest thing in the orchestra at will.'
     ],
     gallery:['HP5xhyPn58U','ki0xu6Gl9Nc','8UfpgT9FMAk','pGdtkUiKaA8','ghkljW0ZmJU','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Felt vs wood mallets', note:'The same figure, two sticks', dur:'0:14'},
@@ -804,9 +776,7 @@ const INSTRUMENTS = {
       'Nothing after a crash will be heard for about a second. Plan the bar around it.'
     ],
     gallery:['JEi23_uSGNE','8UfpgT9FMAk','pGdtkUiKaA8','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Crash, suspended and choked', note:'The three ways it is played', dur:'0:14'},
       {label:'Roll from silence', note:'The crescendo that covers an orchestra', dur:'0:16'},
@@ -924,9 +894,7 @@ const INSTRUMENTS = {
       'Its associations are strong and specific. One stroke reads as significant whether you meant it or not.'
     ],
     gallery:['HP5xhyPn58U','JEi23_uSGNE','j2Hk2SZGrRY','sHsFIv8VA7w','ghkljW0ZmJU','waP1N446Zb0'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Soft to full stroke', note:'The bloom, at both dynamics', dur:'0:18'},
       {label:'Full decay, unedited', note:'How long it actually takes', dur:'0:30'},
@@ -966,9 +934,7 @@ const INSTRUMENTS = {
       'Its associations are extremely strong. Any celesta line reads as magical whether or not you want it to.'
     ],
     gallery:['gumy04TFPBk','qsCZP3wdF4w','2EsNGS9vYe8','YB_PTA4dGws','clK9rM9JoIs','j2Hk2SZGrRY'],
-    /* Shown under the plate in place of the placeholder line. Same wording
-       convention as the model credits: pending means do not publish. */
-    plateCredit:'Attribution pending, do not publish',
+    plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:16'},
