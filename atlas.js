@@ -46,8 +46,15 @@ function viewHome(){
   </section>`;
 }
 
+/* The strip on a family page shows the same engraving as the instrument's own
+   plate, at a fraction of the size, from plates/thumbs/. An instrument still on
+   placeholder line art falls back to its THUMBS svg. */
+function stripArt(id){
+  if(hasPlateImg(id)) return `<img src="plates/thumbs/${esc(id)}.png" alt="" loading="lazy">`;
+  return THUMBS[id] || `<svg viewBox="0 0 40 52" fill="none" stroke="#4B4D57" stroke-width="1.1"><rect x="12" y="10" width="16" height="32" rx="8"/></svg>`;
+}
+
 function viewFamily(fam){
-  const live = fam.members.filter(m => INSTRUMENTS[m] && INSTRUMENTS[m].status === 'live');
   return `
   <section class="atl-fampage">
     <div class="atl-wrap">
@@ -69,18 +76,15 @@ function viewFamily(fam){
             </div>` : ''}
           </div>
 
-          <h3 class="atl-blockhead" style="margin-top:30px">What defines the family</h3>
+          <h3 class="atl-blockhead" style="margin-top:20px">What defines the family</h3>
           <ul class="atl-list">${fam.role.map(r => `<li>${r}</li>`).join('')}</ul>
 
-          <div class="atl-striphead">
-            <h3 class="atl-blockhead" style="margin:0">The instruments</h3>
-            <div class="atl-label">${live.length} of ${fam.members.length} ready</div>
-          </div>
+          <h3 class="atl-blockhead" style="margin:0 0 14px">The instruments</h3>
           <div class="atl-strip" style="grid-template-columns:repeat(${Math.ceil(fam.members.length / 2)},minmax(0,1fr))">
             ${fam.members.map(id => {
               const it = INSTRUMENTS[id]; if(!it) return '';
               const on = it.status === 'live';
-              const art = THUMBS[id] || `<svg viewBox="0 0 40 52" fill="none" stroke="#4B4D57" stroke-width="1.1"><rect x="12" y="10" width="16" height="32" rx="8"/></svg>`;
+              const art = stripArt(id);
               const inner = `<div class="atl-sc-art">${art}</div><b>${esc(it.name)}</b>${on ? '' : '<span class="st">Soon</span>'}`;
               return on
                 ? `<a class="atl-sc" href="#/${fam.id}/${id}">${inner}</a>`
