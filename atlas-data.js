@@ -292,9 +292,9 @@ const INSTRUMENTS = {
        convention as the model credits: pending means do not publish. */
     plateCredit:'Attribution pending, do not publish',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Chalumeau to clarion', note:'The same figure across the break', dur:'0:18'},
-      {label:'Diminuendo to nothing', note:'The fade no other wind instrument can match', dur:'0:12'}
+      {label:'Sustained', note:'Long held tones', dur:'0:06', file:'sustained'},
+      {label:'Staccato', note:'Short, separated notes', dur:'0:05', file:'staccato'},
+      {label:'Trills', note:'Trilled figures', dur:'0:04', file:'trills'}
     ],
     prev:'oboe', next:'bassoon'
   },
