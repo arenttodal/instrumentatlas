@@ -399,11 +399,20 @@ a.atl-sc:hover .atl-sc-art img{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));
 .atl-demo.is-missing .atl-play{opacity:.4}
 .atl-demo-note{font-size:12px;color:#4E505A;margin-top:14px;letter-spacing:.3px}
 
+/* --- basic info strip --- */
+/* Same three rows as the plate caption, laid out across the page instead of
+   down it. auto-fit means an instrument whose facts run long still gets one
+   cell each rather than a squeezed three-up. */
+.atl-basics{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  margin-top:40px;background:var(--hair);border:1px solid var(--hair);border-radius:3px;overflow:hidden}
+.atl-basics div{background:var(--bg-lift);padding:15px 20px}
+.atl-basics span{display:block;font-size:9px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:5px}
+.atl-basics b{font-size:16px;color:#fff;font-weight:500;letter-spacing:-.2px}
+.atl-basics b em{font-style:normal;font-size:12px;color:var(--text-dim);font-weight:400}
+
 /* --- detail blocks --- */
-.atl-detail{display:grid;grid-template-columns:repeat(2,1fr);gap:48px 56px;padding:56px 0}
-/* With only articulations and blends left, two equal columns leave the right
-   one empty. One column, held to a reading measure. */
-.atl-detail-2{grid-template-columns:minmax(0,640px);padding:40px 0}
+.atl-detail{display:grid;grid-template-columns:repeat(2,1fr);gap:48px 56px;padding:40px 0 56px}
 .atl-block h3{font-size:13px;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
   color:var(--gold);padding-bottom:12px;margin-bottom:18px;border-bottom:1px solid var(--hair)}
 .atl-reg{padding:14px 0;border-bottom:1px solid var(--hair)}

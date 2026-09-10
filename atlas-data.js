@@ -817,7 +817,7 @@ const INSTRUMENTS = {
     gallery:['GxqZ8CEoujU','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:06', file:'signature-phrase'},
+      {label:'Snare phrase', note:'A short well known rhythmic motif', dur:'0:06', file:'signature-phrase'},
       {label:'Roll', note:'A sustained roll', dur:'0:04', file:'roll'}
     ],
     prev:'cymbals', next:'bass-drum'

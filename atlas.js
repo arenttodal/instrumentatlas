@@ -405,15 +405,34 @@ function viewInstrument(id){
 
       <!-- DETAILS -->
       <div class="atl-panel" data-panel="details">
-        <!-- Register descriptions, characteristics and limits are no longer
-             shown. They were written for the slot rather than taken from the
-             source the rest of the page now comes from. The fields are still
-             on every instrument in atlas-data.js. -->
-        <div class="atl-detail atl-detail-2">
+        <!-- The same three facts as the plate caption, repeated here so the tab
+             stands on its own: someone who opened Details directly should not
+             have to go back to Overview for the range. -->
+        <div class="atl-basics">
+          ${facts.map(f => `<div><span>${esc(f[0])}</span><b>${esc(f[1])}${f[2] ? ` <em>${esc(f[2])}</em>` : ''}</b></div>`).join('')}
+        </div>
+        <!-- Limits and common mistakes are gone: what the book says about them
+             is family generic, so it belongs on the family page rather than
+             repeated identically across every instrument in the section. -->
+        <div class="atl-detail">
+          <div class="atl-block">
+            <h3>Tone colour by register</h3>
+            ${it.registers.map(r => `
+              <div class="atl-reg">
+                <div class="atl-reg-top"><b>${esc(r.label)}</b><span>${esc(r.pitch)}</span></div>
+                <p>${esc(r.text)}</p>
+              </div>`).join('')}
+          </div>
+          <div class="atl-block">
+            <h3>Characteristics</h3>
+            <ul class="atl-list">${it.characteristics.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
+          </div>
           <div class="atl-block">
             <h3>Articulations</h3>
             <div class="atl-chips">${it.articulations.map(a => `<span class="atl-chip">${esc(a)}</span>`).join('')}</div>
-            <h3 style="margin-top:34px">Blends well with</h3>
+          </div>
+          <div class="atl-block">
+            <h3>Blends well with</h3>
             <div class="atl-chips">
               ${it.blends.map(b => {
                 const t = INSTRUMENTS[b.id];
