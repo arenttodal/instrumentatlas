@@ -38,7 +38,7 @@ Pages redeploys in ~20 seconds.
 | Studio | Theme 1 only, 3 tracks, 7 renders |
 | Instrument audio | 19 of 20. Only the piccolo is silent, and shows the placeholder line. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
-| Plate artwork | 17 of 20 converted engravings, all with credits still pending. harp, snare drum and bass drum are still placeholder gold line art |
+| Plate artwork | all 20 converted engravings, credited to The Met (CC0) |
 | Gallery | 29 videos, six per instrument. Ids came from search results and were never opened: run `tools/gallery-check.py` |
 | Family footage | strings, woodwinds, brass. Percussion has none, by design |
 
