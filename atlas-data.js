@@ -11,7 +11,15 @@
    ------------------------------------------------------------------------
    status: 'live'  = has a full page
            'plan'  = shows in menus, greyed, no page yet
-   range:  MIDI note numbers (60 = middle C). timbre: 0 = dark … 1 = bright
+   range:  MIDI note numbers (60 = middle C). For unpitched percussion it is
+           where the body of the sound sits, not a playable range.
+   timbre: 0 = dark … 1 = bright. Nothing reads this since the Timbre tab
+           became a frequency map; kept because it is the only single-number
+           summary of tone colour in the file.
+   harmonics: the top of the useful overtone content, in Hz. The fundamentals
+           come from range; this is where the spectrum above them runs out.
+           Approximate, as every published instrument frequency chart says of
+           its own numbers: a cymbal has no single ceiling, it has a taper.
    ============================================================================ */
 
 const COLLECTION = {
@@ -136,6 +144,7 @@ const INSTRUMENTS = {
     summary:'The highest pitched instrument in the woodwind family, and in the entire orchestra. Good for huge tutti statements, but should be used sparingly, as it is very tiresome to listen to.',
     range:{lo:74, hi:108, note:'D5 – C8', transposition:'Sounds an octave higher than written'},
     timbre:0.95,
+    harmonics:15000,
     facts:[['Sounding range','D5 – C8'],['Section size','1–2','players'],['Transposition','Octave above written']],
     registers:[
       {label:'Low register', pitch:'D5 – A5', text:'Weak, hollow and easily buried. Rarely worth writing except for colour in a thin texture.'},
@@ -176,6 +185,7 @@ const INSTRUMENTS = {
     summary:'An edge-tone instrument. Can be used effectively as a solo instrument, as well as for doubling other instruments of the orchestra.',
     range:{lo:60, hi:96, note:'C4 – C7', transposition:'Non-transposing'},
     timbre:0.72,
+    harmonics:12000,
     facts:[['Sounding range','C4 – C7'],['Section size','2–4','players'],['Transposition','Concert pitch']],
     registers:[
       {label:'Low register', pitch:'C4 – G4', text:'Breathy and easily buried. Beautiful exposed and soft, useless under a loud texture.'},
@@ -216,6 +226,7 @@ const INSTRUMENTS = {
     summary:'A double reed woodwind instrument. The expressive middle register is often used both for sad, melancholic themes as well as joyful melodies. It has a very characteristic quality, both good for solo melodies and for doubling other orchestral instruments.',
     range:{lo:58, hi:91, note:'B♭3 – G6', transposition:'Non-transposing'},
     timbre:0.80,
+    harmonics:12000,
     facts:[['Sounding range','B♭3 – G6'],['Section size','2–4','players'],['Transposition','Concert pitch']],
     registers:[
       {label:'Low register', pitch:'B♭3 – E4', text:'Thick, heavy and a little coarse. Hard to play softly and difficult to blend.'},
@@ -256,6 +267,7 @@ const INSTRUMENTS = {
     summary:'A single reed instrument with a mellow, warm and expressive tone colour. Very effective for playing smooth and expressive legato passages. It can effectively express desperation, love, joy and mourning.',
     range:{lo:50, hi:91, note:'D3 – G6 sounding', transposition:'In B♭, written a tone higher'},
     timbre:0.55,
+    harmonics:12000,
     facts:[['Sounding range','D3 – G6'],['Section size','2–4','players'],['Transposition','In B♭ (and A)']],
     registers:[
       {label:'Chalumeau', pitch:'D3 – G4', text:'Dark, hollow and unmistakable. The most distinctive low register in the woodwind section.'},
@@ -297,6 +309,7 @@ const INSTRUMENTS = {
     summary:'A tenor and bass instrument, with a double reed mouthpiece like the oboe. The differences between its registers are very clear and pronounced, one of the true characteristics of the bassoon.',
     range:{lo:34, hi:75, note:'B♭1 – E♭5', transposition:'Non-transposing'},
     timbre:0.30,
+    harmonics:11000,
     facts:[['Sounding range','B♭1 – E♭5'],['Section size','2–4','players'],['Notation','Bass and tenor clef']],
     registers:[
       {label:'Low register', pitch:'B♭1 – F2', text:'Thick, heavy and slightly rough. A genuine bass foundation, and it takes some effort to play quietly.'},
@@ -337,6 +350,7 @@ const INSTRUMENTS = {
     summary:'Has a bright, powerful and brilliant sound quality. It is the smallest member of the brass family. Usually tuned in C or B♭.',
     range:{lo:54, hi:84, note:'F♯3 – C6 sounding', transposition:'In B♭, written a tone higher'},
     timbre:0.88,
+    harmonics:9000,
     facts:[['Sounding range','F♯3 – C6'],['Section size','3–6','players'],['Transposition','In B♭ (and C)']],
     registers:[
       {label:'Low register', pitch:'F♯3 – B♭3', text:'Dark, round and a little unfocused. Rarely used for anything prominent.'},
@@ -380,6 +394,7 @@ const INSTRUMENTS = {
     summary:'Where the trumpet and trombone are cylindrical bored and bright, the horn is conical, which gives it a more mellow and full tone colour, and lets it blend with woodwinds and cellos as easily as with its own family.',
     range:{lo:41, hi:77, note:'F2 – F5 sounding', transposition:'In F, written a fifth higher'},
     timbre:0.40,
+    harmonics:8000,
     facts:[['Sounding range','F2 – F5'],['Section size','4–8','players'],['Transposition','In F']],
     registers:[
       {label:'Low register', pitch:'F2 – C3', text:'Very mellow. Works beautifully for calm passages, weak under pressure.'},
@@ -420,6 +435,7 @@ const INSTRUMENTS = {
     summary:'Has a sound that remains homogenous for the entire range, unlike instruments like the clarinet and bassoon. At middle and higher dynamic levels it is heroic, brilliant and mighty, and has the characteristic brass sound.',
     range:{lo:40, hi:74, note:'E2 – D5', transposition:'Non-transposing'},
     timbre:0.66,
+    harmonics:8000,
     facts:[['Sounding range','E2 – D5'],['Section size','3–6','players'],['Notation','Bass and tenor clef']],
     registers:[
       {label:'Low register', pitch:'E2 – B♭2', text:'Dark and threatening at volume, mysterious when soft. The warning register.'},
@@ -460,6 +476,7 @@ const INSTRUMENTS = {
     summary:'The lowest notes can only be played very softly, but project very well. The middle register is very full and soft sounding, and also the most used.',
     range:{lo:26, hi:65, note:'D1 – F4', transposition:'Non-transposing'},
     timbre:0.20,
+    harmonics:7000,
     facts:[['Sounding range','D1 – F4'],['Section size','1–2','players'],['Notation','Bass clef, concert pitch']],
     registers:[
       {label:'Low register', pitch:'D1 – G1', text:'Enormous and slow to speak. Playable only softly at the very bottom, but it projects further than it sounds close up.'},
@@ -503,6 +520,7 @@ const INSTRUMENTS = {
     summary:'Has an even lower range than the viola, able to produce a full and rich sound.',
     range:{lo:36, hi:81, note:'C2 – A5', transposition:'Non-transposing'},
     timbre:0.35,
+    harmonics:10000,
     facts:[['Sounding range','C2 – A5'],['Section size','10','players'],['Transposition','Concert pitch']],
     registers:[
       {label:'Low register', pitch:'C2 – G3', text:'Warm and full. Doubling the basses in octaves here is standard practice.'},
@@ -546,6 +564,7 @@ const INSTRUMENTS = {
     summary:'The smallest and highest pitched instrument of the string family. There can be up to 30 violins in an orchestra. The four strings are tuned in GDAE.',
     range:{lo:55, hi:100, note:'G3 – E7', transposition:'Non-transposing'},
     timbre:0.78,
+    harmonics:13000,
     facts:[['Sounding range','G3 – E7'],['Section size','16 + 14','players'],['Transposition','Concert pitch']],
     registers:[
       {label:'Low register', pitch:'G3 – D4', text:'The G string: dark, thick and surprisingly weak. Soloists love it; in section it disappears under almost anything.'},
@@ -588,6 +607,7 @@ const INSTRUMENTS = {
     summary:'Has a darker timbre compared to the violin’s brighter quality. Tuned in CGDA, a fifth lower than his little brother.',
     range:{lo:48, hi:88, note:'C3 – E6', transposition:'Non-transposing'},
     timbre:0.52,
+    harmonics:11000,
     facts:[['Sounding range','C3 – E6'],['Section size','12','players'],['Notation','Alto clef']],
     registers:[
       {label:'Low register', pitch:'C3 – G3', text:'The C string. Dark, reedy and slightly rough: the sound most people mean when they say "viola".'},
@@ -628,6 +648,7 @@ const INSTRUMENTS = {
     summary:'Actually not a part of the violin family, which is violin, viola and cello. Its timbre is dark, powerful, broad and dull, and it is able to play in a very low register due to its huge size.',
     range:{lo:28, hi:67, note:'E1 – G4 sounding', transposition:'Sounds an octave lower than written'},
     timbre:0.18,
+    harmonics:7000,
     facts:[['Sounding range','E1 – G4'],['Section size','8','players'],['Transposition','Octave below written']],
     registers:[
       {label:'Low register', pitch:'E1 – A1', text:'Felt more than heard. Pitch definition is poor down here, which is why the cello octave above matters so much.'},
@@ -668,6 +689,7 @@ const INSTRUMENTS = {
     summary:'One of the oldest and most widespread instruments in the world, played by plucking strings that are attached to a wooden frame and soundbox. A harp player is able to play both melodic lines and chords. It is a diatonic instrument, and uses foot pedals to alter pitches, making a C a C♯ or a C♭ for instance, so a chromatic scale is very hard to play on the harp.',
     range:{lo:24, hi:103, note:'C1 – G7', transposition:'Non-transposing'},
     timbre:0.60,
+    harmonics:14000,
     facts:[['Sounding range','C1 – G7'],['Section size','1–2','players'],['Pedals','7 · three positions']],
     registers:[
       {label:'Low register', pitch:'C1 – B2', text:'Wire strings, long decay, considerable weight. Sparse writing here reads as enormous.'},
@@ -712,6 +734,7 @@ const INSTRUMENTS = {
     summary:'A big bowl-looking drum. It is a pitched instrument, and the player changes the notes by stretching and loosening the drum heads with a foot pedal. Usually four different timpani of different sizes are used. It is very central to the orchestral percussion, since it can play rhythm, melody and harmony.',
     range:{lo:38, hi:57, note:'D2 – A3 across four drums', transposition:'Non-transposing'},
     timbre:0.22,
+    harmonics:6000,
     facts:[['Range','D2 – A3'],['Drums','4','typical'],['Tuning','Pedal, during play']],
     registers:[
       {label:'Large drums', pitch:'D2 – A2', text:'Deep, booming and slow to decay. Rolls here feel like weather rather than rhythm.'},
@@ -752,6 +775,7 @@ const INSTRUMENTS = {
     summary:'Can be played by either striking one plate against the other, or being struck with a stick or mallet. The loud sound is usually used to accentuate musical climaxes, and can rise above the entire orchestra.',
     range:{lo:60, hi:96, note:'Unpitched. Broadband, with the energy weighted high', transposition:'Non-transposing'},
     timbre:0.92,
+    harmonics:18000,
     facts:[['Pitch','Unpitched'],['Types','Crash, suspended, hi-hat'],['Players','1–2']],
     registers:[
       {label:'Crash cymbals', pitch:'Broadband', text:'Two plates struck together. Instant, huge and impossible to take back.'},
@@ -790,6 +814,7 @@ const INSTRUMENTS = {
     summary:'Extremely common in all western music styles, and a very important part of the orchestral percussion family. Due to its small size, the sound is very bright, sharp and penetrating.',
     range:{lo:58, hi:80, note:'Unpitched. Bright, with high-mid energy', transposition:'Non-transposing'},
     timbre:0.85,
+    harmonics:15000,
     facts:[['Pitch','Unpitched'],['Players','1'],['Snares','On or off']],
     registers:[
       {label:'Snares on', pitch:'Bright', text:'The default. Sharp, rattling, and audible at almost any dynamic.'},
@@ -829,6 +854,7 @@ const INSTRUMENTS = {
     summary:'An important instrument in both western popular music and orchestral works. It is very effective for marking the rhythm, and covers the bass register of the percussion section. It has a huge range, from subtle to super loud, and most often only one bass drum is required.',
     range:{lo:24, hi:40, note:'Unpitched. Very low, felt as much as heard', transposition:'Non-transposing'},
     timbre:0.10,
+    harmonics:8000,
     facts:[['Pitch','Unpitched'],['Drums','1','typical'],['Players','1']],
     registers:[
       {label:'Soft strokes', pitch:'Low', text:'Distant thunder. Almost subliminal under a quiet texture, and unnerving.'},
@@ -868,6 +894,7 @@ const INSTRUMENTS = {
     summary:'A huge round metal plate hanging with a knob in the centre. It has a definite pitch, a very full sounding and round tone, and gongs of different sizes can be used to play entire melodies.',
     range:{lo:30, hi:60, note:'Unpitched. Broadband, and it blooms after the strike', transposition:'Non-transposing'},
     timbre:0.45,
+    harmonics:16000,
     facts:[['Pitch','Unpitched (tam-tam)'],['Players','1'],['Decay','20–30','seconds']],
     registers:[
       {label:'Soft strokes', pitch:'Broadband', text:'A shimmer that emerges from nothing. Extraordinary under quiet strings.'},
@@ -906,6 +933,7 @@ const INSTRUMENTS = {
     summary:'Invented during the 19th century. It is played as a piano. A famous usage of this instrument is the Prologue and Hedwig’s Theme from the Harry Potter series. The celesta parts are usually very quick and lively and require a very skilled player.',
     range:{lo:60, hi:108, note:'C4 – C8 sounding', transposition:'Sounds an octave higher than written'},
     timbre:0.86,
+    harmonics:12000,
     facts:[['Sounding range','C4 – C8'],['Players','1'],['Transposition','Octave above written']],
     registers:[
       {label:'Low register', pitch:'C4 – B4', text:'Soft and slightly dull. The least useful part of the instrument.'},

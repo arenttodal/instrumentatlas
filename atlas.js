@@ -396,10 +396,14 @@ function viewInstrument(id){
              and the heading and explanation that used to sit here were written
              for the slot rather than taken from the source. -->
         <div class="atl-timbre-chart"><svg id="atl-timbre-svg" role="img"
-          aria-label="Range and timbre of every instrument, with ${esc(it.name)} highlighted"></svg></div>
+          aria-label="Frequency map: the fundamentals and harmonics of every instrument in the collection, grouped by family against a piano keyboard, with ${esc(it.name)} highlighted"></svg></div>
+        <!-- The families are named on the chart in their own colour, so the key
+             only has to explain the two strengths of the bar. -->
         <div class="atl-timbre-key">
           <span><i style="background:#D4A04A"></i>${esc(it.name)}</span>
-          ${FAMILIES.map(f => `<span><i style="background:${FAM_COLOR[f.id]};opacity:.6"></i>${esc(f.name)}</span>`).join('')}
+          <span><i class="atl-key-solid"></i>Fundamentals</span>
+          <span><i class="atl-key-faded"></i>Harmonics</span>
+          <span class="atl-key-note">Logarithmic, so an octave is the same width everywhere. For unpitched percussion the solid bar is where the body of the sound sits, not a playable range. Harmonic ceilings are approximate.</span>
         </div>
       </div>
 
@@ -538,98 +542,160 @@ function wireTabs(){
 let currentInstrument = null, currentFamily = null;
 
 /* ============================================================================
-   RANGE & TIMBRE MAP. Full page, on the instrument's Timbre tab.
-   Horizontal axis is pitch, vertical axis is brightness of tone colour. Every
-   instrument in the collection is plotted, so the point of the chart is the
-   comparison: where this instrument sits relative to everything around it.
+   FREQUENCY MAP. Full page, on the instrument's Timbre tab.
+   Horizontal axis is frequency, logarithmic, 20 Hz to 20 kHz: one octave is
+   the same width everywhere, which is the only scale on which instruments
+   are comparable. Vertical axis is nothing at all. Rows are grouped by family
+   and ordered within a family the way the rest of the site orders them, so a
+   row's position carries no measurement and cannot be misread as one.
+
+   Each row is drawn twice: the fundamentals, from the instrument's own range,
+   at full strength, and the harmonics above them, faded. That upper stretch is
+   why a bassoon and a cello occupying the same fundamentals still sound
+   nothing alike, and it is the part a pitch-only chart cannot show.
+
+   The keyboard along the bottom is the anchor. 88 keys, A0 to C8, one semitone
+   per slot, which on a log frequency axis makes every slot the same width, so
+   the keys line up with the frequencies above them exactly rather than
+   approximately. It also shows how much of the audible band sits above the top
+   of a piano: nearly two thirds of the width, all of it harmonics.
    ============================================================================ */
 /* family colours, following the convention of printed orchestra seating charts:
    strings violet, woodwinds green, brass blue, percussion amber. Gold is reserved
    for the instrument you are reading, so no family uses it. */
-/* The timbre chart's palette, which is not the dock's: see STUDIO_FAM in
+/* The frequency map's palette, which is not the dock's: see STUDIO_FAM in
    atlas-data.js for why the two are deliberately different. */
 const FAM_COLOR = {
   strings:'#9B8FD4', woodwinds:'#5FB89A', brass:'#6C9BD8', percussion:'#C9834F'
 };
 
+const HZ_LO = 20, HZ_HI = 20000;
+const hzOf = m => 440 * Math.pow(2, (m - 69) / 12);
+const hzTick = f => f >= 1000 ? (f / 1000) + 'k' : String(f);
+
+/* families top to bottom. Low to high inside the plot would be one more thing
+   to explain; this is the order the family menu and the seating map already
+   use, so the chart matches the rest of the site. */
+const TIMBRE_ORDER = ['percussion','brass','woodwinds','strings'];
+const BLACK_KEYS = [1,3,6,8,10];
+
 function renderTimbre(id){
   const svg = document.getElementById('atl-timbre-svg');
   if(!svg) return;
-  const it = INSTRUMENTS[id], fam = it.family;
-  const W = 1000, H = 470, L = 54, R = 26, T = 36, B = 54;
-  const px = m => L + (m - PITCH_LO) / (PITCH_HI - PITCH_LO) * (W - L - R);
-  const py = t => (H - B) - t * (H - B - T);
 
+  const W = 1000, L = 124, R = 26, T = 26;
+  const ROW = 15, GAP = 15, BAR = 7;
+  const lg = Math.log10(HZ_LO), sp = Math.log10(HZ_HI) - lg;
+  const px = f => L + (Math.log10(f) - lg) / sp * (W - L - R);
+
+  let y = T;
+  const groups = TIMBRE_ORDER.map((fid, gi) => {
+    const f = FAMILIES.find(x => x.id === fid), top = y;
+    const rows = f.members.map(k => {
+      const row = { k, o:INSTRUMENTS[k], fid, cy:y + ROW / 2, sel:k === id };
+      y += ROW;
+      return row;
+    });
+    const g = { fid, name:f.name, top, bot:y, rows };
+    if(gi < TIMBRE_ORDER.length - 1) y += GAP;
+    return g;
+  });
+  const PLOT = y, KB = PLOT + 22, KBH = 30, H = KB + KBH + 38;
+
+  /* ---- decade grid, running the full height of the plot ---- */
+  const TICKS = [20,50,100,200,500,1000,2000,5000,10000,20000];
   let grid = '';
-  [24,36,48,60,72,84,96,108].forEach(m => {
-    const x = px(m).toFixed(1);
-    grid += `<line x1="${x}" y1="${T-12}" x2="${x}" y2="${H-B}" stroke="#fff"
-      stroke-opacity="${m===60?'.13':'.05'}" stroke-width="1"/>
-      <text x="${x}" y="${H-B+22}" fill="${m===60?'#9A9CA4':'#4E505A'}" font-size="11"
-      font-family="DM Sans,sans-serif" text-anchor="middle" letter-spacing=".6">${midiName(m)}</text>`;
-  });
-  [0,.25,.5,.75,1].forEach(t => {
-    grid += `<line x1="${L}" y1="${py(t).toFixed(1)}" x2="${W-R}" y2="${py(t).toFixed(1)}"
-      stroke="#fff" stroke-opacity=".035" stroke-width="1"/>`;
+  TICKS.forEach(f => {
+    const x = px(f).toFixed(1);
+    grid += `<line x1="${x}" y1="${T - 8}" x2="${x}" y2="${PLOT}" stroke="#fff"
+      stroke-opacity="${f === 1000 ? '.10' : '.045'}" stroke-width="1"/>`;
   });
 
-  /* ---- lay out every instrument, then resolve label collisions ---- */
-  const items = Object.keys(INSTRUMENTS).map(k => {
-    const o = INSTRUMENTS[k];
-    return { k, o, sel:k === id, y:py(o.timbre), x0:px(o.range.lo), x1:px(o.range.hi) };
-  });
+  /* ---- family bracket and label down the left edge ---- */
+  const side = groups.map(g => {
+    const col = FAM_COLOR[g.fid], y0 = g.top + 2, y1 = g.bot - 2;
+    return `<line x1="13" y1="${y0.toFixed(1)}" x2="13" y2="${y1.toFixed(1)}"
+        stroke="${col}" stroke-opacity=".4" stroke-width="1.5"/>
+      <text transform="translate(8.5,${((y0 + y1) / 2).toFixed(1)}) rotate(-90)" fill="${col}"
+        fill-opacity=".85" font-size="9" font-weight="700" font-family="DM Sans,sans-serif"
+        text-anchor="middle" letter-spacing="1.8">${esc(g.name.toUpperCase())}</text>`;
+  }).join('');
 
-  /* labels sit to the right of the line, unless that would run off the plot */
-  items.forEach(d => {
-    d.right = d.x1 < W - R - 96;
-    d.lx = d.right ? d.x1 + 9 : d.x0 - 9;
-    d.ly = d.y + 3.5;
-  });
+  /* ---- one row per instrument ---- */
+  /* The harmonic bar is drawn the full span first and the solid fundamentals
+     laid over its left end, so the two meet without a seam: one bar that loses
+     strength where the fundamentals stop. The harmonic fill is a gradient
+     rather than a flat tint because the energy up there really does fall away;
+     a flat block would claim the top of the range is as present as the bottom. */
+  const defs = `<defs>${Object.keys(FAM_COLOR).concat('sel').map(k => {
+    const c = k === 'sel' ? '#D4A04A' : FAM_COLOR[k];
+    return `<linearGradient id="atl-h-${k}" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="${c}" stop-opacity="${k === 'sel' ? '.40' : '.26'}"/>
+      <stop offset="1" stop-color="${c}" stop-opacity="${k === 'sel' ? '.09' : '.05'}"/>
+    </linearGradient>`;
+  }).join('')}</defs>`;
 
-  /* push overlapping labels apart, per side, keeping them near their line */
-  [true,false].forEach(side => {
-    const col = items.filter(d => d.right === side).sort((m,n) => m.ly - n.ly);
-    const MIN = 13.5;
-    for(let i = 1; i < col.length; i++){
-      if(col[i].ly - col[i-1].ly < MIN) col[i].ly = col[i-1].ly + MIN;
-    }
-    /* if the stack ran past the bottom, walk it back up */
-    for(let i = col.length - 1; i > 0; i--){
-      if(col[i].ly > H - B - 4) col[i].ly = H - B - 4;
-      if(col[i].ly - col[i-1].ly < MIN) col[i-1].ly = col[i].ly - MIN;
-    }
-  });
-
-  /* dimmest first so the selected instrument always draws on top */
-  items.sort((m,n) => (m.sel ? 1 : 0) - (n.sel ? 1 : 0));
-
-  const body = items.map(d => {
-    const col = d.sel ? '#D4A04A' : FAM_COLOR[d.o.family];
-    const lineOp = d.sel ? 1 : 0.5;
-    const textOp = d.sel ? 1 : 0.78;
-    /* a leader line when the label had to be nudged away from its bar */
-    const drift = Math.abs(d.ly - (d.y + 3.5)) > 2.5
-      ? `<line x1="${(d.right ? d.x1 + 3 : d.x0 - 3).toFixed(1)}" y1="${d.y.toFixed(1)}"
-           x2="${(d.right ? d.lx - 2 : d.lx + 2).toFixed(1)}" y2="${(d.ly - 3.5).toFixed(1)}"
-           stroke="${col}" stroke-opacity=".3" stroke-width="1"/>` : '';
+  const body = groups.reduce((all, g) => all.concat(g.rows), []).map(d => {
+    const col = d.sel ? '#D4A04A' : FAM_COLOR[d.fid];
+    const f0 = hzOf(d.o.range.lo), f1 = hzOf(d.o.range.hi);
+    const x0 = px(f0), x1 = px(f1), x2 = px(Math.max(d.o.harmonics || f1, f1));
+    const top = (d.cy - BAR / 2).toFixed(1);
     return `<g>
-      <line x1="${d.x0.toFixed(1)}" y1="${d.y.toFixed(1)}" x2="${d.x1.toFixed(1)}" y2="${d.y.toFixed(1)}"
-        stroke="${col}" stroke-opacity="${lineOp}" stroke-width="${d.sel?5:3}" stroke-linecap="round"/>
-      ${drift}
-      <text x="${d.lx.toFixed(1)}" y="${d.ly.toFixed(1)}" fill="${d.sel ? '#fff' : col}"
-        fill-opacity="${textOp}" font-size="${d.sel?13:10.5}" font-family="DM Sans,sans-serif"
-        font-weight="${d.sel?600:400}" text-anchor="${d.right?'start':'end'}">${esc(d.o.name)}</text>
+      ${d.sel ? `<rect x="${L}" y="${(d.cy - ROW / 2).toFixed(1)}" width="${(W - L - R).toFixed(1)}"
+        height="${ROW}" fill="#D4A04A" fill-opacity=".05"/>` : ''}
+      <rect x="${x0.toFixed(1)}" y="${top}" width="${Math.max(BAR, x2 - x0).toFixed(1)}"
+        height="${BAR}" rx="${BAR / 2}" fill="url(#atl-h-${d.sel ? 'sel' : d.fid})"/>
+      <rect x="${x0.toFixed(1)}" y="${top}" width="${Math.max(BAR, x1 - x0).toFixed(1)}"
+        height="${BAR}" rx="${BAR / 2}" fill="${col}" fill-opacity="${d.sel ? '1' : '.85'}"/>
+      <text x="${(L - 14).toFixed(1)}" y="${(d.cy + 3.6).toFixed(1)}" fill="${d.sel ? '#fff' : col}"
+        fill-opacity="${d.sel ? '1' : '.8'}" font-size="${d.sel ? '11.5' : '10.5'}"
+        font-weight="${d.sel ? '600' : '400'}" font-family="DM Sans,sans-serif"
+        text-anchor="end">${esc(d.o.name)}</text>
     </g>`;
   }).join('');
 
-  const axes = `<text x="${L}" y="${T-18}" fill="#7E808A" font-size="10" font-weight="700"
-      font-family="DM Sans,sans-serif" letter-spacing="2">BRIGHT</text>
-    <text x="${L}" y="${H-B-6}" fill="#7E808A" font-size="10" font-weight="700"
-      font-family="DM Sans,sans-serif" letter-spacing="2">DARK</text>`;
+  /* ---- the 88 key piano, A0 to C8, one semitone per slot ---- */
+  /* One light strip carries all the white keys, because at this width a stroke
+     around each of the fifty-two turns the keyboard into a barcode. The seams
+     are drawn where a real keyboard shows them: full height between E and F and
+     between B and C, where two white keys touch, and only along the front
+     elsewhere, where the black key above already separates them. */
+  const slot = m => { const a = px(hzOf(m - 0.5)); return { a, w:px(hzOf(m + 0.5)) - a }; };
+  const front = KB + KBH * .62;
+  let blacks = '', seams = '', octaves = '';
+  for(let m = 21; m <= 108; m++){
+    const { a, w } = slot(m);
+    if(BLACK_KEYS.includes(m % 12)){
+      blacks += `<rect x="${(a + w * .26).toFixed(1)}" y="${KB}" width="${(w * .48).toFixed(1)}"
+        height="${(KBH * .62).toFixed(1)}" fill="#0A0E18"/>`;
+      seams += `<line x1="${(a + w / 2).toFixed(1)}" y1="${front.toFixed(1)}"
+        x2="${(a + w / 2).toFixed(1)}" y2="${KB + KBH}" stroke="#0A0E18" stroke-width=".8"/>`;
+    } else if(m < 108 && !BLACK_KEYS.includes((m + 1) % 12)){
+      seams += `<line x1="${(a + w).toFixed(1)}" y1="${KB}" x2="${(a + w).toFixed(1)}"
+        y2="${KB + KBH}" stroke="#0A0E18" stroke-width=".8"/>`;
+    }
+    if(m % 12 === 0) octaves += `<text x="${(a + w / 2).toFixed(1)}" y="${KB + KBH + 13}"
+      fill="${m === 60 ? '#D4A04A' : '#5E606A'}" font-size="9" font-family="DM Sans,sans-serif"
+      text-anchor="middle" letter-spacing=".6">${midiName(m)}</text>`;
+  }
+  const lo = slot(21), hi = slot(108), mid = slot(60);
+  const keyboard = `<rect x="${lo.a.toFixed(1)}" y="${KB}" width="${(hi.a + hi.w - lo.a).toFixed(1)}"
+      height="${KBH}" rx="2" fill="#A7ACB8"/>
+    <rect x="${mid.a.toFixed(1)}" y="${KB}" width="${mid.w.toFixed(1)}" height="${KBH}" fill="#D9BE8A"/>`
+    + seams + blacks + octaves;
+
+  /* ---- the hertz scale under the keyboard ---- */
+  const hz = TICKS.map(f => `<line x1="${px(f).toFixed(1)}" y1="${KB + KBH + 3}"
+      x2="${px(f).toFixed(1)}" y2="${KB + KBH + 8}" stroke="#fff" stroke-opacity=".12"/>
+    <text x="${px(f).toFixed(1)}" y="${KB + KBH + 30}" fill="#4E505A" font-size="9.5"
+      font-family="DM Sans,sans-serif" text-anchor="middle" letter-spacing=".8">${hzTick(f)}</text>`).join('')
+    + `<text x="${(L - 14).toFixed(1)}" y="${KB + KBH + 30}" fill="#4E505A" font-size="9.5"
+      font-weight="700" font-family="DM Sans,sans-serif" text-anchor="end" letter-spacing="1.4">HZ</text>`
+    + `<text x="${(L - 14).toFixed(1)}" y="${KB + KBH + 13}" fill="#4E505A" font-size="9.5"
+      font-weight="700" font-family="DM Sans,sans-serif" text-anchor="end" letter-spacing="1.4">PIANO</text>`;
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.innerHTML = grid + body + axes;
-
+  svg.innerHTML = defs + grid + side + body + keyboard + hz;
 }
 
 /* ============================================================================
