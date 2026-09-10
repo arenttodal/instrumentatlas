@@ -38,7 +38,7 @@ Pages redeploys in ~20 seconds.
 | Studio | Theme 1 only, 3 tracks, 7 renders |
 | Instrument audio | 11 of 20: cello, oboe, horn, violin, viola, double bass, bassoon, flute, tuba, trombone, trumpet. The other nine show the placeholder line |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
-| Plate artwork | Converted engravings for oboe, trumpet and trombone, all three with credits still pending. The other seventeen are placeholder gold line art |
+| Plate artwork | 17 of 20 converted engravings, all with credits still pending. harp, snare drum and bass drum are still placeholder gold line art |
 | Gallery | 29 videos, six per instrument. Ids came from search results and were never opened: run `tools/gallery-check.py` |
 | Family footage | strings, woodwinds, brass. Percussion has none, by design |
 
