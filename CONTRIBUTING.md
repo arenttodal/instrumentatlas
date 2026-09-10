@@ -36,7 +36,7 @@ Pages redeploys in ~20 seconds.
 | 3D models | 8 `.glb`. cello, horn, viola, violin wired to plates; trumpet, bassoon, clarinet, violin2 in the viewer only |
 | Model attribution | **cello and horn only.** viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" |
 | Studio | Theme 1 only, 3 tracks, 7 renders |
-| Instrument audio | 12 of 20. Missing: piccolo, harp and all six percussion, which show the placeholder line |
+| Instrument audio | 19 of 20. Only the piccolo is silent, and shows the placeholder line. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
 | Plate artwork | 17 of 20 converted engravings, all with credits still pending. harp, snare drum and bass drum are still placeholder gold line art |
 | Gallery | 29 videos, six per instrument. Ids came from search results and were never opened: run `tools/gallery-check.py` |

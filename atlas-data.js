@@ -694,9 +694,9 @@ const INSTRUMENTS = {
     ],
     gallery:['HP5xhyPn58U','6exoB7IW8qw','fEGNNuEM3Fc','sHsFIv8VA7w','GrrvAHhWKIw','waP1N446Zb0'],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Glissando, three tunings', note:'The same sweep with different pedal settings', dur:'0:18'},
-      {label:'With flute', note:'The pairing that defines the colour', dur:'0:14'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Glissando', note:'A sweep across the strings', dur:'0:08', file:'glissando'},
+      {label:'Range', note:'Low to high across the instrument', dur:'0:08', file:'range'}
     ],
     prev:'double-bass', next:''
   },
@@ -738,9 +738,9 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','ki0xu6Gl9Nc','8UfpgT9FMAk','pGdtkUiKaA8','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Felt vs wood mallets', note:'The same figure, two sticks', dur:'0:14'},
-      {label:'Roll and crescendo', note:'From nothing to the top of the dynamic', dur:'0:16'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:14', file:'signature-phrase'},
+      {label:'Phrase', note:'A short rhythmic figure', dur:'0:07', file:'phrase'},
+      {label:'Roll', note:'A sustained roll', dur:'0:04', file:'roll'}
     ],
     prev:'', next:'cymbals'
   },
@@ -778,9 +778,7 @@ const INSTRUMENTS = {
     gallery:['JEi23_uSGNE','8UfpgT9FMAk','pGdtkUiKaA8','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Crash, suspended and choked', note:'The three ways it is played', dur:'0:14'},
-      {label:'Roll from silence', note:'The crescendo that covers an orchestra', dur:'0:16'},
-      {label:'With bass drum', note:'The pairing, isolated then in context', dur:'0:12'}
+      {label:'Strike', note:'A single crash', dur:'0:08', file:'strike'}
     ],
     prev:'timpani', next:'snare-drum'
   },
@@ -817,9 +815,8 @@ const INSTRUMENTS = {
     ],
     gallery:['GxqZ8CEoujU','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
     demos:[
-      {label:'Snares on and off', note:'The same pattern, both settings', dur:'0:14'},
-      {label:'Roll and crescendo', note:'The buzz sustained and built', dur:'0:14'},
-      {label:'March pattern in context', note:'What the instrument was built for', dur:'0:16'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:06', file:'signature-phrase'},
+      {label:'Roll', note:'A sustained roll', dur:'0:04', file:'roll'}
     ],
     prev:'cymbals', next:'bass-drum'
   },
@@ -856,9 +853,8 @@ const INSTRUMENTS = {
     ],
     gallery:['ghkljW0ZmJU','8UfpgT9FMAk','JEi23_uSGNE','j2Hk2SZGrRY','HP5xhyPn58U','waP1N446Zb0'],
     demos:[
-      {label:'Soft, full and damped', note:'Three strokes, three instruments', dur:'0:14'},
-      {label:'Roll and crescendo', note:'The slow build', dur:'0:16'},
-      {label:'Under a tutti', note:'With and without, same bar', dur:'0:12'}
+      {label:'Strokes', note:'Struck notes', dur:'0:10', file:'strokes'},
+      {label:'Roll', note:'A sustained roll', dur:'0:05', file:'roll'}
     ],
     prev:'snare-drum', next:'gong'
   },
@@ -896,9 +892,7 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','JEi23_uSGNE','j2Hk2SZGrRY','sHsFIv8VA7w','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Soft to full stroke', note:'The bloom, at both dynamics', dur:'0:18'},
-      {label:'Full decay, unedited', note:'How long it actually takes', dur:'0:30'},
-      {label:'Under low strings', note:'Where the two blend into one sound', dur:'0:16'}
+      {label:'Strike', note:'A single stroke', dur:'0:10', file:'strike'}
     ],
     prev:'bass-drum', next:'celesta'
   },
@@ -936,9 +930,9 @@ const INSTRUMENTS = {
     gallery:['gumy04TFPBk','qsCZP3wdF4w','2EsNGS9vYe8','YB_PTA4dGws','clK9rM9JoIs','j2Hk2SZGrRY'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:16'},
-      {label:'With harp', note:'The doubling that makes it audible', dur:'0:14'}
+      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Phrase', note:'A short melodic line', dur:'0:13', file:'phrase'},
+      {label:'Run', note:'A fast run', dur:'0:06', file:'run'}
     ],
     prev:'gong', next:''
   }
