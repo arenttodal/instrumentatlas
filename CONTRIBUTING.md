@@ -13,9 +13,8 @@ Three things that share a domain and a visual language:
 
 **The Atlas** is a reference for composers writing for the orchestra. Four
 families, twenty instruments. Each instrument has tone colour by register,
-characteristics, articulations, blends, limits, audio demos, a range-and-timbre
-chart, and a video gallery. Each family has an ensemble-size slider and a
-seating map.
+characteristics, articulations, blends, audio demos, a frequency map, and a
+video gallery. Each family has an ensemble-size slider and a seating map.
 
 **The Studio** is a dock at the bottom of the window, opened from the nav. It
 plays the same passage rendered once per part and once per section size. It
@@ -50,7 +49,7 @@ Pages redeploys in ~20 seconds.
 index.html         page shell: nav, dock container, footer, script tags
 atlas.css          all styles, one file
 atlas-data.js      ← content lives here. Edit this most.
-atlas.js           rendering, routing, seating map, timbre chart, tabs,
+atlas.js           rendering, routing, seating map, frequency map, tabs,
                    demo players, family hover footage
 atlas-studio.js    the studio dock: audio engine, transport, piano roll
 _headers           Cloudflare caching + framing
@@ -125,13 +124,18 @@ id: {
   modelSource,      // optional: link to the model's source page
   summary,          // 2–3 sentences
   range:  {lo, hi, note, transposition},   // lo/hi are MIDI numbers, 60 = C4
-  timbre,           // 0 = darkest … 1 = brightest. Position on the timbre chart
+  timbre,           // 0 = darkest … 1 = brightest. Nothing reads it since the
+                    // Timbre tab became a frequency map; kept as the only
+                    // single-number summary of tone colour in the file
+  harmonics,        // Hz. Top of the useful overtone content, above the
+                    // fundamentals that range gives. Approximate by nature
   facts:  [[label, value, unit?], ×3],
   registers: [{label, pitch, text}, ×3 or ×4],
   characteristics: [ string, ×4 ],
   articulations:   [ string, … ],
   blends: [{id, label, note}, …],   // id MUST be a real instrument
-  limits: [ string, ×3 ],           // what goes wrong, not what goes right
+  limits: [ string, ×3 ],           // present on every instrument, rendered
+                                    // nowhere: family generic, see below
   demos:  [{label, note, dur, file?}, …],  // file omitted = inert player
   prev, next        // pager, '' to end a chain
 }
@@ -145,9 +149,15 @@ labelled "Section size" is replaced at render time by the span the family's own
 `sizes` array covers, so the instrument page and the family table cannot
 disagree.
 
-Unpitched percussion still carry a `range`, because the timbre chart plots all
-twenty instruments and needs somewhere to put them. Say so in the `range.note`
-so the numbers are not read as a claim about pitch.
+Unpitched percussion still carry a `range`, because the frequency map plots all
+twenty instruments and needs somewhere to put them. It is where the body of the
+sound sits, not a playable range. Say so in the `range.note` so the numbers are
+not read as a claim about pitch.
+
+`limits` is still on every instrument and rendered nowhere. What the book says
+about limits is family generic, so it belongs on the family page rather than
+repeated identically under all five instruments in a section. Delete the field
+or wire it back, but do not assume it is live because it is populated.
 
 A `'plan'` stub needs only `{family, name, status, range, timbre}`. Do not give
 a stub a `model`, or the 3D toggle appears on a page that does not exist.
@@ -206,7 +216,7 @@ unless an instrument defines its own `gallery: ['id', …]`.
 | Labels | DM Sans 700, 9.5–11px, uppercase, 1.5–2.6px tracking |
 
 **Two family palettes, deliberately.** `FAM_COLOR` in `atlas.js` colours the
-timbre chart, which separates twenty instruments and needs four well-spaced
+frequency map, which separates twenty instruments and needs four well-spaced
 hues: strings `#9B8FD4`, woodwinds `#5FB89A`, brass `#6C9BD8`, percussion
 `#C9834F`. `STUDIO_FAM` in `atlas-data.js` colours the dock, which shows three
 tracks at a glance on a dark strip: woodwinds `#6FB7E8`, brass `#D4A04A`,
