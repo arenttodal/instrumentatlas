@@ -741,15 +741,15 @@ const INSTRUMENTS = {
     harmonics:6000,
     facts:[['Range','D2 – A3'],['Drums','4','typical'],['Tuning','Pedal, during play']],
     registers:[
-      {label:'Large drums', pitch:'D2 – A2', text:'Deep, booming and slow to decay. Rolls here feel like weather rather than rhythm.'},
+      {label:'Large drums', pitch:'D2 – A2', text:'Deep, booming and slow to decay. Rolls here are thunderous and powerful, but lacking pitch definition.'},
       {label:'Medium drums', pitch:'B2 – E3', text:'The working range. Clear pitch, strong attack, unmistakably orchestral.'},
       {label:'Small drum', pitch:'F3 – A3', text:'Tight and articulate, closer to a tuned tom. Good for rhythmic detail.'}
     ],
     characteristics:[
       'Pedal tuning means pitch can change mid-piece, and glissandi are possible.',
       'Mallet choice changes everything: felt for warmth, wood for attack.',
-      'Rolls sustain indefinitely and crescendo further than almost anything else in the orchestra.',
-      'Reinforces the harmonic bass, so the note choice matters as much as the rhythm.'
+      'Rolls can sustain indefinitely and are very effective for slow crescendos and swells.',
+      'Reinforces the harmonic bass, doubling as both rhythmic and harmonic foundation.'
     ],
     articulations:['Single strokes','Roll','Muffled','Glissando','Wood mallets','Rim'],
     blends:[
