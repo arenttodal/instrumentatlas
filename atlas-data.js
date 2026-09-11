@@ -32,7 +32,10 @@ const COLLECTION = {
    Counts are drawn from standard practice and from named scores:
    chamber strings 4-3-3-2-1 … 6-5-4-4-2; symphonic 12-10-8-6-4 … 16-14-12-10-8;
    Classical period = paired winds, 2–4 horns, 2 trumpets, timpani;
-   maximum tier follows Schoenberg's Gurrelieder (20-20-16-16-12 strings, 10 horns). */
+   maximum tier follows Schoenberg's Gurrelieder (20-20-16-16-12 strings, 10 horns),
+   except the violins, which are 18 + 18 by editorial decision: the violin page
+   reads its "Section size" fact off the first and last entries of this row, and
+   it should say 2–36. Change one and you change the other. */
 const TIERS = [
   {id:'quartet',  label:'Quartet / Quintet', tick:'Quartet',  players:'4–5',    era:'Chamber music'},
   {id:'chamber',  label:'Chamber orchestra', tick:'Chamber',  players:'25–40',  era:'Sinfonietta, baroque revival'},
@@ -59,7 +62,7 @@ const FAMILIES = [
     ],
     smallName:'String quartet',
     sizes:{
-      violin:       ['1 + 1','6 + 5','8 + 6','12 + 10','16 + 14','20 + 20'],
+      violin:       ['1 + 1','6 + 5','8 + 6','12 + 10','16 + 14','18 + 18'],
       viola:        [1, 4, 4, 8, 12, 16],
       cello:        [1, 3, 3, 6, 10, 16],
       'double-bass':[0, 1, 2, 4, 8, 12],
@@ -172,7 +175,7 @@ const INSTRUMENTS = {
     gallery:['wFJCDxcrqsc','GxqZ8CEoujU','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:12'},
       {label:'Against the flute', note:'The same figure, an octave apart', dur:'0:16'},
       {label:'Full force over tutti', note:'Why it is used at climaxes', dur:'0:14'}
     ],
@@ -213,7 +216,7 @@ const INSTRUMENTS = {
     gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','GxqZ8CEoujU','P_1N6_O254g','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:12', file:'register-comparison'},
       {label:'With violins in octaves', note:'The doubling, isolated then in context', dur:'0:14', file:'with-violins'}
     ],
@@ -254,7 +257,7 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     gallery:['r87w1RFT4hg','ki0xu6Gl9Nc','P_1N6_O254g','9aDEq3u5huA','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14', file:'register-comparison'},
       {label:'Solo over strings', note:'Why it carries', dur:'0:11', file:'over-strings'}
     ],
@@ -337,7 +340,7 @@ const INSTRUMENTS = {
     gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:11', file:'register-comparison'},
       {label:'With oboe', note:'Two double reeds fusing into a colour neither makes alone', dur:'0:10', file:'with-oboe'}
     ],
@@ -378,7 +381,7 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     gallery:['bwQumQpug_E','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','GxqZ8CEoujU','waP1N446Zb0'],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:08', file:'register-comparison'},
       {label:'With trombone', note:'Both cylindrical bore, so it thickens without changing the colour', dur:'0:09', file:'with-trombone'}
     ],
@@ -422,7 +425,7 @@ const INSTRUMENTS = {
     gallery:['n5gUu65Pmrk','b4rfWegZi_M','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27', file:'register-comparison'},
       {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:08', file:'with-cello'}
     ],
@@ -463,7 +466,7 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     gallery:['6wRKpdM9ra8','6exoB7IW8qw','GxqZ8CEoujU','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
       {label:'Rips', note:'Quick explanation of an octave rip', dur:'0:05', file:'glissando-and-legato'},
       {label:'Section chord, soft and loud', note:'Showcasing the dynamics of the trombone', dur:'0:11', file:'section-soft-and-loud'}
     ],
@@ -504,7 +507,7 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','JEi23_uSGNE','8UfpgT9FMAk','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after an 1855 instrument in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
       {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:11', file:'low-register-speaking-time'},
       {label:'Melodic middle register', note:'The part of the instrument nobody writes for', dur:'0:09', file:'melodic-middle-register'}
     ],
@@ -548,7 +551,7 @@ const INSTRUMENTS = {
     gallery:['clK9rM9JoIs','P_1N6_O254g','GrrvAHhWKIw','sHsFIv8VA7w','a9UApyClFKA','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
       {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:23', file:'with-horn'}
     ],
@@ -560,22 +563,23 @@ const INSTRUMENTS = {
     model:'violin',
     modelCredit:'“Violin Texturing” by ilushandro · modified: decimated and re-materialled',
     modelSource:'https://skfb.ly/oAVFz',
-    epithet:'More of them than any other instrument in the ensemble', status:'live',
-    summary:'The smallest and highest pitched instrument of the string family. There can be up to 30 violins in an orchestra. The four strings are tuned in GDAE.',
+    epithet:'The most numerous instrument in the ensemble', status:'live',
+    summary:'The smallest and highest pitched instrument in the string family, with up to over 30 violins in an orchestra. Four strings tuned in GDAE.',
     range:{lo:55, hi:100, note:'G3 – E7', transposition:'Non-transposing'},
     timbre:0.78,
     harmonics:13000,
     facts:[['Sounding range','G3 – E7'],['Section size','16 + 14','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'G3 – D4', text:'The G string: dark, thick and surprisingly weak. Soloists love it; in section it disappears under almost anything.'},
-      {label:'Middle register', pitch:'E4 – D5', text:'Warm and even. Where most melodic writing sits, and where a section blends into one voice rather than many.'},
-      {label:'High register', pitch:'E5 – E7', text:'Brilliant and soaring, and above roughly B6 increasingly thin and strained. Sixteen violins in unison up here is the loudest sound in the string section.'}
+      {label:'Low register', pitch:'G3 – D4', text:'Dark and thick tone, not a lot of penetrative energy compared to the other registers.'},
+      {label:'Middle register', pitch:'E4 – D5', text:'Warm and even, and where most melodic writing sits.'},
+      {label:'High register', pitch:'E5 – E7', text:'Brilliant and soaring - getting increasingly thin and strained above B6. Tougher to play the higher you go due to the closeness of the notes on the fingerboard.'}
     ],
     characteristics:[
-      'Divided into firsts and seconds, which can play in unison for weight or split for harmony.',
-      'Four strings tuned in fifths, G, D, A and E, each with an audibly different character.',
-      'Fast passagework, leaps and string crossings are all idiomatic.',
-      'Divisi splits a section into further parts, at the cost of thinning each one.'
+      'Divided into firsts and seconds, which can play in unison - octaves, or separate voices entirely.',
+      'Four strings, tuned GDAE.',
+      'Can play anything from fast runs to soaring lines.',
+      'Cannot play conventional chords, except double and triple stops (playing multiple strings at once).',
+      'Divisi splits a section into further parts, causing more fragmented, thinner ensembles.'
     ],
     articulations:['Arco','Pizzicato','Legato','Spiccato','Staccato','Tremolo','Sul ponticello','Harmonics','Con sordino'],
     blends:[
@@ -592,9 +596,9 @@ const INSTRUMENTS = {
     gallery:['6exoB7IW8qw','9aDEq3u5huA','a9UApyClFKA','GrrvAHhWKIw','sHsFIv8VA7w','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
-      {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:15', file:'string-by-string'},
-      {label:'Section vs solo', note:'One player, then sixteen', dur:'0:09', file:'section-vs-solo'}
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
+      {label:'The range', note:'A melody line showing the vibrant range of the instrument', dur:'0:15', file:'string-by-string'},
+      {label:'Solo vs Section', note:'One player, then the full section', dur:'0:09', file:'section-vs-solo'}
     ],
     prev:'', next:'viola'
   },
@@ -635,7 +639,7 @@ const INSTRUMENTS = {
     gallery:['zWn_7R4B-aI','6exoB7IW8qw','GrrvAHhWKIw','9aDEq3u5huA','sHsFIv8VA7w','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
       {label:'Against the violin', note:'The same line on both, back to back', dur:'0:10', file:'against-the-violin'},
       {label:'With clarinet', note:'Where the two timbres become one', dur:'0:10', file:'with-clarinet'}
     ],
@@ -676,7 +680,7 @@ const INSTRUMENTS = {
     gallery:['clK9rM9JoIs','a9UApyClFKA','ghkljW0ZmJU','sHsFIv8VA7w','hvPlV56VtFs','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
       {label:'With cello in octaves', note:'Why the pairing is standard', dur:'0:10', file:'with-cello-octaves'}
     ],
@@ -717,7 +721,7 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','6exoB7IW8qw','fEGNNuEM3Fc','sHsFIv8VA7w','GrrvAHhWKIw','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:15', file:'signature-phrase'},
       {label:'Glissando', note:'A sweep across the strings', dur:'0:08', file:'glissando'},
       {label:'Range', note:'Low to high across the instrument', dur:'0:08', file:'range'}
     ],
@@ -762,7 +766,7 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','ki0xu6Gl9Nc','8UfpgT9FMAk','pGdtkUiKaA8','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:14', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:14', file:'signature-phrase'},
       {label:'Phrase', note:'A short rhythmic figure', dur:'0:07', file:'phrase'},
       {label:'Roll', note:'A sustained roll', dur:'0:04', file:'roll'}
     ],
@@ -961,7 +965,7 @@ const INSTRUMENTS = {
     gallery:['gumy04TFPBk','qsCZP3wdF4w','2EsNGS9vYe8','YB_PTA4dGws','clK9rM9JoIs','j2Hk2SZGrRY'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:15', file:'signature-phrase'},
       {label:'Phrase', note:'A short melodic line', dur:'0:13', file:'phrase'},
       {label:'Run', note:'A fast run', dur:'0:06', file:'run'}
     ],
