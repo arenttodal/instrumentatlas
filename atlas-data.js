@@ -274,13 +274,13 @@ const INSTRUMENTS = {
     facts:[['Sounding range','D3 – G6'],['Section size','2–4','players'],['Transposition','In B♭ (and A)']],
     registers:[
       {label:'Chalumeau', pitch:'D3 – G4', text:'Dark, hollow and unmistakable. The most distinctive low register in the woodwind section.'},
-      {label:'Throat register', pitch:'A4 – B♭4', text:'Weak, slightly stuffy, and the part section players work hardest to disguise. Avoid exposing it.'},
-      {label:'Clarion', pitch:'B4 – C6', text:'Bright, singing and even. Where most melodic writing belongs.'},
-      {label:'Altissimo', pitch:'C♯6 – G6', text:'Piercing and effortful. Effective in a tutti, unreliable when exposed.'}
+      {label:'Throat register', pitch:'A4 – B♭4', text:'Weak, slightly stuffy, and can have intonation challenges.'},
+      {label:'Clarion', pitch:'B4 – C6', text:'Bright, lyrical and even. This is where you find a lot of melodic writing.'},
+      {label:'Altissimo', pitch:'C♯6 – G6', text:'Piercing and effortful. Effective in a tutti, but unreliable when exposed.'}
     ],
     characteristics:[
       'Cylindrical bore closed at the reed end, so it overblows at the twelfth, not the octave.',
-      'Registers differ audibly, which is a colour resource rather than a defect.',
+      'Registers differ audibly.',
       'The finest diminuendo in the orchestra: it can fade to genuine silence.',
       'Two instruments in common use, B♭ and A, chosen by key to keep fingerings manageable.'
     ],
