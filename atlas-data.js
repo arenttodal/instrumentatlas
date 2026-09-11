@@ -520,25 +520,25 @@ const INSTRUMENTS = {
     modelCredit:'“Cello Sketchfab” by Limpskin · modified: re-centred and normalised',
     modelSource:'https://skfb.ly/pICFS',
     epithet:'The tenor and bass instrument of the violin family', status:'live',
-    summary:'Has an even lower range than the viola, able to produce a full and rich sound.',
+    summary:'The biggest brother in the violin family. Has an even lower range than the viola, able to produce a full and rich sound.',
     range:{lo:36, hi:81, note:'C2 – A5', transposition:'Non-transposing'},
     timbre:0.35,
     harmonics:10000,
     facts:[['Sounding range','C2 – A5'],['Section size','10','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'C2 – G3', text:'Warm and full. Doubling the basses in octaves here is standard practice.'},
-      {label:'Middle register', pitch:'A3 – D4', text:'The singing range. Counter-melodies live here without crowding the violins.'},
-      {label:'High register', pitch:'E4 – A5', text:'Brighter and lyrical, thin enough to sound like a soloist even in section.'}
+      {label:'Low register', pitch:'C2 – G3', text:'Warm and full, often doubling the basses in octaves.'},
+      {label:'Middle register', pitch:'A3 – D4', text:'The singing range, similar to a human voice, often used for counter melodies.'},
+      {label:'High register', pitch:'E4 – A5', text:'Bright and lyrical, and surprisingly powerful and expressive.'}
     ],
     characteristics:[
-      'Any pitch in range, including glissandi and microtones.',
-      'Sustains indefinitely, with no breathing to write around.',
-      'Fast runs, scales and arpeggios all sit well.',
-      'Double and triple stops available, within the limits of the hand.'
+      'Can play any pitch in range, including microtones and glissandi between notes.',
+      'Plays upright, vs the viola and violin which is played placed on the shoulder.',
+      'Fast runs, scales and arpeggios possible - but slightly more complicated than on the smaller violin.',
+      'Double and triple stops possible (multiple strings played at once).'
     ],
     articulations:['Arco','Pizzicato','Legato','Staccato','Marcato','Con sordino','Glissando'],
     blends:[
-      {id:'horn', label:'Horn in unison', note:'Warmth plus brass body'},
+      {id:'horn', label:'Horn in unison', note:'Two timbres giving a heroic result'},
       {id:'bassoon', label:'Bassoon', note:'Deepens and darkens the line'},
       {id:'clarinet', label:'Clarinet', note:'Adds mellow woodwind roundness'},
       {id:'harp', label:'Pizzicato with harp', note:'Plucked attack, sustained ring'}
@@ -552,7 +552,7 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
-      {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
+      {label:'Pizzicato vs Arco', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
       {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:23', file:'with-horn'}
     ],
     prev:'viola', next:'double-bass'
