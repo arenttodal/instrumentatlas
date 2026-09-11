@@ -357,18 +357,18 @@ const INSTRUMENTS = {
     facts:[['Sounding range','F♯3 – C6'],['Section size','3–6','players'],['Transposition','In B♭ (and C)']],
     registers:[
       {label:'Low register', pitch:'F♯3 – B♭3', text:'Dark, round and a little unfocused. Rarely used for anything prominent.'},
-      {label:'Middle register', pitch:'B3 – G5', text:'Full, brilliant and secure. Fanfares, melodies and everything else.'},
-      {label:'High register', pitch:'A5 – C6', text:'Penetrating and physically demanding. Reliable from good players, but it costs them, so do not park a section up here.'}
+      {label:'Middle register', pitch:'B3 – G5', text:'Full, brilliant and secure. Great for fanfares, melodies and everything else.'},
+      {label:'High register', pitch:'A5 – C6', text:'Penetrating and physically demanding. Reliable from good players, but it takes effort, so use it sparingly.'}
     ],
     characteristics:[
       'Cylindrical bore emphasises odd harmonics, giving the bright, cutting tone.',
-      'Straight mutes, cup mutes and harmon mutes each change the colour completely.',
+      'Straight mutes, cup mutes and harmon mutes each change the colour completely when used.',
       'Double and triple tonguing make rapid repeated notes idiomatic.',
       'Valve combinations run progressively sharp, corrected by slide triggers while playing.'
     ],
     articulations:['Legato','Marcato','Staccato','Double tonguing','Flutter tongue','Rips','Straight mute','Harmon mute'],
     blends:[
-      {id:'trombone', label:'Trombone', note:'Same bright family; a unified brass choir'},
+      {id:'trombone', label:'Trombone', note:'Both cylindrical bore, making them blend well'},
       {id:'oboe', label:'Oboe', note:'Both penetrating; the pairing is sharper than either alone'},
       {id:'viola', label:'Viola', note:'Strings take the edge off the brass'},
       {id:'horn', label:'Horn', note:'Contrast rather than blend: bright over round'}
