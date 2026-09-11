@@ -901,14 +901,14 @@ const INSTRUMENTS = {
     harmonics:16000,
     facts:[['Pitch','Unpitched (tam-tam)'],['Players','1'],['Decay','20–30','seconds']],
     registers:[
-      {label:'Soft strokes', pitch:'Broadband', text:'A shimmer that emerges from nothing. Extraordinary under quiet strings.'},
-      {label:'Full strokes', pitch:'Broadband', text:'Vast, slow and enveloping. It takes seconds to reach full volume.'},
-      {label:'Damped', pitch:'Short', text:'Stopped with the hands, which requires real physical effort on a large instrument.'}
+      {label:'Soft strokes', pitch:'Broadband', text:'Feels like a distant shimmer with rich overtones.'},
+      {label:'Full strokes', pitch:'Broadband', text:'Vast, slow and enveloping sound. Works well for large statements.'},
+      {label:'Damped', pitch:'Short', text:'Stopped with the hands, killing the sustain quickly after impact.'}
     ],
     characteristics:[
       'The sound blooms after the strike rather than starting at full volume.',
-      'Decay runs twenty to thirty seconds and cannot be hurried without damping.',
-      'Effective at both extremes of dynamic and slightly awkward in between.',
+      'Decay runs twenty to thirty seconds on large gongs.',
+      'Effective at both extremes of dynamics, from soft to very loud.',
       'Frequently used for ritual, death and the supernatural, to the point of cliché. Use it knowingly.'
     ],
     articulations:['Struck','Rolled','Damped','Scraped','Water gong'],
