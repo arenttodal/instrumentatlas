@@ -32,7 +32,10 @@ const COLLECTION = {
    Counts are drawn from standard practice and from named scores:
    chamber strings 4-3-3-2-1 … 6-5-4-4-2; symphonic 12-10-8-6-4 … 16-14-12-10-8;
    Classical period = paired winds, 2–4 horns, 2 trumpets, timpani;
-   maximum tier follows Schoenberg's Gurrelieder (20-20-16-16-12 strings, 10 horns). */
+   maximum tier follows Schoenberg's Gurrelieder (20-20-16-16-12 strings, 10 horns),
+   except the violins, which are 18 + 18 by editorial decision: the violin page
+   reads its "Section size" fact off the first and last entries of this row, and
+   it should say 2–36. Change one and you change the other. */
 const TIERS = [
   {id:'quartet',  label:'Quartet / Quintet', tick:'Quartet',  players:'4–5',    era:'Chamber music'},
   {id:'chamber',  label:'Chamber orchestra', tick:'Chamber',  players:'25–40',  era:'Sinfonietta, baroque revival'},
@@ -59,7 +62,7 @@ const FAMILIES = [
     ],
     smallName:'String quartet',
     sizes:{
-      violin:       ['1 + 1','6 + 5','8 + 6','12 + 10','16 + 14','20 + 20'],
+      violin:       ['1 + 1','6 + 5','8 + 6','12 + 10','16 + 14','18 + 18'],
       viola:        [1, 4, 4, 8, 12, 16],
       cello:        [1, 3, 3, 6, 10, 16],
       'double-bass':[0, 1, 2, 4, 8, 12],
@@ -152,10 +155,10 @@ const INSTRUMENTS = {
       {label:'High register', pitch:'B6 – C8', text:'Piercing and unmistakable. Carries over the entire orchestra at full force, and turns shrill and exhausting fast.'}
     ],
     characteristics:[
-      'Sounds an octave above written, so the written part looks deceptively modest.',
+      'Sounds an octave above written.',
       'Intonation is unforgiving, and small errors are enormously audible up here.',
       'Excels at fast runs and trills, doubling flutes an octave up.',
-      'Almost never plays quietly in its top octave; the mechanism resists it.'
+      'Almost never plays quietly in its top octave; due to the nature of the instrument and the breath required to reach the highest notes.'
     ],
     articulations:['Legato','Staccato','Double tonguing','Flutter tongue','Trills','Runs'],
     blends:[
@@ -169,12 +172,12 @@ const INSTRUMENTS = {
       'The bottom octave will not project. If you need that range, write for flute.',
       'Doubling a quiet passage with piccolo does not make it prettier, it makes it a piccolo solo.'
     ],
-    gallery:['wFJCDxcrqsc','GxqZ8CEoujU','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
+    gallery:['5Eqj9G5j1ss','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:12'},
-      {label:'Against the flute', note:'The same figure, an octave apart', dur:'0:16'},
-      {label:'Full force over tutti', note:'Why it is used at climaxes', dur:'0:14'}
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:13', file:'signature-phrase'},
+      {label:'The range', note:'From the lowest note, to the high', dur:'0:09', file:'range'},
+      {label:'Trill', note:'A common effect on the piccolo', dur:'0:06', file:'trill'}
     ],
     prev:'', next:'flute'
   },
@@ -188,15 +191,15 @@ const INSTRUMENTS = {
     harmonics:12000,
     facts:[['Sounding range','C4 – C7'],['Section size','2–4','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'C4 – G4', text:'Breathy and easily buried. Beautiful exposed and soft, useless under a loud texture.'},
+      {label:'Low register', pitch:'C4 – G4', text:'Breathy, warm and easily buried. Beautiful when exposed, but disappears quickly in context.'},
       {label:'Middle register', pitch:'A4 – D6', text:'Rich and full: the workhorse range for melodies and for doubling.'},
-      {label:'High register', pitch:'E6 – C7', text:'Brilliant and penetrating. Cuts through a tutti, tiring over long stretches.'}
+      {label:'High register', pitch:'E6 – C7', text:'Brilliant and penetrating. Cuts through a tutti, but tiring over long stretches.'}
     ],
     characteristics:[
       'Adds more high-end overtones as air pressure increases, though the dynamic contrast is subtler than brass.',
-      'Fast runs and arpeggios are entirely idiomatic. This is what woodwinds are for.',
-      'Monophonic. Harmony has to come from arpeggiation or from a second player.',
-      'Needs rests to breathe. Phrases written without them read as synthetic immediately.'
+      'Fast runs and arpeggios are entirely idiomatic. This is what woodwinds excel at.',
+      'Monophonic. Cannot play multiple notes at once.',
+      'Needs rests to breathe. Phrases written for libraries without rests feel synthetic and unrealistic.'
     ],
     articulations:['Legato','Staccato','Flutter tongue','Trills','Runs','Harmonics'],
     blends:[
@@ -210,10 +213,10 @@ const INSTRUMENTS = {
       'Doubling a soft flute with a trumpet clashes. Group by tone colour, not by range.',
       'Long unbroken lines expose the mockup. Write the breath in.'
     ],
-    gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','GxqZ8CEoujU','P_1N6_O254g','waP1N446Zb0'],
+    gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','5Eqj9G5j1ss','P_1N6_O254g','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:12', file:'register-comparison'},
       {label:'With violins in octaves', note:'The doubling, isolated then in context', dur:'0:14', file:'with-violins'}
     ],
@@ -222,22 +225,22 @@ const INSTRUMENTS = {
 
   oboe:{
     family:'woodwinds', name:'Oboe', latin:'Oboe',
-    epithet:'A nasal and bright tone colour', status:'live',
+    epithet:'A reedy and bright tone colour', status:'live',
     summary:'A double reed woodwind instrument. The expressive middle register is often used both for sad, melancholic themes as well as joyful melodies. It has a very characteristic quality, both good for solo melodies and for doubling other orchestral instruments.',
     range:{lo:58, hi:91, note:'B♭3 – G6', transposition:'Non-transposing'},
     timbre:0.80,
     harmonics:12000,
     facts:[['Sounding range','B♭3 – G6'],['Section size','2–4','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'B♭3 – E4', text:'Thick, heavy and a little coarse. Hard to play softly and difficult to blend.'},
-      {label:'Middle register', pitch:'F4 – D5', text:'The expressive core: reedy, singing and instantly recognisable. Almost every famous oboe solo lives here.'},
-      {label:'High register', pitch:'E5 – G6', text:'Thin and increasingly strained. Effective for a moment of tension, punishing across a phrase.'}
+      {label:'Low register', pitch:'B♭3 – E4', text:'Thick, heavy and a little coarse. Can be difficult to blend well.'},
+      {label:'Middle register', pitch:'F4 – D5', text:'The expressive heart: reedy, singing and instantly recognisable. Most famous oboe themes live around here.'},
+      {label:'High register', pitch:'E5 – G6', text:'Thin and increasingly strained. Effective for a moment of tension, but not the best for longer melodic phrases.'}
     ],
     characteristics:[
-      'Double reed, narrow conical bore: the combination that makes it cut.',
-      'Very low air consumption, so players run out of places to breathe rather than breath.',
-      'Extremely agile: fast runs, trills and wide leaps all sit well.',
-      'Blends poorly by nature, which makes it a soloist more often than a section instrument.'
+      'Double reed, narrow conical bore: a combination that gives it a distinct tone.',
+      'Very low air consumption, so players can play for fairly long stretches compared to brass instruments.',
+      'Extremely agile: fast runs, trills and wide leaps all work well.',
+      'Tends to stick out, making it very well suited as a solo instrument.'
     ],
     articulations:['Legato','Staccato','Trills','Runs','Flutter tongue'],
     blends:[
@@ -252,11 +255,11 @@ const INSTRUMENTS = {
       'Long unbroken lines are a breathing problem in reverse: players need somewhere to exhale.'
     ],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
-    gallery:['r87w1RFT4hg','ki0xu6Gl9Nc','P_1N6_O254g','9aDEq3u5huA','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['r87w1RFT4hg','ki0xu6Gl9Nc','P_1N6_O254g','9aDEq3u5huA','5Eqj9G5j1ss','waP1N446Zb0'],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14', file:'register-comparison'},
-      {label:'Solo over strings', note:'Why it carries', dur:'0:11', file:'over-strings'}
+      {label:'Solo over strings', note:'An example of its lyrical quality', dur:'0:11', file:'over-strings'}
     ],
     prev:'flute', next:'clarinet'
   },
@@ -271,13 +274,13 @@ const INSTRUMENTS = {
     facts:[['Sounding range','D3 – G6'],['Section size','2–4','players'],['Transposition','In B♭ (and A)']],
     registers:[
       {label:'Chalumeau', pitch:'D3 – G4', text:'Dark, hollow and unmistakable. The most distinctive low register in the woodwind section.'},
-      {label:'Throat register', pitch:'A4 – B♭4', text:'Weak, slightly stuffy, and the part section players work hardest to disguise. Avoid exposing it.'},
-      {label:'Clarion', pitch:'B4 – C6', text:'Bright, singing and even. Where most melodic writing belongs.'},
-      {label:'Altissimo', pitch:'C♯6 – G6', text:'Piercing and effortful. Effective in a tutti, unreliable when exposed.'}
+      {label:'Throat register', pitch:'A4 – B♭4', text:'Weak, slightly stuffy, and can have intonation challenges.'},
+      {label:'Clarion', pitch:'B4 – C6', text:'Bright, lyrical and even. This is where you find a lot of melodic writing.'},
+      {label:'Altissimo', pitch:'C♯6 – G6', text:'Piercing and effortful. Effective in a tutti, but unreliable when exposed.'}
     ],
     characteristics:[
       'Cylindrical bore closed at the reed end, so it overblows at the twelfth, not the octave.',
-      'Registers differ audibly, which is a colour resource rather than a defect.',
+      'Registers differ audibly.',
       'The finest diminuendo in the orchestra: it can fade to genuine silence.',
       'Two instruments in common use, B♭ and A, chosen by key to keep fingerings manageable.'
     ],
@@ -293,7 +296,7 @@ const INSTRUMENTS = {
       'Remember the transposition when printing parts: a B♭ instrument, written a tone above sounding.',
       'Rapid register crossings over the break are awkward; give the player somewhere to move.'
     ],
-    gallery:['VGvuUOtHGkk','6exoB7IW8qw','ki0xu6Gl9Nc','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['VGvuUOtHGkk','6exoB7IW8qw','ki0xu6Gl9Nc','b4rfWegZi_M','5Eqj9G5j1ss','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Sustained', note:'Long held tones', dur:'0:06', file:'sustained'},
@@ -305,28 +308,28 @@ const INSTRUMENTS = {
 
   bassoon:{
     family:'woodwinds', name:'Bassoon', latin:'Fagotto',
-    epithet:'Not as penetrating and sharp as its little brother', status:'live',
+    epithet:'The oboe’s bigger brother', status:'live',
     summary:'A tenor and bass instrument, with a double reed mouthpiece like the oboe. The differences between its registers are very clear and pronounced, one of the true characteristics of the bassoon.',
     range:{lo:34, hi:75, note:'B♭1 – E♭5', transposition:'Non-transposing'},
     timbre:0.30,
     harmonics:11000,
     facts:[['Sounding range','B♭1 – E♭5'],['Section size','2–4','players'],['Notation','Bass and tenor clef']],
     registers:[
-      {label:'Low register', pitch:'B♭1 – F2', text:'Thick, heavy and slightly rough. A genuine bass foundation, and it takes some effort to play quietly.'},
-      {label:'Middle register', pitch:'G2 – F4', text:'The characterful range: mysterious, melancholic, faintly comic depending entirely on context. Most solos live here.'},
-      {label:'High register', pitch:'G4 – E♭5', text:'Compressed, lyrical and strained, in a way composers use deliberately. The opening of The Rite of Spring is the famous example.'}
+      {label:'Low register', pitch:'B♭1 – F2', text:'Thick, heavy and slightly rough with a solid bass foundation.'},
+      {label:'Middle register', pitch:'G2 – F4', text:'The characterful range: mysterious, melancholic, faintly comic depending on the context it is used in.'},
+      {label:'High register', pitch:'G4 – E♭5', text:'Compressed, lyrical and strained, but very distinct. The opening of The Rite of Spring is the famous example that most people know.'}
     ],
     characteristics:[
       'Double reed like the oboe, but wider bore and far less projection.',
-      'Registers are markedly different in character, an asset rather than a fault.',
+      'Registers are markedly different in character.',
       'Agile enough for fast passagework despite its size.',
-      'Takes the metallic edge off brass when doubled, which is half of its orchestral use.'
+      'Balances out the metallic edge off brass when they are combined, softening the passages.'
     ],
     articulations:['Legato','Staccato','Trills','Flutter tongue','Runs'],
     blends:[
       {id:'cello', label:'Cello', note:'Woody reinforcement of the low string line'},
       {id:'horn', label:'Horn', note:'Softens the brass attack'},
-      {id:'oboe', label:'Oboe', note:'Both double reeds; the family resemblance is audible'},
+      {id:'oboe', label:'Oboe', note:'A combination that works really well'},
       {id:'clarinet', label:'Clarinet', note:'Warm, covered woodwind chord'}
     ],
     limits:[
@@ -334,10 +337,10 @@ const INSTRUMENTS = {
       'Very high writing is possible but exposed and effortful; use it for effect, not for range.',
       'It cannot compete with brass on volume. If you need weight there, add players, not dynamics.'
     ],
-    gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','5Eqj9G5j1ss','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:11', file:'register-comparison'},
       {label:'With oboe', note:'Two double reeds fusing into a colour neither makes alone', dur:'0:10', file:'with-oboe'}
     ],
@@ -354,18 +357,17 @@ const INSTRUMENTS = {
     facts:[['Sounding range','F♯3 – C6'],['Section size','3–6','players'],['Transposition','In B♭ (and C)']],
     registers:[
       {label:'Low register', pitch:'F♯3 – B♭3', text:'Dark, round and a little unfocused. Rarely used for anything prominent.'},
-      {label:'Middle register', pitch:'B3 – G5', text:'Full, brilliant and secure. Fanfares, melodies and everything else.'},
-      {label:'High register', pitch:'A5 – C6', text:'Penetrating and physically demanding. Reliable from good players, but it costs them, so do not park a section up here.'}
+      {label:'Middle register', pitch:'B3 – G5', text:'Full, brilliant and secure. Great for fanfares, melodies and everything else.'},
+      {label:'High register', pitch:'A5 – C6', text:'Penetrating and physically demanding. Reliable from good players, but it takes effort, so use it sparingly.'}
     ],
     characteristics:[
       'Cylindrical bore emphasises odd harmonics, giving the bright, cutting tone.',
-      'Straight mutes, cup mutes and harmon mutes each change the colour completely.',
-      'Double and triple tonguing make rapid repeated notes idiomatic.',
-      'Valve combinations run progressively sharp, corrected by slide triggers while playing.'
+      'Straight mutes, cup mutes and harmon mutes each change the colour completely when used.',
+      'Double and triple tonguing make rapid repeated notes idiomatic.'
     ],
     articulations:['Legato','Marcato','Staccato','Double tonguing','Flutter tongue','Rips','Straight mute','Harmon mute'],
     blends:[
-      {id:'trombone', label:'Trombone', note:'Same bright family; a unified brass choir'},
+      {id:'trombone', label:'Trombone', note:'Both cylindrical bore, making them blend well'},
       {id:'oboe', label:'Oboe', note:'Both penetrating; the pairing is sharper than either alone'},
       {id:'viola', label:'Viola', note:'Strings take the edge off the brass'},
       {id:'horn', label:'Horn', note:'Contrast rather than blend: bright over round'}
@@ -376,9 +378,9 @@ const INSTRUMENTS = {
       'Remember the transposition: written C sounds B♭.'
     ],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
-    gallery:['bwQumQpug_E','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['bwQumQpug_E','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','5Eqj9G5j1ss','waP1N446Zb0'],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:08', file:'register-comparison'},
       {label:'With trombone', note:'Both cylindrical bore, so it thickens without changing the colour', dur:'0:09', file:'with-trombone'}
     ],
@@ -397,19 +399,19 @@ const INSTRUMENTS = {
     harmonics:8000,
     facts:[['Sounding range','F2 – F5'],['Section size','4–8','players'],['Transposition','In F']],
     registers:[
-      {label:'Low register', pitch:'F2 – C3', text:'Very mellow. Works beautifully for calm passages, weak under pressure.'},
-      {label:'Middle register', pitch:'D3 – C4', text:'Full and singing: the heroic range, and the one to write themes in.'},
+      {label:'Low register', pitch:'F2 – C3', text:'Very mellow. Works beautifully for calm passages.'},
+      {label:'Middle register', pitch:'D3 – C4', text:'Full and singing: the heroic range that most themes are written in.'},
       {label:'High register', pitch:'D4 – F5', text:'Intense and bright, but still round compared to any other brass. Hard to play quietly.'}
     ],
     characteristics:[
-      'Pitch comes from lip tension and air pressure, so high and loud are physically linked.',
+      'Pitch comes from lip tension and air pressure, so high range and loudness are physically linked.',
       'Conical bore gives a mellow, warm tone that sits between brass and woodwind.',
-      'Sustained lines need written breaks. Brass players cannot circular-breathe a phrase.',
-      'Complex fast runs fight the mechanics. Write lines, not passagework.'
+      'Sustained lines need written breaks, so the players can breathe.',
+      'Complex fast runs are challenging to play.'
     ],
     articulations:['Legato','Marcato','Staccato','Stopped','Rips','Flutter tongue'],
     blends:[
-      {id:'cello', label:'Cello in unison', note:'The classic warm-melody pairing'},
+      {id:'cello', label:'Cello in unison', note:'Two timbres giving a heroic result'},
       {id:'clarinet', label:'Woodwinds', note:'Horn glues the woodwind chord together'},
       {id:'viola', label:'Strings', note:'Adds brass richness without brass edge'},
       {id:'bassoon', label:'Bassoon', note:'Takes the metallic edge off the low brass'}
@@ -422,7 +424,7 @@ const INSTRUMENTS = {
     gallery:['n5gUu65Pmrk','b4rfWegZi_M','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Mellow low, singing middle, intense high', dur:'0:27', file:'register-comparison'},
       {label:'With cello in unison', note:'The blend that made the pairing standard', dur:'0:08', file:'with-cello'}
     ],
@@ -431,21 +433,21 @@ const INSTRUMENTS = {
 
   trombone:{
     family:'brass', name:'Trombone', latin:'Trombone',
-    epithet:'Dark and threatening, with a warning feeling to it', status:'live',
+    epithet:'Dark, threatening, and powerful', status:'live',
     summary:'Has a sound that remains homogenous for the entire range, unlike instruments like the clarinet and bassoon. At middle and higher dynamic levels it is heroic, brilliant and mighty, and has the characteristic brass sound.',
     range:{lo:40, hi:74, note:'E2 – D5', transposition:'Non-transposing'},
     timbre:0.66,
     harmonics:8000,
     facts:[['Sounding range','E2 – D5'],['Section size','3–6','players'],['Notation','Bass and tenor clef']],
     registers:[
-      {label:'Low register', pitch:'E2 – B♭2', text:'Dark and threatening at volume, mysterious when soft. The warning register.'},
-      {label:'Middle register', pitch:'B2 – B♭3', text:'Full, noble and even. The heart of the section’s chordal writing.'},
-      {label:'High register', pitch:'B3 – D5', text:'Brilliant and heroic, and increasingly effortful. Bass trombonists live lower; the tenors carry this.'}
+      {label:'Low register', pitch:'E2 – B♭2', text:'Dark, epic and threatening at loud volumes, mysterious and brooding when soft.'},
+      {label:'Middle register', pitch:'B2 – B♭3', text:'Full, majestic and even. The heart of the section’s chordal writing.'},
+      {label:'High register', pitch:'B3 – D5', text:'Brilliant and heroic, but requiring more effort the higher you go.'}
     ],
     characteristics:[
-      'Seven slide positions, continuously variable. The only brass that can play a true glissando.',
+      'Seven slide positions, continuously variable. The only brass that can play a true glissando, sliding between notes.',
       'Tone is unusually homogeneous across the range, unlike clarinet or bassoon.',
-      'Rapid passagework is genuinely difficult, because the slide has to travel.',
+      'Rapid passagework is genuinely difficult, because of how the player uses the slide to reach each note.',
       'Sections usually pair two tenors with one bass trombone.'
     ],
     articulations:['Legato','Marcato','Staccato','Glissando','Flutter tongue','Straight mute','Plunger'],
@@ -461,10 +463,10 @@ const INSTRUMENTS = {
       'Three trombones at full volume will bury a string section without effort.'
     ],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
-    gallery:['6wRKpdM9ra8','6exoB7IW8qw','GxqZ8CEoujU','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
+    gallery:['6wRKpdM9ra8','6exoB7IW8qw','5Eqj9G5j1ss','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
-      {label:'Rips', note:'Quick explanation of an octave rip', dur:'0:05', file:'glissando-and-legato'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
+      {label:'Rips', note:'A common effect on the trombone', dur:'0:05', file:'glissando-and-legato'},
       {label:'Section chord, soft and loud', note:'Showcasing the dynamics of the trombone', dur:'0:11', file:'section-soft-and-loud'}
     ],
     prev:'horn', next:'tuba'
@@ -479,14 +481,14 @@ const INSTRUMENTS = {
     harmonics:7000,
     facts:[['Sounding range','D1 – F4'],['Section size','1–2','players'],['Notation','Bass clef, concert pitch']],
     registers:[
-      {label:'Low register', pitch:'D1 – G1', text:'Enormous and slow to speak. Playable only softly at the very bottom, but it projects further than it sounds close up.'},
-      {label:'Middle register', pitch:'A1 – B♭2', text:'Full, warm and the most used part of the instrument. Genuinely agile here.'},
+      {label:'Low register', pitch:'D1 – G1', text:'Enormous and majestic. Playable only softly at the very bottom, but it projects well.'},
+      {label:'Middle register', pitch:'A1 – B♭2', text:'Full, warm and the most used part of the instrument. The instrument is agile here.'},
       {label:'High register', pitch:'B2 – F4', text:'Focused and almost tenor-like. An underused colour, and effective in solo writing.'}
     ],
     characteristics:[
       'Consumes enormous quantities of air, so phrases need more breathing room than any other brass.',
-      'One player supports an entire brass section, so balance sits on them alone.',
-      'Attacks in the lowest octave take time to speak. Write ahead of the beat if precision matters.',
+      'One player supports an entire brass section.',
+      'Attacks in the lowest octave take time to arrive.',
       'Doubling with double basses and contrabassoon is the standard orchestral bass foundation.'
     ],
     articulations:['Legato','Marcato','Staccato','Flutter tongue','Mute'],
@@ -504,9 +506,9 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','JEi23_uSGNE','8UfpgT9FMAk','j2Hk2SZGrRY','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after an 1855 instrument in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
-      {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:11', file:'low-register-speaking-time'},
-      {label:'Melodic middle register', note:'The part of the instrument nobody writes for', dur:'0:09', file:'melodic-middle-register'}
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
+      {label:'The tuba range', note:'From the lowest note, to the high', dur:'0:11', file:'low-register-speaking-time'},
+      {label:'Melodic middle register', note:'Fragile and longing', dur:'0:09', file:'melodic-middle-register'}
     ],
     prev:'trombone', next:''
   },
@@ -517,25 +519,25 @@ const INSTRUMENTS = {
     modelCredit:'“Cello Sketchfab” by Limpskin · modified: re-centred and normalised',
     modelSource:'https://skfb.ly/pICFS',
     epithet:'The tenor and bass instrument of the violin family', status:'live',
-    summary:'Has an even lower range than the viola, able to produce a full and rich sound.',
+    summary:'The biggest brother in the violin family. Has an even lower range than the viola, able to produce a full and rich sound.',
     range:{lo:36, hi:81, note:'C2 – A5', transposition:'Non-transposing'},
     timbre:0.35,
     harmonics:10000,
     facts:[['Sounding range','C2 – A5'],['Section size','10','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'C2 – G3', text:'Warm and full. Doubling the basses in octaves here is standard practice.'},
-      {label:'Middle register', pitch:'A3 – D4', text:'The singing range. Counter-melodies live here without crowding the violins.'},
-      {label:'High register', pitch:'E4 – A5', text:'Brighter and lyrical, thin enough to sound like a soloist even in section.'}
+      {label:'Low register', pitch:'C2 – G3', text:'Warm and full, often doubling the basses in octaves.'},
+      {label:'Middle register', pitch:'A3 – D4', text:'The singing range, similar to a human voice, often used for counter melodies.'},
+      {label:'High register', pitch:'E4 – A5', text:'Bright and lyrical, and surprisingly powerful and expressive.'}
     ],
     characteristics:[
-      'Any pitch in range, including glissandi and microtones.',
-      'Sustains indefinitely, with no breathing to write around.',
-      'Fast runs, scales and arpeggios all sit well.',
-      'Double and triple stops available, within the limits of the hand.'
+      'Can play any pitch in range, including microtones and glissandi between notes.',
+      'Plays upright, vs the viola and violin which is played placed on the shoulder.',
+      'Fast runs, scales and arpeggios possible - but slightly more complicated than on the smaller violin.',
+      'Double and triple stops possible (multiple strings played at once).'
     ],
     articulations:['Arco','Pizzicato','Legato','Staccato','Marcato','Con sordino','Glissando'],
     blends:[
-      {id:'horn', label:'Horn in unison', note:'Warmth plus brass body'},
+      {id:'horn', label:'Horn in unison', note:'Two timbres giving a heroic result'},
       {id:'bassoon', label:'Bassoon', note:'Deepens and darkens the line'},
       {id:'clarinet', label:'Clarinet', note:'Adds mellow woodwind roundness'},
       {id:'harp', label:'Pizzicato with harp', note:'Plucked attack, sustained ring'}
@@ -548,8 +550,8 @@ const INSTRUMENTS = {
     gallery:['clK9rM9JoIs','P_1N6_O254g','GrrvAHhWKIw','sHsFIv8VA7w','a9UApyClFKA','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:23', file:'signature-phrase'},
-      {label:'Arco vs pizzicato', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
+      {label:'Pizzicato vs Arco', note:'The same figure, both articulations', dur:'0:20', file:'pizzicato-vs-arco'},
       {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:23', file:'with-horn'}
     ],
     prev:'viola', next:'double-bass'
@@ -560,22 +562,23 @@ const INSTRUMENTS = {
     model:'violin',
     modelCredit:'“Violin Texturing” by ilushandro · modified: decimated and re-materialled',
     modelSource:'https://skfb.ly/oAVFz',
-    epithet:'More of them than any other instrument in the ensemble', status:'live',
-    summary:'The smallest and highest pitched instrument of the string family. There can be up to 30 violins in an orchestra. The four strings are tuned in GDAE.',
+    epithet:'The most numerous instrument in the ensemble', status:'live',
+    summary:'The smallest and highest pitched instrument in the string family, with up to over 30 violins in an orchestra. Four strings tuned in GDAE.',
     range:{lo:55, hi:100, note:'G3 – E7', transposition:'Non-transposing'},
     timbre:0.78,
     harmonics:13000,
     facts:[['Sounding range','G3 – E7'],['Section size','16 + 14','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'G3 – D4', text:'The G string: dark, thick and surprisingly weak. Soloists love it; in section it disappears under almost anything.'},
-      {label:'Middle register', pitch:'E4 – D5', text:'Warm and even. Where most melodic writing sits, and where a section blends into one voice rather than many.'},
-      {label:'High register', pitch:'E5 – E7', text:'Brilliant and soaring, and above roughly B6 increasingly thin and strained. Sixteen violins in unison up here is the loudest sound in the string section.'}
+      {label:'Low register', pitch:'G3 – D4', text:'Dark and thick tone, not a lot of penetrative energy compared to the other registers.'},
+      {label:'Middle register', pitch:'E4 – D5', text:'Warm and even, and where most melodic writing sits.'},
+      {label:'High register', pitch:'E5 – E7', text:'Brilliant and soaring - getting increasingly thin and strained above B6. Tougher to play the higher you go due to the closeness of the notes on the fingerboard.'}
     ],
     characteristics:[
-      'Divided into firsts and seconds, which can play in unison for weight or split for harmony.',
-      'Four strings tuned in fifths, G, D, A and E, each with an audibly different character.',
-      'Fast passagework, leaps and string crossings are all idiomatic.',
-      'Divisi splits a section into further parts, at the cost of thinning each one.'
+      'Divided into firsts and seconds, which can play in unison - octaves, or separate voices entirely.',
+      'Four strings, tuned GDAE.',
+      'Can play anything from fast runs to soaring lines.',
+      'Cannot play conventional chords, except double and triple stops (playing multiple strings at once).',
+      'Divisi splits a section into further parts, causing more fragmented, thinner ensembles.'
     ],
     articulations:['Arco','Pizzicato','Legato','Spiccato','Staccato','Tremolo','Sul ponticello','Harmonics','Con sordino'],
     blends:[
@@ -592,9 +595,9 @@ const INSTRUMENTS = {
     gallery:['6exoB7IW8qw','9aDEq3u5huA','a9UApyClFKA','GrrvAHhWKIw','sHsFIv8VA7w','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
-      {label:'String by string', note:'The same figure on G, D, A and E', dur:'0:15', file:'string-by-string'},
-      {label:'Section vs solo', note:'One player, then sixteen', dur:'0:09', file:'section-vs-solo'}
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
+      {label:'The range', note:'A melody line showing the vibrant range of the instrument', dur:'0:15', file:'string-by-string'},
+      {label:'Solo vs Section', note:'One player, then the full section', dur:'0:09', file:'section-vs-solo'}
     ],
     prev:'', next:'viola'
   },
@@ -610,19 +613,19 @@ const INSTRUMENTS = {
     harmonics:11000,
     facts:[['Sounding range','C3 – E6'],['Section size','12','players'],['Notation','Alto clef']],
     registers:[
-      {label:'Low register', pitch:'C3 – G3', text:'The C string. Dark, reedy and slightly rough: the sound most people mean when they say "viola".'},
-      {label:'Middle register', pitch:'A3 – D5', text:'Warm and covered. Perfect for inner harmony, which is where it spends most of its life.'},
-      {label:'High register', pitch:'E5 – E6', text:'Intense and a little strained, in a way that reads as expressive rather than weak. Worth using deliberately.'}
+      {label:'Low register', pitch:'C3 – G3', text:'The C string - dark, reedy and slightly rough. Adds a deeper register than the violin.'},
+      {label:'Middle register', pitch:'A3 – D5', text:'Warm and rich, perfect for inner harmonies gluing chords together.'},
+      {label:'High register', pitch:'E5 – E6', text:'Intense and expressive. Rounder and warmer tone than the violin.'}
     ],
     characteristics:[
       'Tuned C, G, D, A, a fifth below the violin.',
-      'Written in alto clef, moving to treble for high passages.',
-      'Same techniques as the violin, marginally slower to speak.',
-      'Blends with almost everything, which is why it is so often used as glue.'
+      'Written in alto clef, moving to treble for higher passages.',
+      'Blends well with almost anything, and is often used as a glue.',
+      'Often the recipient of countless jokes from violinists.'
     ],
     articulations:['Arco','Pizzicato','Legato','Spiccato','Staccato','Tremolo','Harmonics','Con sordino'],
     blends:[
-      {id:'clarinet', label:'Clarinet', note:'Two covered timbres that fuse completely'},
+      {id:'clarinet', label:'Clarinet', note:'The two timbres match really well'},
       {id:'horn', label:'Horn', note:'Adds body to a mid-register line'},
       {id:'cello', label:'Cellos in octaves', note:'The standard warm middle-and-low pairing'},
       {id:'trumpet', label:'Trumpet', note:'Bright over dark; the viola takes the edge off'}
@@ -635,7 +638,7 @@ const INSTRUMENTS = {
     gallery:['zWn_7R4B-aI','6exoB7IW8qw','GrrvAHhWKIw','9aDEq3u5huA','sHsFIv8VA7w','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:26', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
       {label:'Against the violin', note:'The same line on both, back to back', dur:'0:10', file:'against-the-violin'},
       {label:'With clarinet', note:'Where the two timbres become one', dur:'0:10', file:'with-clarinet'}
     ],
@@ -651,15 +654,15 @@ const INSTRUMENTS = {
     harmonics:7000,
     facts:[['Sounding range','E1 – G4'],['Section size','8','players'],['Transposition','Octave below written']],
     registers:[
-      {label:'Low register', pitch:'E1 – A1', text:'Felt more than heard. Pitch definition is poor down here, which is why the cello octave above matters so much.'},
-      {label:'Middle register', pitch:'B1 – D3', text:'The working range. Dark, woody and clear enough to carry an actual line.'},
-      {label:'High register', pitch:'E3 – G4', text:'Thin and strained, and unmistakably expressive. A solo bass up here sounds like nothing else in the orchestra.'}
+      {label:'Low register', pitch:'E1 – A1', text:'Felt more than heard. Pitch definition poorer in the lowest register, but carries tremendous weight and “oomph”. The cello an octave above often reinforces the pitch and gives a big result.'},
+      {label:'Middle register', pitch:'B1 – D3', text:'The working range. Dark, woody and clear enough to carry melodic lines.'},
+      {label:'High register', pitch:'E3 – G4', text:'Thin and strained, but unmistakably expressive. Not as common, but sounds like nothing else in the orchestra when pulled off.'}
     ],
     characteristics:[
-      'Tuned in fourths, E, A, D and G, unlike the rest of the family.',
-      'Many instruments have a low C extension, reaching a fourth below the open E.',
-      'Slow to speak: attacks need time, and fast passagework muddies quickly.',
-      'Pizzicato is enormous and decays slowly, which is half of its use in film scoring.'
+      'Tuned in fourths. E, A, D and G.',
+      'Many instruments have a low C extension, reaching below the open E.',
+      'Slower and bigger, moves like a giant, so ultra fast passageworks quickly gets muddy.',
+      'Pizzicato is large and decays slowly, a common usage.'
     ],
     articulations:['Arco','Pizzicato','Legato','Staccato','Marcato','Tremolo','Harmonics','Con sordino'],
     blends:[
@@ -676,9 +679,9 @@ const INSTRUMENTS = {
     gallery:['clK9rM9JoIs','a9UApyClFKA','ghkljW0ZmJU','sHsFIv8VA7w','hvPlV56VtFs','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:25', file:'signature-phrase'},
-      {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
-      {label:'With cello in octaves', note:'Why the pairing is standard', dur:'0:10', file:'with-cello-octaves'}
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
+      {label:'Pizzicato vs Arco', note:'Plucked, then sustained', dur:'0:11', file:'pizzicato-vs-arco'},
+      {label:'With cello in octaves', note:'A very common and effective pairing', dur:'0:10', file:'with-cello-octaves'}
     ],
     prev:'cello', next:'harp'
   },
@@ -692,9 +695,9 @@ const INSTRUMENTS = {
     harmonics:14000,
     facts:[['Sounding range','C1 – G7'],['Section size','1–2','players'],['Pedals','7 · three positions']],
     registers:[
-      {label:'Low register', pitch:'C1 – B2', text:'Wire strings, long decay, considerable weight. Sparse writing here reads as enormous.'},
-      {label:'Middle register', pitch:'C3 – B5', text:'Gut strings, warm and singing. Where glissandi and arpeggiated figures live.'},
-      {label:'High register', pitch:'C6 – G7', text:'Bright, short and bell-like. Cuts through a full orchestra at surprisingly low dynamics.'}
+      {label:'Low register', pitch:'C1 – B2', text:'Wire strings, long decay, with considerable weight. Effective for sparse writing.'},
+      {label:'Middle register', pitch:'C3 – B5', text:'Gut strings, warm and lyrical. Where glissandi and arpeggiated figures usually live.'},
+      {label:'High register', pitch:'C6 – G7', text:'Bright, short and bell-like with a quick decay. Cuts through a full orchestra at surprisingly low dynamics, but does not have a lot of sustain or weight.'}
     ],
     characteristics:[
       'Each of the seven pedals sets one note name to flat, natural or sharp across all octaves.',
@@ -717,7 +720,7 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','6exoB7IW8qw','fEGNNuEM3Fc','sHsFIv8VA7w','GrrvAHhWKIw','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:15', file:'signature-phrase'},
       {label:'Glissando', note:'A sweep across the strings', dur:'0:08', file:'glissando'},
       {label:'Range', note:'Low to high across the instrument', dur:'0:08', file:'range'}
     ],
@@ -737,15 +740,15 @@ const INSTRUMENTS = {
     harmonics:6000,
     facts:[['Range','D2 – A3'],['Drums','4','typical'],['Tuning','Pedal, during play']],
     registers:[
-      {label:'Large drums', pitch:'D2 – A2', text:'Deep, booming and slow to decay. Rolls here feel like weather rather than rhythm.'},
+      {label:'Large drums', pitch:'D2 – A2', text:'Deep, booming and slow to decay. Rolls here are thunderous and powerful, but lacking pitch definition.'},
       {label:'Medium drums', pitch:'B2 – E3', text:'The working range. Clear pitch, strong attack, unmistakably orchestral.'},
       {label:'Small drum', pitch:'F3 – A3', text:'Tight and articulate, closer to a tuned tom. Good for rhythmic detail.'}
     ],
     characteristics:[
       'Pedal tuning means pitch can change mid-piece, and glissandi are possible.',
       'Mallet choice changes everything: felt for warmth, wood for attack.',
-      'Rolls sustain indefinitely and crescendo further than almost anything else in the orchestra.',
-      'Reinforces the harmonic bass, so the note choice matters as much as the rhythm.'
+      'Rolls can sustain indefinitely and are very effective for slow crescendos and swells.',
+      'Reinforces the harmonic bass, doubling as both rhythmic and harmonic foundation.'
     ],
     articulations:['Single strokes','Roll','Muffled','Glissando','Wood mallets','Rim'],
     blends:[
@@ -762,7 +765,7 @@ const INSTRUMENTS = {
     gallery:['HP5xhyPn58U','ki0xu6Gl9Nc','8UfpgT9FMAk','pGdtkUiKaA8','ghkljW0ZmJU','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:14', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:14', file:'signature-phrase'},
       {label:'Phrase', note:'A short rhythmic figure', dur:'0:07', file:'phrase'},
       {label:'Roll', note:'A sustained roll', dur:'0:04', file:'roll'}
     ],
@@ -778,15 +781,15 @@ const INSTRUMENTS = {
     harmonics:18000,
     facts:[['Pitch','Unpitched'],['Types','Crash, suspended, hi-hat'],['Players','1–2']],
     registers:[
-      {label:'Crash cymbals', pitch:'Broadband', text:'Two plates struck together. Instant, huge and impossible to take back.'},
-      {label:'Suspended cymbal', pitch:'Broadband', text:'Struck or rolled with mallets. A roll from silence to a crash is one of the great orchestral crescendos.'},
+      {label:'Crash cymbals', pitch:'Broadband', text:'Two plates struck together. Instant, huge and extremely powerful.'},
+      {label:'Suspended cymbal', pitch:'Broadband', text:'Struck or rolled with mallets. Can easily go from quiet to massive crescendos.'},
       {label:'Choked', pitch:'Short', text:'Damped immediately against the body for a hard stop.'}
     ],
     characteristics:[
       'Unpitched but not neutral: size and alloy change the colour considerably.',
-      'A suspended roll can crescendo over many bars and covers an entire orchestra at its peak.',
-      'Decay is long and cannot be shortened without choking the instrument.',
-      'A single player usually covers crash and suspended, so simultaneous parts need two.'
+      'A suspended roll can crescendo over many bars and covers an entire orchestra in terms of power at its peak.',
+      'Decay is long and cannot be shortened without choking the cymbal.',
+      'A single player usually covers crash and suspended, so simultaneous parts need multiple players.'
     ],
     articulations:['Crash','Suspended roll','Struck with mallets','Choked','Scraped','Sizzle'],
     blends:[
@@ -817,15 +820,15 @@ const INSTRUMENTS = {
     harmonics:15000,
     facts:[['Pitch','Unpitched'],['Players','1'],['Snares','On or off']],
     registers:[
-      {label:'Snares on', pitch:'Bright', text:'The default. Sharp, rattling, and audible at almost any dynamic.'},
-      {label:'Snares off', pitch:'Dry', text:'Becomes a tenor drum, darker and more archaic. Worth specifying deliberately.'},
-      {label:'Rim and rimshot', pitch:'Sharp', text:'A crack rather than a stroke. Extremely loud relative to effort.'}
+      {label:'Snares on', pitch:'Bright', text:'The default sound people think of. Sharp, rattling, and audible at almost any dynamic.'},
+      {label:'Snares off', pitch:'Dry', text:'Becomes a tenor drum, darker, more dull and more archaic.'},
+      {label:'Rim and rimshot', pitch:'Sharp', text:'A more woody crack rather than a crisp snare shot.'}
     ],
     characteristics:[
-      'Wire snares under the bottom head produce the buzz that defines it.',
-      'The roll is a controlled buzz, not measured single strokes, and can sustain indefinitely.',
+      'Wire snares under the bottom head produce the buzzy rattle sound that it’s known for.',
+      'Can be used for defined rhythmic patterns, or accents.',
       'Enormous dynamic range, from barely audible to painfully loud.',
-      'Ravel’s Boléro is a single snare pattern for fifteen minutes, which tells you how much the instrument can carry.'
+      'Ravel’s Boléro is a single snare pattern for fifteen minutes, one of the most iconic uses.'
     ],
     articulations:['Single strokes','Roll','Flam','Drag','Rimshot','Brushes','Snares off'],
     blends:[
@@ -839,7 +842,7 @@ const INSTRUMENTS = {
       'A roll under a quiet string passage will dominate unless carefully controlled.',
       'Specify snares on or off. The difference is large and players will ask.'
     ],
-    gallery:['GxqZ8CEoujU','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
+    gallery:['5Eqj9G5j1ss','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Snare phrase', note:'A short well known rhythmic motif', dur:'0:06', file:'signature-phrase'},
@@ -857,15 +860,15 @@ const INSTRUMENTS = {
     harmonics:8000,
     facts:[['Pitch','Unpitched'],['Drums','1','typical'],['Players','1']],
     registers:[
-      {label:'Soft strokes', pitch:'Low', text:'Distant thunder. Almost subliminal under a quiet texture, and unnerving.'},
-      {label:'Full strokes', pitch:'Low', text:'The weight under a tutti. Adds size without adding anything audible in the mid range.'},
-      {label:'Roll', pitch:'Low', text:'Two mallets, sustained. A slow crescendo here reads as approaching catastrophe.'}
+      {label:'Soft strokes', pitch:'Low', text:'Distant thunder. Almost subliminal under a quiet texture, but a massive sound. The softer the drum is hit, the bigger it sounds.'},
+      {label:'Full strokes', pitch:'Low', text:'The weight under a tutti. Adds size to big statements and accents.'},
+      {label:'Roll', pitch:'Low', text:'Two mallets, sustained. A slow crescendo is a common way to swell into new sections and climaxes.'}
     ],
     characteristics:[
       'Enormous low-frequency energy with very little pitch definition.',
-      'Decay is long, so a damped stroke and an open one are different instruments in effect.',
-      'One instrument covers the entire orchestra, so balance is entirely in the player’s hands.',
-      'Struck near the edge for a drier sound, near the centre for maximum depth.'
+      'Decay is long and slow, so it takes a lot of space.',
+      'One instrument can easily be heard across the entire orchestra.',
+      'Struck near the edge for a drier sound, near the centre for more depth.'
     ],
     articulations:['Single strokes','Roll','Damped','Two-mallet roll','Struck with timpani mallets'],
     blends:[
@@ -897,14 +900,14 @@ const INSTRUMENTS = {
     harmonics:16000,
     facts:[['Pitch','Unpitched (tam-tam)'],['Players','1'],['Decay','20–30','seconds']],
     registers:[
-      {label:'Soft strokes', pitch:'Broadband', text:'A shimmer that emerges from nothing. Extraordinary under quiet strings.'},
-      {label:'Full strokes', pitch:'Broadband', text:'Vast, slow and enveloping. It takes seconds to reach full volume.'},
-      {label:'Damped', pitch:'Short', text:'Stopped with the hands, which requires real physical effort on a large instrument.'}
+      {label:'Soft strokes', pitch:'Broadband', text:'Feels like a distant shimmer with rich overtones.'},
+      {label:'Full strokes', pitch:'Broadband', text:'Vast, slow and enveloping sound. Works well for large statements.'},
+      {label:'Damped', pitch:'Short', text:'Stopped with the hands, killing the sustain quickly after impact.'}
     ],
     characteristics:[
       'The sound blooms after the strike rather than starting at full volume.',
-      'Decay runs twenty to thirty seconds and cannot be hurried without damping.',
-      'Effective at both extremes of dynamic and slightly awkward in between.',
+      'Decay runs twenty to thirty seconds on large gongs.',
+      'Effective at both extremes of dynamics, from soft to very loud.',
       'Frequently used for ritual, death and the supernatural, to the point of cliché. Use it knowingly.'
     ],
     articulations:['Struck','Rolled','Damped','Scraped','Water gong'],
@@ -936,15 +939,15 @@ const INSTRUMENTS = {
     harmonics:12000,
     facts:[['Sounding range','C4 – C8'],['Players','1'],['Transposition','Octave above written']],
     registers:[
-      {label:'Low register', pitch:'C4 – B4', text:'Soft and slightly dull. The least useful part of the instrument.'},
-      {label:'Middle register', pitch:'C5 – B6', text:'The characteristic bell-like shimmer. Everything memorable is written here.'},
-      {label:'High register', pitch:'C7 – C8', text:'Delicate, glassy and very quiet. Beautiful, and easily lost.'}
+      {label:'Low register', pitch:'C4 – B4', text:'Soft and slightly dull, the least used register of the instrument.'},
+      {label:'Middle register', pitch:'C5 – B6', text:'The characteristic bell-like shimmer that it is famous for.'},
+      {label:'High register', pitch:'C7 – C8', text:'Delicate, glassy and very quiet. Less defined.'}
     ],
     characteristics:[
       'Keyboard-operated, so chords, runs and two-hand writing are all straightforward.',
-      'Very quiet. It needs a thin texture or careful orchestration to be heard at all.',
-      'Notated an octave below sounding, like the piccolo in reverse.',
-      'Frequently doubled with harp or glockenspiel to give it enough presence to register.'
+      'Very quiet and delicate.',
+      'Notated an octave below sounding, the opposite of the piccolo.',
+      'Frequently doubled with harp or glockenspiel to give presence.'
     ],
     articulations:['Legato','Staccato','Arpeggios','Trills','Damper pedal'],
     blends:[
@@ -961,7 +964,7 @@ const INSTRUMENTS = {
     gallery:['gumy04TFPBk','qsCZP3wdF4w','2EsNGS9vYe8','YB_PTA4dGws','clK9rM9JoIs','j2Hk2SZGrRY'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'Same eight bars as every instrument in the atlas', dur:'0:15', file:'signature-phrase'},
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:15', file:'signature-phrase'},
       {label:'Phrase', note:'A short melodic line', dur:'0:13', file:'phrase'},
       {label:'Run', note:'A fast run', dur:'0:06', file:'run'}
     ],
@@ -1052,7 +1055,7 @@ const GALLERY = [
   {v:'j2Hk2SZGrRY', title:'Mahler, Symphony No. 8, "Symphony of a Thousand"', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'What the Maximum tier on the ensemble slider actually looks like', chan:'Berliner Philharmoniker'},
   {v:'GrrvAHhWKIw', title:'Mahler, Symphony No. 9', perf:'Berliner Philharmoniker · Kirill Petrenko', why:'Late-Romantic orchestration at its most transparent', chan:'Berliner Philharmoniker'},
   {v:'waP1N446Zb0', title:'Britten, The Young Person’s Guide to the Orchestra', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'Every family and most of these instruments, introduced one at a time and then fugued together', chan:'Berliner Philharmoniker'},
-  {v:'GxqZ8CEoujU', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'},
+  {v:'5Eqj9G5j1ss', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'},
   {v:'ki0xu6Gl9Nc', title:'Prokofiev, Peter and the Wolf (with score)', perf:'Vancouver Symphony Orchestra · Bramwell Tovey', why:'Every solo instrument given a character, with the score on screen as it plays', chan:'Concert upload'},
   {v:'6exoB7IW8qw', title:'Rimsky-Korsakov, Scheherazade', perf:'hr-Sinfonieorchester · Alain Altinoglu', why:'The concertmaster returns as a character, and almost every principal gets a solo', chan:'hr-Sinfonieorchester'},
   {v:'ghkljW0ZmJU', title:'Stravinsky, The Rite of Spring', perf:'London Symphony Orchestra · Sir Simon Rattle', why:'Opens on a bassoon at the very top of its range, and never stops rethinking the orchestra', chan:'London Symphony Orchestra'},
@@ -1064,7 +1067,6 @@ const GALLERY = [
   {v:'no6vSquaeIQ', title:'Debussy, Prélude à l’après-midi d’un faune', perf:'Minnesota Orchestra · Thomas Søndergård', why:'The flute solo that begins modern orchestration', chan:'Minnesota Orchestra'},
   {v:'8NVnPEsT__Y', title:'Ibert, Flute Concerto', perf:'hr-Sinfonieorchester · Clara Andrada de la Calle · Jaime Martín', why:'The flute as a soloist rather than a colour, at full stretch', chan:'hr-Sinfonieorchester'},
   {v:'r87w1RFT4hg', title:'Bacri, Notturno for oboe and string orchestra', perf:'hr-Sinfonieorchester · François Leleux', why:'An oboe carrying a whole movement over strings, filmed close', chan:'hr-Sinfonieorchester'},
-  {v:'wFJCDxcrqsc', title:'Sousa, The Stars and Stripes Forever', perf:'West Point Band, five piccolos', why:'The piccolo obbligato everyone knows, played by a whole row of them', chan:'West Point Band'},
   {v:'zWn_7R4B-aI', title:'Berlioz, Harold en Italie', perf:'Wolfram Christ, viola · Berliner Philharmoniker · Lorin Maazel', why:'A symphony with a solo viola running through it, which almost nothing else does', chan:'Concert upload'},
   {v:'bwQumQpug_E', title:'Mahler, Symphony No. 5, the opening trumpet solo', perf:'Gábor Tarkövi · Berliner Philharmoniker', why:'One player alone, setting up seventy minutes of music', chan:'Concert upload'},
   {v:'n5gUu65Pmrk', title:'Tchaikovsky, Symphony No. 5, the horn solo', perf:'Marc Gruber · Frankfurt Radio Symphony', why:'Filmed on the player: what the horn’s middle register is for', chan:'hr-Sinfonieorchester'},
