@@ -482,14 +482,14 @@ const INSTRUMENTS = {
     harmonics:7000,
     facts:[['Sounding range','D1 – F4'],['Section size','1–2','players'],['Notation','Bass clef, concert pitch']],
     registers:[
-      {label:'Low register', pitch:'D1 – G1', text:'Enormous and slow to speak. Playable only softly at the very bottom, but it projects further than it sounds close up.'},
-      {label:'Middle register', pitch:'A1 – B♭2', text:'Full, warm and the most used part of the instrument. Genuinely agile here.'},
+      {label:'Low register', pitch:'D1 – G1', text:'Enormous and majestic. Playable only softly at the very bottom, but it projects well.'},
+      {label:'Middle register', pitch:'A1 – B♭2', text:'Full, warm and the most used part of the instrument. The instrument is agile here.'},
       {label:'High register', pitch:'B2 – F4', text:'Focused and almost tenor-like. An underused colour, and effective in solo writing.'}
     ],
     characteristics:[
       'Consumes enormous quantities of air, so phrases need more breathing room than any other brass.',
-      'One player supports an entire brass section, so balance sits on them alone.',
-      'Attacks in the lowest octave take time to speak. Write ahead of the beat if precision matters.',
+      'One player supports an entire brass section.',
+      'Attacks in the lowest octave take time to arrive.',
       'Doubling with double basses and contrabassoon is the standard orchestral bass foundation.'
     ],
     articulations:['Legato','Marcato','Staccato','Flutter tongue','Mute'],
