@@ -434,21 +434,21 @@ const INSTRUMENTS = {
 
   trombone:{
     family:'brass', name:'Trombone', latin:'Trombone',
-    epithet:'Dark and threatening, with a warning feeling to it', status:'live',
+    epithet:'Dark, threatening, and powerful', status:'live',
     summary:'Has a sound that remains homogenous for the entire range, unlike instruments like the clarinet and bassoon. At middle and higher dynamic levels it is heroic, brilliant and mighty, and has the characteristic brass sound.',
     range:{lo:40, hi:74, note:'E2 – D5', transposition:'Non-transposing'},
     timbre:0.66,
     harmonics:8000,
     facts:[['Sounding range','E2 – D5'],['Section size','3–6','players'],['Notation','Bass and tenor clef']],
     registers:[
-      {label:'Low register', pitch:'E2 – B♭2', text:'Dark and threatening at volume, mysterious when soft. The warning register.'},
-      {label:'Middle register', pitch:'B2 – B♭3', text:'Full, noble and even. The heart of the section’s chordal writing.'},
-      {label:'High register', pitch:'B3 – D5', text:'Brilliant and heroic, and increasingly effortful. Bass trombonists live lower; the tenors carry this.'}
+      {label:'Low register', pitch:'E2 – B♭2', text:'Dark, epic and threatening at loud volumes, mysterious and brooding when soft.'},
+      {label:'Middle register', pitch:'B2 – B♭3', text:'Full, majestic and even. The heart of the section’s chordal writing.'},
+      {label:'High register', pitch:'B3 – D5', text:'Brilliant and heroic, but requiring more effort the higher you go.'}
     ],
     characteristics:[
-      'Seven slide positions, continuously variable. The only brass that can play a true glissando.',
+      'Seven slide positions, continuously variable. The only brass that can play a true glissando, sliding between notes.',
       'Tone is unusually homogeneous across the range, unlike clarinet or bassoon.',
-      'Rapid passagework is genuinely difficult, because the slide has to travel.',
+      'Rapid passagework is genuinely difficult, because of how the player uses the slide to reach each note.',
       'Sections usually pair two tenors with one bass trombone.'
     ],
     articulations:['Legato','Marcato','Staccato','Glissando','Flutter tongue','Straight mute','Plunger'],
@@ -467,7 +467,7 @@ const INSTRUMENTS = {
     gallery:['6wRKpdM9ra8','6exoB7IW8qw','5Eqj9G5j1ss','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
-      {label:'Rips', note:'Quick explanation of an octave rip', dur:'0:05', file:'glissando-and-legato'},
+      {label:'Rips', note:'A common effect on the trombone', dur:'0:05', file:'glissando-and-legato'},
       {label:'Section chord, soft and loud', note:'Showcasing the dynamics of the trombone', dur:'0:11', file:'section-soft-and-loud'}
     ],
     prev:'horn', next:'tuba'
