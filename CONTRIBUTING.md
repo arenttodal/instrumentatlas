@@ -35,7 +35,7 @@ Pages redeploys in ~20 seconds.
 | 3D models | 8 `.glb`. **Only the cello is offered on the site**, via `MODELS_LIVE` in `atlas.js`; the rest are in the viewer only |
 | Model attribution | cello, horn, trumpet and violin have real credits. viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" and are switched off |
 | Studio | Theme 1 only, 3 tracks, 7 renders |
-| Instrument audio | 19 of 20. Only the piccolo is silent, and shows the placeholder line. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
+| Instrument audio | **20 of 20**, 54 clips. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
 | Plate artwork | all 20 converted engravings, credited to The Met (CC0) |
 | Gallery | 31 videos, six per instrument except piccolo, which has five. Ids came from search results and were never opened. `tools/gallery-check.py` catches removed videos but **not** ones whose owner has disabled embedding, which is how the Sousa piccolo entry and the old Boléro got through: only loading each tile in a browser finds those |

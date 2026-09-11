@@ -175,9 +175,9 @@ const INSTRUMENTS = {
     gallery:['5Eqj9G5j1ss','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
-      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:12'},
-      {label:'Against the flute', note:'The same figure, an octave apart', dur:'0:16'},
-      {label:'Full force over tutti', note:'Why it is used at climaxes', dur:'0:14'}
+      {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:13', file:'signature-phrase'},
+      {label:'The range', note:'From the lowest note, to the high', dur:'0:09', file:'range'},
+      {label:'Trill', note:'A common effect on the piccolo', dur:'0:06', file:'trill'}
     ],
     prev:'', next:'flute'
   },
