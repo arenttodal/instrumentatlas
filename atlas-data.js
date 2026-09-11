@@ -821,15 +821,15 @@ const INSTRUMENTS = {
     harmonics:15000,
     facts:[['Pitch','Unpitched'],['Players','1'],['Snares','On or off']],
     registers:[
-      {label:'Snares on', pitch:'Bright', text:'The default. Sharp, rattling, and audible at almost any dynamic.'},
-      {label:'Snares off', pitch:'Dry', text:'Becomes a tenor drum, darker and more archaic. Worth specifying deliberately.'},
-      {label:'Rim and rimshot', pitch:'Sharp', text:'A crack rather than a stroke. Extremely loud relative to effort.'}
+      {label:'Snares on', pitch:'Bright', text:'The default sound people think of. Sharp, rattling, and audible at almost any dynamic.'},
+      {label:'Snares off', pitch:'Dry', text:'Becomes a tenor drum, darker, more dull and more archaic.'},
+      {label:'Rim and rimshot', pitch:'Sharp', text:'A more woody crack rather than a crisp snare shot.'}
     ],
     characteristics:[
-      'Wire snares under the bottom head produce the buzz that defines it.',
-      'The roll is a controlled buzz, not measured single strokes, and can sustain indefinitely.',
+      'Wire snares under the bottom head produce the buzzy rattle sound that it’s known for.',
+      'Can be used for defined rhythmic patterns, or accents.',
       'Enormous dynamic range, from barely audible to painfully loud.',
-      'Ravel’s Boléro is a single snare pattern for fifteen minutes, which tells you how much the instrument can carry.'
+      'Ravel’s Boléro is a single snare pattern for fifteen minutes, one of the most iconic uses.'
     ],
     articulations:['Single strokes','Roll','Flam','Drag','Rimshot','Brushes','Snares off'],
     blends:[
