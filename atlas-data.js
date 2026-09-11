@@ -655,15 +655,15 @@ const INSTRUMENTS = {
     harmonics:7000,
     facts:[['Sounding range','E1 – G4'],['Section size','8','players'],['Transposition','Octave below written']],
     registers:[
-      {label:'Low register', pitch:'E1 – A1', text:'Felt more than heard. Pitch definition is poor down here, which is why the cello octave above matters so much.'},
-      {label:'Middle register', pitch:'B1 – D3', text:'The working range. Dark, woody and clear enough to carry an actual line.'},
-      {label:'High register', pitch:'E3 – G4', text:'Thin and strained, and unmistakably expressive. A solo bass up here sounds like nothing else in the orchestra.'}
+      {label:'Low register', pitch:'E1 – A1', text:'Felt more than heard. Pitch definition poorer in the lowest register, but carries tremendous weight and “oomph”. The cello an octave above often reinforces the pitch and gives a big result.'},
+      {label:'Middle register', pitch:'B1 – D3', text:'The working range. Dark, woody and clear enough to carry melodic lines.'},
+      {label:'High register', pitch:'E3 – G4', text:'Thin and strained, but unmistakably expressive. Not as common, but sounds like nothing else in the orchestra when pulled off.'}
     ],
     characteristics:[
-      'Tuned in fourths, E, A, D and G, unlike the rest of the family.',
-      'Many instruments have a low C extension, reaching a fourth below the open E.',
-      'Slow to speak: attacks need time, and fast passagework muddies quickly.',
-      'Pizzicato is enormous and decays slowly, which is half of its use in film scoring.'
+      'Tuned in fourths. E, A, D and G.',
+      'Many instruments have a low C extension, reaching below the open E.',
+      'Slower and bigger, moves like a giant, so ultra fast passageworks quickly gets muddy.',
+      'Pizzicato is large and decays slowly, a common usage.'
     ],
     articulations:['Arco','Pizzicato','Legato','Staccato','Marcato','Tremolo','Harmonics','Con sordino'],
     blends:[
@@ -681,8 +681,8 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
-      {label:'Arco vs pizzicato', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
-      {label:'With cello in octaves', note:'Why the pairing is standard', dur:'0:10', file:'with-cello-octaves'}
+      {label:'Pizzicato vs Arco', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
+      {label:'With cello in octaves', note:'A very common and effective pairing', dur:'0:10', file:'with-cello-octaves'}
     ],
     prev:'cello', next:'harp'
   },
