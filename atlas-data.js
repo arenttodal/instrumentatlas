@@ -940,15 +940,15 @@ const INSTRUMENTS = {
     harmonics:12000,
     facts:[['Sounding range','C4 – C8'],['Players','1'],['Transposition','Octave above written']],
     registers:[
-      {label:'Low register', pitch:'C4 – B4', text:'Soft and slightly dull. The least useful part of the instrument.'},
-      {label:'Middle register', pitch:'C5 – B6', text:'The characteristic bell-like shimmer. Everything memorable is written here.'},
-      {label:'High register', pitch:'C7 – C8', text:'Delicate, glassy and very quiet. Beautiful, and easily lost.'}
+      {label:'Low register', pitch:'C4 – B4', text:'Soft and slightly dull, the least used register of the instrument.'},
+      {label:'Middle register', pitch:'C5 – B6', text:'The characteristic bell-like shimmer that it is famous for.'},
+      {label:'High register', pitch:'C7 – C8', text:'Delicate, glassy and very quiet. Less defined.'}
     ],
     characteristics:[
       'Keyboard-operated, so chords, runs and two-hand writing are all straightforward.',
-      'Very quiet. It needs a thin texture or careful orchestration to be heard at all.',
-      'Notated an octave below sounding, like the piccolo in reverse.',
-      'Frequently doubled with harp or glockenspiel to give it enough presence to register.'
+      'Very quiet and delicate.',
+      'Notated an octave below sounding, the opposite of the piccolo.',
+      'Frequently doubled with harp or glockenspiel to give presence.'
     ],
     articulations:['Legato','Staccato','Arpeggios','Trills','Damper pedal'],
     blends:[
