@@ -155,10 +155,10 @@ const INSTRUMENTS = {
       {label:'High register', pitch:'B6 – C8', text:'Piercing and unmistakable. Carries over the entire orchestra at full force, and turns shrill and exhausting fast.'}
     ],
     characteristics:[
-      'Sounds an octave above written, so the written part looks deceptively modest.',
+      'Sounds an octave above written.',
       'Intonation is unforgiving, and small errors are enormously audible up here.',
       'Excels at fast runs and trills, doubling flutes an octave up.',
-      'Almost never plays quietly in its top octave; the mechanism resists it.'
+      'Almost never plays quietly in its top octave; due to the nature of the instrument and the breath required to reach the highest notes.'
     ],
     articulations:['Legato','Staccato','Double tonguing','Flutter tongue','Trills','Runs'],
     blends:[
