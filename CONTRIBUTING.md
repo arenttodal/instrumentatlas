@@ -32,8 +32,8 @@ Pages redeploys in ~20 seconds.
 |---|---|
 | Instruments written | **20 of 20** |
 | Families complete | **4 of 4** |
-| 3D models | 8 `.glb`. cello, horn, viola, violin wired to plates; trumpet, bassoon, clarinet, violin2 in the viewer only |
-| Model attribution | **cello and horn only.** viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" |
+| 3D models | 8 `.glb`. **Only the cello is offered on the site**, via `MODELS_LIVE` in `atlas.js`; the rest are in the viewer only |
+| Model attribution | cello, horn, trumpet and violin have real credits. viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" and are switched off |
 | Studio | Theme 1 only, 3 tracks, 7 renders |
 | Instrument audio | 19 of 20. Only the piccolo is silent, and shows the placeholder line. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
@@ -119,7 +119,9 @@ id: {
   family, name, latin,
   epithet,          // one line, opinionated, sits under the title
   status,           // 'live' = full page · 'plan' = greyed in menus
-  model,            // optional: id of an entry in viewer/instruments.html
+  model,            // optional: id of an entry in viewer/instruments.html.
+                    // The 3D toggle appears only if it is also listed in
+                    // MODELS_LIVE in atlas.js, which is the on/off switch
   modelCredit,      // required alongside model: title, author, modification
   modelSource,      // optional: link to the model's source page
   summary,          // 2–3 sentences
@@ -217,12 +219,16 @@ unless an instrument defines its own `gallery: ['id', …]`.
 
 **Two family palettes, deliberately.** `FAM_COLOR` in `atlas.js` colours the
 frequency map, which separates twenty instruments and needs four well-spaced
-hues: strings `#9B8FD4`, woodwinds `#5FB89A`, brass `#6C9BD8`, percussion
-`#C9834F`. `STUDIO_FAM` in `atlas-data.js` colours the dock, which shows three
+hues: strings `#CE5F6B`, woodwinds `#6FB7E8`, brass `#E8963C`, percussion
+`#4C77D0`. `STUDIO_FAM` in `atlas-data.js` colours the dock, which shows three
 tracks at a glance on a dark strip: woodwinds `#6FB7E8`, brass `#D4A04A`,
 strings `#CF5F52`, percussion `#9B8FD4`. Gold means brass inside the dock and
 nowhere else, which is why the dock's pressed variant chip and solo button take
 the family colour rather than gold.
+
+Brass orange is the one hue on the map that sits near the gold a selected
+instrument is drawn in. The gold row band and the white label carry the
+selection on a brass page; do not close that gap further by warming the brass.
 
 ### Rules that hold the look together
 
@@ -289,14 +295,19 @@ modification required. Every model was decimated, re-centred and normalised.
 **The four pending models must not reach production** until real attribution
 replaces the placeholder string.
 
+`MODELS_LIVE` in `atlas.js` is what enforces that. It currently holds `cello`
+alone. The viola is off because it has no attribution, and the horn and violin
+because their meshes carry no UVs and render flat. Adding an id back there is
+the whole of turning a model on; the data never changes.
+
 ---
 
 ## 6. Known problems
 
 - **The viola model is broken.** It renders as a fragmented sliver rather than an
-  instrument, and its bounding box is nearly as deep as it is wide. It is wired
-  to the viola plate; reverting that one block in `atlas-data.js` removes the
-  toggle while a replacement is converted.
+  instrument, and its bounding box is nearly as deep as it is wide. It also has
+  no attribution. It is out of `MODELS_LIVE`, so the page shows the engraving
+  and no toggle.
 - **The bassoon model is degenerate**: a thin featureless rod, untextured, with
   no bell flare, boot joint or keywork. Not wired to anything.
 - **`violin2.glb` is tilted** about 30° in model space, which is why its

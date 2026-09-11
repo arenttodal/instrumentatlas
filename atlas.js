@@ -307,8 +307,16 @@ function plateCap(id, it){
   return it.plateCredit ? `<div class="src atl-cap-2d">${esc(it.plateCredit)}</div>` : '';
 }
 
+/* Which instruments actually offer the 3D toggle. The models and their credits
+   stay in atlas-data.js; this is the switch. Horn, violin and viola are off:
+   the first two render flat because the meshes carry no UVs, and the viola has
+   no attribution, which under CC BY means it cannot be shown at all. Add an id
+   back here once its model is fixed and credited, and nothing else changes. */
+const MODELS_LIVE = ['cello'];
+const modelOf = it => (it.model && MODELS_LIVE.includes(it.model)) ? it.model : '';
+
 function viewInstrument(id){
-  const it = INSTRUMENTS[id], fam = famOf(it.family);
+  const it = INSTRUMENTS[id], fam = famOf(it.family), model = modelOf(it);
   const bars = n => Array.from({length:n}, () => `<i style="height:${4 + Math.random()*18}px"></i>`).join('');
   const rel = (rid, dir) => {
     const r = INSTRUMENTS[rid]; if(!r) return '';
@@ -346,15 +354,15 @@ function viewInstrument(id){
                with a model. The 3D iframe is only fetched when the toggle is
                used, so a page with a model now costs nothing until asked. -->
           <div class="atl-plate atl-fade" data-view="2d">
-            ${it.model ? `
+            ${model ? `
             <div class="atl-plate-switch" role="group" aria-label="Plate view">
               <button type="button" data-pv="2d" aria-pressed="true">2D</button>
               <button type="button" data-pv="3d" aria-pressed="false">3D</button>
             </div>` : ''}
             <div class="atl-plate-art">${plateArt(id)}</div>
-            ${it.model ? `
+            ${model ? `
             <div class="atl-plate-3d">
-              <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(it.model)}&amp;embed=1"
+              <iframe id="atl-plate-iframe" data-src="viewer/instruments.html?i=${esc(model)}&amp;embed=1"
                 title="Interactive 3D ${esc(it.name)}" loading="lazy" allow="fullscreen"></iframe>
               <div class="atl-plate-3d-fail">The 3D viewer is not deployed yet.</div>
             </div>` : ''}
@@ -362,7 +370,7 @@ function viewInstrument(id){
               <div class="no">${esc(fam.name)} family</div>
               <div class="nm">${esc(it.latin)}</div>
               ${plateCap(id, it)}
-              ${it.model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')}${it.modelSource ? ` · <a href="${esc(it.modelSource)}" target="_blank" rel="noopener">Sketchfab</a>` : ''} · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="viewer/instruments.html?i=${esc(it.model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
+              ${model ? `<div class="src atl-cap-3d">${esc(it.modelCredit || '')}${it.modelSource ? ` · <a href="${esc(it.modelSource)}" target="_blank" rel="noopener">Sketchfab</a>` : ''} · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="viewer/instruments.html?i=${esc(model)}" target="_blank" rel="noopener">Open full screen &nearr;</a></div>` : ''}
             </div>
             <div class="atl-plate-facts">
               ${facts.map(f => `<div><span>${esc(f[0])}</span><b>${esc(f[1])}${f[2] ? ` <em>${esc(f[2])}</em>` : ''}</b></div>`).join('')}
@@ -566,7 +574,7 @@ let currentInstrument = null, currentFamily = null;
 /* The frequency map's palette, which is not the dock's: see STUDIO_FAM in
    atlas-data.js for why the two are deliberately different. */
 const FAM_COLOR = {
-  strings:'#9B8FD4', woodwinds:'#5FB89A', brass:'#6C9BD8', percussion:'#C9834F'
+  strings:'#CE5F6B', woodwinds:'#6FB7E8', brass:'#E8963C', percussion:'#4C77D0'
 };
 
 const HZ_LO = 20, HZ_HI = 20000;
@@ -600,7 +608,7 @@ function renderTimbre(id){
     if(gi < TIMBRE_ORDER.length - 1) y += GAP;
     return g;
   });
-  const PLOT = y, KB = PLOT + 22, KBH = 30, H = KB + KBH + 38;
+  const PLOT = y, KB = PLOT + 22, KBH = 40, H = KB + KBH + 32;
 
   /* ---- decade grid, running the full height of the plot ---- */
   const TICKS = [20,50,100,200,500,1000,2000,5000,10000,20000];
@@ -633,7 +641,19 @@ function renderTimbre(id){
       <stop offset="0" stop-color="${c}" stop-opacity="${k === 'sel' ? '.40' : '.26'}"/>
       <stop offset="1" stop-color="${c}" stop-opacity="${k === 'sel' ? '.09' : '.05'}"/>
     </linearGradient>`;
-  }).join('')}</defs>`;
+  }).join('')}
+    <linearGradient id="atl-kb-white" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/><stop offset=".84" stop-color="#F2F2F5"/>
+      <stop offset="1" stop-color="#DCDCE2"/>
+    </linearGradient>
+    <linearGradient id="atl-kb-black" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#33343B"/><stop offset=".3" stop-color="#15161B"/>
+      <stop offset=".92" stop-color="#0C0D11"/><stop offset="1" stop-color="#2A2B31"/>
+    </linearGradient>
+    <linearGradient id="atl-kb-shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </linearGradient></defs>`;
 
   const body = groups.reduce((all, g) => all.concat(g.rows), []).map(d => {
     const col = d.sel ? '#D4A04A' : FAM_COLOR[d.fid];
@@ -642,7 +662,7 @@ function renderTimbre(id){
     const top = (d.cy - BAR / 2).toFixed(1);
     return `<g>
       ${d.sel ? `<rect x="${L}" y="${(d.cy - ROW / 2).toFixed(1)}" width="${(W - L - R).toFixed(1)}"
-        height="${ROW}" fill="#D4A04A" fill-opacity=".05"/>` : ''}
+        height="${ROW}" fill="#D4A04A" fill-opacity=".07"/>` : ''}
       <rect x="${x0.toFixed(1)}" y="${top}" width="${Math.max(BAR, x2 - x0).toFixed(1)}"
         height="${BAR}" rx="${BAR / 2}" fill="url(#atl-h-${d.sel ? 'sel' : d.fid})"/>
       <rect x="${x0.toFixed(1)}" y="${top}" width="${Math.max(BAR, x1 - x0).toFixed(1)}"
@@ -659,39 +679,49 @@ function renderTimbre(id){
      around each of the fifty-two turns the keyboard into a barcode. The seams
      are drawn where a real keyboard shows them: full height between E and F and
      between B and C, where two white keys touch, and only along the front
-     elsewhere, where the black key above already separates them. */
+     elsewhere, where the black key above already separates them.
+     Octave names sit inside the keys, as they do on a printed chart. At seven
+     pixels a key a label is wider than the key it names, which is fine: it is
+     left aligned to the C it labels and reads as a caption on the keyboard. */
   const slot = m => { const a = px(hzOf(m - 0.5)); return { a, w:px(hzOf(m + 0.5)) - a }; };
-  const front = KB + KBH * .62;
-  let blacks = '', seams = '', octaves = '';
+  const blackH = KBH * .62, front = KB + blackH;
+  let blacks = '', shades = '', seams = '', octaves = '';
   for(let m = 21; m <= 108; m++){
     const { a, w } = slot(m);
     if(BLACK_KEYS.includes(m % 12)){
-      blacks += `<rect x="${(a + w * .26).toFixed(1)}" y="${KB}" width="${(w * .48).toFixed(1)}"
-        height="${(KBH * .62).toFixed(1)}" fill="#0A0E18"/>`;
+      const bx = a + w * .22, bw = w * .56;
+      shades += `<rect x="${(bx - w * .1).toFixed(1)}" y="${front.toFixed(1)}"
+        width="${(bw + w * .2).toFixed(1)}" height="4" fill="url(#atl-kb-shade)"/>`;
+      blacks += `<rect x="${bx.toFixed(1)}" y="${KB}" width="${bw.toFixed(1)}"
+        height="${blackH.toFixed(1)}" rx="1.2" fill="url(#atl-kb-black)"/>`;
       seams += `<line x1="${(a + w / 2).toFixed(1)}" y1="${front.toFixed(1)}"
-        x2="${(a + w / 2).toFixed(1)}" y2="${KB + KBH}" stroke="#0A0E18" stroke-width=".8"/>`;
+        x2="${(a + w / 2).toFixed(1)}" y2="${KB + KBH}" stroke="#C4C5CC" stroke-width=".7"/>`;
     } else if(m < 108 && !BLACK_KEYS.includes((m + 1) % 12)){
       seams += `<line x1="${(a + w).toFixed(1)}" y1="${KB}" x2="${(a + w).toFixed(1)}"
-        y2="${KB + KBH}" stroke="#0A0E18" stroke-width=".8"/>`;
+        y2="${KB + KBH}" stroke="#C4C5CC" stroke-width=".7"/>`;
     }
-    if(m % 12 === 0) octaves += `<text x="${(a + w / 2).toFixed(1)}" y="${KB + KBH + 13}"
-      fill="${m === 60 ? '#D4A04A' : '#5E606A'}" font-size="9" font-family="DM Sans,sans-serif"
-      text-anchor="middle" letter-spacing=".6">${midiName(m)}</text>`;
+    /* C8 is the last key, so its label is hung off the right edge rather than
+       the left, or it would run out over the dark ground past the keyboard. */
+    if(m % 12 === 0) octaves += `<text x="${(m === 108 ? a + w - 1 : a + 2).toFixed(1)}" y="${KB + KBH - 5}"
+      fill="${m === 60 ? '#B0782A' : '#8B8D95'}" font-size="8.5" font-weight="${m === 60 ? '700' : '500'}"
+      font-family="DM Sans,sans-serif" text-anchor="${m === 108 ? 'end' : 'start'}"
+      letter-spacing=".3">${midiName(m)}</text>`;
   }
-  const lo = slot(21), hi = slot(108), mid = slot(60);
-  const keyboard = `<rect x="${lo.a.toFixed(1)}" y="${KB}" width="${(hi.a + hi.w - lo.a).toFixed(1)}"
-      height="${KBH}" rx="2" fill="#A7ACB8"/>
-    <rect x="${mid.a.toFixed(1)}" y="${KB}" width="${mid.w.toFixed(1)}" height="${KBH}" fill="#D9BE8A"/>`
-    + seams + blacks + octaves;
+  const lo = slot(21), hi = slot(108);
+  const keyboard = `<rect x="${lo.a.toFixed(1)}" y="${(KB - 2.5).toFixed(1)}"
+      width="${(hi.a + hi.w - lo.a).toFixed(1)}" height="2.5" fill="#0A0E18"/>
+    <rect x="${lo.a.toFixed(1)}" y="${KB}" width="${(hi.a + hi.w - lo.a).toFixed(1)}"
+      height="${KBH}" rx="1.5" fill="url(#atl-kb-white)"/>`
+    + seams + shades + blacks + octaves;
 
   /* ---- the hertz scale under the keyboard ---- */
-  const hz = TICKS.map(f => `<line x1="${px(f).toFixed(1)}" y1="${KB + KBH + 3}"
-      x2="${px(f).toFixed(1)}" y2="${KB + KBH + 8}" stroke="#fff" stroke-opacity=".12"/>
-    <text x="${px(f).toFixed(1)}" y="${KB + KBH + 30}" fill="#4E505A" font-size="9.5"
+  const hz = TICKS.map(f => `<line x1="${px(f).toFixed(1)}" y1="${KB + KBH + 4}"
+      x2="${px(f).toFixed(1)}" y2="${KB + KBH + 9}" stroke="#fff" stroke-opacity=".12"/>
+    <text x="${px(f).toFixed(1)}" y="${KB + KBH + 24}" fill="#4E505A" font-size="9.5"
       font-family="DM Sans,sans-serif" text-anchor="middle" letter-spacing=".8">${hzTick(f)}</text>`).join('')
-    + `<text x="${(L - 14).toFixed(1)}" y="${KB + KBH + 30}" fill="#4E505A" font-size="9.5"
+    + `<text x="${(L - 14).toFixed(1)}" y="${KB + KBH + 24}" fill="#4E505A" font-size="9.5"
       font-weight="700" font-family="DM Sans,sans-serif" text-anchor="end" letter-spacing="1.4">HZ</text>`
-    + `<text x="${(L - 14).toFixed(1)}" y="${KB + KBH + 13}" fill="#4E505A" font-size="9.5"
+    + `<text x="${(L - 14).toFixed(1)}" y="${(KB + KBH / 2 + 3.5).toFixed(1)}" fill="#4E505A" font-size="9.5"
       font-weight="700" font-family="DM Sans,sans-serif" text-anchor="end" letter-spacing="1.4">PIANO</text>`;
 
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
