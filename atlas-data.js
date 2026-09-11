@@ -508,8 +508,8 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after an 1855 instrument in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
-      {label:'Low register speaking time', note:'How long the bottom octave takes to arrive', dur:'0:11', file:'low-register-speaking-time'},
-      {label:'Melodic middle register', note:'The part of the instrument nobody writes for', dur:'0:09', file:'melodic-middle-register'}
+      {label:'The tuba range', note:'From the lowest note, to the high', dur:'0:11', file:'low-register-speaking-time'},
+      {label:'Melodic middle register', note:'Fragile and longing', dur:'0:09', file:'melodic-middle-register'}
     ],
     prev:'trombone', next:''
   },
