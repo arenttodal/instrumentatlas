@@ -363,8 +363,7 @@ const INSTRUMENTS = {
     characteristics:[
       'Cylindrical bore emphasises odd harmonics, giving the bright, cutting tone.',
       'Straight mutes, cup mutes and harmon mutes each change the colour completely when used.',
-      'Double and triple tonguing make rapid repeated notes idiomatic.',
-      'Valve combinations run progressively sharp, corrected by slide triggers while playing.'
+      'Double and triple tonguing make rapid repeated notes idiomatic.'
     ],
     articulations:['Legato','Marcato','Staccato','Double tonguing','Flutter tongue','Rips','Straight mute','Harmon mute'],
     blends:[
@@ -552,7 +551,7 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
-      {label:'Pizzicato vs Arco', note:'The same figure, both articulations', dur:'0:20', file:'arco-vs-pizzicato'},
+      {label:'Pizzicato vs Arco', note:'The same figure, both articulations', dur:'0:20', file:'pizzicato-vs-arco'},
       {label:'With horn in unison', note:'Where the two timbres fuse', dur:'0:23', file:'with-horn'}
     ],
     prev:'viola', next:'double-bass'
@@ -681,7 +680,7 @@ const INSTRUMENTS = {
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
-      {label:'Pizzicato vs Arco', note:'Sustained, then plucked', dur:'0:11', file:'arco-vs-pizzicato'},
+      {label:'Pizzicato vs Arco', note:'Plucked, then sustained', dur:'0:11', file:'pizzicato-vs-arco'},
       {label:'With cello in octaves', note:'A very common and effective pairing', dur:'0:10', file:'with-cello-octaves'}
     ],
     prev:'cello', next:'harp'
