@@ -696,9 +696,9 @@ const INSTRUMENTS = {
     harmonics:14000,
     facts:[['Sounding range','C1 – G7'],['Section size','1–2','players'],['Pedals','7 · three positions']],
     registers:[
-      {label:'Low register', pitch:'C1 – B2', text:'Wire strings, long decay, considerable weight. Sparse writing here reads as enormous.'},
-      {label:'Middle register', pitch:'C3 – B5', text:'Gut strings, warm and singing. Where glissandi and arpeggiated figures live.'},
-      {label:'High register', pitch:'C6 – G7', text:'Bright, short and bell-like. Cuts through a full orchestra at surprisingly low dynamics.'}
+      {label:'Low register', pitch:'C1 – B2', text:'Wire strings, long decay, with considerable weight. Effective for sparse writing.'},
+      {label:'Middle register', pitch:'C3 – B5', text:'Gut strings, warm and lyrical. Where glissandi and arpeggiated figures usually live.'},
+      {label:'High register', pitch:'C6 – G7', text:'Bright, short and bell-like with a quick decay. Cuts through a full orchestra at surprisingly low dynamics, but does not have a lot of sustain or weight.'}
     ],
     characteristics:[
       'Each of the seven pedals sets one note name to flat, natural or sharp across all octaves.',
