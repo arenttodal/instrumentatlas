@@ -782,15 +782,15 @@ const INSTRUMENTS = {
     harmonics:18000,
     facts:[['Pitch','Unpitched'],['Types','Crash, suspended, hi-hat'],['Players','1–2']],
     registers:[
-      {label:'Crash cymbals', pitch:'Broadband', text:'Two plates struck together. Instant, huge and impossible to take back.'},
-      {label:'Suspended cymbal', pitch:'Broadband', text:'Struck or rolled with mallets. A roll from silence to a crash is one of the great orchestral crescendos.'},
+      {label:'Crash cymbals', pitch:'Broadband', text:'Two plates struck together. Instant, huge and extremely powerful.'},
+      {label:'Suspended cymbal', pitch:'Broadband', text:'Struck or rolled with mallets. Can easily go from quiet to massive crescendos.'},
       {label:'Choked', pitch:'Short', text:'Damped immediately against the body for a hard stop.'}
     ],
     characteristics:[
       'Unpitched but not neutral: size and alloy change the colour considerably.',
-      'A suspended roll can crescendo over many bars and covers an entire orchestra at its peak.',
-      'Decay is long and cannot be shortened without choking the instrument.',
-      'A single player usually covers crash and suspended, so simultaneous parts need two.'
+      'A suspended roll can crescendo over many bars and covers an entire orchestra in terms of power at its peak.',
+      'Decay is long and cannot be shortened without choking the cymbal.',
+      'A single player usually covers crash and suspended, so simultaneous parts need multiple players.'
     ],
     articulations:['Crash','Suspended roll','Struck with mallets','Choked','Scraped','Sizzle'],
     blends:[
