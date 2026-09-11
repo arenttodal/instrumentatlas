@@ -400,19 +400,19 @@ const INSTRUMENTS = {
     harmonics:8000,
     facts:[['Sounding range','F2 – F5'],['Section size','4–8','players'],['Transposition','In F']],
     registers:[
-      {label:'Low register', pitch:'F2 – C3', text:'Very mellow. Works beautifully for calm passages, weak under pressure.'},
-      {label:'Middle register', pitch:'D3 – C4', text:'Full and singing: the heroic range, and the one to write themes in.'},
+      {label:'Low register', pitch:'F2 – C3', text:'Very mellow. Works beautifully for calm passages.'},
+      {label:'Middle register', pitch:'D3 – C4', text:'Full and singing: the heroic range that most themes are written in.'},
       {label:'High register', pitch:'D4 – F5', text:'Intense and bright, but still round compared to any other brass. Hard to play quietly.'}
     ],
     characteristics:[
-      'Pitch comes from lip tension and air pressure, so high and loud are physically linked.',
+      'Pitch comes from lip tension and air pressure, so high range and loudness are physically linked.',
       'Conical bore gives a mellow, warm tone that sits between brass and woodwind.',
-      'Sustained lines need written breaks. Brass players cannot circular-breathe a phrase.',
-      'Complex fast runs fight the mechanics. Write lines, not passagework.'
+      'Sustained lines need written breaks, so the players can breathe.',
+      'Complex fast runs are challenging to play.'
     ],
     articulations:['Legato','Marcato','Staccato','Stopped','Rips','Flutter tongue'],
     blends:[
-      {id:'cello', label:'Cello in unison', note:'The classic warm-melody pairing'},
+      {id:'cello', label:'Cello in unison', note:'Two timbres giving a heroic result'},
       {id:'clarinet', label:'Woodwinds', note:'Horn glues the woodwind chord together'},
       {id:'viola', label:'Strings', note:'Adds brass richness without brass edge'},
       {id:'bassoon', label:'Bassoon', note:'Takes the metallic edge off the low brass'}
