@@ -614,15 +614,15 @@ const INSTRUMENTS = {
     harmonics:11000,
     facts:[['Sounding range','C3 – E6'],['Section size','12','players'],['Notation','Alto clef']],
     registers:[
-      {label:'Low register', pitch:'C3 – G3', text:'The C string. Dark, reedy and slightly rough: the sound most people mean when they say "viola".'},
-      {label:'Middle register', pitch:'A3 – D5', text:'Warm and covered. Perfect for inner harmony, which is where it spends most of its life.'},
-      {label:'High register', pitch:'E5 – E6', text:'Intense and a little strained, in a way that reads as expressive rather than weak. Worth using deliberately.'}
+      {label:'Low register', pitch:'C3 – G3', text:'The C string - dark, reedy and slightly rough. Adds a deeper register than the violin.'},
+      {label:'Middle register', pitch:'A3 – D5', text:'Warm and rich, perfect for inner harmonies gluing chords together.'},
+      {label:'High register', pitch:'E5 – E6', text:'Intense and expressive. Rounder and warmer tone than the violin.'}
     ],
     characteristics:[
       'Tuned C, G, D, A, a fifth below the violin.',
-      'Written in alto clef, moving to treble for high passages.',
-      'Same techniques as the violin, marginally slower to speak.',
-      'Blends with almost everything, which is why it is so often used as glue.'
+      'Written in alto clef, moving to treble for higher passages.',
+      'Blends well with almost anything, and is often used as a glue.',
+      'Often the recipient of countless jokes from violinists.'
     ],
     articulations:['Arco','Pizzicato','Legato','Spiccato','Staccato','Tremolo','Harmonics','Con sordino'],
     blends:[
