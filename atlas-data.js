@@ -626,7 +626,7 @@ const INSTRUMENTS = {
     ],
     articulations:['Arco','Pizzicato','Legato','Spiccato','Staccato','Tremolo','Harmonics','Con sordino'],
     blends:[
-      {id:'clarinet', label:'Clarinet', note:'Two covered timbres that fuse completely'},
+      {id:'clarinet', label:'Clarinet', note:'The two timbres match really well'},
       {id:'horn', label:'Horn', note:'Adds body to a mid-register line'},
       {id:'cello', label:'Cellos in octaves', note:'The standard warm middle-and-low pairing'},
       {id:'trumpet', label:'Trumpet', note:'Bright over dark; the viola takes the edge off'}
