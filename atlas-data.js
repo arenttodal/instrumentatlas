@@ -861,15 +861,15 @@ const INSTRUMENTS = {
     harmonics:8000,
     facts:[['Pitch','Unpitched'],['Drums','1','typical'],['Players','1']],
     registers:[
-      {label:'Soft strokes', pitch:'Low', text:'Distant thunder. Almost subliminal under a quiet texture, and unnerving.'},
-      {label:'Full strokes', pitch:'Low', text:'The weight under a tutti. Adds size without adding anything audible in the mid range.'},
-      {label:'Roll', pitch:'Low', text:'Two mallets, sustained. A slow crescendo here reads as approaching catastrophe.'}
+      {label:'Soft strokes', pitch:'Low', text:'Distant thunder. Almost subliminal under a quiet texture, but a massive sound. The softer the drum is hit, the bigger it sounds.'},
+      {label:'Full strokes', pitch:'Low', text:'The weight under a tutti. Adds size to big statements and accents.'},
+      {label:'Roll', pitch:'Low', text:'Two mallets, sustained. A slow crescendo is a common way to swell into new sections and climaxes.'}
     ],
     characteristics:[
       'Enormous low-frequency energy with very little pitch definition.',
-      'Decay is long, so a damped stroke and an open one are different instruments in effect.',
-      'One instrument covers the entire orchestra, so balance is entirely in the player’s hands.',
-      'Struck near the edge for a drier sound, near the centre for maximum depth.'
+      'Decay is long and slow, so it takes a lot of space.',
+      'One instrument can easily be heard across the entire orchestra.',
+      'Struck near the edge for a drier sound, near the centre for more depth.'
     ],
     articulations:['Single strokes','Roll','Damped','Two-mallet roll','Struck with timpani mallets'],
     blends:[
