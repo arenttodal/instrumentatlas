@@ -525,13 +525,20 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-insthead{gap:10px;align-items:flex-start;flex-direction:column;padding-bottom:10px;margin-bottom:18px}
   .atl-insthead .atl-tabs{gap:18px;width:100%}
   .atl-insthead .atl-tab[aria-selected="true"]::after{bottom:-10px}
-  .atl-nav-crumb .atl-crumb-root{display:none}
-  .atl-nav-crumb .atl-crumb{font-size:10px;letter-spacing:1.6px;gap:10px}
+  /* The nav crumb is the first thing to go when the bar is short of room: it
+     was clipping mid-word ("STRINGS / CE"), and the family eyebrow and the
+     headline directly beneath it already say where you are. */
+  .atl-nav.is-sub .atl-nav-crumb,.atl-nav.is-sub .atl-nav-sep{display:none}
   .atl-fam-grid,.atl-inst-grid,.atl-detail,.atl-foot-grid,.atl-gallery{grid-template-columns:1fr}
   .atl-strip{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   .atl-detail{gap:34px;padding:36px 0}
-    .atl-timbre-chart{padding:10px 4px 6px}
+  /* Twenty labelled rows and an 88 key piano do not survive being scaled to a
+     phone: at 390px the instrument names come out about four pixels tall. The
+     chart keeps a legible width and the reader swipes it instead. */
+  .atl-timbre-chart{padding:10px 4px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .atl-timbre-chart svg{min-width:720px}
   .atl-timbre-key{gap:14px;font-size:10px}
+  .atl-timbre-key .atl-key-note{margin-left:0;text-align:left}
   .atl-menu{position:fixed;left:12px;right:12px;top:64px;width:auto;max-height:72vh;overflow:auto;
     grid-template-columns:1fr;gap:18px;padding:20px}
   .atl-select-btn{padding:8px 13px;font-size:12.5px}
