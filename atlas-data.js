@@ -172,7 +172,7 @@ const INSTRUMENTS = {
       'The bottom octave will not project. If you need that range, write for flute.',
       'Doubling a quiet passage with piccolo does not make it prettier, it makes it a piccolo solo.'
     ],
-    gallery:['wFJCDxcrqsc','GxqZ8CEoujU','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
+    gallery:['5Eqj9G5j1ss','8UfpgT9FMAk','HP5xhyPn58U','j2Hk2SZGrRY','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:12'},
@@ -191,15 +191,15 @@ const INSTRUMENTS = {
     harmonics:12000,
     facts:[['Sounding range','C4 – C7'],['Section size','2–4','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'C4 – G4', text:'Breathy and easily buried. Beautiful exposed and soft, useless under a loud texture.'},
+      {label:'Low register', pitch:'C4 – G4', text:'Breathy, warm and easily buried. Beautiful when exposed, but disappears quickly in context.'},
       {label:'Middle register', pitch:'A4 – D6', text:'Rich and full: the workhorse range for melodies and for doubling.'},
-      {label:'High register', pitch:'E6 – C7', text:'Brilliant and penetrating. Cuts through a tutti, tiring over long stretches.'}
+      {label:'High register', pitch:'E6 – C7', text:'Brilliant and penetrating. Cuts through a tutti, but tiring over long stretches.'}
     ],
     characteristics:[
       'Adds more high-end overtones as air pressure increases, though the dynamic contrast is subtler than brass.',
-      'Fast runs and arpeggios are entirely idiomatic. This is what woodwinds are for.',
-      'Monophonic. Harmony has to come from arpeggiation or from a second player.',
-      'Needs rests to breathe. Phrases written without them read as synthetic immediately.'
+      'Fast runs and arpeggios are entirely idiomatic. This is what woodwinds excel at.',
+      'Monophonic. Cannot play multiple notes at once.',
+      'Needs rests to breathe. Phrases written for libraries without rests feel synthetic and unrealistic.'
     ],
     articulations:['Legato','Staccato','Flutter tongue','Trills','Runs','Harmonics'],
     blends:[
@@ -213,7 +213,7 @@ const INSTRUMENTS = {
       'Doubling a soft flute with a trumpet clashes. Group by tone colour, not by range.',
       'Long unbroken lines expose the mockup. Write the breath in.'
     ],
-    gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','GxqZ8CEoujU','P_1N6_O254g','waP1N446Zb0'],
+    gallery:['no6vSquaeIQ','8NVnPEsT__Y','ki0xu6Gl9Nc','5Eqj9G5j1ss','P_1N6_O254g','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
@@ -255,7 +255,7 @@ const INSTRUMENTS = {
       'Long unbroken lines are a breathing problem in reverse: players need somewhere to exhale.'
     ],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
-    gallery:['r87w1RFT4hg','ki0xu6Gl9Nc','P_1N6_O254g','9aDEq3u5huA','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['r87w1RFT4hg','ki0xu6Gl9Nc','P_1N6_O254g','9aDEq3u5huA','5Eqj9G5j1ss','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14', file:'register-comparison'},
@@ -296,7 +296,7 @@ const INSTRUMENTS = {
       'Remember the transposition when printing parts: a B♭ instrument, written a tone above sounding.',
       'Rapid register crossings over the break are awkward; give the player somewhere to move.'
     ],
-    gallery:['VGvuUOtHGkk','6exoB7IW8qw','ki0xu6Gl9Nc','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['VGvuUOtHGkk','6exoB7IW8qw','ki0xu6Gl9Nc','b4rfWegZi_M','5Eqj9G5j1ss','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Sustained', note:'Long held tones', dur:'0:06', file:'sustained'},
@@ -337,7 +337,7 @@ const INSTRUMENTS = {
       'Very high writing is possible but exposed and effortful; use it for effect, not for range.',
       'It cannot compete with brass on volume. If you need weight there, add players, not dynamics.'
     ],
-    gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['ghkljW0ZmJU','ki0xu6Gl9Nc','6exoB7IW8qw','b4rfWegZi_M','5Eqj9G5j1ss','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
@@ -379,7 +379,7 @@ const INSTRUMENTS = {
       'Remember the transposition: written C sounds B♭.'
     ],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
-    gallery:['bwQumQpug_E','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','GxqZ8CEoujU','waP1N446Zb0'],
+    gallery:['bwQumQpug_E','fEGNNuEM3Fc','pGdtkUiKaA8','8UfpgT9FMAk','5Eqj9G5j1ss','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:25', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:08', file:'register-comparison'},
@@ -464,7 +464,7 @@ const INSTRUMENTS = {
       'Three trombones at full volume will bury a string section without effort.'
     ],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
-    gallery:['6wRKpdM9ra8','6exoB7IW8qw','GxqZ8CEoujU','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
+    gallery:['6wRKpdM9ra8','6exoB7IW8qw','5Eqj9G5j1ss','pGdtkUiKaA8','8UfpgT9FMAk','waP1N446Zb0'],
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:26', file:'signature-phrase'},
       {label:'Rips', note:'Quick explanation of an octave rip', dur:'0:05', file:'glissando-and-legato'},
@@ -843,7 +843,7 @@ const INSTRUMENTS = {
       'A roll under a quiet string passage will dominate unless carefully controlled.',
       'Specify snares on or off. The difference is large and players will ask.'
     ],
-    gallery:['GxqZ8CEoujU','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
+    gallery:['5Eqj9G5j1ss','JEi23_uSGNE','8UfpgT9FMAk','ghkljW0ZmJU','HP5xhyPn58U','waP1N446Zb0'],
     plateCredit:'Engraved for this atlas after instrument photographs in The Met collection (CC0)',
     demos:[
       {label:'Snare phrase', note:'A short well known rhythmic motif', dur:'0:06', file:'signature-phrase'},
@@ -1056,7 +1056,7 @@ const GALLERY = [
   {v:'j2Hk2SZGrRY', title:'Mahler, Symphony No. 8, "Symphony of a Thousand"', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'What the Maximum tier on the ensemble slider actually looks like', chan:'Berliner Philharmoniker'},
   {v:'GrrvAHhWKIw', title:'Mahler, Symphony No. 9', perf:'Berliner Philharmoniker · Kirill Petrenko', why:'Late-Romantic orchestration at its most transparent', chan:'Berliner Philharmoniker'},
   {v:'waP1N446Zb0', title:'Britten, The Young Person’s Guide to the Orchestra', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'Every family and most of these instruments, introduced one at a time and then fugued together', chan:'Berliner Philharmoniker'},
-  {v:'GxqZ8CEoujU', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'},
+  {v:'5Eqj9G5j1ss', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'},
   {v:'ki0xu6Gl9Nc', title:'Prokofiev, Peter and the Wolf (with score)', perf:'Vancouver Symphony Orchestra · Bramwell Tovey', why:'Every solo instrument given a character, with the score on screen as it plays', chan:'Concert upload'},
   {v:'6exoB7IW8qw', title:'Rimsky-Korsakov, Scheherazade', perf:'hr-Sinfonieorchester · Alain Altinoglu', why:'The concertmaster returns as a character, and almost every principal gets a solo', chan:'hr-Sinfonieorchester'},
   {v:'ghkljW0ZmJU', title:'Stravinsky, The Rite of Spring', perf:'London Symphony Orchestra · Sir Simon Rattle', why:'Opens on a bassoon at the very top of its range, and never stops rethinking the orchestra', chan:'London Symphony Orchestra'},
@@ -1068,7 +1068,6 @@ const GALLERY = [
   {v:'no6vSquaeIQ', title:'Debussy, Prélude à l’après-midi d’un faune', perf:'Minnesota Orchestra · Thomas Søndergård', why:'The flute solo that begins modern orchestration', chan:'Minnesota Orchestra'},
   {v:'8NVnPEsT__Y', title:'Ibert, Flute Concerto', perf:'hr-Sinfonieorchester · Clara Andrada de la Calle · Jaime Martín', why:'The flute as a soloist rather than a colour, at full stretch', chan:'hr-Sinfonieorchester'},
   {v:'r87w1RFT4hg', title:'Bacri, Notturno for oboe and string orchestra', perf:'hr-Sinfonieorchester · François Leleux', why:'An oboe carrying a whole movement over strings, filmed close', chan:'hr-Sinfonieorchester'},
-  {v:'wFJCDxcrqsc', title:'Sousa, The Stars and Stripes Forever', perf:'West Point Band, five piccolos', why:'The piccolo obbligato everyone knows, played by a whole row of them', chan:'West Point Band'},
   {v:'zWn_7R4B-aI', title:'Berlioz, Harold en Italie', perf:'Wolfram Christ, viola · Berliner Philharmoniker · Lorin Maazel', why:'A symphony with a solo viola running through it, which almost nothing else does', chan:'Concert upload'},
   {v:'bwQumQpug_E', title:'Mahler, Symphony No. 5, the opening trumpet solo', perf:'Gábor Tarkövi · Berliner Philharmoniker', why:'One player alone, setting up seventy minutes of music', chan:'Concert upload'},
   {v:'n5gUu65Pmrk', title:'Tchaikovsky, Symphony No. 5, the horn solo', perf:'Marc Gruber · Frankfurt Radio Symphony', why:'Filmed on the player: what the horn’s middle register is for', chan:'hr-Sinfonieorchester'},

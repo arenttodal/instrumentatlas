@@ -38,7 +38,7 @@ Pages redeploys in ~20 seconds.
 | Instrument audio | 19 of 20. Only the piccolo is silent, and shows the placeholder line. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
 | Plate artwork | all 20 converted engravings, credited to The Met (CC0) |
-| Gallery | 29 videos, six per instrument. Ids came from search results and were never opened: run `tools/gallery-check.py` |
+| Gallery | 31 videos, six per instrument except piccolo, which has five. Ids came from search results and were never opened. `tools/gallery-check.py` catches removed videos but **not** ones whose owner has disabled embedding, which is how the Sousa piccolo entry and the old Boléro got through: only loading each tile in a browser finds those |
 | Family footage | strings, woodwinds, brass. Percussion has none, by design |
 
 ---
