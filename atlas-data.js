@@ -225,22 +225,22 @@ const INSTRUMENTS = {
 
   oboe:{
     family:'woodwinds', name:'Oboe', latin:'Oboe',
-    epithet:'A nasal and bright tone colour', status:'live',
+    epithet:'A reedy and bright tone colour', status:'live',
     summary:'A double reed woodwind instrument. The expressive middle register is often used both for sad, melancholic themes as well as joyful melodies. It has a very characteristic quality, both good for solo melodies and for doubling other orchestral instruments.',
     range:{lo:58, hi:91, note:'B♭3 – G6', transposition:'Non-transposing'},
     timbre:0.80,
     harmonics:12000,
     facts:[['Sounding range','B♭3 – G6'],['Section size','2–4','players'],['Transposition','Concert pitch']],
     registers:[
-      {label:'Low register', pitch:'B♭3 – E4', text:'Thick, heavy and a little coarse. Hard to play softly and difficult to blend.'},
-      {label:'Middle register', pitch:'F4 – D5', text:'The expressive core: reedy, singing and instantly recognisable. Almost every famous oboe solo lives here.'},
-      {label:'High register', pitch:'E5 – G6', text:'Thin and increasingly strained. Effective for a moment of tension, punishing across a phrase.'}
+      {label:'Low register', pitch:'B♭3 – E4', text:'Thick, heavy and a little coarse. Can be difficult to blend well.'},
+      {label:'Middle register', pitch:'F4 – D5', text:'The expressive heart: reedy, singing and instantly recognisable. Most famous oboe themes live around here.'},
+      {label:'High register', pitch:'E5 – G6', text:'Thin and increasingly strained. Effective for a moment of tension, but not the best for longer melodic phrases.'}
     ],
     characteristics:[
-      'Double reed, narrow conical bore: the combination that makes it cut.',
-      'Very low air consumption, so players run out of places to breathe rather than breath.',
-      'Extremely agile: fast runs, trills and wide leaps all sit well.',
-      'Blends poorly by nature, which makes it a soloist more often than a section instrument.'
+      'Double reed, narrow conical bore: a combination that gives it a distinct tone.',
+      'Very low air consumption, so players can play for fairly long stretches compared to brass instruments.',
+      'Extremely agile: fast runs, trills and wide leaps all work well.',
+      'Tends to stick out, making it very well suited as a solo instrument.'
     ],
     articulations:['Legato','Staccato','Trills','Runs','Flutter tongue'],
     blends:[
@@ -259,7 +259,7 @@ const INSTRUMENTS = {
     demos:[
       {label:'Signature phrase', note:'The Atlas theme for comparison', dur:'0:23', file:'signature-phrase'},
       {label:'Register comparison', note:'Low, middle and high on the same figure', dur:'0:14', file:'register-comparison'},
-      {label:'Solo over strings', note:'Why it carries', dur:'0:11', file:'over-strings'}
+      {label:'Solo over strings', note:'An example of its lyrical quality', dur:'0:11', file:'over-strings'}
     ],
     prev:'flute', next:'clarinet'
   },
