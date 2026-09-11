@@ -308,28 +308,28 @@ const INSTRUMENTS = {
 
   bassoon:{
     family:'woodwinds', name:'Bassoon', latin:'Fagotto',
-    epithet:'Not as penetrating and sharp as its little brother', status:'live',
+    epithet:'The oboe’s bigger brother', status:'live',
     summary:'A tenor and bass instrument, with a double reed mouthpiece like the oboe. The differences between its registers are very clear and pronounced, one of the true characteristics of the bassoon.',
     range:{lo:34, hi:75, note:'B♭1 – E♭5', transposition:'Non-transposing'},
     timbre:0.30,
     harmonics:11000,
     facts:[['Sounding range','B♭1 – E♭5'],['Section size','2–4','players'],['Notation','Bass and tenor clef']],
     registers:[
-      {label:'Low register', pitch:'B♭1 – F2', text:'Thick, heavy and slightly rough. A genuine bass foundation, and it takes some effort to play quietly.'},
-      {label:'Middle register', pitch:'G2 – F4', text:'The characterful range: mysterious, melancholic, faintly comic depending entirely on context. Most solos live here.'},
-      {label:'High register', pitch:'G4 – E♭5', text:'Compressed, lyrical and strained, in a way composers use deliberately. The opening of The Rite of Spring is the famous example.'}
+      {label:'Low register', pitch:'B♭1 – F2', text:'Thick, heavy and slightly rough with a solid bass foundation.'},
+      {label:'Middle register', pitch:'G2 – F4', text:'The characterful range: mysterious, melancholic, faintly comic depending on the context it is used in.'},
+      {label:'High register', pitch:'G4 – E♭5', text:'Compressed, lyrical and strained, but very distinct. The opening of The Rite of Spring is the famous example that most people know.'}
     ],
     characteristics:[
       'Double reed like the oboe, but wider bore and far less projection.',
-      'Registers are markedly different in character, an asset rather than a fault.',
+      'Registers are markedly different in character.',
       'Agile enough for fast passagework despite its size.',
-      'Takes the metallic edge off brass when doubled, which is half of its orchestral use.'
+      'Balances out the metallic edge off brass when they are combined, softening the passages.'
     ],
     articulations:['Legato','Staccato','Trills','Flutter tongue','Runs'],
     blends:[
       {id:'cello', label:'Cello', note:'Woody reinforcement of the low string line'},
       {id:'horn', label:'Horn', note:'Softens the brass attack'},
-      {id:'oboe', label:'Oboe', note:'Both double reeds; the family resemblance is audible'},
+      {id:'oboe', label:'Oboe', note:'A combination that works really well'},
       {id:'clarinet', label:'Clarinet', note:'Warm, covered woodwind chord'}
     ],
     limits:[
