@@ -517,7 +517,39 @@ const LESSONS = [
       why:'The top point is the moment that captures attention. In Heart Of Courage the highest note of the theme lands in the final bar, on the destruction.' }
   ]
 }
-];
+,
+
+/* ---------------------------------------------------------------- 3 ------ */
+{
+  id:'question-answer', module:'composition', n:3,
+  title:'Question and answer',
+  short:'Two phrases in dialogue — one that asks, one that settles it.',
+  claim:'Play your theme twice and it is a repeat. Change the note it lands on and it becomes a conversation.',
+  demo:'qanda',
+  demoNote:'The same theme twice. Click any note in the two strips to change where each phrase lands — the strips outline the notes each role is aiming at, and the tags under each letter show which of the three main chords it belongs to. Try landing both on C, then both on D, and hear what breaks.',
+  source:'The Composition — Question & Answer: Using Question and Answer Roles / Applying Question and Answer Roles',
+  body:[
+    'You have a phrase. The next job is to expand it into a whole section — the opening of an orchestral piece, a verse, whatever you are building. The cheapest way to do that is not to write more material. It is to <strong>play what you have twice and give the two halves different jobs.</strong>',
+    'A lot of great music runs on <strong>question and answer roles</strong>: one phrase asks, the next replies. It creates dialogue, and dialogue keeps a listener with you. All it takes is deciding where each phrase lands.',
+    'The mechanism is tension and resolution, and it comes from two facts about a major scale. First, the <strong>leading tone</strong>: play C up to B and stop, and you can feel the B wanting to fall back to C. The 7th step creates tension that resolves to the tonic. Second, the <strong>three main chords</strong> — in C major those are the tonic C major (C, E, G), the subdominant F major (F, A, C), and the dominant G major (G, B, D). Play G major and then C major and you hear the same thing at chord scale: the dominant creates tension, the tonic releases it.',
+    'So: <strong>land the questioning phrase on a note from the dominant chord</strong> — G, B or D — and it hangs, unresolved. <strong>Land the answering phrase on a note from the tonic chord</strong> — C, E or G — and it closes. In the book\'s worked example the same theme appears twice, ending first on D and then on C. Nothing else changes. That one note is the difference between a repeat and a conversation.',
+    '<strong>What goes wrong is landing both phrases in the same place.</strong> End both on the tonic and the question answers itself, so the second phrase has nothing to do and the section sits still. End both on the dominant and nothing ever closes, which is exhausting rather than interesting. The pair only works as a pair.',
+    'These are timeless techniques — you will find them in Mozart and Beethoven and in modern writing alike — and they are guidelines rather than rules. The summary of everything so far is short: build from motifs, balance repetition with variation, aim for a top point, and give your phrases question and answer roles.'
+  ],
+  ex:{
+    beginner:'Take your phrase and land it on a note from the dominant chord — G, B or D. Then write the answer, landing on C, E or G.',
+    intermediate:'In the questioning phrase, aim to land on a note from G major. In the answering phrase, resolve to a note from C major. Play around with the roles until you find a combination that feels satisfying.',
+    advanced:'Build a full section by chaining two question-and-answer pairs, so the first pair\'s answer is itself a question for the second.'
+  },
+  quiz:[
+    { q:'Which notes should a questioning phrase land on, in C major?',
+      o:['C, E or G — the tonic chord','G, B or D — the dominant chord','F, A or C — the subdominant chord','Any note outside the scale'], a:1,
+      why:'The dominant creates the tension. The answering phrase then resolves to a note of the tonic chord — C, E or G.' },
+    { q:'Why is B the sharpest note to leave a question hanging on?',
+      o:['It is the highest note in the scale','It is the leading tone, the 7th step that pulls back to the tonic','It is dissonant against every chord','It is outside the key'], a:1,
+      why:'Play C up to B and stop, and you feel the B wanting to resolve to C. It is also a note of the dominant chord, so it does both jobs at once.' }
+  ]
+}];
 
 /* ============================================================================
    THE ACCELERATOR — WIDGETS
@@ -1474,6 +1506,169 @@ WIDGETS.motif = function (host) {
     iv = 3; rh = 1; dir = -1;                        // G G G E♭ — a major third down
     draw(); playMotif();
   };
+  draw();
+};
+
+
+/* ===========================================================================
+   9. QUESTION & ANSWER — one theme twice, and the note it lands on
+   The chapter's own example: the same phrase given a questioning function by
+   landing on a dominant tone, then an answering one by resolving to a tonic
+   tone. Both landing notes are the reader's to choose.
+   =========================================================================== */
+WIDGETS.qanda = function (host) {
+  const BPM = 88, STEPS = 8;
+
+  /* C major. I = C E G, IV = F A C, V = G B D — the book's three main chords. */
+  const SCALE = [
+    { n:'C', m:60, I:true,  IV:true,  V:false },
+    { n:'D', m:62, I:false, IV:false, V:true  },
+    { n:'E', m:64, I:true,  IV:false, V:false },
+    { n:'F', m:65, I:false, IV:true,  V:false },
+    { n:'G', m:67, I:true,  IV:false, V:true  },
+    { n:'A', m:69, I:false, IV:true,  V:false },
+    { n:'B', m:71, I:false, IV:false, V:true  }
+  ];
+  /* the theme, identical in both halves until the note it lands on */
+  const HEAD = [[60,0,1],[64,1,1],[67,2,2],[65,4,1],[64,5,1]];
+  const CHORDS = { V:[55,59,62], I:[48,52,55] };     // G major, C major
+
+  let q = 1, a = 0, chords = true;                   // lands on D, then C
+  let running = false, timer = null;
+
+  const phrase = (land, off) => HEAD.map(([m, s, l]) => [m, s + off, l])
+    .concat([[SCALE[land].m, off + 6, 2]]);
+  const section = () => phrase(q, 0).concat(phrase(a, STEPS));
+  const SPAN = STEPS * 2 * .5 * 60 / BPM;
+
+  function fire() {
+    seq(section().map(([m, s, l]) => [m, s * .5, l * .5]), BPM, { gain: .13, bright: .6 });
+    if (!chords) return;
+    [['V', 0], ['I', STEPS]].forEach(([k, off]) =>
+      seq(CHORDS[k].map(m => [m, off, STEPS]).map(([m, s, l]) => [m, s * .5, l * .5]),
+          BPM, { gain: .055, bright: .3, attack: .25 }));
+  }
+  function loop() { if (!running) return; fire(); timer = setTimeout(loop, SPAN * 1000); }
+
+  const G = { x:42, y:22, w:458, h:128 };
+  const S1 = { y:206 }, S2 = { y:272 }, cellW = 458 / 7;
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="qa-svg" viewBox="0 0 520 330"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div>
+        <div class="w-row">
+          ${playBtn('qa-play','Play section')}
+          <button class="btn" id="qa-once">Once</button>
+        </div></div>
+      <div><div class="w-lab">Harmony</div>
+        <div class="w-row">
+          <button class="btn" id="qa-ch" aria-pressed="true">Chords: V then I</button>
+        </div></div>
+      <div><div class="w-lab">The book's example</div>
+        <div class="w-row"><button class="btn" id="qa-book">D, then C</button></div></div>
+      <div class="w-read" id="qa-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#qa-svg');
+
+  function draw() {
+    const notes = section();
+    const lo = 58, hi = 73;
+    const py = m => G.y + G.h - ((m - lo) / (hi - lo)) * G.h;
+    let g = `<text x="${G.x}" y="12" fill="#4E505A" font-size="9" font-weight="700"
+               font-family="DM Sans" letter-spacing="1.6">THE SAME THEME, TWICE</text>`;
+
+    [['Question', 0, '#6E8FB8', 'over G major — the dominant (V)'],
+     ['Answer',   1, '#5FB89A', 'over C major — the tonic (I)']].forEach(([nm, h, col, sub]) => {
+      const x0 = G.x + h * G.w / 2;
+      g += `<rect x="${x0}" y="${G.y}" width="${(G.w / 2).toFixed(1)}" height="${G.h}"
+              fill="${col}" fill-opacity=".05"/>
+            <text x="${(x0 + G.w / 4).toFixed(1)}" y="${G.y + G.h + 17}" fill="${col}"
+              font-size="10" font-weight="700" font-family="DM Sans"
+              text-anchor="middle">${nm}</text>
+            <text x="${(x0 + G.w / 4).toFixed(1)}" y="${G.y + G.h + 30}" fill="#4E505A"
+              font-size="8.5" font-family="DM Sans" text-anchor="middle">${chords ? sub : 'melody alone'}</text>`;
+    });
+    g += `<line x1="${G.x + G.w / 2}" y1="${G.y}" x2="${G.x + G.w / 2}" y2="${G.y + G.h}"
+            stroke="#ffffff" stroke-opacity=".12"/>`;
+
+    const stepW = G.w / (STEPS * 2);
+    notes.forEach(([m, s, l], i) => {
+      const land = i === HEAD.length || i === notes.length - 1;
+      const half = s < STEPS ? 0 : 1;
+      g += `<rect x="${(G.x + s * stepW + 2).toFixed(1)}" y="${(py(m) - 4).toFixed(1)}"
+              width="${(l * stepW - 4).toFixed(1)}" height="8" rx="4"
+              fill="${land ? (half ? '#5FB89A' : '#6E8FB8') : '#D4A04A'}"
+              fill-opacity="${land ? 1 : .62}"/>`;
+    });
+
+    /* the two landing-note pickers; each lights the notes its role is aiming at */
+    [[S1, q, 'V', 'QUESTION LANDS ON — aim for a note of G major', '#6E8FB8'],
+     [S2, a, 'I', 'ANSWER LANDS ON — resolve to a note of C major', '#5FB89A']
+    ].forEach(([S, sel, want, lab, col]) => {
+      g += `<text x="${G.x}" y="${S.y - 8}" fill="#4E505A" font-size="9" font-weight="700"
+              font-family="DM Sans" letter-spacing="1.4">${lab}</text>`;
+      SCALE.forEach((d, i) => {
+        const on = i === sel, target = d[want];
+        const x = G.x + i * cellW;
+        g += `<rect class="qa-cell" data-s="${want}" data-i="${i}" x="${(x + 2).toFixed(1)}"
+                y="${S.y}" width="${(cellW - 4).toFixed(1)}" height="40" rx="6"
+                fill="${on ? col : '#ffffff'}" fill-opacity="${on ? .9 : target ? .07 : .022}"
+                stroke="${target && !on ? col : 'none'}" stroke-opacity=".45"
+                style="cursor:pointer"/>
+              <text x="${(x + cellW / 2).toFixed(1)}" y="${S.y + 21}"
+                fill="${on ? '#080C14' : target ? '#fff' : '#5A5C66'}" font-size="13"
+                font-weight="${on ? 700 : 400}" font-family="DM Sans" text-anchor="middle"
+                pointer-events="none">${d.n}</text>
+              <text x="${(x + cellW / 2).toFixed(1)}" y="${S.y + 33}"
+                fill="${on ? '#080C14' : '#4E505A'}" font-size="8" font-weight="700"
+                font-family="DM Sans" text-anchor="middle" pointer-events="none"
+                >${[d.I ? 'I' : '', d.IV ? 'IV' : '', d.V ? 'V' : ''].filter(Boolean).join(' · ')}</text>`;
+      });
+    });
+    svg.innerHTML = g;
+    read();
+  }
+
+  function read() {
+    const qd = SCALE[q], ad = SCALE[a];
+    let t = `<b>Question lands on ${qd.n}; answer lands on ${ad.n}.</b> `;
+    if (qd.V && ad.I) {
+      t += 'Tension, then resolution — the shape the chapter describes. ';
+      if (qd.n === 'B') t += 'B is the leading tone, the 7th step that pulls hardest back to the tonic.';
+      else if (qd.n === 'G' || ad.n === 'G') t += 'G sits in both chords, so it pulls less hard either way.';
+    } else if (!qd.V && ad.I) {
+      t += `${qd.n} is not in G major, so the question has little to resolve. The answer still lands.`;
+    } else if (qd.V && !ad.I) {
+      t += `The question sets up the tension, but ${ad.n} is not in C major — nothing closes.`;
+    } else {
+      t += 'Neither phrase is doing its job: no tension raised, and nothing resolved.';
+    }
+    host.querySelector('#qa-read').innerHTML = t;
+  }
+
+  svg.addEventListener('click', e => {
+    const c = e.target.closest('.qa-cell'); if (!c) return;
+    if (c.dataset.s === 'V') q = +c.dataset.i; else a = +c.dataset.i;
+    draw();
+    if (!running) fire();
+  });
+  host.querySelector('#qa-once').onclick = fire;
+  host.querySelector('#qa-book').onclick = () => { q = 1; a = 0; draw(); fire(); };
+  host.querySelector('#qa-ch').onclick = function () {
+    chords = !chords;
+    this.setAttribute('aria-pressed', String(chords));
+    this.textContent = chords ? 'Chords: V then I' : 'Melody alone';
+    draw();
+  };
+  host.querySelector('#qa-play').onclick = function () {
+    running = !running;
+    this.classList.toggle('on', running);
+    if (running) { fire(); timer = setTimeout(loop, SPAN * 1000); }
+    else clearTimeout(timer);
+  };
+  host._cleanup = () => { running = false; clearTimeout(timer); };
   draw();
 };
 
