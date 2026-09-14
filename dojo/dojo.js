@@ -210,7 +210,9 @@ const DojoAudio = (function(){
 
   function position(){
     if(!playing || !ctx) return 0;
-    const p = ctx.currentTime - startTime;
+    /* sources are scheduled LEAD seconds ahead, so this is negative until they
+       actually start; clamped so the progress bar never gets a negative scale */
+    const p = Math.max(0, ctx.currentTime - startTime);
     return duration ? (p % duration) : 0;
   }
 
@@ -427,6 +429,13 @@ function distinction(a, b){
 
 /* ============================================================================
    4. THE SCREEN
+   ----------------------------------------------------------------------------
+   One centred column and nothing else. The belt, the question, the play
+   control, four answers stacked, and — when you are wrong — the two clips to
+   switch between. No prose: the display line asks the question and then names
+   the answer in the same place, so there is nothing to read and nowhere else
+   to look. LISTEN_FOR and DISTINCTIONS stay in dojo-data.js, unused, for when
+   the explanations come back.
    ============================================================================ */
 
 const S = {
@@ -435,53 +444,29 @@ const S = {
   picked: null,
   heard:  false,           // has the clip been played at least once?
   streak: 0,
-  ab:     null             // {answer, picked, on, ready}
+  ab:     null             // {answer, picked, on, ready, clips}
 };
 
-/* ------------------------------------------------------------------ rail --- */
-function paintRail(){
-  $('dj-rail').innerHTML = BELTS.map(b => `
-    <div class="dj-belt" data-on="${b.id === BELT.id}" data-built="${b.built}"
-         role="tab" aria-selected="${b.id === BELT.id}" aria-disabled="${!b.built}">
-      <i>${b.n}</i><span>${esc(b.title)}</span>
-    </div>`).join('');
-  $('dj-title').textContent = BELT.title;
-  $('dj-lede').textContent  = BELT.lede;
-  $('dj-ask').textContent   = BELT.ask;
-
-  const soon = BELTS.filter(b => !b.built).length;
-  $('dj-fine').innerHTML =
-    `${poolFor(BELT).length} instruments in this belt, every clip dry and level-matched. ` +
-    `${soon} further belts arrive with their audio. Progress is kept in this browser only — ` +
-    `<button class="dj-link" id="dj-reset">reset it</button>.`;
-  $('dj-reset').onclick = () => {
-    Progress.reset();
-    S.streak = 0;
-    paintScore();
-    next();
-  };
-}
-
+/* ---------------------------------------------------------------- chrome --- */
 function paintScore(){
   const b = Progress.belt(BELT.id);
   const pct = b.attempts ? Math.round(100 * b.correct / b.attempts) : 0;
   $('dj-score').innerHTML = b.attempts
     ? `<b>${b.correct}</b><span>/${b.attempts}</span><i>${pct}%</i>`
-    : `<span>No attempts yet</span>`;
-  $('dj-streak').innerHTML = S.streak > 1
-    ? `<b>${S.streak}</b> in a row${b.bestStreak > S.streak ? ` · best ${b.bestStreak}` : ''}`
-    : (b.bestStreak > 1 ? `best streak ${b.bestStreak}` : '');
+    : '';
+  $('dj-belt').textContent = S.streak > 1
+    ? `Belt ${BELT.n} · ${BELT.title} · ${S.streak} in a row`
+    : `Belt ${BELT.n} · ${BELT.title}`;
 }
 
 /* -------------------------------------------------------------- transport --- */
 function paintPlay(){
-  const el  = $('dj-play');
-  const lbl = $('dj-play-lbl');
-  const on  = DojoAudio.playing;
+  const el = $('dj-play');
+  const on = DojoAudio.playing;
   el.dataset.state = DojoAudio.loading ? 'loading' : (on ? 'playing' : 'idle');
-  lbl.textContent  = DojoAudio.loading ? 'Loading…' : (on ? 'Stop' : (S.heard ? 'Replay' : 'Play'));
+  $('dj-play-lbl').textContent = DojoAudio.loading ? 'Loading' : (on ? 'Stop' : (S.heard ? 'Replay' : 'Play'));
   el.setAttribute('aria-label', on ? 'Stop' : 'Play the clip');
-  if(DojoAudio.error) $('dj-hint').textContent = DojoAudio.error;
+  if(DojoAudio.error) $('dj-note').textContent = DojoAudio.error;
 }
 
 let lastBar = -1;
@@ -499,26 +484,30 @@ async function playQuestion(){
   const ok = await DojoAudio.play(q.clips, { loop:false, lock:q.clips.length > 1 });
   if(S.q !== q || !ok) return;     // Next was pressed while this was decoding
   S.heard = true;
-  $('dj-hint').textContent = 'Replay as often as you like — there is no timer and no limit.';
+  $('dj-note').textContent = '';
   paintOptions();
 }
 
 /* --------------------------------------------------------------- options --- */
 function paintOptions(){
   const locked = S.phase !== 'asking';
-  $('dj-options').innerHTML = S.q.options.map((id, i) => {
+  $('dj-options').innerHTML = S.q.options.map(id => {
     const state = !locked ? '' :
       id === S.q.answer ? ' is-right' :
       id === S.picked   ? ' is-wrong' : ' is-off';
-    return `<button class="dj-opt${state}" data-id="${esc(id)}" ${locked || !S.heard ? 'disabled' : ''}>
-              <i>${i + 1}</i>${esc(nameOf(id))}
-            </button>`;
+    return `<button class="dj-opt${state}" data-id="${esc(id)}"
+              ${locked || !S.heard ? 'disabled' : ''}>${esc(nameOf(id))}</button>`;
   }).join('');
   if(!S.heard && !locked) $('dj-options').dataset.waiting = '1';
   else delete $('dj-options').dataset.waiting;
 }
 
 /* ---------------------------------------------------------------- answer --- */
+function display(text, state, mark){
+  $('dj-display').innerHTML = (mark ? `<span class="dj-mark" data-v="${mark}"></span>` : '') + esc(text);
+  if(state) $('dj-display').dataset.state = state; else delete $('dj-display').dataset.state;
+}
+
 function answer(id){
   if(S.phase !== 'asking' || !S.heard) return;
   S.picked = id;
@@ -530,71 +519,40 @@ function answer(id){
   Progress.noteStreak(BELT.id, S.streak);
   Progress.cleared(BELT.id);
 
+  display(nameOf(S.q.answer), S.phase, right ? 'right' : 'wrong');
   paintOptions();
   paintScore();
   right ? showRight() : showWrong();
 }
 
 function showRight(){
-  const a = S.q.answer;
-  $('dj-result').innerHTML = `
-    <div class="dj-verdict is-right">
-      <div class="dj-verdict-head"><span class="dj-tick" aria-hidden="true"></span>
-        <b>${esc(nameOf(a))}</b><em>${esc(INSTRUMENTS[a] ? INSTRUMENTS[a].epithet : '')}</em></div>
-      <p>${esc(LISTEN_FOR[a] || '')}</p>
-      <div class="dj-actions">
-        <button class="dj-next" id="dj-next">Next question</button>
-        <a class="dj-link" href="${atlasHref(a)}">Open the ${esc(nameOf(a))} in the atlas</a>
-      </div>
-    </div>`;
+  $('dj-result').innerHTML = `<button class="dj-next" id="dj-next">Next</button>`;
   $('dj-next').onclick = next;
   $('dj-next').focus();
 }
 
 /* ⭐ The A/B on a wrong answer.
-   Both clips are started at ONE scheduled time with the answer at gain 1 and
-   the picked instrument at gain 0. Switching between them after that is a 20 ms
-   ramp on two gain nodes: no restart, no click, and it works mid-note. That is
-   the entire reason this section is built on the studio's engine. */
+   Both clips start at ONE scheduled time with the answer at gain 1 and the
+   picked instrument at gain 0. Switching after that is a 20 ms ramp on two
+   gain nodes: no restart, no click, and it works mid-note. */
 function showWrong(){
   const a = S.q.answer, p = S.picked;
   S.ab = { answer:a, picked:p, on:'a', ready:false };
 
   $('dj-result').innerHTML = `
-    <div class="dj-verdict is-wrong">
-      <div class="dj-verdict-head"><span class="dj-cross" aria-hidden="true"></span>
-        <b>It was the ${esc(nameOf(a))}</b><em>you picked ${esc(nameOf(p))}</em></div>
-
-      <div class="dj-ab" id="dj-ab">
-        <div class="dj-ab-label">Hear them back to back</div>
-        <div class="dj-ab-row">
-          <button class="dj-ab-btn is-on" data-side="a" aria-pressed="true">
-            <i>The answer</i><b>${esc(nameOf(a))}</b></button>
-          <button class="dj-ab-btn" data-side="b" aria-pressed="false">
-            <i>You picked</i><b>${esc(nameOf(p))}</b></button>
-        </div>
-        <div class="dj-ab-note" id="dj-ab-note">Starting both…</div>
-      </div>
-
-      <p class="dj-distinction">${esc(distinction(a, p))}</p>
-
-      <div class="dj-actions">
-        <button class="dj-next" id="dj-next">Next question</button>
-        <a class="dj-link" href="${atlasHref(a)}">Open the ${esc(nameOf(a))} in the atlas</a>
-        <a class="dj-link" href="${atlasHref(p)}">…and the ${esc(nameOf(p))}</a>
-      </div>
-    </div>`;
+    <div class="dj-ab" id="dj-ab">
+      <div class="dj-ab-label">Hear them back to back</div>
+      <button class="dj-ab-btn is-on" data-side="a" aria-pressed="true">${esc(nameOf(a))}</button>
+      <button class="dj-ab-btn" data-side="b" aria-pressed="false">${esc(nameOf(p))}</button>
+    </div>
+    <button class="dj-next" id="dj-next">Next</button>
+    <a class="dj-link" href="${atlasHref(a)}">Open the ${esc(nameOf(a))} in the atlas</a>`;
 
   $('dj-next').onclick = next;
   $('dj-ab').querySelectorAll('.dj-ab-btn').forEach(b => {
     b.onclick = () => setAB(b.dataset.side);
   });
 
-  /* The card grows by the height of the A/B when it appears. On a short laptop
-     that pushes the comparison — the whole point of getting it wrong — below
-     the fold. Revealing the whole verdict rather than just the switch keeps the
-     line that explains the difference on screen with it, which is the half that
-     actually teaches. */
   reveal($('dj-result'));
   startAB();
 }
@@ -602,17 +560,13 @@ function showWrong(){
 async function startAB(){
   const ab = S.ab;                 // the comparison this call belongs to
   const ans = poolClipFor(ab.answer), pick = poolClipFor(ab.picked);
-  if(!ans || !pick){
-    $('dj-ab-note').textContent = 'No clip for one of these yet — comparison unavailable.';
-    return;
-  }
+  if(!ans || !pick){ $('dj-note').textContent = 'No clip to compare against yet.'; return; }
   /* one scheduled start for both; only the gains differ */
   const ok = await DojoAudio.play([ans, pick], { loop:true, lock:false, gains:{ [ans]:1, [pick]:0 } });
   if(S.ab !== ab) return;          // Next was pressed while this was decoding
-  if(!ok){ $('dj-ab-note').textContent = DojoAudio.error || 'Comparison unavailable.'; return; }
+  if(!ok){ $('dj-note').textContent = DojoAudio.error || 'Comparison unavailable.'; return; }
   ab.clips = { a:ans, b:pick };
   ab.ready = true;
-  $('dj-ab-note').textContent = 'Switch as often as you like — it changes mid-note, nothing restarts. Both loop.';
   paintPlay();
 }
 
@@ -649,17 +603,29 @@ function next(){
   S.ab     = null;
   S.q      = buildQuestion(BELT);
   $('dj-result').innerHTML = '';
-  $('dj-hint').textContent = 'Nothing is loaded until you press play. Replay as often as you like — there is no timer.';
+  $('dj-note').textContent = '';
   $('dj-bar-fill').style.transform = 'scaleX(0)';
+  display(BELT.ask, null, null);
   paintOptions();
   paintPlay();
-  $('dj-play').focus();
+  paintScore();
+  /* deliberately not focusing anything: a programmatic focus paints a ring on
+     the play button that reads as a selected state, and the keyboard path does
+     not need it — Space plays, 1-4 answer and Enter advances, all from the
+     document. */
 }
 
 /* ----------------------------------------------------------------- wire --- */
 DojoAudio.onstate = paintPlay;
 
 $('dj-play').onclick = playQuestion;
+
+$('dj-reset').onclick = () => {
+  Progress.reset();
+  S.streak = 0;
+  paintScore();
+  next();
+};
 
 $('dj-options').addEventListener('click', e => {
   const b = e.target.closest('.dj-opt');
@@ -695,7 +661,6 @@ window.addEventListener('scroll', () => {
   $('atl-nav').classList.toggle('is-stuck', window.scrollY > 20);
 }, { passive:true });
 
-paintRail();
 paintScore();
 next();
 requestAnimationFrame(frame);

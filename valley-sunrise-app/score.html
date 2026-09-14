@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Valley Sunrise — Score</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../evenant-nav.css">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#080C14;--gold:#D4A04A;--gold-deep:#C08830;--text:#BEC0C8;--dim:#7E808A;
@@ -19,6 +20,10 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 /* header */
 .top{display:flex;align-items:center;justify-content:space-between;gap:22px;
   padding:13px 22px;border-bottom:1px solid var(--hair);flex:0 0 auto}
+/* the module switcher sits to the left of the piece title, with a hairline
+   between them: one says which tool, the other which piece */
+.top-l{display:flex;align-items:center;gap:16px;min-width:0}
+.top-div{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
 .title{display:flex;align-items:baseline;gap:14px;min-width:0}
 .title span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4E505A}
 .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -292,7 +297,11 @@ body.annotating .lanes{cursor:crosshair}
 <body>
 
 <div class="top">
-  <div class="title"><h1 id="t-title">Valley Sunrise</h1><span id="t-sub"></span></div>
+  <div class="top-l">
+    <div data-ev-switch></div>
+    <span class="top-div"></span>
+    <div class="title"><h1 id="t-title">Valley Sunrise</h1><span id="t-sub"></span></div>
+  </div>
   <div class="tools">
     <div class="menu-wrap preset-wrap">
       <button class="preset-field" id="pre-btn" aria-haspopup="true" aria-expanded="false" title="Stem presets">
@@ -443,6 +452,8 @@ body.annotating .lanes{cursor:crosshair}
   <div class="s" id="boot-s">Loading score…</div>
 </div>
 
+<script defer src="../evenant-modules.js" data-module="score"></script>
+<script defer src="../evenant-nav.js"></script>
 <script>
 /* ============================================================================
    SCORE PLAYER
