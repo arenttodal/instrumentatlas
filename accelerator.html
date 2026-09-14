@@ -457,30 +457,32 @@ const LESSONS = [
 /* ---------------------------------------------------------------- 1 ------ */
 {
   id:'prevade', module:'composition', n:1,
-  title:'Prevade',
-  short:'Four slots that turn one motif into a phrase.',
-  claim:'A phrase is not four ideas. It is one idea presented, repeated, varied, and then broken.',
+  title:'The PReVaDe method',
+  short:'Presentation, Repetition, Variation, Destruction — how one motif becomes a phrase.',
+  claim:'Random notes confuse the listener and one motif on repeat bores them. PReVaDe is the structure that sits between the two failures.',
   demo:'prevade',
-  demoNote:'Write a motif in the top grid — click any cell, click it again to clear it. The four slots below fill themselves from whatever you wrote. Change what each slot does, move the slots around with the arrows, and watch the top point move with them.',
-  source:'PROVISIONAL — chapter not yet confirmed',
+  demoNote:'Write a motif in the top grid — click any cell, click it again to clear it. It starts on the Heart Of Courage motif from the book: a rest, then three notes up the bottom of A minor. The four slots fill themselves from what you write — except Destruction, which is new material by design. Reorder the slots with the arrows and watch the top point move.',
+  source:'The Composition — The PReVaDe Method / Top Point: Creating a Climax',
   body:[
-    '<strong>This lesson text is provisional and must not ship as it stands.</strong> The demonstration above is finished and can be judged on its own, but the prose below describes the mechanism as given in the brief for this module — it has not been condensed from the chapter, and every claim in it needs checking against the ebook.',
-    'Prevade builds a phrase out of a single motif in four slots. <strong>Presentation</strong> states the motif. <strong>Repetition</strong> states it again, so the listener registers it as an idea rather than as something that happened once. <strong>Variation</strong> changes it while keeping it recognisable. <strong>Destruction</strong> breaks it.',
-    'Every version in the demonstration is derived from the motif the reader wrote — inverted, rhythmically displaced, or transposed. That is the whole point of the method: the phrase has one source, so it holds together no matter what order the slots are in.',
-    'The slots are reorderable because the order is a choice rather than a law. The demonstration marks the <strong>top point</strong> of the assembled phrase — its highest note — so you can see what reordering does to where the phrase peaks.'
+    'This method did not come from a conservatoire. It came from a high school guitar teacher in a blues improvisation class, and it solves a problem you can hear in two directions. Play random notes from the pentatonic scale and the result is chaotic and confusing for the listener. Repeat the same short bending motif over and over — the intro to <em>Johnny B. Goode</em> — and it turns monotonous. <strong>The method is the balance between those two failures:</strong> familiar enough to follow, new enough to stay interesting.',
+    '<strong>Presentation.</strong> Introduce your motif. Play it clearly and with intention. <strong>Repetition.</strong> Play it again, to fix it in the listener\'s mind. <strong>Variation.</strong> Alter it slightly to keep interest — change the rhythm, the pitch, or the direction of the notes. <strong>Destruction.</strong> Finish with something entirely new.',
+    '<strong>Destruction is the step that gets misread.</strong> It does not mean fragmenting the motif or grinding it down. It means a completely new ending, unrelated to the motif, that still feels natural and cohesive where it sits. In the book\'s worked example bar four is simply new material that rounds the phrase off. That surprise is the whole point of the step — and it is the best place in a phrase to put a climax or a dramatic shift.',
+    '<strong>The order is not fixed.</strong> Presentation, Variation, Destruction, Repetition works. So does opening with the destruction. The book\'s own worked example runs Presentation, Variation, Repetition, Destruction — the variation arrives in bar two keeping the rhythm but turning the notes downward instead of upward, and bar three brings the motif back with two leading notes that carry it into the last bar.',
+    'Then there is the <strong>top point</strong>. A melody wants a clear climax, a high moment that captures attention, and <strong>without one it risks sounding aimless or flat.</strong> In <em>Heart Of Courage</em> the motif is three notes climbing the bottom of the A minor scale, repeated three times with slight changes of pitch, then destroyed in the final bar by a new idea — a four-note downward scale. The highest note in the whole theme, an F, lands in that last bar. The climax and the destruction are the same moment, and that is not a coincidence.',
+    'Two things keep it working. <strong>Keep it simple</strong>, because overly complex phrases confuse rather than captivate. And <strong>think of the phrase as a journey</strong> with peaks, contrasts and a clear resolution. These are guidelines to spark ideas, not laws — adjust the structure to suit your motif and the story you want to tell.'
   ],
   ex:{
-    beginner:'Provisional. Write a four-note motif in the demonstration, then play the phrase without changing any slot. Notice how far a single idea gets you.',
-    intermediate:'Provisional. Keep your motif and set every slot to a different variation. Then move Destruction to slot two and listen to what it costs.',
-    advanced:'Provisional. Write a motif whose top point lands in the Presentation slot, then rewrite it so the phrase peaks in Variation instead — without changing the slot order.'
+    beginner:'Use your motif to write a melody with the PRVD or PVRD structure.',
+    intermediate:'Write three melodies using different variations of the PRVD order.',
+    advanced:'Break all the rules. Create a new structure using your motif that balances repetition and contrast. Or improvise one — sing or play it from beginning to end without stopping to think, and write down the best idea that emerges.'
   },
   quiz:[
-    { q:'In the four slots, where does the material in Variation and Destruction come from?',
-      o:['A new idea written for each slot','The motif in the Presentation slot','The chord progression underneath','A different motif each time'], a:1,
-      why:'Every slot is a transformation of the one motif. That single source is what holds the phrase together however the slots are ordered.' },
-    { q:'Which of the four slots breaks the motif up rather than restating it?',
-      o:['Presentation','Repetition','Variation','Destruction'], a:3,
-      why:'Presentation states it, Repetition confirms it, Variation changes it while keeping it recognisable, and Destruction breaks it.' }
+    { q:'What does the Destruction step actually ask for?',
+      o:['The motif broken into fragments and hammered','Something entirely new, unrelated to the motif','The motif played backwards','The motif at half speed'], a:1,
+      why:'A completely new ending that rounds the phrase off — unrelated to the motif, but still natural and cohesive. It is also the best place in the phrase for a climax.' },
+    { q:'A melody has no clear high point. What goes wrong?',
+      o:['It sounds dissonant','It sounds aimless or flat','It sounds too short','It drifts out of key'], a:1,
+      why:'The top point is the moment that captures attention. In Heart Of Courage the highest note of the theme lands in the final bar, on the destruction.' }
   ]
 }
 ];
@@ -1003,7 +1005,8 @@ WIDGETS.prevade = function (host) {
   const SLOTN = 4;                                   // slots in the phrase
   const DEG = [57, 59, 60, 62, 64, 65, 67, 69, 71];  // A natural minor, A3..B4
   const DNAME = ['A','B','C','D','E','F','G','A','B'];
-  const SEED = { 0:0, 2:4, 3:3, 4:2, 6:1 };          // A – E – D – C – B
+  const SEED = { 2:0, 4:1, 6:2 };                     // rest, then A B C —
+                                                     // the Heart Of Courage motif
   const SPAN = STEPS * SLOTN * .5 * 60 / BPM;        // one pass, in seconds
 
   let motif = Array(STEPS).fill(null);
@@ -1011,6 +1014,8 @@ WIDGETS.prevade = function (host) {
 
   const clampD = d => Math.max(0, Math.min(d, DEG.length - 1));
   const firstOn = m => m.findIndex(v => v !== null);
+  const onsets  = m => m.reduce((a, v, i) => v === null ? a : a.concat(i), []);
+  const topDeg  = m => m.reduce((a, v) => v === null ? a : Math.max(a, v), 0);
 
   /* Slide a transformed motif back inside the grid as a block. Clamping note by
      note would flatten an inversion into one repeated pitch; shifting the whole
@@ -1038,10 +1043,18 @@ WIDGETS.prevade = function (host) {
       fn: m => { const o = Array(STEPS).fill(null);
                  m.forEach((v, i) => { if (v !== null) o[(i + 2) % STEPS] = v; });
                  return o; } },
-    { id:'fragment',   label:'Fragmented — the head, repeated', short:'Fragmented',
-      fn: m => { const i = firstOn(m); if (i < 0) return m.slice();
-                 const head = [m[i], m[(i + 1) % STEPS]], o = Array(STEPS).fill(null);
-                 for (let k = 0; k < STEPS; k++) o[k] = head[k % 2];
+    /* Destruction is not a transformation. The book is explicit that it is
+       "something entirely new", unrelated to the motif but still cohesive —
+       so these two keep the motif's rhythm and replace its pitches outright. */
+    { id:'newclimb',   label:'New ending — climbing to a climax', short:'New: climbing',
+      fn: m => { const on = onsets(m); if (!on.length) return m.slice();
+                 const o = Array(STEPS).fill(null), hi = topDeg(m);
+                 on.forEach((i, k) => o[i] = hi + 1 + k);
+                 return o; } },
+    { id:'newfall',    label:'New ending — falling back to the tonic', short:'New: falling',
+      fn: m => { const on = onsets(m); if (!on.length) return m.slice();
+                 const o = Array(STEPS).fill(null), start = topDeg(m) + 2;
+                 on.forEach((i, k) => o[i] = start - k);
                  return o; } }
   ];
   const tf = id => TRANSFORMS.find(t => t.id === id) || TRANSFORMS[0];
@@ -1050,8 +1063,8 @@ WIDGETS.prevade = function (host) {
   let slots = [
     { name:'Presentation', t:'original',  col:'#D4A04A' },
     { name:'Repetition',   t:'original',  col:'#B8892F' },
-    { name:'Variation',    t:'transposed', col:'#6E8FB8' },
-    { name:'Destruction',  t:'fragment',  col:'#C0603A' }
+    { name:'Variation',    t:'inverted',  col:'#6E8FB8' },
+    { name:'Destruction',  t:'newclimb',  col:'#C0603A' }
   ];
 
   /* step array -> notes. A note runs to the next onset, capped at two steps so
@@ -1190,14 +1203,17 @@ WIDGETS.prevade = function (host) {
   function readout() {
     const tp = topPoint(), el = host.querySelector('#pd-read');
     if (!tp) {
-      el.innerHTML = '<b>No motif yet.</b> Click cells in the grid to write one — the four slots fill themselves from whatever you write.';
+      el.innerHTML = '<b>No motif yet.</b> Click cells in the grid to write one. Presentation, Repetition and Variation fill themselves from it; the destruction writes its own ending.';
       return;
     }
     const pos = Math.round(((tp.step + 1) / (STEPS * SLOTN)) * 100);
+    const last = tp.slot === SLOTN - 1;
     el.innerHTML = `<b>Top point: ${DNAME[tp.d]}, in ${slots[tp.slot].name} — slot ${tp.slot + 1} of ${SLOTN}, ${pos}% of the way through.</b> `
       + (tp.count > 1
-        ? `The phrase reaches that note ${tp.count} times, so the high point is a ceiling rather than a single peak. Reorder the slots and it moves.`
-        : 'It is reached once. Reorder the slots and it moves.');
+        ? `The phrase hits that note ${tp.count} times, so it is a ceiling rather than a peak — and a ceiling is what makes a melody sound flat.`
+        : last
+          ? 'Late, and on the destruction — which is where the book puts the climax.'
+          : 'Reached early. Move the destruction around and see where you would rather it landed.');
   }
 
   /* --- transport ------------------------------------------------------ */
