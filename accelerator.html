@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Accelerator — Evenant</title>
+<meta name="description" content="An interactive companion to the Cinematic Music Accelerator. Every concept demonstrated before it is explained.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================================
+   THE ACCELERATOR — STYLES
+   Design system shared with the Instrument Atlas. See PORT.md §5.
+   ============================================================================ */
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080C14;--gold:#D4A04A;--gold-deep:#C08830;--blue:#8FB4E0;
+  --warn:#C0603A;--ok:#5FB89A;
+  --text:#BEC0C8;--dim:#7E808A;--faint:#4E505A;
+  --hair:rgba(255,255,255,.07);--hair-gold:rgba(212,160,74,.24);
+}
+html{background:var(--bg);overflow-y:scroll;scrollbar-gutter:stable}
+body{font-family:'DM Sans',-apple-system,sans-serif;font-size:17px;color:var(--text);
+  background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.7}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;letter-spacing:-.3px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+code{font-family:inherit;color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+
+.grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")}
+.atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.16) 0%,transparent 55%)}
+
+/* --- nav --- */
+.nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  gap:20px;padding:13px 30px;background:rgba(8,12,20,.86);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.nav-l{display:flex;align-items:center;gap:13px;font-size:11px;font-weight:700;letter-spacing:2.2px;
+  text-transform:uppercase;color:var(--dim);min-width:0}
+.nav-l i{font-style:normal;color:#33353D}
+.nav-l a:hover{color:var(--gold)}
+.nav-l span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mark{width:15px;height:13px;display:flex;flex-direction:column;justify-content:space-between;flex:0 0 auto}
+.mark i{display:block;height:2px;background:#fff;border-radius:1px}
+.mark i:nth-child(2){width:70%}
+.prog{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:700;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--faint);flex:0 0 auto}
+.prog-bar{width:74px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.prog-bar i{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold));
+  transition:width .5s cubic-bezier(.16,1,.3,1)}
+
+.wrap{position:relative;z-index:10;max-width:940px;margin:0 auto;padding:0 30px}
+.eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
+
+/* --- module index --- */
+.hero{padding:66px 0 40px}
+.hero h1{font-size:clamp(38px,5vw,58px);line-height:1.04;margin:16px 0 18px}
+.hero h1 em{font-style:italic;color:var(--gold);display:block}
+.hero p{max-width:620px;color:#9A9CA4;font-weight:300;font-size:16.5px}
+.lessons{display:grid;gap:12px;padding-bottom:80px}
+.lcard{display:grid;grid-template-columns:40px 1fr auto;gap:20px;align-items:center;
+  padding:20px 22px;border:1px solid var(--hair);border-radius:12px;background:rgba(255,255,255,.02);
+  transition:border-color .3s,background .3s,transform .3s}
+.lcard:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03);transform:translateY(-2px)}
+.lnum{font-family:'Playfair Display',serif;font-size:22px;color:var(--faint);text-align:center}
+.lcard.done .lnum{color:var(--gold)}
+.lcard h3{font-size:21px;margin-bottom:5px}
+.lcard p{font-size:14px;color:var(--dim);font-weight:300;line-height:1.55}
+.ltag{font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--faint);
+  padding:5px 11px;border:1px solid var(--hair);border-radius:100px;white-space:nowrap}
+.lcard.done .ltag{color:var(--ok);border-color:rgba(95,184,154,.3)}
+
+/* --- lesson --- */
+.crumb{display:flex;align-items:center;gap:12px;font-size:10.5px;letter-spacing:2.2px;
+  text-transform:uppercase;font-weight:700;color:var(--faint);padding:26px 0 0}
+.crumb a:hover{color:var(--gold)}
+.crumb i{font-style:normal;color:#33353D}
+.lesson{padding-bottom:90px}
+.lesson-n{margin-top:20px}
+.lesson h1{font-size:clamp(32px,4.2vw,48px);line-height:1.06;margin:14px 0 0}
+.claim{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;line-height:1.5;
+  color:var(--gold);max-width:640px;margin:18px 0 0}
+.sec{margin-top:52px}
+.sec-h{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+.sec-h b{font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold)}
+.sec-h span{flex:1 1 auto;height:1px;background:var(--hair)}
+.prose{max-width:660px}
+.prose p{margin-bottom:16px;font-weight:300}
+.prose p strong{color:#fff;font-weight:500}
+.prose em{font-style:italic;color:var(--text)}
+.demo{border:1px solid var(--hair);border-radius:14px;background:rgba(255,255,255,.015);overflow:hidden}
+.demo-note{padding:13px 22px;border-top:1px solid var(--hair);font-size:12.5px;
+  color:var(--faint);line-height:1.6}
+.source{margin-top:46px;padding-top:18px;border-top:1px solid var(--hair);
+  font-size:11.5px;color:#3E404A;font-weight:300}
+.source em{color:var(--faint);font-style:italic}
+
+/* --- exercise --- */
+.ex{display:grid;gap:10px}
+.ex-row{display:grid;grid-template-columns:112px 1fr;gap:20px;align-items:start;
+  padding:16px 20px;border:1px solid var(--hair);border-radius:10px;background:rgba(255,255,255,.015)}
+.ex-row b{font-size:9.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
+  color:var(--gold);padding-top:3px}
+.ex-row p{font-size:14.5px;line-height:1.6;font-weight:300}
+.ex-done{margin-top:18px}
+.ex-done button{display:inline-flex;align-items:center;gap:9px;padding:9px 17px;
+  border:1px solid var(--hair);border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s}
+.ex-done button:hover{border-color:var(--hair-gold);color:#fff}
+.ex-done button[aria-pressed="true"]{border-color:var(--ok);color:var(--ok);background:rgba(95,184,154,.08)}
+
+/* --- quiz --- */
+.q{padding:20px 22px;border:1px solid var(--hair);border-radius:12px;margin-bottom:12px;
+  background:rgba(255,255,255,.015)}
+.q>p{font-size:16px;margin-bottom:14px;color:#fff;font-weight:400}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;padding:11px 15px;border:1px solid var(--hair);border-radius:9px;
+  font-size:14.5px;color:var(--text);font-weight:300;transition:all .2s}
+.opt:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
+.opt.right{border-color:var(--ok);background:rgba(95,184,154,.1);color:#fff}
+.opt.wrong{border-color:var(--warn);background:rgba(192,96,58,.1);color:#fff}
+.opt:disabled{cursor:default}
+.why{margin-top:13px;padding-top:13px;border-top:1px solid var(--hair);font-size:13.5px;
+  line-height:1.65;color:var(--dim);font-weight:300;display:none}
+.why.on{display:block}
+.why b{color:var(--gold);font-weight:700}
+
+/* --- pager --- */
+.pager{display:flex;justify-content:space-between;gap:20px;margin-top:36px;padding-top:30px;
+  border-top:1px solid var(--hair)}
+.pager span{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:5px}
+.pager b{font-family:'Playfair Display',serif;font-size:20px;color:#fff;font-weight:500}
+.pager a:hover b{color:var(--gold)}
+.pager .r{text-align:right;margin-left:auto}
+
+/* ===========================================================================
+   WIDGET CHROME — shared by every demonstration
+   =========================================================================== */
+.w-grid{display:grid;grid-template-columns:1fr 276px}
+.w-stage{padding:22px 20px 16px;min-width:0}
+.w-stage svg{width:100%;height:auto;display:block;touch-action:none}
+.w-side{border-left:1px solid var(--hair);padding:20px;display:flex;flex-direction:column;gap:17px}
+.w-lab{font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:9px}
+.w-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.w-col{display:grid;gap:5px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--hair);
+  border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s;white-space:nowrap}
+.btn:hover{border-color:var(--hair-gold);color:#fff}
+.btn.wide{border-radius:9px;justify-content:flex-start;width:100%}
+.btn.gold{border-color:rgba(212,160,74,.4);color:#fff;background:rgba(212,160,74,.09)}
+.btn.gold:hover{background:rgba(212,160,74,.18)}
+.btn.on{border-color:var(--gold);background:rgba(212,160,74,.2);color:#fff}
+.btn[aria-pressed="true"]{border-color:var(--c,var(--gold));color:#fff;
+  background:rgba(212,160,74,.12)}
+.w-read{font-size:12.5px;color:var(--dim);font-weight:300;line-height:1.6;
+  padding-top:14px;border-top:1px solid var(--hair)}
+.w-read b{color:#fff;font-weight:500}
+.w-missing{padding:44px 30px;text-align:center}
+.w-missing p{font-size:14px;color:var(--dim);font-weight:300;margin-top:10px}
+.w-missing .hint{font-size:12px;color:#3E404A}
+
+/* voicing checks */
+.checks{display:grid;gap:7px}
+.chk{display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start;font-size:12.5px;
+  line-height:1.5;font-weight:300;transition:color .25s}
+.chk i{font-style:normal;font-size:13px;line-height:1.3;text-align:center}
+.chk.ok{color:var(--dim)}.chk.ok i{color:var(--ok)}
+.chk.bad{color:#fff}.chk.bad i{color:var(--warn)}
+
+/* perspective dials */
+.pv-layer{padding:11px 0;border-bottom:1px solid var(--hair)}
+.pv-layer:last-child{border-bottom:none}
+.pv-name{font-size:12.5px;font-weight:500;margin-bottom:7px}
+.pv-dial{display:block;margin-bottom:6px}
+.pv-dial span{display:block;font-size:9.5px;color:var(--faint);letter-spacing:.4px;margin-bottom:2px}
+.pv-dial input{width:100%;accent-color:var(--gold);height:3px}
+
+@media (max-width:860px){
+  .w-grid{grid-template-columns:1fr}
+  .w-side{border-left:none;border-top:1px solid var(--hair)}
+  .lcard{grid-template-columns:32px 1fr;gap:14px}
+  .ltag{grid-column:2;justify-self:start}
+  .ex-row{grid-template-columns:1fr;gap:8px}
+  .wrap{padding:0 20px}
+  .nav{padding:12px 18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="atmos"></div>
+
+<nav class="nav">
+  <div class="nav-l">
+    <span class="mark"><i></i><i></i><i></i></span>
+    <a href="#/foundations">The Accelerator</a><i>/</i><span id="nav-where">Foundations</span>
+  </div>
+  <div class="prog">
+    <span id="prog-txt">0 of 6</span>
+    <span class="prog-bar"><i id="prog-fill"></i></span>
+  </div>
+</nav>
+
+<main id="view"></main>
+
+<script>
+/* ============================================================================
+   THE ACCELERATOR — CONTENT
+   ----------------------------------------------------------------------------
+   This is the file to edit. Nothing here knows how anything is drawn.
+
+   Every lesson maps to a chapter of the Cinematic Music Accelerator ebook by
+   Arn Andersson. The `source` field on each lesson names the chapter it is
+   condensed from, so the teaching can be checked against the original.
+
+   LESSON SHAPE
+     id        route segment, lowercase, hyphenated
+     n         display number within the module
+     title     lesson title
+     short     one line for the module index
+     claim     the single sentence the reader should leave with
+     demo      widget id — see accel-widgets.js
+     demoNote  caption under the demo, tells the reader what to try
+     body      array of paragraphs; <strong> allowed
+     ex        {beginner, intermediate, advanced} — the ebook's quests
+     quiz      [{q, o:[...], a:index, why}]
+     source    which ebook chapter this condenses
+   ============================================================================ */
+
+const MODULES = [
+  { id:'foundations', n:1, title:'Foundations',
+    subtitle:'The core pillars',
+    lede:'The concepts everything else rests on. Each one is demonstrated before it is explained — you will hear the difference before you read why it happens.' }
+  /* composition, form, orchestration, production follow — see PORT.md §9 */
+];
+
+const LESSONS = [
+
+/* ---------------------------------------------------------------- 1 ------ */
+{
+  id:'overtones', module:'foundations', n:1,
+  title:'Overtones',
+  short:'Why one note is never one note, and what follows from that.',
+  claim:'Every note you play contains a stack of quieter notes above it. Almost every rule in this book is a consequence of that one fact.',
+  demo:'overtones',
+  demoNote:'Click any bar to silence that partial. The fundamental alone is a bare sine wave. Everything that makes it sound like an instrument is sitting above it.',
+  source:'Core Pillars of Music — Overtones / A Look At The Overtones',
+  body:[
+    'Most sounds are more complex than they appear. When you pluck a guitar string you hear a note, but inside that note is a rainbow of overtones, and they are what create the timbre and the character of the sound.',
+    'The fundamental is the root frequency. The rate at which the string vibrates determines the pitch — an A at 110Hz is a string vibrating 110 times a second. But the string does not only vibrate along its whole length. It also vibrates in halves, thirds, quarters and so on, and each division produces its own pitch. The first overtone is the fundamental doubled, an octave above at 220Hz. The next is the fundamental tripled, at 330Hz. Then 440, then 550.',
+    'Written out from a low C, the first sixteen overtones give you C, then C an octave up, then G, then C, then E, G, B♭ and another C — and after that the steps get closer and closer together until the top of the series is almost a scale. <strong>The intervals start wide at the bottom and tighten as they rise.</strong>',
+    'There are only two things to take from this, and between them they are about 80% of what you need. <strong>First: follow that spacing in your own chords.</strong> Spacious, octave- and fifth-based voicings in the low end, then tighter voicings as you go up. <strong>Second: double the root most, then the fifth, then the third, and sevenths and ninths least of all.</strong> The root appears four times in the series, the fifth twice, the third once. Copy that proportion and a chord sounds balanced, because it matches what a single note is already doing.'
+  ],
+  ex:{
+    beginner:'Play a low C on a piano or in your DAW. Sing the C an octave above it, then the G above that. Both are already sounding inside the note you played.',
+    intermediate:'Voice a C major triad three ways — closed in the low register, spread following the overtone series, and closed in the high register. Note which one sounds clearest and why.',
+    advanced:'Take a chord from something you have written. Count how many times you doubled the root, the fifth and the third. Re-voice it to roughly 4:2:1 and compare the two.'
+  },
+  quiz:[
+    { q:'Which note appears most often in the first sixteen overtones?',
+      o:['The third','The fifth','The root','The seventh'], a:2,
+      why:'The root appears four times, the fifth twice, the third once — which is exactly the proportion to double in.' },
+    { q:'The overtone series spaces intervals widely at the bottom and closely at the top. What should you do with chord voicings?',
+      o:['The same — wide low, tight high','The opposite — tight low, wide high','Space everything evenly','Spacing does not affect clarity'], a:0,
+      why:'Following the series gives clarity and balance. Fighting it is the most common cause of a muddy low end.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 2 ------ */
+{
+  id:'perspective', module:'foundations', n:2,
+  title:'Musical perspective',
+  short:'Foreground, middleground, background — and the three dials that decide which is which.',
+  claim:'Your listener can only follow one thing at a time. Perspective is how you choose what that thing is.',
+  demo:'perspective',
+  demoNote:'Three layers, one phrase. Move any layer forward or back on the three dials and notice how fast your attention follows.',
+  source:'Musical Perspective: Foreground, Middleground & Background',
+  body:[
+    'Look at a painting and you take in the whole thing first, then you notice it has layers — a figure in the foreground, sharply detailed and drawing the eye; other shapes in the middleground giving context and movement; and a background that sets the scene. Each layer has a purpose, and together they create depth and focus.',
+    'Sound works the same way, and for a practical reason. We are bombarded with sound sources constantly, and to avoid sensory overload the brain filters and prioritises — <strong>giving priority to what is dynamic and unpredictable.</strong> Historically a sudden or unpredictable noise demanded attention and might mean danger. Complex sources like speech take far more attention than the monotony of rain.',
+    'In music that becomes a hierarchy of focus, and three parameters do almost all the work. <strong>Loudness</strong> — louder elements move to the front. <strong>Rhythmic activity</strong> — rhythmically dynamic parts attract attention; an ostinato sticks out more than a drone. <strong>Variation and predictability</strong> — elements that change or surprise stand out, while static and repetitive layers stay back.',
+    'So the foreground is melodies, surprise swells, effects, big stabs, vocal lines. The middleground is supporting harmony, rhythmic ostinatos, accompanying countermelodies. The background is drones, predictable ostinatos and atmospheric textures. <strong>These are not rigid categories but a sliding scale</strong> — a drone that swells steps forward; a melody that repeats recedes.',
+    'Two things to get right. Make sure the foreground is clear and that one main element is in focus. And make sure the middleground and background support it without stealing attention — exactly as they would in a painting. Get this wrong and the track becomes chaotic, because the listener never knows what to follow.'
+  ],
+  ex:{
+    beginner:'Take a track you like and name the foreground, middleground and background in the first sixteen bars.',
+    intermediate:'Take one of your own tracks. Decide which layer should be the foreground, then check whether it actually is on all three parameters.',
+    advanced:'Rewrite a section so the foreground changes hands twice without either handover being obvious.'
+  },
+  quiz:[
+    { q:'A sustained drone swells and gets louder. What happens to it?',
+      o:['Nothing — drones are always background','It moves toward the foreground','It becomes harmony','It masks the melody'], a:1,
+      why:'Loudness is one of the three dials, and the categories are a sliding scale. A background element that changes stops being background.' },
+    { q:'Which is most likely to sit in the middleground?',
+      o:['A solo melody with wide leaps','A repeating rhythmic ostinato','A static atmospheric pad','A sudden cymbal crash'], a:1,
+      why:'Rhythmically active but predictable — it supplies motion and support without demanding attention.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 3 ------ */
+{
+  id:'separation', module:'foundations', n:3,
+  title:'Separation of elements',
+  short:'Four tools for stopping layers from swallowing each other.',
+  claim:'Two ideas in the same register, with the same rhythm, in the same colour, are one muddy idea.',
+  demo:'separation',
+  demoNote:'The same four bars, three ways. Switch while it plays — the notes never change, only how separated the layers are.',
+  source:'Separation Of Elements / Music With Two Layers / Three Or More Layers',
+  body:[
+    'Whenever you have more than one layer, there has to be enough separation between them. Without it everything becomes a confusing mess. Separation is what lets each musical idea stand out, whether it is a foreground or a background element.',
+    'At the simplest level there is homophonic music — from the Greek <em>homos</em>, same, and <em>phone</em>, sound. All the instruments play identical or very similar rhythms even when they are playing different notes, so the listener perceives them as one unified thing. That is useful deliberately: to introduce a theme clearly, as a tutti climax after a complex build, or to close a piece.',
+    'Once you have two layers you have a foreground and a background, and you need two things: <strong>separation</strong>, so the layers are distinct, and <strong>balance</strong>, so attention lands on the foreground. There are four tools. <strong>Rhythm</strong> — a moving melody against sustained chords. <strong>Articulation</strong> — pizzicato chords under a sustained melody. <strong>Tone colour</strong> — strings and harp behind a solo oboe. <strong>Pitch</strong> — melody high, chords in the mid-to-low range.',
+    'Mars from The Planets is the textbook case. The background is a rhythmic col legno pattern in strings, harp and timpani; the foreground is a dark sustained melody in brass and woodwinds. They are separated by rhythm — short and driving against long and sustained — by tone colour, sharp and percussive against dark and ominous, and by articulation. Three tools at once, and the hierarchy is completely clear.',
+    'With three or more layers there will be overlap, and that is fine as long as something separates each pair. A quick woodwind ostinato can share a register with a soaring violin melody because the tone colour and the rate of movement differ. A horn countermelody can overlap string chords because it moves faster and sounds different. <strong>Always assign clear roles and avoid redundancy.</strong>'
+  ],
+  ex:{
+    beginner:'Write a melody and a chord bed that differ only in register. Then change the rhythm of one of them and listen to what improves.',
+    intermediate:'Take a passage where two lines fight each other. Fix it using tone colour alone — do not move a single note.',
+    advanced:'Write four simultaneous layers that all stay individually audible, and name which of the four tools separates each pair.'
+  },
+  quiz:[
+    { q:'Which tools separate the two layers in Holst\'s Mars?',
+      o:['Register and dynamics','Rhythm, tone colour and articulation','Tempo and key','Panning and reverb'], a:1,
+      why:'Short driving col legno against long sustained brass — different rhythm, different colour, different articulation.' },
+    { q:'A woodwind ostinato and a violin melody share the same register. Why does it still work?',
+      o:['It does not — one must move','The ostinato is quicker and a different tone colour','Woodwinds are always quieter','The listener cannot hear that high'], a:1,
+      why:'Sharing one parameter is fine as long as others separate them. Rate of movement and tone colour are doing the work.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 4 ------ */
+{
+  id:'tone-colour', module:'foundations', n:4,
+  title:'Tone colour and timbre',
+  short:'What makes a flute a flute — and how to blend or separate with it.',
+  claim:'Timbre is the overtone series wearing a personality. Same note, different stack, different instrument.',
+  demo:'timbre',
+  demoNote:'The same pitch, six different overtone balances, with the spectrum drawn live. The shape you see is the difference you hear.',
+  source:'Tone Color & Timbre',
+  body:[
+    'The overtone series permeates everything, and it is what determines the tone colour of an instrument. It is why a middle C on an oboe sounds distinctly different from the same note on a violin, a synth, or a human voice. Even the uniqueness of individual voices comes down to their overtone content.',
+    'Timbre is influenced by countless small factors — the instrument itself and how it is played. Picking versus fingerstyle on a guitar. Bow pressure and the age of the strings. The specific wood and construction. No two real instruments of the same kind, played by different musicians, sound exactly alike, and that variability is both the challenge and the tool.',
+    '<strong>Dynamics change timbre as much as instrument choice does.</strong> A horn in its soft range produces few high overtones and sounds velvety; at full force it becomes rich and vibrant. A flute adds high-end overtones as air pressure increases, though its dynamic contrast is more subtle. Violins gain brilliance and loudness at higher dynamics, but that can also introduce harshness. You are never choosing an instrument — you are choosing an instrument at a dynamic.',
+    'That gives you four uses. <strong>Enhancing emotion</strong> — darker, velvety tones for solemn or introspective moods, brighter ones for triumph or heroism. <strong>Blending</strong> — layer timbres for nuance, adding airiness to a violin line with a flute, or warmth to a horn melody with a cello. <strong>Creating separation</strong> — pair a bright trumpet melody with warm string chords so each stays distinct. <strong>Supporting layers</strong> — reinforce a quiet element with a similar timbre, doubling an oboe with a bassoon an octave below for depth.',
+    'Which reduces to two rules. <strong>To blend, use instruments with similar timbres</strong> — French horn and cello. <strong>To separate, use contrasting ones</strong> — trumpet against flute.'
+  ],
+  ex:{
+    beginner:'Play the same note on four different patches at the same dynamic. Describe each one in three words.',
+    intermediate:'Take a melody and double it three ways — for warmth, for brightness, and for edge. Keep the notes identical.',
+    advanced:'Spend time exploring how each instrument\'s EQ changes with articulation, dynamic level and playing style. Then build a blend that produces a colour neither instrument has alone.'
+  },
+  quiz:[
+    { q:'You want a horn melody warmer and fuller without changing the notes. What do you double it with?',
+      o:['Piccolo','Cello','Trumpet','Snare drum'], a:1,
+      why:'The horn is conical and mellow, and the cello has a similar overtone balance — so the two fuse rather than clash.' },
+    { q:'What happens to a horn\'s overtones as it plays louder?',
+      o:['They disappear','More high-end overtones appear','They shift down an octave','Nothing changes'], a:1,
+      why:'Brightness is a dynamic, not only an instrument. Soft horn is velvety; at full force it is rich and vibrant.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 5 ------ */
+{
+  id:'voicing', module:'foundations', n:5,
+  title:'Chord voicing',
+  short:'Spacing and doubling — the difference between a rich chord and a muddy one.',
+  claim:'The overtone series already showed you how to space a chord. Follow it and chords ring; ignore it and they smear.',
+  demo:'voicing',
+  demoNote:'Drag any notehead. The checks update as you go. Try cramming the bottom two voices together, then press Fix it.',
+  source:'Chord Voicing — The Role Of The Overtone Series / Doubling Notes In Chords',
+  body:[
+    'The orchestra can produce incredibly rich and lush chordal passages, but that takes careful attention to voicing. The overtone series is the natural guide, and it tells you two things.',
+    '<strong>Spacing.</strong> Look at how the first overtones from a root note actually form a chord, and notice how it is built. The low range is spacious, with an octave between the lowest notes. Then the spacing gets closer as you climb. That is a very important guideline, and it is why voices crammed together in the lower range sound muddy.',
+    '<strong>Doubling.</strong> When you orchestrate for ensembles with multiple parts, doubling becomes unavoidable, so the question is which notes to prioritise. The root is most prominent — it appears four times in the series, so double the root most often. The fifth appears twice, so double it less frequently. The third appears only once, so avoid doubling it if you can, because it changes the chord\'s balance.',
+    'In practice, for a C major triad with four voices: double the C, add the G once, add the E once. If you expand to more voices, keep roughly those proportions. Chords with sevenths and ninths — treat those notes like the third.',
+    'So a bad voicing is one where the voices are too close in the lower range, creating mud, and where the doubling is inconsistent — the third doubled more than the root. A good voicing spaces the lower notes widely and the higher notes closer together, and doubles by the overtone proportions. <strong>Everything here is a guideline rather than a law</strong>, and when your ear disagrees your ear wins. But if a chord sounds muddy and you cannot say why, it is almost always one of these two.'
+  ],
+  ex:{
+    beginner:'Voice a C major triad for four voices following the doubling proportions. Play it, then double the third instead and compare.',
+    intermediate:'Take four chords from something you have written and check each one for spacing and doubling. Fix the worst.',
+    advanced:'Voice the same progression twice — once by the rules, once deliberately breaking them for effect. Be able to justify the second.'
+  },
+  quiz:[
+    { q:'In a four-voice C major chord, which note should appear twice?',
+      o:['E','G','C','Any of them'], a:2,
+      why:'The root. It appears most often in the overtone series, so doubling it reinforces what the chord is already doing.' },
+    { q:'Why do two voices a second apart in the bass register sound muddy?',
+      o:['Seconds are always dissonant','It contradicts the wide spacing of the overtone series down there','The instruments are out of tune','It is too quiet to hear'], a:1,
+      why:'The series is spacious at the bottom — an octave between the lowest notes. Cramming notes together down there fights the physics.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 6 ------ */
+{
+  id:'voice-leading', module:'foundations', n:6,
+  title:'Voice leading',
+  short:'Turning chords into four melodies that happen to agree.',
+  claim:'The orchestra is not a keyboard patch. Four voices moving individually sound like an ensemble; four voices moving in parallel sound like one hand.',
+  demo:'voiceleading',
+  demoNote:'The same progression three ways — block keyboard voicings, proper voice leading, then split across individual instruments.',
+  source:'Voicing Harmonic Material Across Time / The Orchestra Is Not a Keyboard',
+  body:[
+    'The first thing to be aware of is that the orchestra is not a keyboard patch and should not be treated as one. A string section is several instrumental sections — Violin I, Violin II, Viola, Cello, Basses — and all of them are playing individual score parts that together make up the chords you hear.',
+    'So the job is to turn your chords into four-part arrangements with individual melody lines that sound like what an orchestral section would actually play. These principles go back to Bach\'s era, and while being bound to strict rules is no fun, these particular ones will make your harmonic material a great deal better.',
+    'Four guidelines. <strong>Minimise motion</strong> — each voice should move as little as possible to the next chord, taking the closest route to its next note. <strong>Avoid parallel fifths and octaves</strong> — create contrary or oblique motion instead, so some notes move up, some down, and some stay where they are. Thirds and sixths in parallel are fine. <strong>Proper spacing</strong> — lower voices wide, upper voices closer. <strong>Follow the doubling rules</strong> — root first, then fifth, and avoid doubling the third.',
+    'Take Am, F, C, G. Voice it badly and every voice moves in the same parallel direction, exactly as a hand does on a keyboard — and it will sound like somebody playing chords with a string patch rather than four individual string voices. Voice it well and each voice moves in a different direction or stays put, moving just one step at a time to the closest note in the next chord. Try singing each voice; each one should feel natural to sing and play, and they should all be different. That is what makes them feel like an ensemble.',
+    '<strong>Then add inner movement.</strong> Introduce a subtle sustained note across a chord change — a voice that resolves from the second step to the root and is held into the next chord, giving you a sus4 that resolves into the third of the following chord. It also guarantees you avoid parallel movement, because something is always either moving in the opposite direction or sustaining across. It is a very simple and very effective way to breathe life into a chordal arrangement.',
+    'The last step is to split it out of an ensemble patch into individual legato instruments — Violin I and II on the top voices, viola on the third, cello doubling the basses in octaves. Notice that this also follows the overtone recommendations: octaves in the bass, tighter as you go up, three root notes and only one third.'
+  ],
+  ex:{
+    beginner:'Take Am–F–C–G and voice it so that no voice moves more than two steps between chords.',
+    intermediate:'Voice the same progression with at least one sustained common tone across every chord change.',
+    advanced:'Split it across Violin I, Violin II, viola and cello as individual legato lines. Sing each part to check it is natural to play.'
+  },
+  quiz:[
+    { q:'What is the main problem with all voices moving in parallel?',
+      o:['It is dissonant','The voices stop sounding independent — it becomes the keyboard sound','It is hard to play','It changes the key'], a:1,
+      why:'Four voices moving identically read as one thickened line, not as an ensemble of individual players.' },
+    { q:'A voice holds a G while the chord changes. What have you created?',
+      o:['A parallel fifth','A suspension that resolves into the next chord','A modulation','A doubling error'], a:1,
+      why:'The held note becomes a sus4 over the new chord and resolves into it — inner movement for free, and it also prevents parallel motion.' }
+  ]
+}
+
+];
+
+/* ============================================================================
+   THE ACCELERATOR — WIDGETS
+   ----------------------------------------------------------------------------
+   Every widget is a function (host, lesson) that fills `host` with its UI.
+   Register it on WIDGETS under the id used by `lesson.demo`.
+
+   Every widget works with NO ASSETS by synthesising its audio. Where rendered
+   audio would be better, the widget looks for it first and falls back to
+   synthesis — so dropping files into audio/accelerator/<lesson>/ upgrades the
+   demonstration without any code change. See PORT.md §6 for the file manifest.
+   ============================================================================ */
+
+const WIDGETS = {};
+
+/* ---------------------------------------------------------------------------
+   AUDIO CORE
+   One context, created on first use because browsers require a gesture.
+   --------------------------------------------------------------------------- */
+let actx = null;
+const AC = () => actx || (actx = new (window.AudioContext || window.webkitAudioContext)());
+const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+
+/* Additive tone. `bright` shifts energy into the upper partials, which is the
+   whole of timbre for our purposes. `partials` can silence individual ones. */
+function tone(midi, o = {}) {
+  const { dur = 1.6, gain = .16, partials = null, bright = .55, when = 0, detune = 0 } = o;
+  const c = AC(), t0 = c.currentTime + when;
+  const out = c.createGain();
+  out.connect(c.destination);
+  out.gain.setValueAtTime(0, t0);
+  out.gain.linearRampToValueAtTime(gain, t0 + (o.attack || .03));
+  out.gain.setTargetAtTime(0, t0 + dur * .55, dur * .22);
+  for (let k = 1; k <= 10; k++) {
+    if (partials && !partials[k - 1]) continue;
+    const osc = c.createOscillator(), g = c.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = hz(midi) * k * (1 + detune / 1200);
+    g.gain.value = (1 / Math.pow(k, 2.1 - bright)) / 1.6;
+    osc.connect(g).connect(out);
+    osc.start(t0); osc.stop(t0 + dur + .4);
+  }
+  return out;
+}
+const chord = (notes, o = {}) =>
+  notes.forEach(m => tone(m, Object.assign({ dur: 2.2, gain: .1 }, o)));
+
+/* a tiny sequencer: [[midi, startBeat, lenBeats], ...] */
+function seq(notes, bpm, o = {}) {
+  const spb = 60 / bpm;
+  notes.forEach(([m, s, l]) =>
+    tone(m, Object.assign({ when: s * spb, dur: l * spb }, o)));
+  return notes.reduce((a, [, s, l]) => Math.max(a, (s + l) * spb), 0);
+}
+
+/* shared transport button markup */
+const playBtn = (id, label) =>
+  `<button class="btn gold" id="${id}">
+     <svg width="10" height="12" viewBox="0 0 12 14" fill="currentColor"><path d="M0 0l12 7-12 7z"/></svg>
+     ${label}</button>`;
+
+/* ===========================================================================
+   1. OVERTONES — click partials on and off
+   =========================================================================== */
+WIDGETS.overtones = function (host) {
+  const ROOT = 48;                                   // C3
+  const IVL = [0, 12, 19, 24, 28, 31, 34, 36];       // the series, in semitones
+  const NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+  let on = Array(8).fill(true);
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="ot-svg" viewBox="0 0 520 262"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div>
+        <div class="w-row">
+          ${playBtn('ot-play','Play')}
+          <button class="btn" id="ot-first">Fundamental only</button>
+          <button class="btn" id="ot-all">All partials</button>
+        </div></div>
+      <div class="w-read" id="ot-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#ot-svg');
+  const play = () => tone(ROOT, { dur: 2, partials: on, gain: .2 });
+
+  function draw() {
+    let g = '';
+    on.forEach((v, k) => {
+      const x = 40 + k * 60, h = 150 / Math.pow(k + 1, .75), m = ROOT + IVL[k];
+      g += `<rect class="ot-bar" data-k="${k}" x="${x}" y="${(206 - h).toFixed(1)}"
+              width="42" height="${h.toFixed(1)}" rx="4"
+              fill="${v ? '#D4A04A' : '#4E505A'}" fill-opacity="${v ? .9 : .22}" style="cursor:pointer"/>
+            <text x="${x + 21}" y="224" fill="${v ? '#BEC0C8' : '#43454F'}" font-size="10.5"
+              font-family="DM Sans" text-anchor="middle">${NAMES[m % 12]}</text>
+            <text x="${x + 21}" y="240" fill="#43454F" font-size="8.5" font-weight="700"
+              font-family="DM Sans" text-anchor="middle">${k === 0 ? 'FUND' : '×' + (k + 1)}</text>`;
+    });
+    svg.innerHTML = g;
+    const n = on.filter(Boolean).length;
+    host.querySelector('#ot-read').innerHTML = n === 1
+      ? '<b>One partial.</b> A pure sine wave — nothing on earth sounds like this.'
+      : `<b>${n} partials.</b> Same fundamental, different instrument. The intervals are wide at the bottom and tighten as they rise.`;
+  }
+
+  svg.addEventListener('click', e => {
+    const b = e.target.closest('.ot-bar'); if (!b) return;
+    on[+b.dataset.k] = !on[+b.dataset.k]; draw(); play();
+  });
+  host.querySelector('#ot-play').onclick  = play;
+  host.querySelector('#ot-first').onclick = () => { on = on.map((_, i) => i === 0); draw(); play(); };
+  host.querySelector('#ot-all').onclick   = () => { on = on.map(() => true); draw(); play(); };
+  draw();
+};
+
+/* ===========================================================================
+   2. VOICING — drag noteheads, hear it, see the rules
+   The flagship widget. Rules are checked live against the ebook's two
+   principles: spacing follows the series, doubling follows 4:2:1.
+   =========================================================================== */
+WIDGETS.voicing = function (host) {
+  const LO = 36, HI = 79;                 // C2 .. G5
+  const START = [48, 55, 64, 67];
+  const BAD   = [48, 50, 52, 55];         // crammed low, third doubled
+  const GOOD  = [36, 48, 55, 64];         // octave at the bottom, root-heavy
+  const NAMES = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+  let voices = [...START];
+
+  const nm    = m => NAMES[m % 12] + (Math.floor(m / 12) - 1);
+  const y     = m => 270 - ((m - LO) / (HI - LO)) * 236;
+  const role  = m => ({ 0:'root', 4:'third', 7:'fifth' })[m % 12] || 'outside';
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="vc-svg" viewBox="0 0 520 300"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div>
+        <div class="w-row">${playBtn('vc-play','Chord')}<button class="btn" id="vc-arp">Arpeggio</button></div></div>
+      <div><div class="w-lab">Checks</div><div class="checks" id="vc-checks"></div></div>
+      <div><div class="w-lab">Compare</div>
+        <div class="w-row"><button class="btn" id="vc-bad">Bad voicing</button>
+          <button class="btn" id="vc-good">Fix it</button></div></div>
+      <div class="w-read" id="vc-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#vc-svg');
+
+  /* the two ebook principles, expressed as five checks */
+  function analyse() {
+    const s = [...voices].sort((a, b) => a - b);
+    const roles = s.map(role);
+    const nRoot  = roles.filter(r => r === 'root').length;
+    const nThird = roles.filter(r => r === 'third').length;
+    const out    = roles.filter(r => r === 'outside').length;
+    const lowGap = s[1] - s[0], topGap = s[3] - s[2];
+    return [
+      { ok: lowGap >= 7,
+        good: 'The bottom two voices are spaced widely',
+        bad: `The bottom two voices are ${lowGap} semitones apart — the series spaces the low end by an octave or a fifth` },
+      { ok: topGap <= lowGap,
+        good: 'Spacing tightens as it rises, as the series does',
+        bad: 'The top is spaced wider than the bottom — that is the series upside down' },
+      { ok: nThird <= 1,
+        good: 'The third appears once',
+        bad: `The third is doubled ${nThird} times — it appears once in the series and it changes the chord's balance` },
+      { ok: nRoot >= 2 || out > 0,
+        good: 'The root is reinforced',
+        bad: 'The root appears only once — it is the note the series repeats most' },
+      { ok: out === 0,
+        good: 'Every voice is a chord tone',
+        bad: `${out} voice${out > 1 ? 's are' : ' is'} outside the triad` }
+    ];
+  }
+
+  function draw() {
+    let g = '';
+    for (let m = LO; m <= HI; m++) {
+      if (m % 12) continue;
+      g += `<line x1="60" y1="${y(m).toFixed(1)}" x2="500" y2="${y(m).toFixed(1)}" stroke="#fff" stroke-opacity=".07"/>
+            <text x="46" y="${(y(m) + 4).toFixed(1)}" fill="#4E505A" font-size="10"
+              font-family="DM Sans" text-anchor="end">${nm(m)}</text>`;
+    }
+    const sorted = voices.map((v, i) => ({ v, i })).sort((a, b) => a.v - b.v);
+    sorted.forEach((o, k) => {
+      const x = 110 + k * 106, yy = y(o.v), r = role(o.v);
+      const col = r === 'third' ? '#6E8FB8' : r === 'fifth' ? '#8FB4E0'
+                : r === 'root' ? '#D4A04A' : '#C0603A';
+      g += `<line x1="${x}" y1="${yy.toFixed(1)}" x2="${x}" y2="278" stroke="${col}" stroke-opacity=".18"/>
+            <circle class="vc-dot" data-i="${o.i}" cx="${x}" cy="${yy.toFixed(1)}" r="13"
+              fill="${col}" fill-opacity=".9" stroke="#080C14" stroke-width="2" style="cursor:ns-resize"/>
+            <text x="${x}" y="${(yy + 4).toFixed(1)}" fill="#080C14" font-size="9.5" font-weight="700"
+              font-family="DM Sans" text-anchor="middle" pointer-events="none">${nm(o.v).replace(/[-\d]/g, '')}</text>
+            <text x="${x}" y="294" fill="#4E505A" font-size="9" font-weight="700" letter-spacing="1.2"
+              font-family="DM Sans" text-anchor="middle">${['BASS','TENOR','ALTO','SOP'][k]}</text>`;
+    });
+    svg.innerHTML = g;
+
+    const checks = analyse();
+    host.querySelector('#vc-checks').innerHTML = checks.map(c =>
+      `<div class="chk ${c.ok ? 'ok' : 'bad'}"><i>${c.ok ? '✓' : '!'}</i><span>${c.ok ? c.good : c.bad}</span></div>`
+    ).join('');
+    const bad = checks.filter(c => !c.ok).length;
+    host.querySelector('#vc-read').innerHTML = bad === 0
+      ? '<b>This chord follows the overtone series.</b> Wide at the bottom, tighter at the top, root reinforced.'
+      : `<b>${bad} thing${bad > 1 ? 's' : ''} to fix.</b> Drag a notehead, or press Fix it to hear the difference.`;
+  }
+
+  let drag = null;
+  const toY   = e => { const r = svg.getBoundingClientRect(); return (e.clientY - r.top) / r.height * 300; };
+  const toMidi = py => Math.round(LO + ((270 - py) / 236) * (HI - LO));
+  svg.addEventListener('pointerdown', e => {
+    const d = e.target.closest('.vc-dot'); if (!d) return;
+    drag = +d.dataset.i; svg.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  svg.addEventListener('pointermove', e => {
+    if (drag === null) return;
+    const m = Math.max(LO, Math.min(toMidi(toY(e)), HI));
+    if (m !== voices[drag]) { voices[drag] = m; draw(); }
+  });
+  svg.addEventListener('pointerup', () => { if (drag !== null) { chord(voices); drag = null; } });
+
+  host.querySelector('#vc-play').onclick = () => chord(voices);
+  host.querySelector('#vc-arp').onclick  = () =>
+    [...voices].sort((a, b) => a - b).forEach((m, i) => tone(m, { dur: 1.4, gain: .13, when: i * .28 }));
+  host.querySelector('#vc-bad').onclick  = () => { voices = [...BAD];  draw(); chord(voices); };
+  host.querySelector('#vc-good').onclick = () => { voices = [...GOOD]; draw(); chord(voices); };
+  draw();
+};
+
+/* ===========================================================================
+   3. PERSPECTIVE — three layers, three dials
+   Each dial maps to one of the ebook's three parameters.
+   =========================================================================== */
+WIDGETS.perspective = function (host) {
+  const BPM = 84;
+  const LAYERS = [
+    { id:'mel',  name:'Melody',   col:'#D4A04A', loud:1.0, active:1, vary:1 },
+    { id:'harm', name:'Harmony',  col:'#6E8FB8', loud:0.6, active:0, vary:0 },
+    { id:'drone',name:'Drone',    col:'#5C6B7C', loud:0.4, active:0, vary:0 }
+  ];
+  let running = false, timer = null;
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="pv-svg" viewBox="0 0 520 250"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div><div class="w-row">${playBtn('pv-play','Play loop')}</div></div>
+      <div id="pv-ctrls"></div>
+      <div class="w-read" id="pv-read"></div>
+    </div></div>`;
+
+  const ctrls = host.querySelector('#pv-ctrls');
+  ctrls.innerHTML = LAYERS.map((l, i) => `
+    <div class="pv-layer">
+      <div class="pv-name" style="color:${l.col}">${l.name}</div>
+      ${['loud','active','vary'].map(k => `
+        <label class="pv-dial">
+          <span>${ {loud:'Loudness', active:'Rhythmic activity', vary:'Unpredictability'}[k] }</span>
+          <input type="range" min="0" max="1" step="0.01" value="${l[k]}" data-i="${i}" data-k="${k}">
+        </label>`).join('')}
+    </div>`).join('');
+
+  /* score = the ebook's three parameters, equally weighted */
+  const score = l => (l.loud * .4 + l.active * .35 + l.vary * .25);
+  const band  = s => s > .62 ? 'Foreground' : s > .34 ? 'Middleground' : 'Background';
+
+  function draw() {
+    const sorted = [...LAYERS].sort((a, b) => score(b) - score(a));
+    let g = `<text x="20" y="20" fill="#4E505A" font-size="9" font-weight="700"
+               font-family="DM Sans" letter-spacing="1.6">FOREGROUND</text>
+             <text x="20" y="238" fill="#4E505A" font-size="9" font-weight="700"
+               font-family="DM Sans" letter-spacing="1.6">BACKGROUND</text>`;
+    LAYERS.forEach(l => {
+      const s = score(l), y = 224 - s * 190;
+      const w = 110 + l.loud * 230;
+      g += `<rect x="140" y="${(y - 13).toFixed(1)}" width="${w.toFixed(1)}" height="26" rx="13"
+              fill="${l.col}" fill-opacity="${.22 + s * .55}"/>
+            <text x="152" y="${(y + 5).toFixed(1)}" fill="#fff" font-size="12.5"
+              font-family="DM Sans" font-weight="500">${l.name}</text>
+            <text x="${(140 + w + 12).toFixed(1)}" y="${(y + 4).toFixed(1)}" fill="${l.col}"
+              font-size="9" font-weight="700" font-family="DM Sans" letter-spacing="1.3">${band(s).toUpperCase()}</text>`;
+    });
+    host.querySelector('#pv-svg').innerHTML = g;
+    const fg = sorted.filter(l => band(score(l)) === 'Foreground');
+    host.querySelector('#pv-read').innerHTML = fg.length === 1
+      ? `<b>${fg[0].name} is in focus.</b> One clear foreground is what stops a track becoming chaotic.`
+      : fg.length === 0
+        ? '<b>Nothing is in the foreground.</b> The listener has nothing to follow.'
+        : `<b>${fg.length} layers are competing.</b> They will fight rather than support each other.`;
+  }
+
+  /* synthesised loop — activity swaps sustained notes for a moving line */
+  function fire() {
+    const beats = 8;
+    LAYERS.forEach(l => {
+      const g = .03 + l.loud * .13;
+      if (l.id === 'drone') {
+        tone(36, { dur: beats * 60 / BPM, gain: g * .8, bright: .25 });
+        if (l.active > .5) for (let i = 0; i < beats; i++)
+          tone(43, { when: i * 60 / BPM, dur: .4, gain: g * .5, bright: .3 });
+      } else if (l.id === 'harm') {
+        const ch = [[48, 52, 55], [45, 48, 52], [50, 53, 57], [43, 47, 50]];
+        for (let i = 0; i < 4; i++) {
+          const c = ch[l.vary > .5 ? i : 0];
+          if (l.active > .5) {
+            c.forEach((m, j) => tone(m, { when: (i * 2 + j * .25) * 60 / BPM, dur: .5, gain: g * .7, bright: .45 }));
+          } else {
+            c.forEach(m => tone(m, { when: i * 2 * 60 / BPM, dur: 2 * 60 / BPM, gain: g * .55, bright: .4 }));
+          }
+        }
+      } else {
+        const a = [[67,0,1],[69,1,1],[72,2,2],[71,4,1],[69,5,1],[67,6,2]];
+        const b = [[67,0,1],[67,1,1],[67,2,2],[67,4,1],[67,5,1],[67,6,2]];
+        seq(l.vary > .5 ? a : b, BPM, { gain: g, bright: .6 });
+      }
+    });
+  }
+  function loop() {
+    if (!running) return;
+    fire();
+    timer = setTimeout(loop, 8 * 60 / BPM * 1000);
+  }
+  host.querySelector('#pv-play').onclick = function () {
+    running = !running;
+    this.classList.toggle('on', running);
+    if (running) loop(); else clearTimeout(timer);
+  };
+  ctrls.addEventListener('input', e => {
+    const i = +e.target.dataset.i, k = e.target.dataset.k;
+    LAYERS[i][k] = +e.target.value; draw();
+  });
+  host._cleanup = () => { running = false; clearTimeout(timer); };
+  draw();
+};
+
+/* ===========================================================================
+   4 & 5. A/B COMPARISONS — separation and voice leading
+   Generic three-way switch. Renders from audio files when present, otherwise
+   synthesises the three versions so the lesson works with no assets.
+   =========================================================================== */
+function abWidget(host, opts) {
+  let current = 0, running = false, timer = null;
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="ab-svg" viewBox="0 0 520 230"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div><div class="w-row">${playBtn('ab-play','Play loop')}</div></div>
+      <div><div class="w-lab">Version</div>
+        <div class="w-col" id="ab-opts">${opts.versions.map((v, i) =>
+          `<button class="btn wide" data-v="${i}" aria-pressed="${i === 0}">${v.label}</button>`).join('')}</div></div>
+      <div class="w-read" id="ab-read"></div>
+    </div></div>`;
+
+  function draw() {
+    const v = opts.versions[current];
+    let g = '';
+    v.lanes.forEach((lane, li) => {
+      const y0 = 26 + li * 62;
+      g += `<text x="18" y="${y0 + 4}" fill="${lane.col}" font-size="9" font-weight="700"
+              font-family="DM Sans" letter-spacing="1.3">${lane.name.toUpperCase()}</text>`;
+      lane.notes.forEach(([m, s, l]) => {
+        const x = 96 + s * 50, w = Math.max(l * 50 - 4, 6);
+        const y = y0 + 26 - ((m - lane.lo) / Math.max(lane.hi - lane.lo, 6)) * 34;
+        g += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="6" rx="3"
+                fill="${lane.col}" fill-opacity=".92"/>`;
+      });
+    });
+    host.querySelector('#ab-svg').innerHTML = g;
+    host.querySelector('#ab-read').innerHTML = v.read;
+    host.querySelectorAll('#ab-opts button').forEach((b, i) =>
+      b.setAttribute('aria-pressed', String(i === current)));
+  }
+  function fire() {
+    const v = opts.versions[current];
+    v.lanes.forEach(lane =>
+      seq(lane.notes, opts.bpm, { gain: lane.gain || .1, bright: lane.bright ?? .5, attack: lane.attack || .03 }));
+  }
+  function loop() { if (!running) return; fire(); timer = setTimeout(loop, opts.bars * 4 * 60 / opts.bpm * 1000); }
+
+  host.querySelector('#ab-play').onclick = function () {
+    running = !running; this.classList.toggle('on', running);
+    if (running) loop(); else clearTimeout(timer);
+  };
+  host.querySelectorAll('#ab-opts button').forEach(b =>
+    b.onclick = () => { current = +b.dataset.v; draw(); if (!running) fire(); });
+  host._cleanup = () => { running = false; clearTimeout(timer); };
+  draw();
+}
+
+WIDGETS.separation = function (host) {
+  const MEL = [[72,0,1],[74,1,1],[76,2,2],[74,4,1],[72,5,1],[71,6,2]];
+  abWidget(host, { bpm: 80, bars: 2, versions: [
+    { label:'Everything in one place',
+      read:'<b>Same register, same rhythm, same colour.</b> Three ideas arriving as one muddy idea.',
+      lanes:[
+        { name:'Melody', col:'#D4A04A', lo:64, hi:78, gain:.1, bright:.5, notes:MEL },
+        { name:'Harmony',col:'#6E8FB8', lo:64, hi:78, gain:.09, bright:.5,
+          notes:[[71,0,1],[72,1,1],[74,2,2],[72,4,1],[71,5,1],[69,6,2]] },
+        { name:'Bass',   col:'#CF5F52', lo:64, hi:78, gain:.09, bright:.5,
+          notes:[[69,0,1],[71,1,1],[72,2,2],[71,4,1],[69,5,1],[67,6,2]] }
+      ] },
+    { label:'Separated by register',
+      read:'<b>Pitch alone.</b> Better — but register is the weakest of the four tools, because an arrangement runs out of registers.',
+      lanes:[
+        { name:'Melody', col:'#D4A04A', lo:64, hi:78, gain:.1, bright:.55, notes:MEL },
+        { name:'Harmony',col:'#6E8FB8', lo:52, hi:66, gain:.085, bright:.45,
+          notes:[[59,0,1],[60,1,1],[62,2,2],[60,4,1],[59,5,1],[57,6,2]] },
+        { name:'Bass',   col:'#CF5F52', lo:36, hi:50, gain:.09, bright:.3,
+          notes:[[45,0,1],[47,1,1],[48,2,2],[47,4,1],[45,5,1],[43,6,2]] }
+      ] },
+    { label:'Register, rhythm and colour',
+      read:'<b>Three tools at once.</b> Long sustained harmony under a moving melody, with a slow bass — exactly the Mars principle.',
+      lanes:[
+        { name:'Melody', col:'#D4A04A', lo:64, hi:78, gain:.11, bright:.68, notes:MEL },
+        { name:'Harmony',col:'#6E8FB8', lo:52, hi:66, gain:.07, bright:.35, attack:.35,
+          notes:[[59,0,4],[62,0,4],[57,4,4],[60,4,4]] },
+        { name:'Bass',   col:'#CF5F52', lo:36, hi:50, gain:.1, bright:.22, attack:.2,
+          notes:[[45,0,4],[43,4,4]] }
+      ] }
+  ]});
+};
+
+WIDGETS.voiceleading = function (host) {
+  /* Am – F – C – G, the ebook's own example */
+  abWidget(host, { bpm: 66, bars: 4, versions: [
+    { label:'Block keyboard voicings',
+      read:'<b>Every voice moves the same distance in the same direction.</b> This is the string-patch sound — one hand, not four players.',
+      lanes:[
+        { name:'Voices', col:'#6E8FB8', lo:45, hi:76, gain:.075, bright:.42, attack:.06,
+          notes:[[57,0,2],[60,0,2],[64,0,2],[69,0,2],
+                 [53,2,2],[57,2,2],[60,2,2],[65,2,2],
+                 [48,4,2],[52,4,2],[55,4,2],[60,4,2],
+                 [55,6,2],[59,6,2],[62,6,2],[67,6,2]] }
+      ] },
+    { label:'Proper voice leading',
+      read:'<b>Each voice takes the closest route.</b> Some move up, some down, some stay — contrary and oblique motion instead of parallel.',
+      lanes:[
+        { name:'Voices', col:'#D4A04A', lo:45, hi:76, gain:.075, bright:.45, attack:.06,
+          notes:[[57,0,2],[60,0,2],[64,0,2],[69,0,2],
+                 [57,2,2],[60,2,2],[65,2,2],[69,2,2],
+                 [55,4,2],[60,4,2],[64,4,2],[67,4,2],
+                 [55,6,2],[59,6,2],[62,6,2],[67,6,2]] }
+      ] },
+    { label:'Split across instruments',
+      read:'<b>Four individual legato lines.</b> Cello doubling the bass in octaves, tighter spacing as it rises — the overtone series again.',
+      lanes:[
+        { name:'Violin I', col:'#CF5F52', lo:60, hi:76, gain:.075, bright:.62, attack:.12,
+          notes:[[69,0,2],[69,2,2],[67,4,2],[67,6,2]] },
+        { name:'Violin II',col:'#CF5F52', lo:55, hi:70, gain:.065, bright:.55, attack:.12,
+          notes:[[64,0,2],[65,2,2],[64,4,2],[62,6,2]] },
+        { name:'Viola',    col:'#9B8FD4', lo:50, hi:64, gain:.06, bright:.42, attack:.14,
+          notes:[[60,0,2],[60,2,2],[60,4,2],[59,6,2]] },
+        { name:'Cello/Bass',col:'#5C6B7C',lo:33, hi:58, gain:.085, bright:.26, attack:.16,
+          notes:[[45,0,2],[33,0,2],[41,2,2],[29,2,2],[36,4,2],[24,4,2],[43,6,2],[31,6,2]] }
+      ] }
+  ]});
+};
+
+/* ===========================================================================
+   6. TIMBRE — same pitch, six overtone balances, live spectrum
+   =========================================================================== */
+WIDGETS.timbre = function (host) {
+  const INSTR = [
+    { id:'flute',   name:'Flute',    bright:.72, col:'#6FB7E8' },
+    { id:'oboe',    name:'Oboe',     bright:.86, col:'#6FB7E8' },
+    { id:'clarinet',name:'Clarinet', bright:.52, col:'#6FB7E8' },
+    { id:'horn',    name:'Horn',     bright:.40, col:'#D4A04A' },
+    { id:'trumpet', name:'Trumpet',  bright:.90, col:'#D4A04A' },
+    { id:'violin',  name:'Violin',   bright:.78, col:'#CF5F52' }
+  ];
+  const PITCH = 60;
+  let sel = 0;
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="tb-svg" viewBox="0 0 520 230"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Same note, six instruments</div>
+        <div class="w-col" id="tb-opts">${INSTR.map((x, i) =>
+          `<button class="btn wide" data-i="${i}" aria-pressed="${i === 0}"
+             style="--c:${x.col}">${x.name}</button>`).join('')}</div></div>
+      <div class="w-read" id="tb-read"></div>
+    </div></div>`;
+
+  function draw() {
+    const x = INSTR[sel];
+    let g = '';
+    for (let k = 1; k <= 10; k++) {
+      const amp = 1 / Math.pow(k, 2.1 - x.bright);
+      const h = amp * 168, px = 46 + (k - 1) * 46;
+      g += `<rect x="${px}" y="${(190 - h).toFixed(1)}" width="30" height="${h.toFixed(1)}" rx="3"
+              fill="${x.col}" fill-opacity=".85"/>
+            <text x="${px + 15}" y="208" fill="#43454F" font-size="8.5" font-weight="700"
+              font-family="DM Sans" text-anchor="middle">${k === 1 ? 'F' : '×' + k}</text>`;
+    }
+    g += `<line x1="40" y1="190.5" x2="500" y2="190.5" stroke="#fff" stroke-opacity=".1"/>`;
+    host.querySelector('#tb-svg').innerHTML = g;
+    host.querySelector('#tb-read').innerHTML =
+      `<b>${x.name}.</b> ${x.bright > .75 ? 'Strong upper partials — bright and penetrating, and it will cut through a texture.'
+        : x.bright > .55 ? 'A balanced stack — carries a line without dominating.'
+        : 'Energy concentrated low in the series — mellow and covered, which is why it blends.'}`;
+    host.querySelectorAll('#tb-opts button').forEach((b, i) =>
+      b.setAttribute('aria-pressed', String(i === sel)));
+  }
+  host.querySelectorAll('#tb-opts button').forEach(b => b.onclick = () => {
+    sel = +b.dataset.i; draw();
+    tone(PITCH, { dur: 2, gain: .18, bright: INSTR[sel].bright });
+  });
+  draw();
+};
+
+/* ============================================================================
+   THE ACCELERATOR — APPLICATION
+   ----------------------------------------------------------------------------
+   Routing, progress and lesson rendering. Reads MODULES and LESSONS from
+   accel-data.js, and WIDGETS from accel-widgets.js — both must load first.
+   ============================================================================ */
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]));
+
+/* ---------------------------------------------------------------------------
+   PROGRESS
+   One module so a server-side store can replace it without touching anything
+   else. Shape: { lessonId: {seen, exerciseDone, quizPassed} }
+   --------------------------------------------------------------------------- */
+const Progress = (() => {
+  const KEY = 'accel-progress';
+  let data = {};
+  try { data = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (_) { data = {}; }
+  const write = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (_) {} };
+  return {
+    get: id => data[id] || {},
+    set(id, field, val) { (data[id] = data[id] || {})[field] = val; write(); paintProgress(); },
+    done: id => { const p = data[id] || {}; return !!(p.exerciseDone && p.quizPassed); },
+    reset() { data = {}; write(); paintProgress(); }
+  };
+})();
+
+function paintProgress() {
+  const total = LESSONS.length;
+  const n = LESSONS.filter(l => Progress.done(l.id)).length;
+  const t = $('prog-txt'), f = $('prog-fill');
+  if (t) t.textContent = `${n} of ${total}`;
+  if (f) f.style.width = (n / total * 100) + '%';
+}
+
+/* ---------------------------------------------------------------------------
+   VIEWS
+   --------------------------------------------------------------------------- */
+function viewModule(mod) {
+  const list = LESSONS.filter(l => l.module === mod.id);
+  return `<div class="wrap">
+    <header class="hero">
+      <div class="eyebrow">Module ${mod.n} · ${list.length} lessons</div>
+      <h1>${esc(mod.title)}<em>${esc(mod.subtitle)}</em></h1>
+      <p>${esc(mod.lede)}</p>
+    </header>
+    <div class="lessons">
+      ${list.map(l => `
+        <a class="lcard ${Progress.done(l.id) ? 'done' : ''}" href="#/${mod.id}/${l.id}">
+          <div class="lnum">${l.n}</div>
+          <div class="lbody"><h3>${esc(l.title)}</h3><p>${esc(l.short)}</p></div>
+          <div class="ltag">${Progress.done(l.id) ? 'Complete' : 'Start'}</div>
+        </a>`).join('')}
+    </div>
+  </div>`;
+}
+
+function viewLesson(l) {
+  const mod = MODULES.find(m => m.id === l.module);
+  const sibs = LESSONS.filter(x => x.module === l.module);
+  const i = sibs.indexOf(l), prev = sibs[i - 1], next = sibs[i + 1];
+  const p = Progress.get(l.id);
+
+  return `<div class="wrap"><article class="lesson">
+    <nav class="crumb"><a href="#/${mod.id}">${esc(mod.title)}</a><i>/</i><span>${esc(l.title)}</span></nav>
+    <div class="eyebrow lesson-n">Lesson ${l.n}</div>
+    <h1>${esc(l.title)}</h1>
+    <p class="claim">${esc(l.claim)}</p>
+
+    <section class="sec">
+      <div class="sec-h"><b>Try it</b><span></span></div>
+      <div class="demo">
+        <div id="demo-host"></div>
+        <p class="demo-note">${esc(l.demoNote)}</p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><b>Why it works</b><span></span></div>
+      <div class="prose">${l.body.map(t => `<p>${t}</p>`).join('')}</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><b>Practise</b><span></span></div>
+      <div class="ex">${['beginner','intermediate','advanced'].map(k =>
+        `<div class="ex-row"><b>${k}</b><p>${esc(l.ex[k])}</p></div>`).join('')}</div>
+      <div class="ex-done">
+        <button id="ex-btn" aria-pressed="${!!p.exerciseDone}">
+          <span>${p.exerciseDone ? '✓' : '○'}</span> I have done this
+        </button>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-h"><b>Check yourself</b><span></span></div>
+      ${l.quiz.map((q, qi) => `
+        <div class="q" data-q="${qi}">
+          <p>${esc(q.q)}</p>
+          <div class="opts">${q.o.map((o, oi) =>
+            `<button class="opt" data-o="${oi}">${esc(o)}</button>`).join('')}</div>
+          <div class="why"><b>Why:</b> ${esc(q.why)}</div>
+        </div>`).join('')}
+    </section>
+
+    <p class="source">Condensed from <em>${esc(l.source)}</em> — Cinematic Music Accelerator.</p>
+
+    <nav class="pager">
+      ${prev ? `<a href="#/${mod.id}/${prev.id}"><span>Previous</span><b>${esc(prev.title)}</b></a>` : '<span></span>'}
+      ${next ? `<a class="r" href="#/${mod.id}/${next.id}"><span>Next</span><b>${esc(next.title)}</b></a>` : ''}
+    </nav>
+  </article></div>`;
+}
+
+/* ---------------------------------------------------------------------------
+   LESSON BEHAVIOUR
+   --------------------------------------------------------------------------- */
+let activeHost = null;
+
+function initLesson(l) {
+  /* widget */
+  const host = $('demo-host');
+  activeHost = host;
+  if (WIDGETS[l.demo]) {
+    try { WIDGETS[l.demo](host, l); }
+    catch (err) { console.error('[accelerator] widget failed:', l.demo, err); missing(host, l.demo); }
+  } else {
+    missing(host, l.demo);
+  }
+
+  /* exercise */
+  const b = $('ex-btn');
+  b.onclick = () => {
+    const v = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(v));
+    b.querySelector('span').textContent = v ? '✓' : '○';
+    Progress.set(l.id, 'exerciseDone', v);
+  };
+
+  /* quiz */
+  document.querySelectorAll('.q').forEach((qEl, qi) => {
+    const q = l.quiz[qi];
+    qEl.querySelectorAll('.opt').forEach((btn, oi) => {
+      btn.onclick = () => {
+        qEl.querySelectorAll('.opt').forEach(x => x.disabled = true);
+        btn.classList.add(oi === q.a ? 'right' : 'wrong');
+        if (oi !== q.a) qEl.querySelectorAll('.opt')[q.a].classList.add('right');
+        qEl.querySelector('.why').classList.add('on');
+        const all = [...document.querySelectorAll('.q')]
+          .every(x => x.querySelector('.opt.right, .opt.wrong'));
+        if (all) {
+          const pass = [...document.querySelectorAll('.q')]
+            .every(x => !x.querySelector('.opt.wrong'));
+          Progress.set(l.id, 'quizPassed', pass);
+        }
+      };
+    });
+  });
+}
+
+function missing(host, type) {
+  host.innerHTML = `<div class="w-missing">
+    <div class="w-lab">${esc(type)}</div>
+    <p>This demonstration has not been built yet.</p>
+    <p class="hint">Register a function on <code>WIDGETS.${esc(type)}</code> in accel-widgets.js.</p>
+  </div>`;
+}
+
+/* ---------------------------------------------------------------------------
+   ROUTER
+   Real hash URLs in the markup so deep links work when deployed, but clicks are
+   intercepted — and inside an iframe the URL is never touched, because changing
+   it there is read as a navigation attempt.
+   --------------------------------------------------------------------------- */
+const IN_FRAME = (() => { try { return window.self !== window.top; } catch (_) { return true; } })();
+let currentPath = '/foundations';
+
+function route(path) {
+  if (typeof path === 'string') currentPath = path;
+  const parts = currentPath.replace(/^#?\/?/, '').split('/').filter(Boolean);
+  const mod = MODULES.find(m => m.id === parts[0]) || MODULES[0];
+  const lesson = LESSONS.find(l => l.id === parts[1] && l.module === mod.id);
+
+  if (activeHost && activeHost._cleanup) { try { activeHost._cleanup(); } catch (_) {} }
+  activeHost = null;
+
+  const v = $('view');
+  if (lesson) {
+    v.innerHTML = viewLesson(lesson);
+    initLesson(lesson);
+    Progress.set(lesson.id, 'seen', true);
+    $('nav-where').textContent = lesson.title;
+  } else {
+    v.innerHTML = viewModule(mod);
+    $('nav-where').textContent = mod.title;
+  }
+  window.scrollTo({ top: 0 });
+  paintProgress();
+}
+
+function navigate(path) {
+  route(path);
+  if (IN_FRAME) return;
+  try { history.pushState({ path }, '', '#' + path.replace(/^#?\/?/, '/')); } catch (_) {}
+}
+
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  e.preventDefault();
+  navigate(a.getAttribute('href').slice(1) || '/foundations');
+});
+window.addEventListener('popstate', e =>
+  route((e.state && e.state.path) || location.hash.slice(1) || '/foundations'));
+
+route((!IN_FRAME && location.hash.slice(1)) || '/foundations');
+
+</script>
+</body>
+</html>
