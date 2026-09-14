@@ -1,24 +1,28 @@
 /* ============================================================================
-   EVENANT · MODULE SWITCHER
+   EVENANT · BRAND BAR AND MODULE SWITCHER
    ----------------------------------------------------------------------------
-   Turns a header's existing module title into the trigger for a menu that
-   switches between tools. Loads after evenant-modules.js, both deferred.
+   Renders the whole left-hand cluster of every tool's header — logo, divider,
+   module name, chevron — plus the menu that switches tools. Loads after
+   evenant-modules.js, both deferred.
 
-   Mount it by marking the element that already says which tool you are in:
+   Mount it with an empty placeholder where the cluster should go:
 
-     <div class="atl-nav-title" data-ev-switch>The Instrument Atlas</div>
+     <div data-ev-switch></div>
 
-   That element is ADOPTED, not restyled: it is moved inside a button whose own
-   rules are scoped to .ev-switch so nothing lands on it. Its font, colour,
-   tracking and position stay exactly as the host stylesheet left them, which
-   is the point — the switcher should look like the title it replaced, with a
-   chevron. An empty [data-ev-switch] gets a label created instead, for a
-   header that has no module title of its own to adopt.
+   Optionally `data-ev-home="#/foundations"` to say where the logo should point
+   inside this tool; it defaults to the tool's own entry in the registry.
 
-   The menu is position:fixed. Two of the four headers sit inside an ancestor
-   with overflow hidden — score.html clips at html,body — so an absolutely
-   positioned menu is cut off in exactly the places it is most needed. Fixed
-   also means one stacking context to reason about rather than four.
+   Why the component draws the logo and the label rather than adopting what the
+   page already had: it was adopting five different things. The five headers
+   had heights of 76, 61, 49, 48 and 46px, three padding values, three logos —
+   the Evenant mark, a hand-drawn three-bar mark, and on the score viewer none
+   at all — and the accelerator's title tracked at 2.2px where everything else
+   tracked at 2.6px. One component, one set of values, no way for a header to
+   drift.
+
+   The menu is position:fixed. Two of the headers sit inside an ancestor with
+   overflow hidden — score.html clips at html,body — so an absolutely
+   positioned menu is cut off in exactly the places it is most needed.
    ============================================================================ */
 
 (function(){
@@ -36,6 +40,18 @@ const active = evenantModule(EVENANT_ACTIVE);
 const wrap = document.createElement('div');
 wrap.className = 'ev-switch';
 
+/* the logo, identical everywhere, pointing at this tool's own front door */
+const home = host.dataset.evHome || (active ? evenantHref(active) : EVENANT_ROOT);
+const logo = document.createElement('a');
+logo.className = 'ev-logo';
+logo.href = home;
+logo.setAttribute('aria-label', 'Evenant');
+logo.innerHTML = `<img src="${EVENANT_LOGO}" alt="Evenant">`;
+
+const div = document.createElement('span');
+div.className = 'ev-div';
+div.setAttribute('aria-hidden', 'true');
+
 const btn = document.createElement('button');
 btn.type = 'button';
 btn.className = 'ev-switch-btn';
@@ -45,17 +61,11 @@ btn.setAttribute('aria-expanded', 'false');
 btn.setAttribute('aria-controls', 'ev-switch-menu');
 btn.setAttribute('aria-label', `${active ? active.name : 'Tools'} — switch tool`);
 
-/* adopt the host element if it has something to say, otherwise make a label */
 host.replaceWith(wrap);
-if(host.textContent.trim() || host.children.length){
-  host.removeAttribute('data-ev-switch');
-  btn.appendChild(host);
-} else {
-  const lbl = document.createElement('span');
-  lbl.className = 'ev-switch-label';
-  lbl.textContent = active ? active.name : 'Tools';
-  btn.appendChild(lbl);
-}
+const lbl = document.createElement('span');
+lbl.className = 'ev-switch-label';
+lbl.textContent = active ? (active.navName || active.name) : 'Tools';
+btn.appendChild(lbl);
 btn.insertAdjacentHTML('beforeend',
   `<svg class="ev-chev" viewBox="0 0 10 6" fill="none" width="10" height="6" aria-hidden="true">
      <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`);
@@ -86,8 +96,24 @@ menu.innerHTML =
   '<div class="ev-rule" role="separator"></div>' +
   EVENANT_MODULES.map(row).join('');
 
+wrap.appendChild(logo);
+wrap.appendChild(div);
 wrap.appendChild(btn);
 wrap.appendChild(menu);
+
+/* The bar itself: transparent until the page is scrolled, then the atlas's
+   blurred panel and hairline. A header that cannot scroll — an app shell like
+   the score viewer — pins that treatment with data-ev-bar="pinned", because
+   the alternative is a header that never gets its separating line. */
+const bar = wrap.closest('.ev-bar');
+if(bar){
+  if(bar.dataset.evBar === 'pinned') bar.classList.add('is-stuck');
+  else {
+    const stick = () => bar.classList.toggle('is-stuck', window.scrollY > 20);
+    addEventListener('scroll', stick, { passive:true });
+    stick();
+  }
+}
 
 const items = () => [...menu.querySelectorAll('.ev-item:not([aria-disabled])')];
 

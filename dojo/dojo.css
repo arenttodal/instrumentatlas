@@ -63,8 +63,6 @@ body{background:#080C14;margin:0}
   padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}
 .atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
 .atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
-.atl-logo{height:15px;width:auto;object-fit:contain}
-.atl-nav-sep{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
 .atl-nav-right{display:flex;align-items:center;gap:14px}
 .dj-score{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--text-dim);
   font-variant-numeric:tabular-nums;letter-spacing:.4px}
@@ -168,7 +166,6 @@ body{background:#080C14;margin:0}
 
 /* --- narrow --- */
 @media (max-width:760px){
-  .atl-nav{padding:12px 18px;gap:12px}
   .dj-score{display:none}
   .atl-main{padding:26px 20px 64px}
   .dj-opt{min-height:54px;font-size:16.5px}

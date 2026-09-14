@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Valley Sunrise — Score</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../evenant-nav.css">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#080C14;--gold:#D4A04A;--gold-deep:#C08830;--text:#BEC0C8;--dim:#7E808A;
@@ -18,13 +17,21 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
 
 /* header */
-.top{display:flex;align-items:center;justify-content:space-between;gap:22px;
-  padding:13px 22px;border-bottom:1px solid var(--hair);flex:0 0 auto}
+/* height, padding, background and hairline come from .ev-bar in
+   evenant-nav.css, shared with every other tool. Only the shrink behaviour is
+   this page's: the bar must not give way to the piano roll below it. */
+.top{flex:0 0 auto}
 /* the module switcher sits to the left of the piece title, with a hairline
    between them: one says which tool, the other which piece */
 .top-l{display:flex;align-items:center;gap:16px;min-width:0}
 .top-div{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
+/* The piece title truncates rather than wrapping, so it cannot push the bar
+   past the 76px every other tool's header is. Note that the toolbar to its
+   right still wraps below about 1280px and takes the bar to two rows with it;
+   that is this page's own flex-wrap and predates the shared bar. */
 .title{display:flex;align-items:baseline;gap:14px;min-width:0}
+.title h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.title span{white-space:nowrap}
 .title span{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#4E505A}
 .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .btn{padding:7px 14px;border:1px solid var(--hair);border-radius:100px;font-size:11.5px;color:var(--dim);
@@ -293,10 +300,11 @@ body.annotating .lanes{cursor:crosshair}
 .boot .s{font-size:12px;color:var(--dim);max-width:420px;text-align:center;line-height:1.6}
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 </style>
+<link rel="stylesheet" href="../evenant-nav.css">
 </head>
 <body>
 
-<div class="top">
+<div class="top ev-bar" data-ev-bar="pinned">
   <div class="top-l">
     <div data-ev-switch></div>
     <span class="top-div"></span>
