@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="evenant-nav.css">
 <style>
 /* ============================================================================
    THE ACCELERATOR — STYLES
@@ -200,8 +201,11 @@ code{font-family:inherit;color:var(--gold)}
 
 <nav class="nav">
   <div class="nav-l">
-    <span class="mark"><i></i><i></i><i></i></span>
-    <a href="#/foundations">The Accelerator</a><i>/</i><span id="nav-where">Foundations</span>
+    <!-- The module title becomes the switcher trigger, so its #/foundations
+         destination moves to the mark beside it — the same logo-to-module-home
+         pattern the atlas already uses. Nothing has lost a way in. -->
+    <a class="mark" href="#/foundations" aria-label="The Accelerator, start"><i></i><i></i><i></i></a>
+    <span data-ev-switch>The Accelerator</span><i>/</i><span id="nav-where">Foundations</span>
   </div>
   <div class="prog">
     <span id="prog-txt">0 of 6</span>
@@ -211,6 +215,8 @@ code{font-family:inherit;color:var(--gold)}
 
 <main id="view"></main>
 
+<script defer src="evenant-modules.js" data-module="accelerator"></script>
+<script defer src="evenant-nav.js"></script>
 <script>
 /* ============================================================================
    THE ACCELERATOR — CONTENT

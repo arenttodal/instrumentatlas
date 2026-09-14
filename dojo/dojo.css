@@ -65,149 +65,118 @@ body{background:#080C14;margin:0}
 .atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
 .atl-logo{height:15px;width:auto;object-fit:contain}
 .atl-nav-sep{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
-.atl-nav-crumb{display:flex;align-items:center;gap:14px;min-width:0;font-size:11px;font-weight:700;
-  letter-spacing:2.6px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;overflow:hidden}
-.atl-nav-crumb a:hover{color:var(--gold)}
-.atl-nav-crumb .sl{color:var(--text-faint)}
-.atl-nav-crumb b{color:var(--gold);font-weight:700}
 .atl-nav-right{display:flex;align-items:center;gap:14px}
+.dj-score{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--text-dim);
+  font-variant-numeric:tabular-nums;letter-spacing:.4px}
+.dj-score b{font-size:15px;color:#fff;font-weight:500}
+.dj-score span{margin-right:2px}
+.dj-score i{font-style:normal;color:var(--gold);margin-left:6px}
 .atl-select-btn{display:flex;align-items:center;gap:11px;padding:9px 18px;border:1px solid rgba(212,160,74,.42);
   border-radius:100px;font-size:13px;font-weight:500;color:#fff;background:rgba(212,160,74,.07);white-space:nowrap;
   letter-spacing:0;text-transform:none;transition:border-color .25s,background .25s,box-shadow .25s}
 .atl-select-btn:hover{border-color:var(--gold);background:rgba(212,160,74,.14);box-shadow:0 0 0 3px rgba(212,160,74,.08)}
 
 /* --- page frame ---
-   min-height is the viewport minus the nav, so the whole practice screen sits
-   above the fold at a laptop height and never scrolls to answer a question. */
-.atl-main{position:relative;z-index:10;min-height:calc(100vh - 60px);display:flex;align-items:flex-start}
-.atl-wrap{width:100%;max-width:1080px;margin:0 auto;padding:20px 32px 48px}
+   One column, centred horizontally, anchored a fixed distance from the top.
+   Not vertically centred: revealing an answer makes the column taller, and a
+   centred column would slide the question upward every single time. The
+   references this is modelled on do the same — content in the upper middle,
+   space below it. */
+.atl-main{position:relative;z-index:10;display:flex;justify-content:center;
+  padding:clamp(34px,7vh,74px) 20px 80px}
+/* The column is wider than the controls in it: the question wants one line,
+   the answers want a comfortable click target rather than a wide one. */
+.dj-col{width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.dj-options,.dj-ab,.dj-result{max-width:360px}
 
-/* --- header + belt rail --- */
-.dj-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap;margin-bottom:20px}
-.dj-head h1{font-size:clamp(28px,3.4vw,38px);line-height:1.08;margin:8px 0 5px}
-.dj-lede{font-size:15px;color:var(--text-dim);max-width:60ch;font-weight:300}
-
-.dj-rail{display:flex;gap:6px;flex-wrap:wrap}
-.dj-belt{display:flex;align-items:center;gap:8px;padding:7px 13px 7px 9px;border:1px solid var(--hair);
-  border-radius:100px;font-size:12px;color:var(--text-faint);white-space:nowrap;transition:border-color .25s,color .25s}
-.dj-belt i{font-style:normal;font-weight:700;font-size:10px;width:17px;height:17px;border-radius:50%;
-  display:grid;place-items:center;background:rgba(255,255,255,.05);color:var(--text-faint)}
-.dj-belt[data-built="false"]{opacity:.5}
-.dj-belt[data-built="false"] span::after{content:' · soon';color:var(--text-faint);font-size:10px;letter-spacing:1px}
-.dj-belt[data-on="true"]{border-color:var(--gold);background:rgba(212,160,74,.10);color:#fff;opacity:1}
-.dj-belt[data-on="true"] i{background:var(--gold);color:#0A0C14}
-
-/* --- score in the nav --- */
-.dj-score{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--text-dim);
-  font-variant-numeric:tabular-nums;letter-spacing:.4px}
-.dj-score b{font-size:15px;color:#fff;font-weight:500}
-.dj-score span{margin-right:2px}
-.dj-score i{font-style:normal;color:var(--gold);margin-left:6px}
-
-/* --- the practice card --- */
-.dj-card{border:1px solid var(--hair);border-radius:14px;background:rgba(255,255,255,.02);
-  padding:24px 28px 26px;transition:border-color .3s}
-.dj-ask-row{display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin-bottom:16px}
-.dj-ask{font-size:clamp(20px,2.4vw,27px);line-height:1.25}
-.dj-streak{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
-.dj-streak b{color:var(--gold);font-size:13px}
+/* --- the question, and then the answer ---
+   One display line carries both: it asks before you answer and names the
+   instrument after, so the eye never has to move to find out what happened. */
+.dj-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;
+  color:var(--gold);opacity:.85}
+.dj-display{font-size:clamp(26px,4.4vw,40px);line-height:1.14;margin:14px 0 0;
+  letter-spacing:-.6px;transition:color .3s ease}
+.dj-display[data-state="right"]{color:#fff}
+.dj-display[data-state="wrong"]{color:#fff}
+.dj-mark{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:12px;
+  vertical-align:middle;position:relative;top:-4px}
+.dj-mark[data-v="right"]{background:var(--ok);box-shadow:0 0 12px rgba(95,184,154,.75)}
+.dj-mark[data-v="wrong"]{background:var(--warn);box-shadow:0 0 12px rgba(192,96,58,.65)}
+.dj-note{font-size:12px;color:var(--text-faint);margin-top:10px;min-height:18px}
 
 /* --- transport --- */
-.dj-stage{display:flex;align-items:center;gap:20px;padding-bottom:18px;border-bottom:1px solid var(--hair)}
-.dj-play{display:flex;align-items:center;gap:13px;padding:13px 26px 13px 18px;border-radius:100px;
+.dj-play{display:inline-flex;align-items:center;justify-content:center;gap:11px;
+  margin-top:26px;padding:12px 30px;border-radius:100px;
   border:1px solid var(--hair-gold);background:rgba(212,160,74,.07);color:var(--gold);
-  font-size:14px;font-weight:500;flex:0 0 auto;transition:background .25s,border-color .25s,color .25s}
+  font-size:14px;font-weight:500;min-width:148px;
+  transition:background .25s,border-color .25s,color .25s}
 .dj-play:hover{border-color:var(--gold);background:rgba(212,160,74,.15);color:#fff}
-.dj-play .ico{width:0;height:0;border-style:solid;border-width:7px 0 7px 12px;
-  border-color:transparent transparent transparent currentColor;transition:border-color .2s}
+.dj-play .ico{width:0;height:0;border-style:solid;border-width:6px 0 6px 11px;
+  border-color:transparent transparent transparent currentColor}
 .dj-play[data-state="playing"]{background:rgba(212,160,74,.18);border-color:var(--gold);color:#fff}
-.dj-play[data-state="playing"] .ico{width:12px;height:14px;border:none;background:currentColor;
-  -webkit-mask:linear-gradient(#000 0 0) 0/4px 100% no-repeat,linear-gradient(#000 0 0) 100%/4px 100% no-repeat;
-          mask:linear-gradient(#000 0 0) 0/4px 100% no-repeat,linear-gradient(#000 0 0) 100%/4px 100% no-repeat}
-.dj-play[data-state="loading"]{opacity:.6;pointer-events:none}
-.dj-stage-meta{flex:1 1 auto;min-width:0}
-.dj-bar{height:3px;border-radius:2px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:10px}
-.dj-bar i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);
-  transition:transform .1s linear}
-.dj-hint{font-size:12.5px;color:var(--text-faint);line-height:1.5}
+.dj-play[data-state="playing"] .ico{width:11px;height:12px;border:none;background:currentColor;
+  -webkit-mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat;
+          mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat}
+.dj-play[data-state="loading"]{opacity:.55;pointer-events:none}
 
-/* --- options --- */
-.dj-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
-.dj-options[data-waiting]{opacity:.4}
-.dj-opt{display:flex;align-items:center;gap:10px;padding:13px 15px;border:1px solid var(--hair);border-radius:10px;
-  background:rgba(255,255,255,.015);font-size:15px;color:var(--text);text-align:left;min-width:0;
+.dj-meter{width:148px;height:2px;border-radius:2px;background:rgba(255,255,255,.07);
+  overflow:hidden;margin-top:14px}
+.dj-meter i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);
+  transition:transform .1s linear}
+
+/* --- answers: one per row, centred --- */
+.dj-options{display:flex;flex-direction:column;gap:9px;width:100%;margin-top:30px}
+.dj-opt{display:flex;align-items:center;justify-content:center;
+  min-height:52px;padding:8px 18px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.015);font-size:16px;font-weight:400;color:var(--text);
   transition:border-color .2s,background .2s,color .2s,opacity .2s}
-.dj-opt i{font-style:normal;font-size:10px;font-weight:700;color:var(--text-faint);width:16px;height:16px;
-  border-radius:3px;background:rgba(255,255,255,.05);display:grid;place-items:center;flex:0 0 auto}
-.dj-opt:not(:disabled):hover{border-color:var(--hair-gold);background:rgba(212,160,74,.06);color:#fff}
+.dj-opt:not(:disabled):hover{border-color:var(--hair-gold);background:rgba(212,160,74,.07);color:#fff}
 .dj-opt:disabled{cursor:default}
-.dj-opt.is-right{border-color:var(--ok);background:rgba(95,184,154,.10);color:#fff}
-.dj-opt.is-right i{background:var(--ok);color:#08120E}
-.dj-opt.is-wrong{border-color:var(--warn);background:rgba(192,96,58,.10);color:#fff}
-.dj-opt.is-wrong i{background:var(--warn);color:#140A06}
-.dj-opt.is-off{opacity:.3}
+.dj-options[data-waiting] .dj-opt{opacity:.35}
+.dj-opt.is-right{border-color:var(--ok);background:rgba(95,184,154,.12);color:#fff}
+.dj-opt.is-wrong{border-color:var(--warn);background:rgba(192,96,58,.12);color:#fff}
+.dj-opt.is-off{opacity:.28}
 
 /* --- result --- */
+.dj-result{width:100%;display:flex;flex-direction:column;align-items:center}
 .dj-result:empty{display:none}
-.dj-verdict{margin-top:17px;padding-top:16px;border-top:1px solid var(--hair)}
-.dj-verdict-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-.dj-verdict-head b{font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:21px;color:#fff}
-.dj-verdict-head em{font-style:italic;color:var(--gold);font-size:14px;font-family:'Playfair Display',Georgia,serif}
-.dj-tick,.dj-cross{width:9px;height:9px;border-radius:50%;flex:0 0 auto;align-self:center}
-.dj-tick{background:var(--ok);box-shadow:0 0 10px rgba(95,184,154,.7)}
-.dj-cross{background:var(--warn);box-shadow:0 0 10px rgba(192,96,58,.6)}
-.dj-verdict p{font-size:14.5px;color:var(--text-dim);max-width:72ch;font-weight:300}
-.dj-distinction{margin-top:15px;padding-left:14px;border-left:2px solid var(--hair-gold)}
 
-/* --- ⭐ the A/B ---
-   The one thing in this section that has to be right. Two buttons, both clips
-   already running, switching by gain ramp. Styled to look like a switch rather
-   than like two more answers. */
-.dj-ab{margin-top:16px;padding:15px 18px 13px;border:1px solid var(--hair-gold);border-radius:12px;
-  background:linear-gradient(180deg,rgba(212,160,74,.06),rgba(212,160,74,.02))}
-.dj-ab-label{font-size:10.5px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
-  color:var(--gold);margin-bottom:12px}
-.dj-ab-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.dj-ab-btn{padding:11px 15px;border:1px solid var(--hair);border-radius:9px;background:rgba(0,0,0,.25);
-  text-align:left;transition:border-color .2s,background .2s,box-shadow .2s}
-.dj-ab-btn i{display:block;font-style:normal;font-size:10px;font-weight:700;letter-spacing:1.8px;
-  text-transform:uppercase;color:var(--text-faint);margin-bottom:3px}
-.dj-ab-btn b{font-size:16px;font-weight:500;color:var(--text-dim)}
-.dj-ab-btn:hover{border-color:var(--hair-gold)}
-.dj-ab-btn.is-on{border-color:var(--gold);background:rgba(212,160,74,.14);box-shadow:0 0 0 3px rgba(212,160,74,.07)}
-.dj-ab-btn.is-on i{color:var(--gold)}
-.dj-ab-btn.is-on b{color:#fff}
-.dj-ab-note{font-size:12px;color:var(--text-faint);margin-top:11px}
+/* ⭐ the A/B. Two clips already running; these only move the gains. */
+.dj-ab{width:100%;margin-top:26px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.dj-ab-label{font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
+  color:var(--gold);opacity:.8;margin-bottom:3px}
+.dj-ab-btn{width:100%;min-height:48px;padding:8px 18px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(0,0,0,.25);font-size:15px;color:var(--text-dim);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .2s,background .2s,color .2s,box-shadow .2s}
+.dj-ab-btn:hover{border-color:var(--hair-gold);color:#fff}
+.dj-ab-btn.is-on{border-color:var(--gold);background:rgba(212,160,74,.15);color:#fff;
+  box-shadow:0 0 0 3px rgba(212,160,74,.07)}
 
-/* --- actions --- */
-.dj-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:18px}
-.dj-next{padding:11px 26px;border-radius:100px;border:1px solid var(--gold);background:var(--gold);
-  color:#0A0C14;font-size:13.5px;font-weight:500;transition:background .25s,border-color .25s}
+.dj-next{margin-top:26px;padding:12px 32px;border-radius:100px;border:1px solid var(--gold);
+  background:var(--gold);color:#0A0C14;font-size:14px;font-weight:500;
+  transition:background .25s,border-color .25s}
 .dj-next:hover{background:var(--gold-lift);border-color:var(--gold-lift)}
-.dj-link{font-size:13px;color:var(--text-dim);border-bottom:1px solid var(--hair);padding-bottom:1px;
-  background:none;transition:color .2s,border-color .2s}
+
+.dj-link{font-size:12px;color:var(--text-faint);margin-top:16px;
+  border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
 .dj-link:hover{color:var(--gold);border-color:var(--hair-gold)}
 
-.dj-fine{margin-top:22px;font-size:12px;color:var(--text-faint);line-height:1.7}
-.dj-fine .dj-link{font-size:12px}
+.dj-reset{margin-top:40px;font-size:11px;color:var(--text-faint);opacity:.7;
+  letter-spacing:.3px;transition:color .2s,opacity .2s}
+.dj-reset:hover{color:var(--text-dim);opacity:1}
 
 /* --- narrow --- */
-@media (max-width:860px){
-  .atl-wrap{padding:28px 20px 48px}
-  .dj-card{padding:24px 20px 26px}
-  .dj-options{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .dj-head{gap:22px}
-  .atl-nav{padding:12px 20px;gap:14px}
+@media (max-width:760px){
+  .atl-nav{padding:12px 18px;gap:12px}
   .dj-score{display:none}
-}
-@media (max-width:560px){
-  .dj-options{grid-template-columns:1fr}
-  .dj-ab-row{grid-template-columns:1fr}
-  .dj-stage{flex-wrap:wrap;gap:14px}
-  .atl-nav-crumb .atl-crumb-root{display:none}
+  .atl-main{padding:26px 20px 64px}
+  .dj-opt{min-height:54px;font-size:16.5px}
+  .dj-ab-btn{min-height:50px}
+  .dj-play{min-height:48px}
 }
 
 @media (prefers-reduced-motion:reduce){
   .atl *,.atl *::before,.atl *::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
-  .dj-bar i{transition:none}
+  .dj-meter i{transition:none}
 }

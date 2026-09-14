@@ -1,0 +1,122 @@
+/* ============================================================================
+   EVENANT · MODULE SWITCHER · STYLES
+   ----------------------------------------------------------------------------
+   Loaded by every tool. The four headers have four stylesheets and three sets
+   of token NAMES for the same palette, so every value below reads the host's
+   token first and falls back to the design-system value from HANDOFF §2:
+   var(--dim, var(--text-dim, #7E808A)). The switcher therefore looks identical
+   everywhere without any host having to define anything.
+
+   Every rule is scoped two classes deep (.ev-switch .ev-switch-btn). A bare
+   .ev-switch-btn scores (0,1,0) and loses to atlas.css's `.atl button`
+   (0,1,1) — which sets `font:inherit` and would drop the adopted title from
+   11px/700 to the 17px body font. That is the one thing this component must
+   never do, so the specificity is deliberate, not incidental.
+   ============================================================================ */
+
+/* The module name must stay legible, so the switcher never shrinks: in a
+   cramped header it is the crumb or the piece title beside it that gives way,
+   both of which already truncate. */
+.ev-switch{display:flex;align-items:center;flex:0 0 auto}
+
+/* ---- trigger -------------------------------------------------------------
+   The label inside is ADOPTED from the host header and is never styled here:
+   no font, no colour, no spacing. Hover, focus and open states are carried by
+   the background and the chevron alone, so the title's own colour stays
+   exactly what the host stylesheet set.
+
+   padding and an equal negative margin grow the hit area without moving a
+   pixel of what you can see. */
+.ev-switch .ev-switch-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px;margin:-10px;border:0;background:none;color:inherit;
+  border-radius:8px;cursor:pointer;min-width:0;
+  font:inherit;letter-spacing:inherit;text-transform:inherit;line-height:inherit;
+  /* a button defaults to text-align:center, and text-align inherits — without
+     this the adopted title computes as centred where it used to compute as
+     start. Invisible here, because the label is a flex item sized to its own
+     text, but it is still a changed style on an element we promised not to
+     touch, and it would show the moment a header gave one room to spare. */
+  text-align:inherit;
+  transition:background .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.ev-switch .ev-switch-btn:hover{background:rgba(255,255,255,.05)}
+.ev-switch[data-open="1"] .ev-switch-btn{background:rgba(212,160,74,.10)}
+.ev-switch .ev-switch-btn:focus-visible{
+  outline:2px solid var(--gold,#D4A04A);outline-offset:1px}
+
+/* the label only exists when the header had no module title to adopt */
+.ev-switch .ev-switch-label{
+  font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
+  color:var(--dim,var(--text-dim,#7E808A));white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+
+.ev-switch .ev-chev{
+  flex:0 0 auto;color:var(--dim,var(--text-dim,#7E808A));
+  transition:transform .22s ease,color .2s ease}
+.ev-switch .ev-switch-btn:hover .ev-chev{color:var(--gold,#D4A04A)}
+.ev-switch[data-open="1"] .ev-chev{transform:rotate(180deg);color:var(--gold,#D4A04A)}
+
+/* ---- menu ----------------------------------------------------------------
+   position:fixed, not absolute. score.html clips at html,body{overflow:hidden}
+   and the atlas sits inside overflow-x:hidden, so an absolutely positioned
+   menu is cut off in two of the four headers. Fixed also keeps this to one
+   stacking context instead of four. Surface, radius and shadow are the atlas
+   .atl-menu treatment, so it reads as the same family of menu. */
+.ev-menu{
+  position:fixed;z-index:9000;
+  width:264px;max-width:calc(100vw - 16px);
+  padding:6px;
+  background:#0B111C;border:1px solid var(--hair,rgba(255,255,255,.07));
+  border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.6);
+  font-family:'DM Sans',-apple-system,sans-serif;
+}
+.ev-menu[hidden]{display:none}
+
+.ev-menu .ev-rule{height:1px;margin:6px 4px;background:var(--hair,rgba(255,255,255,.07))}
+
+.ev-menu .ev-item{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 10px;border-radius:8px;
+  font-size:13.5px;font-weight:400;line-height:1.35;letter-spacing:0;text-transform:none;
+  color:var(--text,#BEC0C8);text-decoration:none;
+  transition:background .15s ease,color .15s ease}
+.ev-menu .ev-item .ev-ico{flex:0 0 auto;width:16px;height:16px;color:var(--faint,#4E505A);
+  transition:color .15s ease}
+.ev-menu .ev-item-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.ev-menu a.ev-item:hover,
+.ev-menu a.ev-item:focus-visible{background:rgba(255,255,255,.05);color:#fff;outline:none}
+.ev-menu a.ev-item:hover .ev-ico,
+.ev-menu a.ev-item:focus-visible .ev-ico{color:var(--gold,#D4A04A)}
+.ev-menu a.ev-item:focus-visible{box-shadow:inset 0 0 0 1px var(--hair-gold,rgba(212,160,74,.24))}
+
+/* the tool you are in: a tint and a tick, not a different shape */
+.ev-menu .ev-item[data-active="1"]{background:rgba(212,160,74,.10);color:#fff}
+.ev-menu .ev-item[data-active="1"] .ev-ico{color:var(--gold,#D4A04A)}
+.ev-menu .ev-tick{flex:0 0 auto;width:12px;height:12px;color:var(--gold,#D4A04A)}
+
+.ev-menu .ev-item[aria-disabled]{color:var(--faint,#4E505A);cursor:default}
+.ev-menu .ev-soon{flex:0 0 auto;font-size:9px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--faint,#4E505A);
+  border:1px solid var(--hair,rgba(255,255,255,.07));border-radius:100px;padding:2px 7px}
+
+/* ---- narrow --------------------------------------------------------------
+   The menu still hangs under the trigger — no sidebar, no bottom bar — but it
+   takes more of the width and every row clears the 44px touch target. */
+@media (max-width:760px){
+  .ev-menu{width:min(280px,calc(100vw - 24px));padding:7px}
+  .ev-menu .ev-item{padding:0 10px;min-height:44px;font-size:14.5px}
+  .ev-switch .ev-switch-btn{padding:11px 10px;margin:-11px -10px;position:relative}
+  /* The touch target has to clear 44px, and the headers it sits in are between
+     34px and 41px tall. Growing the button would make the header taller on
+     phones, so the extra height is a pseudo-element instead: it takes the taps
+     and occupies no layout at all. */
+  .ev-switch .ev-switch-btn::after{content:'';position:absolute;left:0;right:0;
+    top:50%;transform:translateY(-50%);height:46px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .ev-switch .ev-chev,.ev-switch .ev-switch-btn,.ev-menu .ev-item{transition:none}
+}

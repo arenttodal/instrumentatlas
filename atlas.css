@@ -65,10 +65,12 @@ body{background:#080C14;margin:0}   /* the .atl reset never covered body itself:
 .atl-logo-fallback{font-family:'Playfair Display',serif;font-size:19px;color:#fff;letter-spacing:.5px}
 .atl-nav-div{width:1px;height:20px;background:var(--hair)}
 .atl-nav-title{font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
-/* Inside the atlas the breadcrumb states where you are, so the wordmark line
-   is only shown on the front page and the crumb takes its place, in line with
-   the logo, as the topmost element on the page. */
-.atl-nav.is-sub .atl-nav-title,.atl-nav.is-sub .atl-nav-div{display:none}
+/* The wordmark used to be hidden on sub-pages so the breadcrumb could take its
+   place. It is the module switcher now, and a switcher you cannot reach from an
+   instrument page is not one, so it stays and the crumb follows it. The crumb
+   is still the first thing dropped when the bar runs out of room — see the
+   phone block near the end of this file. */
+.atl-nav.is-sub .atl-nav-div{display:none}
 /* the announcement bar belongs to the collection front page; inside the atlas it
    is just 32px of vertical space taken from the content */
 /* The announcement bar and the footer are switched off for now. The bar used
@@ -102,11 +104,6 @@ body{background:#080C14;margin:0}   /* the .atl reset never covered body itself:
   transition:opacity .25s,background .25s,box-shadow .25s}
 .atl-studio-btn[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.12);color:#fff}
 .atl-studio-btn[aria-pressed="true"] .dot{background:var(--gold);opacity:1;box-shadow:0 0 8px rgba(212,160,74,.8)}
-
-/* The link out to the dojo. Same ghost pill as the studio toggle, but it is a
-   link rather than a switch, so it has no dot and no pressed state. */
-.atl-dojo-btn{color:var(--text-dim)}
-.atl-dojo-btn:hover{border-color:var(--hair-gold);color:var(--gold)}
 
 .atl-select{position:relative}
 .atl-select-btn{display:flex;align-items:center;gap:11px;padding:9px 18px;border:1px solid rgba(212,160,74,.42);
@@ -521,7 +518,7 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
   .atl-wrap{padding:0 20px}
   .atl-nav{padding:12px 20px}
   .atl-logo{height:13px}
-  .atl-nav-div,.atl-nav-title{display:none}
+  .atl-nav-div{display:none}   /* the module name stays: it is the switcher */
   .atl-topbar{font-size:9.5px;letter-spacing:2px}
   .atl-home{min-height:auto;padding:36px 0 52px}
   .atl-hero{margin-bottom:32px}
