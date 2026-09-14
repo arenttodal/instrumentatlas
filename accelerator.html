@@ -456,7 +456,39 @@ const LESSONS = [
 
 /* ---------------------------------------------------------------- 1 ------ */
 {
-  id:'prevade', module:'composition', n:1,
+  id:'motifs', module:'composition', n:1,
+  title:'Motifs',
+  short:'The short fragment everything else is built from — and how to choose one.',
+  claim:'A weak melody will sink a well-produced track, and a strong one will carry a thin one. It starts with a fragment short enough to remember.',
+  demo:'motif',
+  demoNote:'Click any interval to hear a motif built on it. The rhythm and the shape stay put, so the only thing changing is the leap — which is the book\'s point about intervals. Then change the rhythm with the interval fixed, and hear the other half of the job. Motif of fate sets all three to Beethoven\'s.',
+  source:'The Composition — Using Motifs to Build a Melody / Composing Your Own Motif',
+  body:[
+    '<strong>Melody is king.</strong> It is the element that lingers after the final note fades. A perfectly crafted snare or synth pluck catches attention for a moment; the melody is what makes music memorable. Think of the endless four-chord songs that share a progression and are told apart entirely by their tunes.',
+    'This matters more than it sounds. <strong>A weak melody compromises an otherwise well-produced track</strong> — music recorded and produced by extraordinarily talented people can still feel like something is missing, and often that missing thing is a memorable melody. It works in the other direction too: a powerful melody lifts a simple, minimal production.',
+    'At the heart of most great melodies is a <strong>motif</strong> — a short, distinctive fragment that carries much of the piece\'s identity. Motifs are the building blocks of themes and phrases, which build sections, which build the piece. The famous one is Beethoven\'s Fifth: four notes, G–G–G–E♭, the motif of fate, repeated, varied and developed across the whole first movement. <strong>Deceptively simple and enormously powerful.</strong> That is the standard to aim at, and note what it is not — it is not clever, and it is not long.',
+    'A motif does three jobs. It <strong>gives your music identity</strong>, a signature sound. It <strong>unifies the composition</strong>, because repeating and developing one idea creates cohesion. And it <strong>gets you unstuck</strong> — starting from a motif beats staring at an empty bar.',
+    'There are three ways in, and they are all cheap to try. <strong>Start with an interval.</strong> An interval is the distance between two notes, and different distances carry different feelings: a perfect fifth is heroic and grand, a minor seventh introspective and mysterious, an augmented fourth full of tension and intrigue. Choose the interval and you have already set the emotional tone. <strong>Start with a rhythm.</strong> Rhythm alone evokes emotion — try a mix of shorter and longer notes, sing it, clap it, and add pitches afterwards. Or the reverse. <strong>Start with your surroundings.</strong> Birds, conversations, machinery: rhythmic and melodic ideas turn up in unexpected places.',
+    '<strong>Do not reach for complexity.</strong> Compare a melody that is disjointed and hard to hum with one that is simple and cohesive, and most listeners pick the simple one every time — it is more recognisable, more memorable, and it has a stronger arc. A memorable melody is not harder to write than a forgettable one. It is the same work, aimed better.'
+  ],
+  ex:{
+    beginner:'Compose a simple motif using an interval or rhythm.',
+    intermediate:'Create three motifs. Choose your favourite to develop further.',
+    advanced:'Set a timer for 30 seconds and compose three motifs within the time limit. For added challenge, work in an unfamiliar key — A♭, F♯, or B minor. Select your best motif to develop into a full melody.'
+  },
+  quiz:[
+    { q:'What makes Beethoven\'s motif of fate effective?',
+      o:['It is harmonically sophisticated','It is four notes, simple enough to develop across a movement','It uses an unusual scale','It is played by the whole orchestra'], a:1,
+      why:'G–G–G–E♭. Deceptively simple, and that simplicity is what lets it be repeated, varied and developed throughout the first movement.' },
+    { q:'You want a motif that sounds heroic and grand. Which interval does the book point you at?',
+      o:['A minor second','A perfect fifth','A minor seventh','An augmented fourth'], a:1,
+      why:'The perfect fifth. The minor seventh is introspective and mysterious; the augmented fourth adds tension and intrigue.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 2 ------ */
+{
+  id:'prevade', module:'composition', n:2,
   title:'The PReVaDe method',
   short:'Presentation, Repetition, Variation, Destruction — how one motif becomes a phrase.',
   claim:'Random notes confuse the listener and one motif on repeat bores them. PReVaDe is the structure that sits between the two failures.',
@@ -1278,6 +1310,171 @@ WIDGETS.prevade = function (host) {
   };
 
   drawSlots(); draw(); readout();
+};
+
+
+/* ===========================================================================
+   8. MOTIFS — the book's interval table, made audible
+   Two of the book's three starting points, on separate controls: pick the
+   interval that carries the motif, then the rhythm that places it. Only the
+   three intervals the book characterises carry an emotional note.
+   =========================================================================== */
+WIDGETS.motif = function (host) {
+  const BPM = 92, STEPS = 8, ROOT = 60;              // C4
+
+  const IVS = [
+    { n:'Minor second',   ab:'m2', s:1,  con:false },
+    { n:'Major second',   ab:'M2', s:2,  con:false },
+    { n:'Minor third',    ab:'m3', s:3,  con:true  },
+    { n:'Major third',    ab:'M3', s:4,  con:true  },
+    { n:'Perfect fourth', ab:'P4', s:5,  con:true  },
+    { n:'Tritone',        ab:'TT', s:6,  con:false,
+      emo:'The book\'s augmented fourth — tension and intrigue.' },
+    { n:'Perfect fifth',  ab:'P5', s:7,  con:true,
+      emo:'Heroism and grandeur. The first example motif opens on this leap.' },
+    { n:'Minor sixth',    ab:'m6', s:8,  con:true  },
+    { n:'Major sixth',    ab:'M6', s:9,  con:true  },
+    { n:'Minor seventh',  ab:'m7', s:10, con:false,
+      emo:'Introspective and mysterious.' },
+    { n:'Major seventh',  ab:'M7', s:11, con:false },
+    { n:'Octave',         ab:'P8', s:12, con:true  }
+  ];
+
+  /* [startStep, lengthSteps] per note, and which note carries the interval */
+  const RHYTHMS = [
+    { id:'even',   name:'Even',
+      on:[[0,2],[2,2],[4,2],[6,2]], leap:1,
+      note:'Four equal notes. Plain, and easy to hum.' },
+    { id:'fate',   name:'Three and a drop',
+      on:[[0,1],[1,1],[2,1],[3,5]], leap:3,
+      note:'Three shorts and a long — the rhythm of Beethoven\'s motif of fate.' },
+    { id:'dotted', name:'Long, then short',
+      on:[[0,3],[3,1],[4,2],[6,2]], leap:1,
+      note:'A mix of longer and shorter notes, which is what the book suggests trying.' },
+    { id:'synco',  name:'Syncopated',
+      on:[[0,2],[3,2],[5,1],[6,2]], leap:1,
+      note:'Off the beat. The book\'s second example motif is built on a syncopated rhythm.' }
+  ];
+
+  let iv = 6, rh = 0, dir = 1;                       // perfect fifth, even, upward
+
+  /* Non-leap notes sit on the root; the leap note carries the interval, and
+     anything after it steps back toward the root a tone at a time. */
+  function notes() {
+    const r = RHYTHMS[rh], iS = IVS[iv].s;
+    return r.on.map(([s, l], k) => {
+      let off = 0;
+      if (k === r.leap) off = iS;
+      else if (k > r.leap) off = Math.max(iS - (k - r.leap) * 2, 0);
+      return { m: ROOT + dir * off, s, l };
+    });
+  }
+  const playMotif = () =>
+    seq(notes().map(n => [n.m, n.s * .5, n.l * .5]), BPM, { gain: .14, bright: .6 });
+  const playIv = () => {
+    const a = ROOT, b = ROOT + dir * IVS[iv].s;
+    tone(a, { dur: .8, gain: .16, bright: .55 });
+    tone(b, { when: .5, dur: .8, gain: .16, bright: .55 });
+    tone(a, { when: 1.3, dur: 1.6, gain: .13, bright: .5 });
+    tone(b, { when: 1.3, dur: 1.6, gain: .13, bright: .5 });
+  };
+
+  const L = { x:14, y:18, rowH:22 };                 // interval ladder
+  const R = { x:42, y:302, w:458, h:104 };           // motif roll
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="mo-svg" viewBox="0 0 520 420"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div>
+        <div class="w-row">
+          ${playBtn('mo-motif','Play motif')}
+          <button class="btn" id="mo-iv">Interval only</button>
+        </div></div>
+      <div><div class="w-lab">Direction</div>
+        <div class="w-row">
+          <button class="btn" id="mo-up"   aria-pressed="true">Up</button>
+          <button class="btn" id="mo-down" aria-pressed="false">Down</button>
+        </div></div>
+      <div><div class="w-lab">Rhythm</div>
+        <div class="w-col" id="mo-rh">${RHYTHMS.map((r, i) =>
+          `<button class="btn wide" data-r="${i}" aria-pressed="${i === 0}">${r.name}</button>`).join('')}</div></div>
+      <div><div class="w-lab">The famous one</div>
+        <div class="w-row"><button class="btn" id="mo-fate">Motif of fate</button></div></div>
+      <div class="w-read" id="mo-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#mo-svg');
+
+  function draw() {
+    let g = `<text x="${L.x}" y="10" fill="#4E505A" font-size="9" font-weight="700"
+               font-family="DM Sans" letter-spacing="1.6">THE INTERVAL THE MOTIF IS BUILT ON</text>`;
+    IVS.forEach((v, i) => {
+      const y = L.y + i * L.rowH, on = i === iv;
+      const col = on ? '#D4A04A' : v.con ? '#5FB89A' : '#C0603A';
+      g += `<rect class="mo-row" data-i="${i}" x="${L.x - 4}" y="${y}" width="500"
+              height="${L.rowH - 3}" rx="5" fill="${on ? '#D4A04A' : '#ffffff'}"
+              fill-opacity="${on ? .1 : .022}" style="cursor:pointer"/>
+            <text x="${L.x + 6}" y="${y + 13.5}" fill="${on ? '#fff' : '#7E808A'}" font-size="10.5"
+              font-family="DM Sans" pointer-events="none">${v.n}</text>
+            <rect x="128" y="${y + 6}" width="${(v.s * 14).toFixed(0)}" height="6" rx="3"
+              fill="${col}" fill-opacity="${on ? .95 : .5}" pointer-events="none"/>
+            <text x="316" y="${y + 13.5}" fill="${on ? '#D4A04A' : '#4E505A'}" font-size="10"
+              font-weight="700" font-family="DM Sans" pointer-events="none">${v.ab}</text>
+            <text x="352" y="${y + 13.5}" fill="${v.con ? '#5FB89A' : '#C0603A'}"
+              fill-opacity="${on ? 1 : .55}" font-size="9" font-family="DM Sans"
+              pointer-events="none">${v.con ? 'consonance' : 'dissonance'}</text>`;
+    });
+
+    /* the motif itself */
+    /* Fixed range, deliberately. Scaling the roll to each motif would draw a
+       minor second and an octave identically — the leap size is the lesson. */
+    const ns = notes(), lo = ROOT - 13, hi = ROOT + 13;
+    const py = m => R.y + R.h - ((m - lo) / (hi - lo)) * R.h;
+    g += `<text x="${R.x}" y="${R.y - 8}" fill="#4E505A" font-size="9" font-weight="700"
+            font-family="DM Sans" letter-spacing="1.6">THE MOTIF</text>
+          <rect x="${R.x}" y="${R.y}" width="${R.w}" height="${R.h}" rx="6"
+            fill="#ffffff" fill-opacity=".022"/>
+          <line x1="${R.x}" y1="${(R.y + R.h / 2).toFixed(1)}" x2="${R.x + R.w}"
+            y2="${(R.y + R.h / 2).toFixed(1)}" stroke="#ffffff" stroke-opacity=".09"
+            stroke-dasharray="3 4"/>
+          <text x="${R.x - 6}" y="${(R.y + R.h / 2 + 3.5).toFixed(1)}" fill="#4E505A"
+            font-size="8.5" font-family="DM Sans" text-anchor="end">root</text>`;
+    const stepW = R.w / STEPS;
+    ns.forEach((n, k) => {
+      const isLeap = k === RHYTHMS[rh].leap;
+      g += `<rect x="${(R.x + n.s * stepW + 2).toFixed(1)}" y="${(py(n.m) - 4).toFixed(1)}"
+              width="${(n.l * stepW - 4).toFixed(1)}" height="8" rx="4"
+              fill="${isLeap ? '#D4A04A' : '#6E8FB8'}" fill-opacity=".92"/>`;
+    });
+    svg.innerHTML = g;
+
+    const v = IVS[iv], r = RHYTHMS[rh];
+    host.querySelector('#mo-read').innerHTML =
+      `<b>${v.n} ${dir > 0 ? 'up' : 'down'} — ${v.con ? 'a consonance' : 'a dissonance'}.</b> `
+      + (v.emo ? v.emo + ' ' : '') + r.note;
+    host.querySelectorAll('#mo-rh button').forEach((b, i) =>
+      b.setAttribute('aria-pressed', String(i === rh)));
+    host.querySelector('#mo-up').setAttribute('aria-pressed', String(dir > 0));
+    host.querySelector('#mo-down').setAttribute('aria-pressed', String(dir < 0));
+  }
+
+  svg.addEventListener('click', e => {
+    const row = e.target.closest('.mo-row'); if (!row) return;
+    iv = +row.dataset.i; draw(); playMotif();
+  });
+  host.querySelector('#mo-rh').addEventListener('click', e => {
+    const b = e.target.closest('button[data-r]'); if (!b) return;
+    rh = +b.dataset.r; draw(); playMotif();
+  });
+  host.querySelector('#mo-up').onclick    = () => { dir =  1; draw(); playMotif(); };
+  host.querySelector('#mo-down').onclick  = () => { dir = -1; draw(); playMotif(); };
+  host.querySelector('#mo-motif').onclick = playMotif;
+  host.querySelector('#mo-iv').onclick    = playIv;
+  host.querySelector('#mo-fate').onclick  = () => {
+    iv = 3; rh = 1; dir = -1;                        // G G G E♭ — a major third down
+    draw(); playMotif();
+  };
+  draw();
 };
 
 /* ============================================================================
