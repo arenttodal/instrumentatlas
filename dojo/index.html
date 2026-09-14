@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Dojo · Evenant</title>
+<meta name="description" content="Ear training for orchestration: hear an instrument, name it, and when you are wrong, hear the two side by side.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dojo.css">
+</head>
+<body>
+<div class="atl atl-dojo" id="atl">
+  <div class="atl-grain"></div>
+  <div class="atl-atmos"></div>
+
+  <nav class="atl-nav is-sub" id="atl-nav">
+    <div class="atl-nav-left">
+      <a href="../#/" aria-label="Atlas home" style="display:flex;align-items:center;gap:10px">
+        <img class="atl-logo" alt="Evenant" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAoCAYAAABnyQNuAAABg2lDQ1BJQ0MgUHJvZmlsZQAAKJGFkT9Lw1AUxU+jooiUKg5uPtChQ5SQ0nbRoU2LCra0xYKKS5ombSU2IY3/cBbcHF3FT+Dg4ODQwc1JBSc/gZMguGiJ9zUtRYX2hJf7u+c93r28Cwhnqm2bQgjYq7tOYSXJNre22egbxugLgmFW1Rp2IpdbB6kbf+vzBQEenxf4Xf/3+2q8rDc0it+07jTbcYHALfHcoWtzfiWedqgp4nfOlTYLw5xLPs+0z2wUFGKROFTyeYlzxWfed0irqmXiHWKxU5eLJdPZPMsk5LhUZIplWg7LOZZRM3UxFYtKUrdXhiTSyCJPlEECMuKQUKRMgQWTlkOco78FAzVydIhIIYYonWtfEx5QihnkZFQNfeXqRy6PimUfO7VK1WUJenmdrdW1RZHJkhwD+Bz/zqfnnTaB5Sf+zj1v9RG4Jj943vPCaWDSAu5PtH3noFM+IESAQXnDiMh+NjEFjDx43sc8MLoLtG487+vS81pXwBDNt3nxAwgfdRuKLiZgAAAAOGVYSWZNTQAqAAAACAABh2kABAAAAAEAAAAaAAAAAAACoAIABAAAAAEAAAAroAMABAAAAAEAAAAoAAAAAAq0HxIAAALmSURBVFgJ7VnPT9RAFH5vOtuysGCaLJEfwejBixoTD3ow4WZCOHEwRC/+CSQePHr05Mm7f4jEK8aEGEAlagwGA4iySFyQtrvdtjO+WXdiGzDUZYHWMNnsvJn3zTdfX9s3s7N49/63808elhfCCAwJQJ/sFAbAIoFR5Ucw/WLef8wDZKzfNnoZQyM7MpNKRgaMOyDQIvEAQoBIurPXGhni15tisydtryIEKOZGLMmX+RFLr35+xFJoT8XufT060ENvGOMckHMsdIDuSCkKHC0eBMybf9+YbTSiImC2VjB99bRgFXYcWKHgAkxOSmPZnmP1arHZ1qAs1e8uXwqzpOf/0tL2bV9ZkfbsR2909JoVrX8Pwe7mcmndR9cDuHHFkvMffCzbBvTbHJbXfbgwbMnVio9F05CDZQ5+A6BWD8XLN7XBcwPm5lDZkLwL0DJAbmwBDp/lcmbOxbGbPXLbA/Zq0Q3aFuv48mqPCa8jAWhQthZqhWmx0cYIWCuDqx2SMiX5UfuVTX26nbj/5FNOzUf8oPi3f0bVFmUCnqpBuS4iYF0RqaKFNu0YqzbjwhQ23m4S6K/WBWk+zR/QbJpLQ1PXdBdVnlNxOK4i2hZ7XArj85yKjUejk/ZpZDsZzTjXoSLbyjJxvqOzabK2xZq/x3Yfnboks8mxxJNd6VtrVaeysIjTUSS7WHM9UmNby08i/ar4x9NxvK1tVeuisTEfAnp1sRZHaXTqenxqyVrdaGj21OP+Feg7Jn56dtH/13EniqfISrz3oNJtlKyCWVPbjXSlSjA7HfTQKIeOuAJ/t87HpzbKE2Olp4jYi/LPw6V3S/vNpH26jmP264v7D7L/Mt5wa2e+8L4u1nf7VmniIJKT9rueqDMhpQhDqTZRmS6uJ5228+xJXFl+xFIyz49YSlv5EUtpIj9iacnNjVj6teuxQoTqYC6zf37orLO1E73lgSHl182Q0eGX7s9UTWcQn3drkft8xnn0C+Jy45OGlP6OAAAAAElFTkSuQmCC">
+      </a>
+      <div class="atl-nav-sep"></div>
+      <div class="atl-nav-crumb"><a class="atl-crumb-root" href="../#/">The Instrument Atlas</a><span class="sl">/</span><b>The Dojo</b></div>
+    </div>
+    <div class="atl-nav-right">
+      <div class="dj-score" id="dj-score" aria-live="off"></div>
+      <a class="atl-select-btn" href="../#/">Back to the atlas</a>
+    </div>
+  </nav>
+
+  <main class="atl-main">
+    <div class="atl-wrap">
+
+      <!-- Belt rail. Belt 2 is the only one built; the rest are shown so the
+           ladder is legible, and are marked as not yet available rather than
+           looking like something the learner has failed to unlock. -->
+      <div class="dj-head">
+        <div>
+          <div class="atl-eyebrow">The Dojo · Ear Training</div>
+          <h1 id="dj-title">Instruments</h1>
+          <p class="dj-lede" id="dj-lede"></p>
+        </div>
+        <div class="dj-rail" id="dj-rail" role="tablist" aria-label="Belts"></div>
+      </div>
+
+      <!-- The practice card. Nothing is fetched until the play button below is
+           pressed: no audio, no AudioContext, nothing. -->
+      <section class="dj-card" aria-labelledby="dj-ask">
+        <div class="dj-ask-row">
+          <h2 class="dj-ask" id="dj-ask"></h2>
+          <div class="dj-streak" id="dj-streak"></div>
+        </div>
+
+        <div class="dj-stage">
+          <button class="dj-play" id="dj-play" aria-label="Play the clip">
+            <span class="ico" aria-hidden="true"></span>
+            <span class="lbl" id="dj-play-lbl">Play</span>
+          </button>
+          <div class="dj-stage-meta">
+            <div class="dj-bar" id="dj-bar"><i id="dj-bar-fill"></i></div>
+            <div class="dj-hint" id="dj-hint">Nothing is loaded until you press play. Replay as often as you like — there is no timer.</div>
+          </div>
+        </div>
+
+        <div class="dj-options" id="dj-options" role="group" aria-label="Answers"></div>
+
+        <div class="dj-result" id="dj-result" aria-live="polite"></div>
+      </section>
+
+      <p class="dj-fine" id="dj-fine"></p>
+
+    </div>
+  </main>
+</div>
+
+<!-- atlas-data.js first: INSTRUMENTS supplies the names, families, epithets and
+     the deep links back into the atlas, so the dojo can never drift out of step
+     with the reference it is practising. Then the dojo's own data, then the
+     renderer. All deferred, in dependency order, never async. -->
+<script defer src="../atlas-data.js"></script>
+<script defer src="dojo-data.js"></script>
+<script defer src="dojo.js"></script>
+</body>
+</html>

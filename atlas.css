@@ -103,6 +103,11 @@ body{background:#080C14;margin:0}   /* the .atl reset never covered body itself:
 .atl-studio-btn[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,160,74,.12);color:#fff}
 .atl-studio-btn[aria-pressed="true"] .dot{background:var(--gold);opacity:1;box-shadow:0 0 8px rgba(212,160,74,.8)}
 
+/* The link out to the dojo. Same ghost pill as the studio toggle, but it is a
+   link rather than a switch, so it has no dot and no pressed state. */
+.atl-dojo-btn{color:var(--text-dim)}
+.atl-dojo-btn:hover{border-color:var(--hair-gold);color:var(--gold)}
+
 .atl-select{position:relative}
 .atl-select-btn{display:flex;align-items:center;gap:11px;padding:9px 18px;border:1px solid rgba(212,160,74,.42);
   border-radius:100px;font-size:13px;font-weight:500;color:#fff;background:rgba(212,160,74,.07);
