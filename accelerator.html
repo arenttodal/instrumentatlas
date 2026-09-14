@@ -181,6 +181,24 @@ code{font-family:inherit;color:var(--gold)}
 .pv-dial span{display:block;font-size:9.5px;color:var(--faint);letter-spacing:.4px;margin-bottom:2px}
 .pv-dial input{width:100%;accent-color:var(--gold);height:3px}
 
+/* prevade slots */
+.pd-slot{padding:9px 0;border-bottom:1px solid var(--hair)}
+.pd-slot:last-child{border-bottom:none;padding-bottom:0}
+.pd-row{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.pd-key{width:17px;height:17px;border-radius:100px;font-size:9.5px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.pd-name{font-size:12.5px;color:#fff;font-weight:500;flex:1 1 auto;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pd-arrow{width:21px;height:21px;border:1px solid var(--hair);border-radius:6px;
+  color:var(--faint);font-size:11px;line-height:1;flex:0 0 auto;transition:all .2s}
+.pd-arrow:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
+.pd-arrow:disabled{opacity:.28;cursor:default}
+.pd-sel{width:100%;padding:7px 10px;border:1px solid var(--hair);border-radius:8px;
+  background:rgba(255,255,255,.02);color:var(--dim);font-family:inherit;font-size:12px;
+  cursor:pointer;-webkit-appearance:none;appearance:none;transition:all .2s}
+.pd-sel:hover{border-color:var(--hair-gold);color:#fff}
+.pd-sel option{background:#0E1420;color:var(--text)}
+
 @media (max-width:860px){
   .w-grid{grid-template-columns:1fr}
   .w-side{border-left:none;border-top:1px solid var(--hair)}
@@ -238,8 +256,11 @@ code{font-family:inherit;color:var(--gold)}
 const MODULES = [
   { id:'foundations', n:1, title:'Foundations',
     subtitle:'The core pillars',
-    lede:'The concepts everything else rests on. Each one is demonstrated before it is explained — you will hear the difference before you read why it happens.' }
-  /* composition, form, orchestration, production follow — see PORT.md §9 */
+    lede:'The concepts everything else rests on. Each one is demonstrated before it is explained — you will hear the difference before you read why it happens.' },
+  { id:'composition', n:2, title:'Composition',
+    subtitle:'Building material that goes somewhere',
+    lede:'How a single short idea becomes a phrase, and how phrases become music that moves. Everything in this module is built from one motif at a time — including the one you write.' }
+  /* form, orchestration and production follow */
 ];
 
 const LESSONS = [
@@ -429,7 +450,39 @@ const LESSONS = [
       why:'The held note becomes a sus4 over the new chord and resolves into it — inner movement for free, and it also prevents parallel motion.' }
   ]
 }
+,
 
+/* ====================== MODULE 2 — COMPOSITION ============================ */
+
+/* ---------------------------------------------------------------- 1 ------ */
+{
+  id:'prevade', module:'composition', n:1,
+  title:'Prevade',
+  short:'Four slots that turn one motif into a phrase.',
+  claim:'A phrase is not four ideas. It is one idea presented, repeated, varied, and then broken.',
+  demo:'prevade',
+  demoNote:'Write a motif in the top grid — click any cell, click it again to clear it. The four slots below fill themselves from whatever you wrote. Change what each slot does, move the slots around with the arrows, and watch the top point move with them.',
+  source:'PROVISIONAL — chapter not yet confirmed',
+  body:[
+    '<strong>This lesson text is provisional and must not ship as it stands.</strong> The demonstration above is finished and can be judged on its own, but the prose below describes the mechanism as given in the brief for this module — it has not been condensed from the chapter, and every claim in it needs checking against the ebook.',
+    'Prevade builds a phrase out of a single motif in four slots. <strong>Presentation</strong> states the motif. <strong>Repetition</strong> states it again, so the listener registers it as an idea rather than as something that happened once. <strong>Variation</strong> changes it while keeping it recognisable. <strong>Destruction</strong> breaks it.',
+    'Every version in the demonstration is derived from the motif the reader wrote — inverted, rhythmically displaced, or transposed. That is the whole point of the method: the phrase has one source, so it holds together no matter what order the slots are in.',
+    'The slots are reorderable because the order is a choice rather than a law. The demonstration marks the <strong>top point</strong> of the assembled phrase — its highest note — so you can see what reordering does to where the phrase peaks.'
+  ],
+  ex:{
+    beginner:'Provisional. Write a four-note motif in the demonstration, then play the phrase without changing any slot. Notice how far a single idea gets you.',
+    intermediate:'Provisional. Keep your motif and set every slot to a different variation. Then move Destruction to slot two and listen to what it costs.',
+    advanced:'Provisional. Write a motif whose top point lands in the Presentation slot, then rewrite it so the phrase peaks in Variation instead — without changing the slot order.'
+  },
+  quiz:[
+    { q:'In the four slots, where does the material in Variation and Destruction come from?',
+      o:['A new idea written for each slot','The motif in the Presentation slot','The chord progression underneath','A different motif each time'], a:1,
+      why:'Every slot is a transformation of the one motif. That single source is what holds the phrase together however the slots are ordered.' },
+    { q:'Which of the four slots breaks the motif up rather than restating it?',
+      o:['Presentation','Repetition','Variation','Destruction'], a:3,
+      why:'Presentation states it, Repetition confirms it, Variation changes it while keeping it recognisable, and Destruction breaks it.' }
+  ]
+}
 ];
 
 /* ============================================================================
@@ -935,6 +988,280 @@ WIDGETS.timbre = function (host) {
     tone(PITCH, { dur: 2, gain: .18, bright: INSTR[sel].bright });
   });
   draw();
+};
+
+
+/* ===========================================================================
+   7. PREVADE — write a motif, then build a phrase out of it
+   The ebook's central method. Every version in the four slots is derived from
+   the motif the reader wrote, so the phrase has one source however it is
+   ordered. Slots are reorderable; the top point of the result is marked.
+   =========================================================================== */
+WIDGETS.prevade = function (host) {
+  const BPM = 96;
+  const STEPS = 8;                                   // steps in the motif
+  const SLOTN = 4;                                   // slots in the phrase
+  const DEG = [57, 59, 60, 62, 64, 65, 67, 69, 71];  // A natural minor, A3..B4
+  const DNAME = ['A','B','C','D','E','F','G','A','B'];
+  const SEED = { 0:0, 2:4, 3:3, 4:2, 6:1 };          // A – E – D – C – B
+  const SPAN = STEPS * SLOTN * .5 * 60 / BPM;        // one pass, in seconds
+
+  let motif = Array(STEPS).fill(null);
+  Object.keys(SEED).forEach(i => motif[+i] = SEED[i]);
+
+  const clampD = d => Math.max(0, Math.min(d, DEG.length - 1));
+  const firstOn = m => m.findIndex(v => v !== null);
+
+  /* Slide a transformed motif back inside the grid as a block. Clamping note by
+     note would flatten an inversion into one repeated pitch; shifting the whole
+     shape keeps the intervals the reader wrote. */
+  function fit(arr) {
+    const vals = arr.filter(v => v !== null);
+    if (!vals.length) return arr;
+    const lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    const shift = lo < 0 ? -lo : hi > DEG.length - 1 ? (DEG.length - 1) - hi : 0;
+    return arr.map(v => v === null ? null : clampD(v + shift));
+  }
+
+  /* Every transform takes the reader's own motif and returns a new step array.
+     Nothing here invents material — it only rewrites what they wrote. */
+  const TRANSFORMS = [
+    { id:'original',   label:'As written',              short:'As written',
+      fn: m => m.slice() },
+    { id:'transposed', label:'Transposed up a third',   short:'Up a third',
+      fn: m => m.map(v => v === null ? null : v + 2) },
+    { id:'inverted',   label:'Inverted',                short:'Inverted',
+      fn: m => { const i = firstOn(m); if (i < 0) return m.slice();
+                 const a = m[i];
+                 return m.map(v => v === null ? null : 2 * a - v); } },
+    { id:'displaced',  label:'Rhythmically displaced',  short:'Displaced',
+      fn: m => { const o = Array(STEPS).fill(null);
+                 m.forEach((v, i) => { if (v !== null) o[(i + 2) % STEPS] = v; });
+                 return o; } },
+    { id:'fragment',   label:'Fragmented — the head, repeated', short:'Fragmented',
+      fn: m => { const i = firstOn(m); if (i < 0) return m.slice();
+                 const head = [m[i], m[(i + 1) % STEPS]], o = Array(STEPS).fill(null);
+                 for (let k = 0; k < STEPS; k++) o[k] = head[k % 2];
+                 return o; } }
+  ];
+  const tf = id => TRANSFORMS.find(t => t.id === id) || TRANSFORMS[0];
+  const render = s => fit(tf(s.t).fn(motif));
+
+  let slots = [
+    { name:'Presentation', t:'original',  col:'#D4A04A' },
+    { name:'Repetition',   t:'original',  col:'#B8892F' },
+    { name:'Variation',    t:'transposed', col:'#6E8FB8' },
+    { name:'Destruction',  t:'fragment',  col:'#C0603A' }
+  ];
+
+  /* step array -> notes. A note runs to the next onset, capped at two steps so
+     the line breathes instead of becoming a wall of sustains. */
+  function notesOf(arr, offset) {
+    const out = [];
+    arr.forEach((v, i) => {
+      if (v === null) return;
+      let l = 1;
+      while (l < 2 && i + l < arr.length && arr[i + l] === null) l++;
+      out.push({ m: DEG[v], d: v, s: offset + i, l });
+    });
+    return out;
+  }
+  const phrase = () =>
+    slots.reduce((a, s, k) => a.concat(notesOf(render(s), k * STEPS)), []);
+
+  function topPoint() {
+    const p = phrase();
+    if (!p.length) return null;
+    const hi = p.reduce((a, n) => Math.max(a, n.d), -1);
+    const hits = p.filter(n => n.d === hi);
+    return { d: hi, step: hits[0].s, slot: Math.floor(hits[0].s / STEPS), count: hits.length };
+  }
+
+  const playNotes = list =>
+    seq(list.map(n => [n.m, n.s * .5, n.l * .5]), BPM, { gain: .13, bright: .6 });
+
+  /* --- geometry ------------------------------------------------------- */
+  const G = { x:42, y:20,  w:458, h:150 };   // motif editor
+  const P = { x:42, y:224, w:458, h:140 };   // assembled phrase
+  const colW = G.w / STEPS, rowH = G.h / DEG.length;
+  const pW = P.w / (STEPS * SLOTN), pH = P.h / DEG.length;
+  const gy = d => G.y + (DEG.length - 1 - d) * rowH;
+  const py = d => P.y + (DEG.length - 1 - d) * pH;
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="pd-svg" viewBox="0 0 520 400"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Your motif</div>
+        <div class="w-row">
+          <button class="btn" id="pd-motif">Play motif</button>
+          <button class="btn" id="pd-clear">Clear</button>
+          <button class="btn" id="pd-seed">Example</button>
+        </div></div>
+      <div><div class="w-lab">The phrase</div>
+        <div class="w-row">${playBtn('pd-play','Play phrase')}</div></div>
+      <div><div class="w-lab">Slots — reorder and vary</div>
+        <div id="pd-slots"></div></div>
+      <div class="w-read" id="pd-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#pd-svg');
+  const slotBox = host.querySelector('#pd-slots');
+
+  function draw() {
+    const tp = topPoint();
+    let g = `<text x="${G.x}" y="12" fill="#4E505A" font-size="9" font-weight="700"
+               font-family="DM Sans" letter-spacing="1.6">YOUR MOTIF — CLICK TO WRITE</text>`;
+
+    /* motif editor */
+    for (let d = 0; d < DEG.length; d++) {
+      const tonic = d % 7 === 0;
+      g += `<text x="${G.x - 8}" y="${(gy(d) + rowH / 2 + 3.5).toFixed(1)}"
+              fill="${tonic ? '#7E808A' : '#43454F'}" font-size="9"
+              font-family="DM Sans" text-anchor="end">${DNAME[d]}</text>`;
+      for (let c = 0; c < STEPS; c++) {
+        const on = motif[c] === d;
+        g += `<rect class="pd-cell" data-c="${c}" data-d="${d}"
+                x="${(G.x + c * colW + 1).toFixed(1)}" y="${(gy(d) + 1).toFixed(1)}"
+                width="${(colW - 2).toFixed(1)}" height="${(rowH - 2).toFixed(1)}" rx="3"
+                fill="${on ? '#D4A04A' : '#ffffff'}"
+                fill-opacity="${on ? .9 : tonic ? .05 : .028}" style="cursor:pointer"/>`;
+      }
+    }
+
+    /* phrase: one tinted band per slot, in playback order */
+    for (let k = 0; k < SLOTN; k++) {
+      const x0 = P.x + k * STEPS * pW, cx = x0 + STEPS * pW / 2;
+      g += `<rect x="${x0.toFixed(1)}" y="${P.y}" width="${(STEPS * pW).toFixed(1)}"
+              height="${P.h}" fill="${slots[k].col}" fill-opacity=".05"/>`;
+      if (k) g += `<line x1="${x0.toFixed(1)}" y1="${P.y}" x2="${x0.toFixed(1)}"
+              y2="${P.y + P.h}" stroke="#ffffff" stroke-opacity=".1"/>`;
+      g += `<text x="${cx.toFixed(1)}" y="${P.y + P.h + 17}" fill="${slots[k].col}"
+              font-size="9.5" font-weight="700" font-family="DM Sans"
+              text-anchor="middle">${k + 1}. ${slots[k].name}</text>
+            <text x="${cx.toFixed(1)}" y="${P.y + P.h + 30}" fill="#4E505A" font-size="8.5"
+              font-family="DM Sans" text-anchor="middle">${tf(slots[k].t).short}</text>`;
+    }
+    phrase().forEach(n => {
+      const x = P.x + n.s * pW, w = Math.max(n.l * pW - 2, 5);
+      g += `<rect x="${x.toFixed(1)}" y="${(py(n.d) + 2).toFixed(1)}" width="${w.toFixed(1)}"
+              height="${(pH - 4).toFixed(1)}" rx="3"
+              fill="${slots[Math.floor(n.s / STEPS)].col}" fill-opacity=".92"/>`;
+    });
+
+    /* the top point */
+    if (tp) {
+      const x = P.x + tp.step * pW + pW / 2;
+      const anchor = x < 80 ? 'start' : x > 440 ? 'end' : 'middle';
+      const tx = anchor === 'start' ? x - 5 : anchor === 'end' ? x + 5 : x;
+      g += `<line x1="${x.toFixed(1)}" y1="${P.y - 5}" x2="${x.toFixed(1)}"
+              y2="${(py(tp.d) + 2).toFixed(1)}" stroke="#D4A04A" stroke-opacity=".45"
+              stroke-dasharray="2 3"/>
+            <path d="M${(x - 4).toFixed(1)} ${P.y - 11} L${(x + 4).toFixed(1)} ${P.y - 11}
+              L${x.toFixed(1)} ${P.y - 4} Z" fill="#D4A04A"/>
+            <text x="${tx.toFixed(1)}" y="${P.y - 15}" fill="#D4A04A" font-size="8.5"
+              font-weight="700" font-family="DM Sans" letter-spacing="1.3"
+              text-anchor="${anchor}">TOP POINT</text>`;
+    }
+
+    g += `<line id="pd-ph" x1="${P.x}" y1="${P.y}" x2="${P.x}" y2="${P.y + P.h}"
+            stroke="#ffffff" stroke-opacity=".55" stroke-width="1.5" opacity="0"/>`;
+    svg.innerHTML = g;
+  }
+
+  function drawSlots() {
+    slotBox.innerHTML = slots.map((s, i) => `
+      <div class="pd-slot">
+        <div class="pd-row">
+          <span class="pd-key" style="color:${s.col};background:${s.col}22">${i + 1}</span>
+          <span class="pd-name">${s.name}</span>
+          <button class="pd-arrow" data-i="${i}" data-dir="-1" ${i === 0 ? 'disabled' : ''}
+            aria-label="Move ${s.name} earlier">&#8593;</button>
+          <button class="pd-arrow" data-i="${i}" data-dir="1"
+            ${i === slots.length - 1 ? 'disabled' : ''}
+            aria-label="Move ${s.name} later">&#8595;</button>
+        </div>
+        <select class="pd-sel" data-i="${i}" aria-label="Variation for ${s.name}">
+          ${TRANSFORMS.map(t =>
+            `<option value="${t.id}"${t.id === s.t ? ' selected' : ''}>${t.label}</option>`).join('')}
+        </select>
+      </div>`).join('');
+  }
+
+  function readout() {
+    const tp = topPoint(), el = host.querySelector('#pd-read');
+    if (!tp) {
+      el.innerHTML = '<b>No motif yet.</b> Click cells in the grid to write one — the four slots fill themselves from whatever you write.';
+      return;
+    }
+    const pos = Math.round(((tp.step + 1) / (STEPS * SLOTN)) * 100);
+    el.innerHTML = `<b>Top point: ${DNAME[tp.d]}, in ${slots[tp.slot].name} — slot ${tp.slot + 1} of ${SLOTN}, ${pos}% of the way through.</b> `
+      + (tp.count > 1
+        ? `The phrase reaches that note ${tp.count} times, so the high point is a ceiling rather than a single peak. Reorder the slots and it moves.`
+        : 'It is reached once. Reorder the slots and it moves.');
+  }
+
+  /* --- transport ------------------------------------------------------ */
+  let running = false, timer = null, raf = null, t0 = 0;
+
+  function tick() {
+    if (!running) return;
+    const ph = svg.querySelector('#pd-ph');
+    if (ph) {
+      const t = (AC().currentTime - t0) / SPAN;
+      const x = P.x + Math.max(0, Math.min(t, 1)) * P.w;
+      ph.setAttribute('x1', x.toFixed(1));
+      ph.setAttribute('x2', x.toFixed(1));
+      ph.setAttribute('opacity', t >= 0 && t <= 1 ? '1' : '0');
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function fire() { playNotes(phrase()); t0 = AC().currentTime; }
+  function loop() { if (!running) return; fire(); timer = setTimeout(loop, SPAN * 1000); }
+
+  /* --- events --------------------------------------------------------- */
+  svg.addEventListener('click', e => {
+    const cell = e.target.closest('.pd-cell'); if (!cell) return;
+    const c = +cell.dataset.c, d = +cell.dataset.d;
+    motif[c] = motif[c] === d ? null : d;
+    draw(); readout();
+    if (motif[c] !== null) tone(DEG[d], { dur: .55, gain: .16, bright: .6 });
+  });
+  slotBox.addEventListener('click', e => {
+    const b = e.target.closest('.pd-arrow'); if (!b || b.disabled) return;
+    const i = +b.dataset.i, j = i + +b.dataset.dir;
+    if (j < 0 || j >= slots.length) return;
+    const tmp = slots[i]; slots[i] = slots[j]; slots[j] = tmp;
+    drawSlots(); draw(); readout();
+  });
+  slotBox.addEventListener('change', e => {
+    const s = e.target.closest('.pd-sel'); if (!s) return;
+    slots[+s.dataset.i].t = s.value;
+    draw(); readout();
+  });
+  host.querySelector('#pd-motif').onclick = () => playNotes(notesOf(motif, 0));
+  host.querySelector('#pd-clear').onclick = () => {
+    motif = Array(STEPS).fill(null); draw(); readout();
+  };
+  host.querySelector('#pd-seed').onclick = () => {
+    motif = Array(STEPS).fill(null);
+    Object.keys(SEED).forEach(i => motif[+i] = SEED[i]);
+    draw(); readout(); playNotes(notesOf(motif, 0));
+  };
+  host.querySelector('#pd-play').onclick = function () {
+    running = !running;
+    this.classList.toggle('on', running);
+    if (running) { fire(); timer = setTimeout(loop, SPAN * 1000); tick(); }
+    else {
+      clearTimeout(timer); cancelAnimationFrame(raf);
+      const ph = svg.querySelector('#pd-ph'); if (ph) ph.setAttribute('opacity', '0');
+    }
+  };
+
+  host._cleanup = () => {
+    running = false; clearTimeout(timer); cancelAnimationFrame(raf);
+  };
+
+  drawSlots(); draw(); readout();
 };
 
 /* ============================================================================
