@@ -517,6 +517,134 @@ const LESSONS = [
       why:'The top point is the moment that captures attention. In Heart Of Courage the highest note of the theme lands in the final bar, on the destruction.' }
   ]
 }
+,
+
+/* ---------------------------------------------------------------- 3 ------ */
+{
+  id:'question-answer', module:'composition', n:3,
+  title:'Question and answer',
+  short:'Two phrases in dialogue — one that asks, one that settles it.',
+  claim:'Play your theme twice and it is a repeat. Change the note it lands on and it becomes a conversation.',
+  demo:'qanda',
+  demoNote:'The same theme twice. Click any note in the two strips to change where each phrase lands — the strips outline the notes each role is aiming at, and the tags under each letter show which of the three main chords it belongs to. Try landing both on C, then both on D, and hear what breaks.',
+  source:'The Composition — Question & Answer: Using Question and Answer Roles / Applying Question and Answer Roles',
+  body:[
+    'You have a phrase. The next job is to expand it into a whole section — the opening of an orchestral piece, a verse, whatever you are building. The cheapest way to do that is not to write more material. It is to <strong>play what you have twice and give the two halves different jobs.</strong>',
+    'A lot of great music runs on <strong>question and answer roles</strong>: one phrase asks, the next replies. It creates dialogue, and dialogue keeps a listener with you. All it takes is deciding where each phrase lands.',
+    'The mechanism is tension and resolution, and it comes from two facts about a major scale. First, the <strong>leading tone</strong>: play C up to B and stop, and you can feel the B wanting to fall back to C. The 7th step creates tension that resolves to the tonic. Second, the <strong>three main chords</strong> — in C major those are the tonic C major (C, E, G), the subdominant F major (F, A, C), and the dominant G major (G, B, D). Play G major and then C major and you hear the same thing at chord scale: the dominant creates tension, the tonic releases it.',
+    'So: <strong>land the questioning phrase on a note from the dominant chord</strong> — G, B or D — and it hangs, unresolved. <strong>Land the answering phrase on a note from the tonic chord</strong> — C, E or G — and it closes. In the book\'s worked example the same theme appears twice, ending first on D and then on C. Nothing else changes. That one note is the difference between a repeat and a conversation.',
+    '<strong>What goes wrong is landing both phrases in the same place.</strong> End both on the tonic and the question answers itself, so the second phrase has nothing to do and the section sits still. End both on the dominant and nothing ever closes, which is exhausting rather than interesting. The pair only works as a pair.',
+    'These are timeless techniques — you will find them in Mozart and Beethoven and in modern writing alike — and they are guidelines rather than rules. The summary of everything so far is short: build from motifs, balance repetition with variation, aim for a top point, and give your phrases question and answer roles.'
+  ],
+  ex:{
+    beginner:'Take your phrase and land it on a note from the dominant chord — G, B or D. Then write the answer, landing on C, E or G.',
+    intermediate:'In the questioning phrase, aim to land on a note from G major. In the answering phrase, resolve to a note from C major. Play around with the roles until you find a combination that feels satisfying.',
+    advanced:'Build a full section by chaining two question-and-answer pairs, so the first pair\'s answer is itself a question for the second.'
+  },
+  quiz:[
+    { q:'Which notes should a questioning phrase land on, in C major?',
+      o:['C, E or G — the tonic chord','G, B or D — the dominant chord','F, A or C — the subdominant chord','Any note outside the scale'], a:1,
+      why:'The dominant creates the tension. The answering phrase then resolves to a note of the tonic chord — C, E or G.' },
+    { q:'Why is B the sharpest note to leave a question hanging on?',
+      o:['It is the highest note in the scale','It is the leading tone, the 7th step that pulls back to the tonic','It is dissonant against every chord','It is outside the key'], a:1,
+      why:'Play C up to B and stop, and you feel the B wanting to resolve to C. It is also a note of the dominant chord, so it does both jobs at once.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 4 ------ */
+{
+  id:'harmony', module:'composition', n:4,
+  title:'Harmony',
+  short:'Choosing the chords that sit under a melody you have already written.',
+  claim:'You do not guess at chords. You look at the notes you already wrote and find the chord that contains them.',
+  demo:'harmony',
+  demoNote:'Each cell shows how many of that bar\'s melody notes the chord actually contains — which is the chapter\'s method, done for you. Click any cell to set that bar\'s chord. Start from the primary chords, then swap in the substitutes and hear what changes.',
+  source:'The Composition — Harmony: Choosing Chords / Substitutions and Tweaks',
+  body:[
+    'Melody first or harmony first? <strong>It genuinely does not matter</strong> — it is down to how you work. The author\'s own preference is melody first, on the grounds that building chords around a strong melodic idea is easier than squeezing a compelling melody out of a progression. Try both and find out which way round your brain works.',
+    'At the core there are two kinds of chord. <strong>Major</strong> — happy, joyful, uplifting. <strong>Minor</strong> — sad, melancholic, introspective. Since you have already written the melody you already know the emotional tone you are after, so the first question is just whether the melody is in a major or a minor key.',
+    'Then the method, and it is more mechanical than people expect. <strong>Look at the notes in your melody and identify which ones align with the notes in each chord.</strong> In C major, start with the primary chords — C (I), F (IV) and G (V) — and place them where they fit. The chapter\'s own worked example: the opening notes were C and G, so C major, because it contains both. The next three were F, G and A, so F major, because it contains F and A. The final note resolved back to C major for a strong sense of closure. That is the whole technique.',
+    'If you are new to this, write the melody into your DAW and use the piano roll to line the notes up against the chords you are considering. Seeing it is much faster than hearing it.',
+    'Then the <strong>substitutions</strong>, which is where the colour lives. Each primary chord has a minor relative that shares two of its three notes. <strong>D minor (ii) substitutes for F major</strong>, sharing F and A. <strong>A minor (vi) substitutes for C major</strong>, sharing C and E. <strong>E minor (iii) substitutes for G major</strong>, sharing G and B. Because they share so much, they keep the harmonic function and change the mood. Replacing F major with D minor shifts a passage from uplifting to bittersweet — <strong>and that works particularly well at a climactic moment, like the top point of your melody.</strong>',
+    'In a minor key the same chords are available, but the root chord becomes the minor tonic — A minor (i) in A minor — and the fourth and fifth work differently. To get a proper dominant function you <strong>raise the third of E minor to make E major</strong> (E, G♯, B). That G♯ is the leading tone, and it is what gives you a strong resolution back to A minor, exactly as the question-and-answer lesson described.',
+    'Experimentation is the whole job here. Try combinations, try substitutions, and trust your ear — there is no right or wrong as long as it sounds good to you.'
+  ],
+  ex:{
+    beginner:'Write a chord progression using tonic, subdominant and dominant chords. In C major: C, F, G.',
+    intermediate:'Create a progression using tonic, subdominant and dominant, but also include ii and vi — D minor and A minor in C major.',
+    advanced:'Write two or three progressions: one using only tonic, subdominant and dominant, and the others adding chords like ii and vi. Listen to how each alters the melody\'s emotional tone. Then experiment with ♭II, ♭VI and ♭VII — D♭, A♭ and B♭ in C major — and watch the emotional impact shift.'
+  },
+  quiz:[
+    { q:'How does the chapter say to pick the chord for a bar?',
+      o:['Follow a standard progression','Match the bar\'s melody notes against the notes in each chord','Always alternate tonic and dominant','Pick whichever chord sounds loudest'], a:1,
+      why:'Look at the notes you already wrote and find the chord that contains them. The worked example picks C major for a bar of C and G, then F major for a bar containing F and A.' },
+    { q:'Why can D minor stand in for F major?',
+      o:['They share two notes, F and A','They are both minor chords','They have the same root','They are both dominant chords'], a:0,
+      why:'Sharing two of three notes keeps the function while changing the colour — uplifting becomes bittersweet, which works well at a climax.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 5 ------ */
+{
+  id:'countermelody', module:'composition', n:5,
+  title:'Countermelody',
+  short:'A second line that supports the theme instead of fighting it.',
+  claim:'A countermelody is not a second melody. The moment it competes for attention it has failed at its job.',
+  demo:'countermelody',
+  demoNote:'The same two lines, separated three ways. Switch versions while it loops — the theme never changes, only what the second line does around it.',
+  source:'The Composition — Countermelodies: How to Create a Countermelody',
+  body:[
+    'You have a theme. A good next move is a countermelody — but be clear about what that is. <strong>It is not a second melody competing for the listener\'s attention.</strong> It is a supporting element, there to add movement and interest to the main melody without overshadowing it. Get that distinction wrong and you have written two foreground parts, which means you have written none.',
+    '<strong>Rhythm and range do most of the work.</strong> The rule is simple and almost mechanical: when the main theme is active, let the countermelody rest; when the main theme rests, let the countermelody take over. You are filling the gaps, not the spaces that are already full. On top of that, put the two lines in different ranges — the more separation the better.',
+    '<strong>Then tone colour.</strong> Give the countermelody a different colour from the theme. If the melody is the full, warm sound of flutes and violins, the countermelody might take the bright, characteristic tone of an oboe or a bassoon. A heroic horn theme is well answered by strings. You can use similar colours — strings throughout, say — but then you are leaning entirely on rhythm, range and articulation to keep them apart, so you have to be stricter about all three.',
+    'Two shapes worth knowing. A <strong>call and response</strong>, where a string theme and a horn countermelody trade phrases. And an <strong>echo</strong>, where the countermelody restates the main theme in a simpler form, filling the gaps without ever competing.',
+    '<strong>Reuse the motif.</strong> Take part of your main motif into the countermelody in a simplified form — the same leap, fewer notes. It keeps the whole thing cohesive while still giving you variety, which is the balance the entire module runs on.'
+  ],
+  ex:{
+    beginner:'Try creating a simple countermelody for your theme. Keep it straightforward.',
+    intermediate:'Take the same countermelody and experiment with tone colours, rhythms and ranges until the theme clearly stays in front.',
+    advanced:'Write one countermelody as a call and response with the theme, and another that echoes the theme in simplified form. Use part of your main motif in both.'
+  },
+  quiz:[
+    { q:'When should a countermelody move?',
+      o:['At the same time as the theme, in harmony','While the theme rests','Only at the end of a phrase','Continuously, throughout'], a:1,
+      why:'When the theme is active the countermelody rests, and when the theme rests the countermelody takes over. That alternation is what stops the two lines competing.' },
+    { q:'Your theme and countermelody are both in the strings. What follows?',
+      o:['It cannot work — change one instrument','You have to lean harder on rhythm, range and articulation','Double the countermelody to make it louder','Put them in the same register for blend'], a:1,
+      why:'Similar tone colours are allowed, but then colour is not doing any separating, so the other tools have to work harder.' }
+  ]
+},
+
+/* ---------------------------------------------------------------- 6 ------ */
+{
+  id:'ostinato', module:'composition', n:6,
+  title:'Ostinatos and textures',
+  short:'A repeating pattern that drives the music without stealing it.',
+  claim:'An ostinato earns its place by being repetitive. The moment it gets interesting, it is stealing from the melody.',
+  demo:'ostinato',
+  demoNote:'Change what the pattern is made of and how much it moves, with the melody on top. Turn the melody off to hear the pattern alone, then back on to judge whether it is still supporting or has started competing.',
+  source:'The Composition — Making Ostinatos & Textures: What Is an Ostinato?',
+  body:[
+    'Another way to add flair and drive is an ostinato. <strong>An ostinato is a melodic pattern that repeats over and over</strong> — the driving figures in <em>The Dark Knight</em>, the pattern that runs through Ravel\'s <em>Boléro</em>, riffs like The Who\'s <em>Baba O\'Riley</em>. The repetition is the point, not a limitation.',
+    'For the material, stay close to what is already there. <strong>Use parts of scales</strong> — the first few notes of a major or minor scale, repeated in a pattern. <strong>Arpeggios work well</strong> as a foundation, being a chord played one note at a time. <strong>A safe bet is the tonic chord</strong> — C major in a C major track.',
+    '<strong>And a specific trick worth remembering: to make an ostinato more neutral, use only octaves and fifths and leave out the third.</strong> The third is what commits a chord to major or minor, so dropping it gives you a pattern that sits under anything without arguing with the harmony above it.',
+    'Then the part people get wrong. <strong>Shake up the rhythmic pattern to make it more exciting — but keep it simple and repetitive, so it does not take attention from the melody.</strong> Those pull against each other on purpose. Every bit of extra movement and unpredictability you add drags the ostinato toward the foreground, and the foreground already has a tenant. Make sure it is clearly separated from the other layers, and when in doubt, make it duller.'
+  ],
+  ex:{
+    beginner:'Build an ostinato from the first notes of your track\'s scale, and loop it under your theme.',
+    intermediate:'Write the same ostinato three ways — as a scale fragment, as a tonic arpeggio, and as octaves and fifths with no third. Keep the one that gets out of the way best.',
+    advanced:'Shake up the rhythm until the ostinato is genuinely exciting on its own, then put the melody back and cut it back until the melody clearly leads again.'
+  },
+  quiz:[
+    { q:'Why leave the third out of an ostinato?',
+      o:['It is hard to play quickly','It makes the pattern neutral, since the third is what commits it to major or minor','Thirds are dissonant','It makes the ostinato louder'], a:1,
+      why:'Octaves and fifths only. Without the third the pattern does not commit to major or minor, so it sits under whatever harmony is above it.' },
+    { q:'You make your ostinato rhythmically more interesting. What is the risk?',
+      o:['It will clash harmonically','It starts taking attention from the melody','It will be too quiet','It will shorten the loop'], a:1,
+      why:'The chapter asks for both at once — shake it up, but keep it simple and repetitive so it does not pull focus. Extra movement always costs you foreground.' }
+  ]
+}
+
 ];
 
 /* ============================================================================
@@ -1474,6 +1602,442 @@ WIDGETS.motif = function (host) {
     iv = 3; rh = 1; dir = -1;                        // G G G E♭ — a major third down
     draw(); playMotif();
   };
+  draw();
+};
+
+
+/* ===========================================================================
+   9. QUESTION & ANSWER — one theme twice, and the note it lands on
+   The chapter's own example: the same phrase given a questioning function by
+   landing on a dominant tone, then an answering one by resolving to a tonic
+   tone. Both landing notes are the reader's to choose.
+   =========================================================================== */
+WIDGETS.qanda = function (host) {
+  const BPM = 88, STEPS = 8;
+
+  /* C major. I = C E G, IV = F A C, V = G B D — the book's three main chords. */
+  const SCALE = [
+    { n:'C', m:60, I:true,  IV:true,  V:false },
+    { n:'D', m:62, I:false, IV:false, V:true  },
+    { n:'E', m:64, I:true,  IV:false, V:false },
+    { n:'F', m:65, I:false, IV:true,  V:false },
+    { n:'G', m:67, I:true,  IV:false, V:true  },
+    { n:'A', m:69, I:false, IV:true,  V:false },
+    { n:'B', m:71, I:false, IV:false, V:true  }
+  ];
+  /* the theme, identical in both halves until the note it lands on */
+  const HEAD = [[60,0,1],[64,1,1],[67,2,2],[65,4,1],[64,5,1]];
+  const CHORDS = { V:[55,59,62], I:[48,52,55] };     // G major, C major
+
+  let q = 1, a = 0, chords = true;                   // lands on D, then C
+  let running = false, timer = null;
+
+  const phrase = (land, off) => HEAD.map(([m, s, l]) => [m, s + off, l])
+    .concat([[SCALE[land].m, off + 6, 2]]);
+  const section = () => phrase(q, 0).concat(phrase(a, STEPS));
+  const SPAN = STEPS * 2 * .5 * 60 / BPM;
+
+  function fire() {
+    seq(section().map(([m, s, l]) => [m, s * .5, l * .5]), BPM, { gain: .13, bright: .6 });
+    if (!chords) return;
+    [['V', 0], ['I', STEPS]].forEach(([k, off]) =>
+      seq(CHORDS[k].map(m => [m, off, STEPS]).map(([m, s, l]) => [m, s * .5, l * .5]),
+          BPM, { gain: .055, bright: .3, attack: .25 }));
+  }
+  function loop() { if (!running) return; fire(); timer = setTimeout(loop, SPAN * 1000); }
+
+  const G = { x:42, y:22, w:458, h:128 };
+  const S1 = { y:206 }, S2 = { y:272 }, cellW = 458 / 7;
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="qa-svg" viewBox="0 0 520 330"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div>
+        <div class="w-row">
+          ${playBtn('qa-play','Play section')}
+          <button class="btn" id="qa-once">Once</button>
+        </div></div>
+      <div><div class="w-lab">Harmony</div>
+        <div class="w-row">
+          <button class="btn" id="qa-ch" aria-pressed="true">Chords: V then I</button>
+        </div></div>
+      <div><div class="w-lab">The book's example</div>
+        <div class="w-row"><button class="btn" id="qa-book">D, then C</button></div></div>
+      <div class="w-read" id="qa-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#qa-svg');
+
+  function draw() {
+    const notes = section();
+    const lo = 58, hi = 73;
+    const py = m => G.y + G.h - ((m - lo) / (hi - lo)) * G.h;
+    let g = `<text x="${G.x}" y="12" fill="#4E505A" font-size="9" font-weight="700"
+               font-family="DM Sans" letter-spacing="1.6">THE SAME THEME, TWICE</text>`;
+
+    [['Question', 0, '#6E8FB8', 'over G major — the dominant (V)'],
+     ['Answer',   1, '#5FB89A', 'over C major — the tonic (I)']].forEach(([nm, h, col, sub]) => {
+      const x0 = G.x + h * G.w / 2;
+      g += `<rect x="${x0}" y="${G.y}" width="${(G.w / 2).toFixed(1)}" height="${G.h}"
+              fill="${col}" fill-opacity=".05"/>
+            <text x="${(x0 + G.w / 4).toFixed(1)}" y="${G.y + G.h + 17}" fill="${col}"
+              font-size="10" font-weight="700" font-family="DM Sans"
+              text-anchor="middle">${nm}</text>
+            <text x="${(x0 + G.w / 4).toFixed(1)}" y="${G.y + G.h + 30}" fill="#4E505A"
+              font-size="8.5" font-family="DM Sans" text-anchor="middle">${chords ? sub : 'melody alone'}</text>`;
+    });
+    g += `<line x1="${G.x + G.w / 2}" y1="${G.y}" x2="${G.x + G.w / 2}" y2="${G.y + G.h}"
+            stroke="#ffffff" stroke-opacity=".12"/>`;
+
+    const stepW = G.w / (STEPS * 2);
+    notes.forEach(([m, s, l], i) => {
+      const land = i === HEAD.length || i === notes.length - 1;
+      const half = s < STEPS ? 0 : 1;
+      g += `<rect x="${(G.x + s * stepW + 2).toFixed(1)}" y="${(py(m) - 4).toFixed(1)}"
+              width="${(l * stepW - 4).toFixed(1)}" height="8" rx="4"
+              fill="${land ? (half ? '#5FB89A' : '#6E8FB8') : '#D4A04A'}"
+              fill-opacity="${land ? 1 : .62}"/>`;
+    });
+
+    /* the two landing-note pickers; each lights the notes its role is aiming at */
+    [[S1, q, 'V', 'QUESTION LANDS ON — aim for a note of G major', '#6E8FB8'],
+     [S2, a, 'I', 'ANSWER LANDS ON — resolve to a note of C major', '#5FB89A']
+    ].forEach(([S, sel, want, lab, col]) => {
+      g += `<text x="${G.x}" y="${S.y - 8}" fill="#4E505A" font-size="9" font-weight="700"
+              font-family="DM Sans" letter-spacing="1.4">${lab}</text>`;
+      SCALE.forEach((d, i) => {
+        const on = i === sel, target = d[want];
+        const x = G.x + i * cellW;
+        g += `<rect class="qa-cell" data-s="${want}" data-i="${i}" x="${(x + 2).toFixed(1)}"
+                y="${S.y}" width="${(cellW - 4).toFixed(1)}" height="40" rx="6"
+                fill="${on ? col : '#ffffff'}" fill-opacity="${on ? .9 : target ? .07 : .022}"
+                stroke="${target && !on ? col : 'none'}" stroke-opacity=".45"
+                style="cursor:pointer"/>
+              <text x="${(x + cellW / 2).toFixed(1)}" y="${S.y + 21}"
+                fill="${on ? '#080C14' : target ? '#fff' : '#5A5C66'}" font-size="13"
+                font-weight="${on ? 700 : 400}" font-family="DM Sans" text-anchor="middle"
+                pointer-events="none">${d.n}</text>
+              <text x="${(x + cellW / 2).toFixed(1)}" y="${S.y + 33}"
+                fill="${on ? '#080C14' : '#4E505A'}" font-size="8" font-weight="700"
+                font-family="DM Sans" text-anchor="middle" pointer-events="none"
+                >${[d.I ? 'I' : '', d.IV ? 'IV' : '', d.V ? 'V' : ''].filter(Boolean).join(' · ')}</text>`;
+      });
+    });
+    svg.innerHTML = g;
+    read();
+  }
+
+  function read() {
+    const qd = SCALE[q], ad = SCALE[a];
+    let t = `<b>Question lands on ${qd.n}; answer lands on ${ad.n}.</b> `;
+    if (qd.V && ad.I) {
+      t += 'Tension, then resolution — the shape the chapter describes. ';
+      if (qd.n === 'B') t += 'B is the leading tone, the 7th step that pulls hardest back to the tonic.';
+      else if (qd.n === 'G' || ad.n === 'G') t += 'G sits in both chords, so it pulls less hard either way.';
+    } else if (!qd.V && ad.I) {
+      t += `${qd.n} is not in G major, so the question has little to resolve. The answer still lands.`;
+    } else if (qd.V && !ad.I) {
+      t += `The question sets up the tension, but ${ad.n} is not in C major — nothing closes.`;
+    } else {
+      t += 'Neither phrase is doing its job: no tension raised, and nothing resolved.';
+    }
+    host.querySelector('#qa-read').innerHTML = t;
+  }
+
+  svg.addEventListener('click', e => {
+    const c = e.target.closest('.qa-cell'); if (!c) return;
+    if (c.dataset.s === 'V') q = +c.dataset.i; else a = +c.dataset.i;
+    draw();
+    if (!running) fire();
+  });
+  host.querySelector('#qa-once').onclick = fire;
+  host.querySelector('#qa-book').onclick = () => { q = 1; a = 0; draw(); fire(); };
+  host.querySelector('#qa-ch').onclick = function () {
+    chords = !chords;
+    this.setAttribute('aria-pressed', String(chords));
+    this.textContent = chords ? 'Chords: V then I' : 'Melody alone';
+    draw();
+  };
+  host.querySelector('#qa-play').onclick = function () {
+    running = !running;
+    this.classList.toggle('on', running);
+    if (running) { fire(); timer = setTimeout(loop, SPAN * 1000); }
+    else clearTimeout(timer);
+  };
+  host._cleanup = () => { running = false; clearTimeout(timer); };
+  draw();
+};
+
+
+/* ===========================================================================
+   10. HARMONY — the chapter's own method, as a grid
+   "Look at the notes in your melody. Identify which ones align with the notes
+   in each chord." Every cell shows exactly that count, so the reader picks
+   chords the way the chapter says to rather than by guessing.
+   =========================================================================== */
+WIDGETS.harmony = function (host) {
+  const BPM = 76, BARS = 4, SPB = 4;                 // steps per bar
+
+  const MEL = [[60,0,1],[64,1,1],[67,2,2],
+               [65,4,1],[67,5,1],[69,6,2],
+               [67,8,1],[71,9,1],[74,10,2],
+               [64,12,1],[62,13,1],[60,14,2]];
+
+  const CH = [
+    { id:'C',  name:'C major', rn:'I',   pcs:[0,4,7],  v:[36,40,43], maj:true  },
+    { id:'F',  name:'F major', rn:'IV',  pcs:[5,9,0],  v:[41,45,48], maj:true  },
+    { id:'G',  name:'G major', rn:'V',   pcs:[7,11,2], v:[43,47,50], maj:true  },
+    { id:'Dm', name:'D minor', rn:'ii',  pcs:[2,5,9],  v:[38,41,45], maj:false, sub:'F major' },
+    { id:'Am', name:'A minor', rn:'vi',  pcs:[9,0,4],  v:[33,36,40], maj:false, sub:'C major' },
+    { id:'Em', name:'E minor', rn:'iii', pcs:[4,7,11], v:[40,43,47], maj:false, sub:'G major' }
+  ];
+
+  let pick = [0, 1, 2, 0];                           // C F G C — the primary chords
+  let running = false, timer = null;
+
+  const barNotes = b => MEL.filter(([, s]) => Math.floor(s / SPB) === b);
+  const fit = (b, c) => barNotes(b).filter(([m]) => CH[c].pcs.indexOf(m % 12) >= 0).length;
+  const SPAN = BARS * SPB * .5 * 60 / BPM;
+
+  function fire() {
+    seq(MEL.map(([m, s, l]) => [m, s * .5, l * .5]), BPM, { gain: .13, bright: .6 });
+    pick.forEach((c, b) => seq(CH[c].v.map(m => [m, b * SPB * .5, SPB * .5]),
+      BPM, { gain: .06, bright: .3, attack: .22 }));
+  }
+  function loop() { if (!running) return; fire(); timer = setTimeout(loop, SPAN * 1000); }
+
+  const M = { x:100, y:22, w:400, h:108 };
+  const T = { y:194, rowH:30 };
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="hm-svg" viewBox="0 0 520 388"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div>
+        <div class="w-row">${playBtn('hm-play','Play')}<button class="btn" id="hm-once">Once</button></div></div>
+      <div><div class="w-lab">Progressions</div>
+        <div class="w-col">
+          <button class="btn wide" id="hm-prim">Primary chords — C F G C</button>
+          <button class="btn wide" id="hm-sub">Swap in the substitutes</button>
+        </div></div>
+      <div class="w-read" id="hm-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#hm-svg');
+
+  function draw() {
+    const lo = 58, hi = 76, stepW = M.w / (BARS * SPB);
+    const py = m => M.y + M.h - ((m - lo) / (hi - lo)) * M.h;
+    let g = `<text x="${M.x}" y="12" fill="#4E505A" font-size="9" font-weight="700"
+               font-family="DM Sans" letter-spacing="1.6">YOUR MELODY</text>`;
+
+    for (let b = 0; b < BARS; b++) {
+      const x0 = M.x + b * M.w / BARS;
+      g += `<rect x="${x0.toFixed(1)}" y="${M.y}" width="${(M.w / BARS).toFixed(1)}"
+              height="${M.h}" fill="#ffffff" fill-opacity="${b % 2 ? .03 : .015}"/>
+            <text x="${(x0 + M.w / BARS / 2).toFixed(1)}" y="${M.y + M.h + 17}"
+              fill="#D4A04A" font-size="10.5" font-weight="700" font-family="DM Sans"
+              text-anchor="middle">${CH[pick[b]].name}</text>
+            <text x="${(x0 + M.w / BARS / 2).toFixed(1)}" y="${M.y + M.h + 30}"
+              fill="#4E505A" font-size="8.5" font-family="DM Sans" text-anchor="middle"
+              >${CH[pick[b]].rn} · ${fit(b, pick[b])} of ${barNotes(b).length} notes</text>`;
+    }
+    MEL.forEach(([m, s, l]) => {
+      const b = Math.floor(s / SPB), inCh = CH[pick[b]].pcs.indexOf(m % 12) >= 0;
+      g += `<rect x="${(M.x + s * stepW + 2).toFixed(1)}" y="${(py(m) - 4).toFixed(1)}"
+              width="${(l * stepW - 4).toFixed(1)}" height="8" rx="4"
+              fill="${inCh ? '#D4A04A' : '#5A5C66'}" fill-opacity="${inCh ? .95 : .8}"/>`;
+    });
+
+    g += `<text x="14" y="${T.y - 10}" fill="#4E505A" font-size="9" font-weight="700"
+            font-family="DM Sans" letter-spacing="1.4">HOW MANY OF THE BAR'S NOTES EACH CHORD CONTAINS</text>`;
+    CH.forEach((c, ci) => {
+      const y = T.y + ci * T.rowH;
+      g += `<text x="14" y="${y + 17}" fill="${c.maj ? '#BEC0C8' : '#9B8FD4'}" font-size="10.5"
+              font-family="DM Sans">${c.name}</text>
+            <text x="84" y="${y + 17}" fill="#4E505A" font-size="9" font-weight="700"
+              font-family="DM Sans" text-anchor="end">${c.rn}</text>`;
+      for (let b = 0; b < BARS; b++) {
+        const on = pick[b] === ci, f = fit(b, ci), n = barNotes(b).length;
+        const x = M.x + b * M.w / BARS;
+        g += `<rect class="hm-cell" data-b="${b}" data-c="${ci}" x="${(x + 3).toFixed(1)}"
+                y="${y + 2}" width="${(M.w / BARS - 6).toFixed(1)}" height="${T.rowH - 6}" rx="6"
+                fill="${on ? '#D4A04A' : '#ffffff'}"
+                fill-opacity="${on ? .85 : .02 + (f / n) * .09}" style="cursor:pointer"/>
+              <text x="${(x + M.w / BARS / 2).toFixed(1)}" y="${y + 18}"
+                fill="${on ? '#080C14' : f === n ? '#5FB89A' : f === 0 ? '#4E505A' : '#BEC0C8'}"
+                font-size="11" font-weight="${on || f === n ? 700 : 400}" font-family="DM Sans"
+                text-anchor="middle" pointer-events="none">${f}/${n}</text>`;
+      }
+    });
+    svg.innerHTML = g;
+    read();
+  }
+
+  function read() {
+    const names = pick.map(c => CH[c].name.replace(' major', '').replace(' minor', 'm'));
+    const tot = pick.reduce((a, c, b) => a + fit(b, c), 0);
+    const subs = pick.map((c, b) => CH[c].sub ? CH[c] : null).filter(Boolean);
+    let t = `<b>${names.join(' – ')}. ${tot} of ${MEL.length} melody notes are chord tones.</b> `;
+    if (subs.length) {
+      const s = subs[0];
+      t += `${s.name} is the substitute for ${s.sub}, sharing two of its three notes — the swap adds depth without changing the function.`;
+    } else if (tot === MEL.length) {
+      t += 'Every note is covered. Safe, and a little plain — the substitutes are where the colour is.';
+    } else {
+      t += 'Notes outside the chord are not mistakes; passing notes are normal. But a bar where almost nothing fits will sound like a wrong chord.';
+    }
+    host.querySelector('#hm-read').innerHTML = t;
+  }
+
+  svg.addEventListener('click', e => {
+    const c = e.target.closest('.hm-cell'); if (!c) return;
+    pick[+c.dataset.b] = +c.dataset.c;
+    draw();
+    if (!running) chord(CH[pick[+c.dataset.b]].v, { dur: 1.4, gain: .09, bright: .35 });
+  });
+  host.querySelector('#hm-once').onclick = fire;
+  host.querySelector('#hm-prim').onclick = () => { pick = [0, 1, 2, 0]; draw(); fire(); };
+  host.querySelector('#hm-sub').onclick  = () => { pick = [4, 3, 5, 0]; draw(); fire(); };
+  host.querySelector('#hm-play').onclick = function () {
+    running = !running;
+    this.classList.toggle('on', running);
+    if (running) { fire(); timer = setTimeout(loop, SPAN * 1000); } else clearTimeout(timer);
+  };
+  host._cleanup = () => { running = false; clearTimeout(timer); };
+  draw();
+};
+
+/* ===========================================================================
+   11. COUNTERMELODY — the same two lines, separated three ways
+   The chapter's two tools in order: rhythm and range first, then tone colour.
+   =========================================================================== */
+WIDGETS.countermelody = function (host) {
+  /* the theme leaps a perfect fifth, rests in the middle, then closes */
+  const THEME = [[60,0,1],[67,1,1],[65,2,1],[64,3,1],[62,6,1],[60,7,1]];
+  abWidget(host, { bpm: 84, bars: 2, versions: [
+    { label:'Competing',
+      read:'<b>Same range, same rhythm, moving whenever the theme moves.</b> This is a second melody fighting for attention, not a countermelody — and the listener cannot follow either line.',
+      lanes:[
+        { name:'Theme', col:'#D4A04A', lo:58, hi:74, gain:.11, bright:.6, notes:THEME },
+        { name:'Counter', col:'#CF5F52', lo:58, hi:74, gain:.11, bright:.6,
+          notes:[[64,0,1],[71,1,1],[69,2,1],[67,3,1],[66,6,1],[64,7,1]] }
+      ] },
+    { label:'Rhythm and range',
+      read:'<b>The counter rests while the theme moves, and takes over in the gap.</b> An octave down, so the two never share a register. This is the chapter\'s first tool, and it does most of the work on its own.',
+      lanes:[
+        { name:'Theme', col:'#D4A04A', lo:58, hi:74, gain:.11, bright:.6, notes:THEME },
+        { name:'Counter', col:'#6E8FB8', lo:44, hi:60, gain:.1, bright:.5,
+          notes:[[48,4,1],[50,5,1]] }
+      ] },
+    { label:'Rhythm, range and colour',
+      read:'<b>Plus a darker tone colour, and the counter now echoes the theme\'s rising fifth in a simpler form.</b> Reusing part of the motif keeps the two lines related while the separation keeps them distinct.',
+      lanes:[
+        { name:'Theme', col:'#D4A04A', lo:58, hi:74, gain:.11, bright:.68, notes:THEME },
+        { name:'Counter', col:'#5FB89A', lo:44, hi:60, gain:.1, bright:.24, attack:.14,
+          notes:[[48,4,1],[55,5,2]] }
+      ] }
+  ]});
+};
+
+/* ===========================================================================
+   12. OSTINATO — a repeating pattern that has to stay out of the way
+   Source and rhythm are separate controls, because the chapter treats them
+   separately: what the pattern is made of, then how much it moves.
+   =========================================================================== */
+WIDGETS.ostinato = function (host) {
+  const BPM = 104, STEPS = 8;
+  const MEL = [[72,0,2],[76,2,2],[74,4,1],[72,5,1],[71,6,2]];
+
+  const SRC = [
+    { id:'scale', name:'Scale fragment', deg:[48,50,52,53],
+      note:'The first notes of the C major scale, repeated — the simplest source there is.' },
+    { id:'arp',   name:'Tonic arpeggio', deg:[48,52,55,60],
+      note:'The tonic chord one note at a time. A safe bet, and the third makes it clearly major.' },
+    { id:'fifth', name:'Octaves and fifths', deg:[48,55,60,55],
+      note:'The tonic with the third left out. Neutral by design — it commits to neither major nor minor, so it sits under anything.' }
+  ];
+  const RHY = [
+    { id:'even',  name:'Straight',   on:[[0,1],[2,1],[4,1],[6,1]],
+      note:'Even and predictable, which is what keeps it in the background.' },
+    { id:'drive', name:'Driving',    on:[[0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1]],
+      note:'Twice the movement. More drive, and it starts pulling focus off the melody.' },
+    { id:'synco', name:'Syncopated', on:[[0,1],[3,1],[5,1],[6,1]],
+      note:'Shaken up, as the chapter suggests — but the busier and less predictable it gets, the harder it competes.' }
+  ];
+
+  let src = 2, rhy = 0, mel = true, running = false, timer = null;
+  const SPAN = STEPS * .5 * 60 / BPM;
+
+  const pattern = () => RHY[rhy].on.map(([s, l], k) => [SRC[src].deg[k % 4], s, l]);
+  function fire() {
+    seq(pattern().map(([m, s, l]) => [m, s * .5, l * .5]), BPM, { gain: .1, bright: .45 });
+    if (mel) seq(MEL.map(([m, s, l]) => [m, s * .5, l * .5]), BPM, { gain: .13, bright: .62 });
+  }
+  function loop() { if (!running) return; fire(); timer = setTimeout(loop, SPAN * 1000); }
+
+  host.innerHTML = `<div class="w-grid">
+    <div class="w-stage"><svg id="os-svg" viewBox="0 0 520 296"></svg></div>
+    <div class="w-side">
+      <div><div class="w-lab">Play</div>
+        <div class="w-row">${playBtn('os-play','Play loop')}
+          <button class="btn" id="os-mel" aria-pressed="true">Melody on</button></div></div>
+      <div><div class="w-lab">What it is made of</div>
+        <div class="w-row" id="os-src">${SRC.map((s, i) =>
+          `<button class="btn" data-i="${i}" aria-pressed="${i === 2}">${s.name}</button>`).join('')}</div></div>
+      <div><div class="w-lab">Rhythm</div>
+        <div class="w-row" id="os-rhy">${RHY.map((r, i) =>
+          `<button class="btn" data-i="${i}" aria-pressed="${i === 0}">${r.name}</button>`).join('')}</div></div>
+      <div class="w-read" id="os-read"></div>
+    </div></div>`;
+
+  const svg = host.querySelector('#os-svg');
+
+  function draw() {
+    const lo = 44, hi = 78, X = 42, W = 458, Y = 24, H = 224;
+    const stepW = W / STEPS, py = m => Y + H - ((m - lo) / (hi - lo)) * H;
+    let g = `<rect x="${X}" y="${Y}" width="${W}" height="${H}" rx="6" fill="#ffffff" fill-opacity=".018"/>`;
+    for (let s = 1; s < STEPS; s++)
+      g += `<line x1="${(X + s * stepW).toFixed(1)}" y1="${Y}" x2="${(X + s * stepW).toFixed(1)}"
+              y2="${Y + H}" stroke="#ffffff" stroke-opacity="${s % 2 ? .03 : .07}"/>`;
+    if (mel) MEL.forEach(([m, s, l]) =>
+      g += `<rect x="${(X + s * stepW + 2).toFixed(1)}" y="${(py(m) - 4).toFixed(1)}"
+              width="${(l * stepW - 4).toFixed(1)}" height="8" rx="4" fill="#D4A04A" fill-opacity=".9"/>`);
+    pattern().forEach(([m, s, l]) =>
+      g += `<rect x="${(X + s * stepW + 2).toFixed(1)}" y="${(py(m) - 4).toFixed(1)}"
+              width="${(l * stepW - 4).toFixed(1)}" height="8" rx="4" fill="#6E8FB8" fill-opacity=".9"/>`);
+    g += `<text x="${X}" y="14" fill="#D4A04A" font-size="9" font-weight="700"
+            font-family="DM Sans" letter-spacing="1.5">${mel ? 'MELODY' : ''}</text>
+          <text x="${X + 70}" y="14" fill="#6E8FB8" font-size="9" font-weight="700"
+            font-family="DM Sans" letter-spacing="1.5">OSTINATO</text>
+          <text x="${X}" y="${Y + H + 20}" fill="#4E505A" font-size="9"
+            font-family="DM Sans">${RHY[rhy].on.length} notes per bar, repeating</text>`;
+    svg.innerHTML = g;
+    host.querySelector('#os-read').innerHTML =
+      `<b>${SRC[src].name}, ${RHY[rhy].name.toLowerCase()}.</b> ${SRC[src].note} ${RHY[rhy].note}`;
+    host.querySelectorAll('#os-src button').forEach((b, i) => b.setAttribute('aria-pressed', String(i === src)));
+    host.querySelectorAll('#os-rhy button').forEach((b, i) => b.setAttribute('aria-pressed', String(i === rhy)));
+  }
+
+  host.querySelector('#os-src').addEventListener('click', e => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    src = +b.dataset.i; draw(); if (!running) fire();
+  });
+  host.querySelector('#os-rhy').addEventListener('click', e => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    rhy = +b.dataset.i; draw(); if (!running) fire();
+  });
+  host.querySelector('#os-mel').onclick = function () {
+    mel = !mel;
+    this.setAttribute('aria-pressed', String(mel));
+    this.textContent = mel ? 'Melody on' : 'Melody off';
+    draw();
+  };
+  host.querySelector('#os-play').onclick = function () {
+    running = !running;
+    this.classList.toggle('on', running);
+    if (running) { fire(); timer = setTimeout(loop, SPAN * 1000); } else clearTimeout(timer);
+  };
+  host._cleanup = () => { running = false; clearTimeout(timer); };
   draw();
 };
 
