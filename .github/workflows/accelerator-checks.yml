@@ -1,0 +1,24 @@
+name: Accelerator checks
+on:
+  pull_request:
+    paths:
+      - accelerator.html
+      - accelerator/**
+      - .github/workflows/accelerator-checks.yml
+permissions:
+  contents: read
+jobs:
+  accelerator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node accelerator/tests/model.cjs
+      - run: npm install --no-save --package-lock=false playwright@1.55.0
+      - run: npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 8765 > /tmp/accelerator-server.log 2>&1 &
+          node accelerator/tests/browser.cjs
