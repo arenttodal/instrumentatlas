@@ -18,171 +18,17 @@ const roleOf = id => LAYER_ROLES.find(r => r.id === id);
 /* ============================================================================
    1. AUDIO
    ----------------------------------------------------------------------------
-   The same engine as the belts mode and, behind it, the studio's AudioCompare
-   and the score view's node registry: one AudioContext, every stem started at
-   ONE scheduled time, and changing what you hear is a gain ramp rather than a
-   restart — which is what makes solo instant and keeps the stems locked to
-   each other while you audition them one at a time.
+   The shared engine from audio.js, with the two settings this mode needs.
 
-   Two things are specific to this mode.
+   32 kHz, as the score view uses: twelve stems of this piece decode to 553 MB
+   at 48 kHz, and that constraint is what the whole score view was built around.
 
-   A 32 kHz context, as the score view uses. Twelve stems of this piece decode
-   to 553 MB at 48 kHz, and that is the constraint the whole score view was
-   built around.
-
-   And the decoded buffer is SLICED to the exercise's bars and the full one
-   dropped. A section is ten to sixteen seconds of a 113-second piece, so a
-   five-stem exercise holds about 20 MB instead of 145 MB. The full buffer
-   exists only while one stem is being cut, one stem at a time.
+   And `cut`, which copies the decoded buffer down to the exercise's bars and
+   drops the full one — a section is ten to sixteen seconds of a 113-second
+   piece, so a five-stem exercise holds about 20 MB instead of 145 MB.
    ============================================================================ */
 
-const LayerAudio = (function(){
-
-  const CACHE_MAX = 16;
-  const LEAD = 0.08;
-  const RAMP = 0.03;
-
-  let ctx = null, gen = 0;
-  const slices = new Map();          // key -> AudioBuffer, already cut to the bars
-  const LIVE   = new Set();          // {id, src, gain} — nothing else holds a node
-
-  let startTime = 0, duration = 0;
-  let playing = false, loading = false, failed = null;
-  let onstate = () => {};
-
-  /* never at load, only on a gesture */
-  function ensureCtx(){
-    if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate:32000 });
-    return ctx;
-  }
-
-  function nodeFor(id){ for(const n of LIVE) if(n.id === id) return n; return null; }
-  function killNode(n){
-    try { n.src.onended = null; n.src.stop(); } catch(_){}
-    try { n.src.disconnect(); n.gain.disconnect(); } catch(_){}
-    LIVE.delete(n);
-  }
-  function killId(id){ [...LIVE].forEach(n => { if(n.id === id) killNode(n); }); }
-  function killAll(){ [...LIVE].forEach(killNode); LIVE.clear(); }
-
-  function startNode(id, buf, when, gainValue){
-    killId(id);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.loop = true;                 // every slice in an exercise is the same length
-    const gain = ctx.createGain();
-    gain.gain.value = gainValue;
-    src.connect(gain).connect(ctx.destination);
-    const n = { id, src, gain };
-    src.onended = () => { LIVE.delete(n); if(!LIVE.size && playing){ playing = false; onstate(); } };
-    src.start(when, 0);
-    LIVE.add(n);
-    return n;
-  }
-
-  /* Decode the stem, copy out the bars we want, let the rest go. A short fade
-     at each edge: the cut lands wherever the bar line lands, which is rarely a
-     zero crossing, and the loop point would click on every pass. */
-  async function slice(id, start, dur){
-    const key = `${id}@${start.toFixed(3)}+${dur.toFixed(3)}`;
-    if(slices.has(key)){ const b = slices.get(key); slices.delete(key); slices.set(key, b); return b; }
-
-    const url = layerStemSrc(id);
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('Missing stem: ' + url);
-    const full = await ensureCtx().decodeAudioData(await res.arrayBuffer());
-
-    const sr  = full.sampleRate;
-    const off = Math.max(0, Math.round(start * sr));
-    const n   = Math.max(1, Math.min(Math.round(dur * sr), full.length - off));
-    const out = ctx.createBuffer(full.numberOfChannels, n, sr);
-    const fade = Math.min(Math.round(0.014 * sr), n >> 1);
-
-    for(let c = 0; c < full.numberOfChannels; c++){
-      const dst = out.getChannelData(c);
-      dst.set(full.getChannelData(c).subarray(off, off + n));
-      for(let i = 0; i < fade; i++){
-        const g = i / fade;
-        dst[i] *= g;
-        dst[n - 1 - i] *= g;
-      }
-    }
-    slices.set(key, out);
-    for(const k of [...slices.keys()]){
-      if(slices.size <= CACHE_MAX) break;
-      if(!nodeFor(k.split('@')[0])) slices.delete(k);
-    }
-    return out;                      // `full` is unreferenced from here
-  }
-
-  /* Every play() takes a generation token, so a play still decoding when the
-     learner moves on cannot start its sources afterwards. stop() bumps it too,
-     which is what makes stop mean stop including work that has not landed. */
-  async function play(ids, start, dur, gains){
-    const mine = ++gen;
-    failed = null;
-    try {
-      ensureCtx();
-      if(ctx.state === 'suspended') await ctx.resume();
-      loading = true; onstate();
-
-      const bufs = [];
-      for(const id of ids){
-        bufs.push(await slice(id, start, dur));
-        if(mine !== gen) return false;
-      }
-      loading = false;
-
-      killAll();
-      duration = Math.min(...bufs.map(b => b.duration));
-      const when = ctx.currentTime + LEAD;
-      ids.forEach((id, i) => startNode(id, bufs[i], when, gains && id in gains ? gains[id] : 1));
-      startTime = when;
-      playing = true;
-    } catch(e){
-      if(mine !== gen) return false;
-      loading = false; playing = false; failed = e.message;
-      console.error(e);
-    } finally {
-      if(mine === gen) onstate();
-    }
-    return playing;
-  }
-
-  function stop(){ gen++; killAll(); playing = false; loading = false; onstate(); }
-
-  /* id null means everything back up. A ramp, never a restart, so the stems
-     never lose alignment while you audition them. */
-  function solo(id, ramp = RAMP){
-    if(!ctx) return;
-    const now = ctx.currentTime;
-    LIVE.forEach(n => {
-      const target = (id === null || n.id === id) ? 1 : 0;
-      n.gain.gain.cancelScheduledValues(now);
-      n.gain.gain.setValueAtTime(n.gain.gain.value, now);
-      n.gain.gain.linearRampToValueAtTime(target, now + ramp);
-    });
-  }
-
-  /* the current gain of every live stem. The registry stays private; this is a
-     read-only window onto it, for the solo state and for tests. */
-  function levels(){
-    const o = {};
-    LIVE.forEach(n => { o[n.id] = Math.round(n.gain.gain.value * 1000) / 1000; });
-    return o;
-  }
-
-  function position(){
-    if(!playing || !ctx) return 0;
-    const p = Math.max(0, ctx.currentTime - startTime);
-    return duration ? (p % duration) : 0;
-  }
-
-  return { play, stop, solo, position, levels, ensureCtx,
-    get playing(){ return playing; }, get loading(){ return loading; },
-    get duration(){ return duration; }, get error(){ return failed; },
-    set onstate(fn){ onstate = fn; } };
-})();
+const LayerAudio = makeDojoAudio({ srcOf: layerStemSrc, sampleRate:32000, cacheMax:16 });
 
 /* ============================================================================
    2. THE BOARD
@@ -387,7 +233,7 @@ async function playPassage(){
   if(LayerAudio.playing){ LayerAudio.stop(); S.soloed = null; render(); return; }
   const ex = S.ex;
   $('ly-note').textContent = 'Decoding the passage…';
-  const ok = await LayerAudio.play(stemIds(), exStart(), exDur(), null);
+  const ok = await LayerAudio.play(stemIds(), { loop:true, cut:{ start:exStart(), dur:exDur() } });
   if(S.ex !== ex) return;
   if(!ok){ $('ly-note').textContent = LayerAudio.error || ''; return; }
   S.heard = true;

@@ -10,28 +10,17 @@
   padding:clamp(24px,5vh,54px) 20px 72px}
 .ly-col{width:100%;max-width:940px;display:flex;flex-direction:column;align-items:center;text-align:center}
 
-.dj-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;
-  color:var(--gold);opacity:.85}
-.dj-display{font-size:clamp(24px,3.6vw,36px);line-height:1.14;margin:12px 0 0;letter-spacing:-.5px}
+/* a shorter display line than the other modes: this one is a question, not a
+   name, and it has three zones of board under it to leave room for */
+.dj-display{font-size:clamp(24px,3.6vw,36px);margin:12px 0 0}
 
-/* --- transport, same control as the belts mode --- */
-.dj-play{display:inline-flex;align-items:center;justify-content:center;gap:11px;
-  margin-top:22px;padding:12px 30px;border-radius:100px;
-  border:1px solid var(--hair-gold);background:rgba(212,160,74,.07);color:var(--gold);
-  font-size:14px;font-weight:500;min-width:148px;
-  transition:background .25s,border-color .25s,color .25s}
-.dj-play:hover{border-color:var(--gold);background:rgba(212,160,74,.15);color:#fff}
-.dj-play .ico{width:0;height:0;border-style:solid;border-width:6px 0 6px 11px;
-  border-color:transparent transparent transparent currentColor}
-.dj-play[data-state="playing"]{background:rgba(212,160,74,.18);border-color:var(--gold);color:#fff}
-.dj-play[data-state="playing"] .ico{width:11px;height:12px;border:none;background:currentColor;
-  -webkit-mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat;
-          mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat}
-.dj-play[data-state="loading"]{opacity:.55;pointer-events:none}
-/* No progress line under the play button here. The passage loops until you
-   stop it, so a bar filling and resetting says nothing you need — unlike the
-   belts mode, where the clip plays once and how much is left is real. */
-.dj-note{font-size:12px;color:var(--text-faint);margin-top:14px;min-height:18px;max-width:52ch}
+/* --- transport ---
+   The button itself comes from dojo-base.css. Two differences here: it sits a
+   little closer to the question, and there is no progress line under it — the
+   passage loops until you stop it, so a bar filling and resetting measures
+   nothing. The belts mode keeps the fill because its clip plays once. */
+.dj-play{margin-top:22px}
+.dj-note{margin-top:14px;max-width:52ch}
 
 /* --- the tray of instruments still to place --- */
 /* The tray has no box. At rest it is just the cards, sitting in the space
@@ -105,14 +94,10 @@
 /* --- actions --- */
 .ly-actions{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;
   margin-top:24px;min-height:44px}
-.dj-next{padding:12px 32px;border-radius:100px;border:1px solid var(--gold);
-  background:var(--gold);color:#0A0C14;font-size:14px;font-weight:500;
-  transition:background .25s,border-color .25s,opacity .25s}
-.dj-next:hover:not(:disabled){background:var(--gold-lift);border-color:var(--gold-lift)}
+/* Check is the only button in any mode that can be disabled */
+.dj-next{margin-top:0}
 .dj-next:disabled{opacity:.3;cursor:default}
-.dj-link{font-size:13px;color:var(--text-faint);border-bottom:1px solid transparent;
-  transition:color .2s,border-color .2s}
-.dj-link:hover{color:var(--gold);border-color:var(--hair-gold)}
+.dj-next:disabled:hover{background:var(--gold);border-color:var(--gold)}
 
 /* --- narrow ---
    The zones stack rather than shrink: three columns of 108px cards do not fit
