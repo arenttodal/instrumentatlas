@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Accelerator : Evenant</title>
-<meta name="description" content="An interactive companion to the Cinematic Music Accelerator. Every concept demonstrated before it is explained.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<style>
+
 /* ============================================================================
    THE ACCELERATOR — STYLES
    Design system shared with the Instrument Atlas. See PORT.md §5.
@@ -36,13 +26,17 @@ code{font-family:inherit;color:var(--gold)}
   background:radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.16) 0%,transparent 55%)}
 
 /* --- nav --- */
-/* the bar itself is evenant-nav.css's .ev-bar — height, padding, background
-   and hairline are shared with every other tool */
+.nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  gap:20px;padding:13px 30px;background:rgba(8,12,20,.86);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
 .nav-l{display:flex;align-items:center;gap:13px;font-size:11px;font-weight:700;letter-spacing:2.2px;
   text-transform:uppercase;color:var(--dim);min-width:0}
 .nav-l i{font-style:normal;color:#33353D}
 .nav-l a:hover{color:var(--gold)}
 .nav-l span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mark{width:15px;height:13px;display:flex;flex-direction:column;justify-content:space-between;flex:0 0 auto}
+.mark i{display:block;height:2px;background:#fff;border-radius:1px}
+.mark i:nth-child(2){width:70%}
 .prog{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:700;letter-spacing:1.6px;
   text-transform:uppercase;color:var(--faint);flex:0 0 auto}
 .prog-bar{width:74px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
@@ -177,6 +171,24 @@ code{font-family:inherit;color:var(--gold)}
 .pv-dial span{display:block;font-size:9.5px;color:var(--faint);letter-spacing:.4px;margin-bottom:2px}
 .pv-dial input{width:100%;accent-color:var(--gold);height:3px}
 
+/* prevade slots */
+.pd-slot{padding:9px 0;border-bottom:1px solid var(--hair)}
+.pd-slot:last-child{border-bottom:none;padding-bottom:0}
+.pd-row{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.pd-key{width:17px;height:17px;border-radius:100px;font-size:9.5px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.pd-name{font-size:12.5px;color:#fff;font-weight:500;flex:1 1 auto;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pd-arrow{width:21px;height:21px;border:1px solid var(--hair);border-radius:6px;
+  color:var(--faint);font-size:11px;line-height:1;flex:0 0 auto;transition:all .2s}
+.pd-arrow:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
+.pd-arrow:disabled{opacity:.28;cursor:default}
+.pd-sel{width:100%;padding:7px 10px;border:1px solid var(--hair);border-radius:8px;
+  background:rgba(255,255,255,.02);color:var(--dim);font-family:inherit;font-size:12px;
+  cursor:pointer;-webkit-appearance:none;appearance:none;transition:all .2s}
+.pd-sel:hover{border-color:var(--hair-gold);color:#fff}
+.pd-sel option{background:#0E1420;color:var(--text)}
+
 @media (max-width:860px){
   .w-grid{grid-template-columns:1fr}
   .w-side{border-left:none;border-top:1px solid var(--hair)}
@@ -184,39 +196,7 @@ code{font-family:inherit;color:var(--gold)}
   .ltag{grid-column:2;justify-self:start}
   .ex-row{grid-template-columns:1fr;gap:8px}
   .wrap{padding:0 20px}
+  .nav{padding:12px 18px}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 
-</style>
-<link rel="stylesheet" href="evenant-nav.css">
-</head>
-<body>
-<div class="grain"></div>
-<div class="atmos"></div>
-
-<nav class="nav ev-bar">
-  <div class="nav-l">
-    <!-- The hand-drawn three-bar mark is gone: every tool shows the same Evenant
-         logo, drawn by evenant-nav.js, and it keeps this module's #/foundations
-         destination. -->
-    <div data-ev-switch data-ev-home="#/foundations"></div>
-    <i>/</i><span id="nav-where">Foundations</span>
-  </div>
-  <div class="prog">
-    <span id="prog-txt">0 of 12</span>
-    <span class="prog-bar"><i id="prog-fill"></i></span>
-  </div>
-</nav>
-
-<main id="view"></main>
-
-<script defer src="evenant-modules.js" data-module="accelerator"></script>
-<script defer src="evenant-nav.js"></script>
-<script defer src="accelerator/data.js"></script>
-<script defer src="accelerator/model.js"></script>
-<script defer src="accelerator/audio.js"></script>
-<script defer src="accelerator/activities.js"></script>
-<script defer src="accelerator/widgets.js"></script>
-<script defer src="accelerator/app.js"></script>
-</body>
-</html>
