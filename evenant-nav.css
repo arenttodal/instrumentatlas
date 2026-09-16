@@ -17,7 +17,30 @@
 /* The module name must stay legible, so the switcher never shrinks: in a
    cramped header it is the crumb or the piece title beside it that gives way,
    both of which already truncate. */
-.ev-switch{display:flex;align-items:center;flex:0 0 auto}
+/* ---- the bar -------------------------------------------------------------
+   One height, one padding, one background treatment for every tool. The values
+   are the Instrument Atlas's, because that is the header the others are meant
+   to match. min-height rather than height: a header whose right-hand controls
+   are taller than 48px grows, it does not clip them. */
+.ev-bar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  min-height:76px;padding:14px 32px;
+  border-bottom:1px solid transparent;
+  transition:background .35s ease,border-color .35s ease}
+.ev-bar.is-stuck{
+  background:rgba(8,12,20,.86);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-bottom-color:rgba(255,255,255,.07)}   /* literal: the hosts' --hair differs by .01 */
+
+/* ---- the brand cluster: logo, divider, module name ---- */
+.ev-switch{display:flex;align-items:center;gap:15px;flex:0 0 auto}
+.ev-switch .ev-logo{display:flex;align-items:center;flex:0 0 auto}
+.ev-switch .ev-logo img{height:15px;width:auto;display:block;object-fit:contain;
+  max-width:none;opacity:.95;transition:opacity .2s ease}
+.ev-switch .ev-logo:hover img{opacity:1}
+.ev-switch .ev-div{width:1px;height:20px;flex:0 0 auto;
+  background:var(--hair,rgba(255,255,255,.07))}
 
 /* ---- trigger -------------------------------------------------------------
    The label inside is ADOPTED from the host header and is never styled here:
@@ -31,13 +54,7 @@
   display:inline-flex;align-items:center;gap:7px;
   padding:10px;margin:-10px;border:0;background:none;color:inherit;
   border-radius:8px;cursor:pointer;min-width:0;
-  font:inherit;letter-spacing:inherit;text-transform:inherit;line-height:inherit;
-  /* a button defaults to text-align:center, and text-align inherits — without
-     this the adopted title computes as centred where it used to compute as
-     start. Invisible here, because the label is a flex item sized to its own
-     text, but it is still a changed style on an element we promised not to
-     touch, and it would show the moment a header gave one room to spare. */
-  text-align:inherit;
+  text-align:start;
   transition:background .2s ease;
   -webkit-tap-highlight-color:transparent;
 }
@@ -46,11 +63,14 @@
 .ev-switch .ev-switch-btn:focus-visible{
   outline:2px solid var(--gold,#D4A04A);outline-offset:1px}
 
-/* the label only exists when the header had no module title to adopt */
+/* The module name. These are the atlas's .atl-nav-title values, restated here
+   so that every tool gets them rather than whatever its own header happened to
+   use — the accelerator tracked at 2.2px, and the score viewer had no module
+   name at all. Fixed values, not host tokens: uniform is the whole point. */
 .ev-switch .ev-switch-label{
-  font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
-  color:var(--dim,var(--text-dim,#7E808A));white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis}
+  font-family:'DM Sans',-apple-system,sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:2.6px;line-height:1.7;
+  text-transform:uppercase;color:#7E808A;white-space:nowrap}
 
 .ev-switch .ev-chev{
   flex:0 0 auto;color:var(--dim,var(--text-dim,#7E808A));
@@ -106,6 +126,8 @@
    The menu still hangs under the trigger — no sidebar, no bottom bar — but it
    takes more of the width and every row clears the 44px touch target. */
 @media (max-width:760px){
+  .ev-bar{min-height:60px;padding:12px 20px;gap:14px}
+  .ev-switch{gap:12px}
   .ev-menu{width:min(280px,calc(100vw - 24px));padding:7px}
   .ev-menu .ev-item{padding:0 10px;min-height:44px;font-size:14.5px}
   .ev-switch .ev-switch-btn{padding:11px 10px;margin:-11px -10px;position:relative}
