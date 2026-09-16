@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Accelerator — Evenant</title>
+<title>The Accelerator : Evenant</title>
 <meta name="description" content="An interactive companion to the Cinematic Music Accelerator. Every concept demonstrated before it is explained.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,40 +35,25 @@ code{font-family:inherit;color:var(--gold)}
 .atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
   background:radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.16) 0%,transparent 55%)}
 
-/* ============================================================================
-   NAV — the Instrument Atlas bar, ported from atlas.css unchanged.
-   Same markup, same classes, same is-sub / is-stuck behaviour. On the module
-   index the wordmark shows; inside a lesson the crumb replaces it, exactly as
-   a family or instrument page does in the atlas. Do not fork this.
-   ============================================================================ */
-.atl-topline{height:2px;flex:0 0 auto;position:relative;z-index:50;
-  background:linear-gradient(90deg,transparent 12%,rgba(74,140,212,.6) 40%,rgba(100,170,230,.4) 62%,transparent 88%)}
-.atl-nav{position:sticky;top:0;z-index:50;flex:0 0 auto;
-  display:flex;align-items:center;justify-content:space-between;gap:24px;
-  padding:14px 32px;border-bottom:1px solid transparent;
-  transition:background .35s ease,border-color .35s ease}
-.atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);
-  backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
-.atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
-.atl-logo{height:15px;width:auto;object-fit:contain}
-.atl-nav-div{width:1px;height:20px;background:var(--hair)}
-.atl-nav-title{font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
-  color:var(--dim);white-space:nowrap}
-.atl-nav.is-sub .atl-nav-title,.atl-nav.is-sub .atl-nav-div{display:none}
+/* --- nav --- */
+/* The bar itself is evenant-nav.css's .ev-bar, and the logo, divider, module
+   name and chevron are drawn by evenant-nav.js into [data-ev-switch]. Nothing
+   about the bar is defined here, so it cannot drift from the other tools.
+   Only the breadcrumb is ours, and it uses the atlas's own crumb rules. */
+.nav-l{display:flex;align-items:center;gap:15px;min-width:0}
 .atl-nav-sep{display:none;width:1px;height:18px;background:var(--hair);flex:0 0 auto}
 .atl-nav-crumb{display:none;min-width:0}
-.atl-nav.is-sub .atl-nav-sep,.atl-nav.is-sub .atl-nav-crumb{display:flex}
+.ev-bar.is-sub .atl-nav-sep,.ev-bar.is-sub .atl-nav-crumb{display:flex}
 .atl-nav-crumb .atl-crumb{margin-bottom:0;flex-wrap:nowrap;overflow:hidden}
 .atl-crumb{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:2.2px;
-  text-transform:uppercase;font-weight:700;color:var(--dim);margin-bottom:16px;flex-wrap:wrap}
+  text-transform:uppercase;font-weight:700;color:var(--dim);flex-wrap:wrap}
 .atl-crumb a:hover{color:var(--gold)}
 .atl-crumb i{font-style:normal;color:#3E404A}
 .atl-crumb-root{display:inline-flex;align-items:center;gap:14px}
 @media (max-width:860px){
-  .atl-nav{padding:12px 20px}
-  .atl-logo{height:13px}
-  .atl-nav-div,.atl-nav-title{display:none}
+  .atl-nav-sep,.atl-nav-crumb{display:none!important}
 }
+
 
 .wrap{position:relative;z-index:10;max-width:940px;margin:0 auto;padding:0 30px}
 .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
@@ -300,25 +285,21 @@ code{font-family:inherit;color:var(--gold)}
   .ltag{grid-column:2;justify-self:start}
   .ex-row{grid-template-columns:1fr;gap:8px}
   .wrap{padding:0 20px}
-  .nav{padding:12px 18px}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 
 </style>
+<link rel="stylesheet" href="evenant-nav.css">
 </head>
 <body>
 <div class="grain"></div>
 <div class="atmos"></div>
 
-<div class="atl-topline"></div>
-
-<nav class="atl-nav" id="atl-nav">
-  <div class="atl-nav-left">
-    <a href="#/foundations" aria-label="Accelerator home" style="display:flex;align-items:center;gap:10px">
-      <img class="atl-logo" alt="Evenant" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAoCAYAAABnyQNuAAABg2lDQ1BJQ0MgUHJvZmlsZQAAKJGFkT9Lw1AUxU+jooiUKg5uPtChQ5SQ0nbRoU2LCra0xYKKS5ombSU2IY3/cBbcHF3FT+Dg4ODQwc1JBSc/gZMguGiJ9zUtRYX2hJf7u+c93r28Cwhnqm2bQgjYq7tOYSXJNre22egbxugLgmFW1Rp2IpdbB6kbf+vzBQEenxf4Xf/3+2q8rDc0it+07jTbcYHALfHcoWtzfiWedqgp4nfOlTYLw5xLPs+0z2wUFGKROFTyeYlzxWfed0irqmXiHWKxU5eLJdPZPMsk5LhUZIplWg7LOZZRM3UxFYtKUrdXhiTSyCJPlEECMuKQUKRMgQWTlkOco78FAzVydIhIIYYonWtfEx5QihnkZFQNfeXqRy6PimUfO7VK1WUJenmdrdW1RZHJkhwD+Bz/zqfnnTaB5Sf+zj1v9RG4Jj943vPCaWDSAu5PtH3noFM+IESAQXnDiMh+NjEFjDx43sc8MLoLtG487+vS81pXwBDNt3nxAwgfdRuKLiZgAAAAOGVYSWZNTQAqAAAACAABh2kABAAAAAEAAAAaAAAAAAACoAIABAAAAAEAAAAroAMABAAAAAEAAAAoAAAAAAq0HxIAAALmSURBVFgJ7VnPT9RAFH5vOtuysGCaLJEfwejBixoTD3ow4WZCOHEwRC/+CSQePHr05Mm7f4jEK8aEGEAlagwGA4iySFyQtrvdtjO+WXdiGzDUZYHWMNnsvJn3zTdfX9s3s7N49/63808elhfCCAwJQJ/sFAbAIoFR5Ucw/WLef8wDZKzfNnoZQyM7MpNKRgaMOyDQIvEAQoBIurPXGhni15tisydtryIEKOZGLMmX+RFLr35+xFJoT8XufT060ENvGOMckHMsdIDuSCkKHC0eBMybf9+YbTSiImC2VjB99bRgFXYcWKHgAkxOSmPZnmP1arHZ1qAs1e8uXwqzpOf/0tL2bV9ZkfbsR2909JoVrX8Pwe7mcmndR9cDuHHFkvMffCzbBvTbHJbXfbgwbMnVio9F05CDZQ5+A6BWD8XLN7XBcwPm5lDZkLwL0DJAbmwBDp/lcmbOxbGbPXLbA/Zq0Q3aFuv48mqPCa8jAWhQthZqhWmx0cYIWCuDqx2SMiX5UfuVTX26nbj/5FNOzUf8oPi3f0bVFmUCnqpBuS4iYF0RqaKFNu0YqzbjwhQ23m4S6K/WBWk+zR/QbJpLQ1PXdBdVnlNxOK4i2hZ7XArj85yKjUejk/ZpZDsZzTjXoSLbyjJxvqOzabK2xZq/x3Yfnboks8mxxJNd6VtrVaeysIjTUSS7WHM9UmNby08i/ar4x9NxvK1tVeuisTEfAnp1sRZHaXTqenxqyVrdaGj21OP+Feg7Jn56dtH/13EniqfISrz3oNJtlKyCWVPbjXSlSjA7HfTQKIeOuAJ/t87HpzbKE2Olp4jYi/LPw6V3S/vNpH26jmP264v7D7L/Mt5wa2e+8L4u1nf7VmniIJKT9rueqDMhpQhDqTZRmS6uJ5228+xJXFl+xFIyz49YSlv5EUtpIj9iacnNjVj6teuxQoTqYC6zf37orLO1E73lgSHl182Q0eGX7s9UTWcQn3drkft8xnn0C+Jy45OGlP6OAAAAAElFTkSuQmCC">
-    </a>
-    <div class="atl-nav-div"></div>
-    <div class="atl-nav-title">The Accelerator</div>
+<nav class="nav ev-bar" id="atl-nav">
+  <div class="nav-l">
+    <!-- evenant-nav.js draws the logo, the divider, the module name and the
+         chevron here. Same component as the atlas, the dojo and the viewer. -->
+    <div data-ev-switch data-ev-home="#/foundations"></div>
     <div class="atl-nav-sep"></div>
     <div class="atl-nav-crumb" id="atl-nav-crumb"></div>
   </div>
@@ -2439,5 +2420,8 @@ window.addEventListener('popstate', e =>
 route((!IN_FRAME && location.hash.slice(1)) || '/foundations');
 
 </script>
+
+<script defer src="evenant-modules.js" data-module="accelerator"></script>
+<script defer src="evenant-nav.js"></script>
 </body>
 </html>

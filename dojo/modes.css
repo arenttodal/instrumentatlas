@@ -1,0 +1,45 @@
+/* ============================================================================
+   EAR TRAINING · MODES MENU
+   ----------------------------------------------------------------------------
+   The section's front page. Card treatment is the atlas family grid's — 1px
+   hairline, near-transparent fill, warming to gold and lifting on hover — so
+   picking a mode here feels like picking a family there.
+   ============================================================================ */
+
+.dj-modes-page{position:relative;z-index:10;width:100%;max-width:1080px;margin:0 auto;
+  padding:clamp(30px,6vh,58px) 32px 72px}
+.dj-modes-head{margin-bottom:clamp(30px,5vh,46px);max-width:620px}
+.dj-modes-head h1{font-size:clamp(34px,4.6vw,56px);line-height:1.05;margin:16px 0 18px}
+.dj-modes-head h1 span{display:block}
+.dj-modes-head p{font-size:16.5px;font-weight:300;color:#9A9CA4}
+
+.dj-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.dj-mode{display:block;padding:26px 24px 24px;border:1px solid var(--hair);border-radius:12px;
+  background:rgba(255,255,255,.02);
+  transition:border-color .3s,background .3s,transform .3s,box-shadow .3s}
+a.dj-mode:hover{border-color:var(--hair-gold);transform:translateY(-3px);
+  background:linear-gradient(180deg,rgba(10,14,24,.94) 0%,rgba(8,12,20,.97) 100%);
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.dj-mode h3{font-size:24px;margin:0 0 10px}
+.dj-mode p{font-size:14px;line-height:1.6;color:var(--text-dim);font-weight:300}
+.dj-mode .count{margin-top:18px;padding-top:14px;border-top:1px solid var(--hair);
+  font-size:12px;color:#5E606A;letter-spacing:.4px}
+
+/* The family cards carry a miniature seating arc. A mode has no seating, so it
+   carries a diagram of its own shape instead: stacked bars for layers, a
+   single lit bar for belts. Same box, same height, same job — telling the
+   cards apart before you have read them. */
+.dj-mode-art{margin:-4px 0 18px;height:104px;display:flex;align-items:center;justify-content:center}
+.dj-mode-art svg{width:100%;height:100%;display:block;overflow:visible}
+.dj-mode-art .lit{opacity:.82;transition:opacity .35s ease}
+a.dj-mode:hover .dj-mode-art .lit{opacity:1}
+
+.dj-mode[data-soon]{opacity:.45;pointer-events:none}
+.dj-mode[data-soon] .count{color:var(--text-faint)}
+
+@media (max-width:980px){ .dj-modes{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:760px){
+  .dj-modes-page{padding:26px 20px 56px}
+  .dj-modes{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ a.dj-mode:hover{transform:none} }

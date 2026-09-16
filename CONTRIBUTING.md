@@ -34,7 +34,7 @@ Pages redeploys in ~20 seconds.
 | Families complete | **4 of 4** |
 | 3D models | 8 `.glb`. **Only the cello is offered on the site**, via `MODELS_LIVE` in `atlas.js`; the rest are in the viewer only |
 | Model attribution | cello, horn, trumpet and violin have real credits. viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" and are switched off |
-| Studio | Theme 1 only, 3 tracks, 7 renders |
+| Studio | Theme 1 only, 3 tracks, 7 renders, all cut to exactly 8 bars |
 | Instrument audio | **20 of 20**, 54 clips. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
 | Plate artwork | all 20 converted engravings, credited to The Met (CC0) |
@@ -197,6 +197,20 @@ tracks. The first note should be at beat 0.
 **Adding a theme:** render the parts at one tempo and length with the first note
 at time zero, drop them in `audio/<id>/`, add one `PASSAGES` entry. It appears
 in the dropdown by itself. Nothing else changes.
+
+**Every stem in a passage must decode to exactly the same number of samples,
+and that length must be the passage's own `bars`.** The engine gives each stem
+its own looping `AudioBufferSourceNode`, so a source loops over *its own* buffer
+and nothing re-aligns them: one stem four seconds shorter than the rest does not
+just end early, it slides further out of sync on every pass. This is how the
+flute in Theme 1 broke. `bars` has to agree too, because the playhead and the
+piano roll are drawn from `bars × beats`, not from the audio.
+
+ADTS frames are 1024 samples, so a stem can be cut or padded on frame boundaries
+without re-encoding: parse the frames, keep the first `ceil(seconds × rate /
+1024)`, and pad a short one with frames taken from a silent file encoded at the
+same rate, channel count and profile. `tools/` has no script for this yet; it
+was done inline. Re-encoding would work too and costs a generation of quality.
 
 ### `GALLERY`
 `{v, title, perf, why, chan}`, where `v` is a YouTube id. Shared across instruments

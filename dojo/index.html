@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ear Training · Evenant</title>
+<meta name="description" content="Ear training for orchestration. Two modes: name the instrument you hear, or sort a passage into the layers it is built from.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dojo-base.css">
+<link rel="stylesheet" href="modes.css">
+<link rel="stylesheet" href="../evenant-nav.css">
+</head>
+<body>
+<div class="atl atl-dojo" id="atl">
+  <div class="atl-grain"></div>
+  <div class="atl-atmos"></div>
+
+  <nav class="atl-nav is-sub ev-bar" id="atl-nav">
+    <div class="atl-nav-left">
+      <div data-ev-switch></div>
+    </div>
+  </nav>
+
+  <main class="dj-modes-page">
+    <div class="dj-modes-head">
+      <div class="atl-eyebrow">Ear Training · 2 modes</div>
+      <h1><span>Hearing is a skill</span><span class="atl-serif-em">you can practise</span></h1>
+      <p>Two ways in. Name what you are hearing, or take a passage apart and say what each instrument is actually doing in it.</p>
+    </div>
+
+    <div class="dj-modes" id="dj-modes"></div>
+  </main>
+
+</div>
+
+<script defer src="../evenant-modules.js" data-module="dojo"></script>
+<script defer src="../evenant-nav.js"></script>
+<script defer src="modes.js"></script>
+</body>
+</html>
