@@ -1,12 +1,18 @@
 /* ============================================================================
    EAR TRAINING · LAYERS
    ----------------------------------------------------------------------------
-   Loads after atlas-data.js and layers-data.js, all deferred.
+   Loads after atlas-data.js, themes.js and layers-data.js, all deferred.
 
-   A real passage plays with four or five instruments at once; you drag each
-   one into the job it is doing. The answer key is the piece's own role
-   annotations, so being told you are wrong means the annotation disagrees with
-   you, not that a quiz was written to.
+   A real passage plays with four or five parts at once; you drag each one into
+   the job it is doing. Being told you are wrong means the material disagrees
+   with you, not that a quiz was written to: a theme exercise reads each part's
+   role straight out of themes.js, and a Valley Sunrise one reads the piece's
+   own annotations.
+
+   A CARD IS NOT ALWAYS A CLIP. Theme 5's horn and tuba are one gesture and are
+   never used apart, so they arrive as one card playing two clips — which is
+   also why the mix is built with setGains rather than the engine's solo(),
+   since solo() raises exactly one clip.
 
    Two parts: the audio, then the board.
    ============================================================================ */
@@ -28,7 +34,7 @@ const roleOf = id => LAYER_ROLES.find(r => r.id === id);
    piece, so a five-stem exercise holds about 20 MB instead of 145 MB.
    ============================================================================ */
 
-const LayerAudio = makeDojoAudio({ srcOf: layerStemSrc, sampleRate:32000, cacheMax:16 });
+const LayerAudio = makeDojoAudio({ srcOf: layerSrc, sampleRate:32000, cacheMax:16 });
 
 /* ============================================================================
    2. THE BOARD
@@ -37,30 +43,69 @@ const LayerAudio = makeDojoAudio({ srcOf: layerStemSrc, sampleRate:32000, cacheM
 const S = {
   i:        0,        // which exercise
   ex:       null,
-  placed:   {},       // stemId -> roleId, or undefined while it is in the tray
+  items:    [],       // the cards: {id, name, icon, clips[], role, gain}
+  placed:   {},       // card id -> roleId, or undefined while it is in the tray
   picked:   null,     // the card waiting for a zone, on the click/tap path
   soloed:   null,
   checked:  false,
   heard:    false
 };
 
-const stemIds = () => Object.keys(S.ex.answers);
-const exStart = () => barTime(S.ex.from);
-const exDur   = () => barTime(S.ex.to) - barTime(S.ex.from);
+const stemIds  = () => S.items.map(it => it.id);
+const itemOf   = id => S.items.find(it => it.id === id);
+const answerOf = id => itemOf(id).role;
+const exStart  = () => barTime(S.ex.from);
+const exDur    = () => barTime(S.ex.to) - barTime(S.ex.from);
 const allPlaced = () => stemIds().every(id => S.placed[id]);
+
+/* ------------------------------------------------------------------ cards ---
+   One shape for both kinds of exercise. A theme exercise's roles come from the
+   parts themselves; a Valley Sunrise one's from its answer key. */
+function buildItems(ex){
+  if(!ex.theme) return Object.keys(ex.answers).map(id => ({
+    id, name:LAYER_STEMS[id].name, icon:layerStemIcon(id),
+    clips:[id], role:ex.answers[id], gain:1
+  }));
+  const t = themeById(ex.theme);
+  const seen = new Set(), out = [];
+  ex.use.forEach(file => {
+    const p = t.parts.find(x => x.file === file);
+    if(!p) return;
+    const group = p.pair ? t.parts.filter(x => x.pair === p.pair) : [p];
+    const key = p.pair ? 'pair-' + p.pair : partId(p);
+    if(seen.has(key)) return;
+    seen.add(key);
+    out.push({
+      id:key, name:group.map(partName).join(' & '), icon:layerPartIcon(p),
+      clips:group.map(x => themeClip(t.id, x.file)), role:p.role, gain:THEME_GAIN[p.role]
+    });
+  });
+  return out;
+}
+
+/* The mix, as a gains map. With nothing soloed every card sits at its role's
+   level, which is what puts the balance back after each part was normalised on
+   its own; with one soloed it comes up to full and the rest go to zero. */
+function mixMap(soloed){
+  const m = {};
+  S.items.forEach(it => it.clips.forEach(c => {
+    m[c] = soloed ? (it.id === soloed ? 1 : 0) : it.gain;
+  }));
+  return m;
+}
 
 /* ------------------------------------------------------------------ cards --- */
 function cardHTML(id){
-  const st = LAYER_STEMS[id];
+  const st = itemOf(id);
   const verdict = !S.checked ? '' :
-    (S.placed[id] === S.ex.answers[id] ? ' is-right' : ' is-wrong');
+    (S.placed[id] === st.role ? ' is-right' : ' is-wrong');
   const picked = S.picked === id ? ' is-picked' : '';
   const solo   = S.soloed === id ? ' is-solo' : '';
   return `<div class="ly-card${verdict}${picked}${solo}" data-id="${esc(id)}"
        draggable="${!S.checked}" tabindex="0" role="button"
        aria-pressed="${S.picked === id}"
        aria-label="${esc(st.name)}${S.placed[id] ? ', in ' + roleOf(S.placed[id]).name : ''}">
-    <div class="ly-card-art">${layerStemIcon(id)}</div>
+    <div class="ly-card-art">${st.icon}</div>
     <b>${esc(st.name)}</b>
     <button class="ly-solo" data-solo="${esc(id)}" tabindex="-1"
             aria-label="Hear ${esc(st.name)} alone">
@@ -73,8 +118,9 @@ function cardHTML(id){
 
 function render(){
   const ex = S.ex;
-  $('ly-eyebrow').textContent =
-    `Layers · ${ex.section} · bars ${ex.from}–${ex.to - 1}`;
+  $('ly-eyebrow').textContent = ex.from
+    ? `Layers · ${ex.section} · bars ${ex.from}–${ex.to - 1}`
+    : `Layers · ${ex.section}`;
   $('ly-display').textContent = S.checked
     ? `${score()} of ${stemIds().length} right`
     : 'What is each one doing?';
@@ -112,7 +158,7 @@ function render(){
   paintPlay();
 }
 
-function score(){ return stemIds().filter(id => S.placed[id] === S.ex.answers[id]).length; }
+function score(){ return stemIds().filter(id => S.placed[id] === answerOf(id)).length; }
 
 /* ------------------------------------------------------------------ moves --- */
 function place(id, role){
@@ -131,9 +177,9 @@ function pick(id){
 function toggleSolo(id){
   if(!LayerAudio.playing){ $('ly-note').textContent = 'Press play first.'; return; }
   S.soloed = S.soloed === id ? null : id;
-  LayerAudio.solo(S.soloed);
+  LayerAudio.setGains(mixMap(S.soloed), 0.03);
   $('ly-note').textContent = S.soloed
-    ? `${LAYER_STEMS[S.soloed].name} alone — press it again for the full passage.`
+    ? `${itemOf(S.soloed).name} alone — press it again for the full passage.`
     : '';
   render();
 }
@@ -143,7 +189,9 @@ function wireActions(){
   const check = $('ly-check');
   if(check) check.onclick = () => { S.checked = true; S.picked = null; render(); };
   const reveal = $('ly-reveal');
-  if(reveal) reveal.onclick = () => { S.placed = { ...S.ex.answers }; render(); };
+  if(reveal) reveal.onclick = () => {
+    S.placed = {}; S.items.forEach(it => S.placed[it.id] = it.role); render();
+  };
   const next = $('ly-next');
   if(next) next.onclick = () => load((S.i + 1) % LAYER_EXERCISES.length);
 }
@@ -233,7 +281,9 @@ async function playPassage(){
   if(LayerAudio.playing){ LayerAudio.stop(); S.soloed = null; render(); return; }
   const ex = S.ex;
   $('ly-note').textContent = 'Decoding the passage…';
-  const ok = await LayerAudio.play(stemIds(), { loop:true, cut:{ start:exStart(), dur:exDur() } });
+  const o = { loop:true, gains:mixMap(null) };
+  if(ex.from) o.cut = { start:exStart(), dur:exDur() };
+  const ok = await LayerAudio.play(S.items.flatMap(it => it.clips), o);
   if(S.ex !== ex) return;
   if(!ok){ $('ly-note').textContent = LayerAudio.error || ''; return; }
   S.heard = true;
@@ -247,6 +297,7 @@ function load(i){
   LayerAudio.stop();
   S.i = i;
   S.ex = LAYER_EXERCISES[i];
+  S.items = buildItems(S.ex);
   S.placed = {};
   S.picked = null;
   S.soloed = null;

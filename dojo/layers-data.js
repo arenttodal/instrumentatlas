@@ -1,21 +1,28 @@
 /* ============================================================================
    EAR TRAINING · LAYERS · DATA
    ----------------------------------------------------------------------------
-   Loads after atlas-data.js (for THUMBS and INSTRUMENTS) and before layers.js.
+   Loads after atlas-data.js (for THUMBS and INSTRUMENTS) and themes.js, before
+   layers.js.
 
-   MOCKUP AUDIO. Every exercise below is a real passage from Valley Sunrise,
-   played from the stems the score viewer already ships, and the answer key is
-   lifted from valley-sunrise-app/annotations.json — the role annotations
-   written for that piece. Nothing here is invented: if the answer key says the
-   horn is playing counter-melody in bars 8–17, that is because the annotation
-   says so and you can hear it in the score viewer.
+   Two kinds of exercise, and neither has an invented answer key.
 
-   Three roles rather than the five the annotations use. `texture` and `rhythm`
-   are real jobs, but they make a four- or five-column sorting task, and the
-   question being mocked up is the three-layer one. So exercises are chosen
-   from the sections whose stems fall into exactly melody / counter / harmony,
-   and the stems doing something else simply are not in the mix. Adding a
-   fourth column later is an entry in LAYER_ROLES and a wider exercise.
+   The THEME exercises are the purpose-made material: themes 4 and 5 were
+   bounced with their countermelody and chord parts as well as their melody, so
+   naming the parts an exercise uses IS the answer key — the role is the part's
+   own, in themes.js, and cannot drift out of step with the audio.
+
+   The VALLEY SUNRISE exercises are a real passage from a real piece, played
+   from the stems the score viewer already ships, with the key lifted from
+   valley-sunrise-app/annotations.json. If the key says the horn is playing
+   counter-melody in bars 8–17, that is because the annotation says so and you
+   can hear it in the score viewer.
+
+   Three roles rather than the five Valley Sunrise's annotations use. `texture`
+   and `rhythm` are real jobs, but they make a four- or five-column sorting
+   task, and this is the three-layer question. So its exercises are chosen from
+   the sections whose stems fall into exactly melody / counter / harmony, and
+   the stems doing something else simply are not in the mix. Adding a fourth
+   column later is an entry in LAYER_ROLES and a wider exercise.
    ============================================================================ */
 
 const LAYER_AUDIO = { base:'../valley-sunrise-app/audio/scores/valley-sunrise/', ext:'aac' };
@@ -59,7 +66,21 @@ const LAYER_STEMS = {
 
 /* Straight out of annotations.json. `from`/`to` are the annotation's own bar
    numbers, so an exercise can be checked against the score viewer by ear. */
+/* `use` names parts by file. The role of each is the part's own, so there is
+   no answer key here to get out of step with the audio — and parts sharing a
+   pair id (theme 5's horn and tuba are one gesture) arrive as a single card and
+   are placed together, which is the only way they are ever used. */
 const LAYER_EXERCISES = [
+  { id:'t4-a', theme:'theme-4', section:'Theme 4',
+    use:['violin', 'counter-oboe', 'chord-trombone'] },
+  { id:'t5-a', theme:'theme-5', section:'Theme 5',
+    use:['clarinet', 'counter-violin', 'chord-horn', 'chord-strings'] },
+  { id:'t5-b', theme:'theme-5', section:'Theme 5, scored up',
+    use:['flute-8va', 'oboe-8va', 'counter-violin', 'chord-strings'] },
+  { id:'t4-b', theme:'theme-4', section:'Theme 4, scored up',
+    use:['flute-8va', 'violin-8va', 'counter-cello', 'chord-trombone', 'chord-strings'] },
+  { id:'t4-c', theme:'theme-4', section:'Theme 4, inner parts',
+    use:['oboe-8va', 'viola', 'counter-violin', 'chord-clarinet', 'chord-strings'] },
   {
     id:'first-theme', section:'First theme', from:8, to:17,
     answers:{ reeds:'melody', horn:'counter', strings:'harmony', cello:'harmony', bass:'harmony' }
@@ -74,7 +95,15 @@ const LAYER_EXERCISES = [
   }
 ];
 
-const layerStemSrc = id => `${LAYER_AUDIO.base}${id}.${LAYER_AUDIO.ext}`;
+/* A theme clip id carries its theme ("theme-5/chord-horn"); a Valley Sunrise
+   stem is a bare name. One engine, one srcOf, two shelves. */
+const layerSrc = id => id.includes('/') ? themeSrc(id) : `${LAYER_AUDIO.base}${id}.${LAYER_AUDIO.ext}`;
+
+/* a whole section has no instrument page, so it borrows the thumbnail of the
+   instrument that best stands for it */
+const LAYER_SECTION_ICON = { strings:'viola', woodwinds:'flute', brass:'horn', percussion:'timpani' };
+const layerPartIcon = p => (typeof THUMBS !== 'undefined' &&
+  THUMBS[p.instrument || LAYER_SECTION_ICON[p.section]]) || '';
 const layerStemIcon = id => {
   const s = LAYER_STEMS[id];
   if(!s) return '';
