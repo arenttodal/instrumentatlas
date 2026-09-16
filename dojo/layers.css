@@ -87,6 +87,10 @@
   transition:opacity .2s,color .2s,background .2s}
 .ly-card:hover .ly-solo,.ly-card:focus-within .ly-solo{opacity:1}
 .ly-solo svg{width:14px;height:14px}
+/* the button stays 22px, its hit area does not: a thumb needs 44 and the
+   pseudo-element gives it one without moving anything on screen */
+.ly-solo::after{content:'';position:absolute;top:50%;left:50%;width:44px;height:44px;
+  transform:translate(-50%,-50%)}
 .ly-solo:hover{color:var(--gold);background:rgba(212,160,74,.12)}
 .ly-card.is-solo .ly-solo{opacity:1;color:#0A0C14;background:var(--gold)}
 .ly-card.is-solo{border-color:var(--gold)}

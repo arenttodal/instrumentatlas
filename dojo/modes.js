@@ -13,13 +13,13 @@ const DOJO_MODES = [
   },
   {
     id:'layers', name:'Layers', href:'layers.html', status:'live',
-    blurb:'A real passage, four or five instruments at once. Drag each one into the job it is doing — melody, countermelody or harmony.',
-    meta:'3 passages · Valley Sunrise'
+    blurb:'A real passage, three to five parts at once. Drag each one into the job it is doing — melody, countermelody or harmony.',
+    meta:'8 passages · themes 4 and 5, and Valley Sunrise'
   },
   {
     id:'blend', name:'Blend', href:'blend.html', status:'live',
-    blurb:'The horn has the tune and something is doubling it, an octave above or below — or nothing is. Say what, when it is not audible on its own.',
-    meta:'4 answers · Theme 1'
+    blurb:'Several instruments are playing one line at once. Name every one of them — and at the hardest level, say which sits an octave over or under the others.',
+    meta:'3 levels · 4 themes'
   }
 ];
 
