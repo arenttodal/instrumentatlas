@@ -239,8 +239,6 @@ function render(){
   tray.innerHTML = loose.length
     ? loose.map(cardHTML).join('')
     : `<p class="ly-tray-empty">All placed — check them, or take one back out.</p>`;
-  /* an empty tray collapses to a line rather than holding a card's worth of
-     nothing open above the zones */
   tray.toggleAttribute('data-empty', !loose.length);
 
   $('ly-zones').innerHTML = LAYER_ROLES.map(r => {
