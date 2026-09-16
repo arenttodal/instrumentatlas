@@ -56,7 +56,12 @@ _headers           Cloudflare caching + framing
 audio/
   theme-1/         the studio's renders, one per part per section size
   instruments/     per-instrument demo clips
-video/             family hover footage, one .mp4 per family that has one
+video/             family hover footage, one .mp4 per family. All four match:
+                   1280x676, SAR 676:675 (DAR 256:135), h264 High, yuv420p,
+                   bt709, 25 fps, 8s, no audio track, 500-600 KB. The clip
+                   plays at opacity .20 under a dark scrim, so grade a new one
+                   to roughly the same mean luma as the others (25-58) before
+                   encoding, or it washes the headline out
 viewer/
   instruments.html the whole 3D viewer, self-contained
   *.glb            eight models, flat in this folder, NOT in a subfolder
