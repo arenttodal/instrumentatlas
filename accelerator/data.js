@@ -20,10 +20,10 @@ const LESSONS = [
   demoNote:'Click any bar to silence that partial. The fundamental alone is a bare sine wave. Everything that makes it sound like an instrument is sitting above it.',
   source:'Core Pillars of Music : Overtones / A Look At The Overtones',
   beats:[
-    {t:'One note is never one note',p:[0]},
-    {t:'The string vibrates in halves, thirds, quarters',p:[1]},
-    {t:'Wide at the bottom, tight at the top',p:[2]},
-    {t:'The two rules that follow',p:[3]}
+    {t:'One note is never one note',p:[0],scene:'timbres'},
+    {t:'The string vibrates in halves, thirds, quarters',p:[1],scene:'divisions'},
+    {t:'Wide at the bottom, tight at the top',p:[2],scene:'spacing'},
+    {t:'The two rules that follow',p:[3],scene:'doubling'}
   ],
   body:[
     'Most sounds are more complex than they appear. When you pluck a guitar string you hear a note, but inside that note is a rainbow of overtones, and they are what create the timbre and the character of the sound.',
@@ -84,7 +84,7 @@ const LESSONS = [
   short:'Four tools for stopping layers from swallowing each other.',
   claim:'When independent ideas overlap in register, rhythm and colour, try separating one property at a time.',
   demo:'separation',
-  demoNote:'The same four bars, three ways. Switch while it plays : the notes never change, only how separated the layers are.',
+  demoNote:'The same four bars, three ways. Switch while it plays — the notes never change, only how separated the layers are.',
   source:'Separation Of Elements / Music With Two Layers / Three Or More Layers',
   body:[
     'Whenever you have more than one layer, there has to be enough separation between them. Without it everything becomes a confusing mess. Separation is what lets each musical idea stand out, whether it is a foreground or a background element.',
@@ -177,7 +177,7 @@ const LESSONS = [
   short:'Turning chords into four melodies that happen to agree.',
   claim:'The orchestra is not a keyboard patch. Four voices moving individually sound like an ensemble; four voices moving in parallel sound like one hand.',
   demo:'voiceleading',
-  demoNote:'The same progression three ways : block keyboard voicings, proper voice leading, then split across individual instruments.',
+  demoNote:'The same progression three ways — block keyboard voicings, proper voice leading, then split across individual instruments.',
   source:'Voicing Harmonic Material Across Time / The Orchestra Is Not a Keyboard',
   body:[
     'The first thing to be aware of is that the orchestra is not a keyboard patch and should not be treated as one. A string section is several instrumental sections : Violin I, Violin II, Viola, Cello, Basses : and all of them are playing individual score parts that together make up the chords you hear.',
@@ -212,7 +212,7 @@ const LESSONS = [
   short:'The short fragment everything else is built from : and how to choose one.',
   claim:'A weak melody will sink a well-produced track, and a strong one will carry a thin one. It starts with a fragment short enough to remember.',
   demo:'motif',
-  demoNote:'Click any interval to hear a motif built on it. The rhythm and the shape stay put, so the only thing changing is the leap : which is the book\'s point about intervals. Then change the rhythm with the interval fixed, and hear the other half of the job. Motif of fate sets all three to Beethoven\'s.',
+  demoNote:'Click any interval to hear a motif built on it. The rhythm and the shape stay put, so the only thing changing is the leap — which is the book\'s point about intervals. Then change the rhythm with the interval fixed, and hear the other half of the job. Motif of fate sets all three to Beethoven\'s.',
   source:'The Composition : Using Motifs to Build a Melody / Composing Your Own Motif',
   body:[
     '<strong>Melody is king.</strong> It is the element that lingers after the final note fades. A perfectly crafted snare or synth pluck catches attention for a moment; the melody is what makes music memorable. Think of the endless four-chord songs that share a progression and are told apart entirely by their tunes.',
@@ -244,7 +244,7 @@ const LESSONS = [
   short:'Presentation, Repetition, Variation, Destruction : how one motif becomes a phrase.',
   claim:'Random notes confuse the listener and one motif on repeat bores them. PReVaDe is the structure that sits between the two failures.',
   demo:'prevade',
-  demoNote:'Write a motif in the top grid : click any cell, click it again to clear it. It starts on the Heart Of Courage motif from the book: a rest, then three notes up the bottom of A minor. The four slots fill themselves from what you write : except Destruction, which is new material by design. Reorder the slots with the arrows and watch the top point move.',
+  demoNote:'Write a motif in the top grid — click any cell, click it again to clear it. It starts on the Heart Of Courage motif from the book: a rest, then three notes up the bottom of A minor. The four slots fill themselves from what you write — except Destruction, which is new material by design. Reorder the slots with the arrows and watch the top point move.',
   source:'The Composition : The PReVaDe Method / Top Point: Creating a Climax',
   body:[
     'This method did not come from a conservatoire. It came from a high school guitar teacher in a blues improvisation class, and it solves a problem you can hear in two directions. Play random notes from the pentatonic scale and the result is chaotic and confusing for the listener. Repeat the same short bending motif over and over : the intro to <em>Johnny B. Goode</em> : and it turns monotonous. <strong>The method is the balance between those two failures:</strong> familiar enough to follow, new enough to stay interesting.',
@@ -277,7 +277,7 @@ const LESSONS = [
   short:'Two phrases in dialogue : one that asks, one that settles it.',
   claim:'Play your theme twice and it is a repeat. Change the note it lands on and it becomes a conversation.',
   demo:'qanda',
-  demoNote:'The same theme twice. Click any note in the two strips to change where each phrase lands : the strips outline the notes each role is aiming at, and the tags under each letter show which of the three main chords it belongs to. Try landing both on C, then both on D, and hear what breaks.',
+  demoNote:'The same theme twice. Click any note in the two strips to change where each phrase lands — the strips outline the notes each role is aiming at, and the tags under each letter show which of the three main chords it belongs to. Try landing both on C, then both on D, and hear what breaks.',
   source:'The Composition : Question & Answer: Using Question and Answer Roles / Applying Question and Answer Roles',
   body:[
     'You have a phrase. The next job is to expand it into a whole section : the opening of an orchestral piece, a verse, whatever you are building. The cheapest way to do that is not to write more material. It is to <strong>play what you have twice and give the two halves different jobs.</strong>',
@@ -309,7 +309,7 @@ const LESSONS = [
   short:'Choosing the chords that sit under a melody you have already written.',
   claim:'You do not guess at chords. You look at the notes you already wrote and find the chord that contains them.',
   demo:'harmony',
-  demoNote:'Each cell shows how many of that bar\'s melody notes the chord actually contains : which is the chapter\'s method, done for you. Click any cell to set that bar\'s chord. Start from the primary chords, then swap in the substitutes and hear what changes.',
+  demoNote:'Each cell shows how many of that bar\'s melody notes the chord actually contains — which is the chapter\'s method, done for you. Click any cell to set that bar\'s chord. Start from the primary chords, then swap in the substitutes and hear what changes.',
   source:'The Composition : Harmony: Choosing Chords / Substitutions and Tweaks',
   body:[
     'Melody first or harmony first? <strong>It genuinely does not matter</strong> : it is down to how you work. The author\'s own preference is melody first, on the grounds that building chords around a strong melodic idea is easier than squeezing a compelling melody out of a progression. Try both and find out which way round your brain works.',
@@ -342,7 +342,7 @@ const LESSONS = [
   short:'A second line that supports the theme instead of fighting it.',
   claim:'A countermelody is a second line with a supporting role. Choose when it answers, overlaps or briefly takes the lead.',
   demo:'countermelody',
-  demoNote:'The same two lines, separated three ways. Switch versions while it loops : the theme never changes, only what the second line does around it.',
+  demoNote:'The same two lines, separated three ways. Switch versions while it loops — the theme never changes, only what the second line does around it.',
   source:'The Composition : Countermelodies: How to Create a Countermelody',
   body:[
     'You have a theme. A good next move is a countermelody : but be clear about what that is. <strong>It is not a second melody competing for the listener\'s attention.</strong> It is a supporting element, there to add movement and interest to the main melody without overshadowing it. Get that distinction wrong and you have written two foreground parts, which may obscure the intended hierarchy.',
@@ -400,21 +400,7 @@ const LESSONS = [
 
 /* Contextual teaching corrections and action-first captions. */
 const lessonById = id => LESSONS.find(l=>l.id===id);
-const CAPTIONS = {
- overtones:'Play a sustained tone. Change one harmonic amplitude and compare the same sound. Ratios are exact; note names are approximate.',
- perspective:'Play, solo a layer, then change its level, activity or variation. The focus estimate is an explanatory model, not a measurement of attention.',
- separation:'Keep the same source notes and change register, rhythm, articulation or sampled instrument independently.',
- 'tone-colour':'Compare the same pitch or phrase on six sampled instruments. The spectrum measures the playing audio. Performance references use different passages.',
- voicing:'Move a note with its selector or arrow keys. Retain C, E and G, try wider low spacing, then compare your result with A.',
- 'voice-leading':'Follow each voice through four bars of Am, F, C and G. Solo a line, edit its notes, then compare block chords with smaller movements.',
- motifs:'Write notes, rests and durations. Save your motif so the following five lessons can develop the same sketch.',
- prevade:'Develop your saved motif. Reorder phrase slots, vary the material, and write an independent new ending. Keep two versions to compare.',
- 'question-answer':'Change the ending of each phrase. Compare melody alone, question alone and answer alone, then listen over V and I.',
- harmony:'Choose a chord for each four-beat bar. Give sustained and accented melody notes particular attention, then compare harmonisations.',
- countermelody:'Write a supporting line, solo it, then restore the theme. Try filling rests and deliberately overlapping before judging the result.',
- ostinato:'Edit a repeating pattern, its rests, lengths and accents. Toggle the melody to hear whether the pattern supports it.'
-};
-LESSONS.forEach(l=>l.demoNote=CAPTIONS[l.id]);
+
 lessonById('voice-leading').body[4]='Then add inner movement. A suspension has a preparation, dissonance against the new harmony, and resolution. For example, hold G into a D major chord, then resolve it down to F♯. A common tone that stays consonant is not automatically a suspension. Check the motion of every voice.';
 lessonById('voice-leading').quiz[1]={q:'A prepared G is held over D major, then resolves down to F♯. What does this demonstrate?',o:['A 4–3 suspension','A modulation','A parallel octave','A tempo change'],a:0,why:'G becomes a dissonant fourth over D, then resolves down to the chord third. A held note alone is not enough to identify a suspension.'};
 lessonById('question-answer').body.push('These are starting points for this exercise. A non-chord ending may create more tension, not less. Rhythm, metre, bass and the surrounding harmony all affect closure.');

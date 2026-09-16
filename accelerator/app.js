@@ -7,7 +7,7 @@
   function progress(){view.querySelectorAll('[data-lesson-status]').forEach(e=>e.textContent=state(e.dataset.lessonStatus));}
   function outline(l){return '<details class="ac-outline"><summary>Lessons'+(l?' · '+esc(l.title):'')+'</summary><nav aria-label="Accelerator lessons"><a href="#/">Course overview</a>'+MODULES.map(m=>'<p>'+esc(m.title)+'</p>'+LESSONS.filter(x=>x.module===m.id).map(x=>'<a href="'+href(x)+'" '+(x===l?'aria-current="page"':'')+'>'+x.n+'. '+esc(x.title)+'<span data-lesson-status="'+x.id+'">'+state(x.id)+'</span></a>').join('')).join('')+'</nav></details>';}
   function overview(mod){const next=LESSONS.find(l=>!Accel.done(l.id))||LESSONS[0],last=Accel.last(),resume=LESSONS.some(l=>last==='/'+l.module+'/'+l.id)?last:'/'+next.module+'/'+next.id;
-    return '<div class="wrap ac-course">'+outline()+'<header class="hero"><div class="eyebrow">Interactive learning · 12 lessons</div><h1>'+(mod?esc(mod.title):'The Accelerator')+'<em>Hear it. Shape it. Make it yours.</em></h1><p>Explore a musical idea, apply it in a short challenge, then develop your own sketch. Your progress and musical work stay in this browser.</p><a class="btn gold" href="#'+resume+'">Resume learning</a></header>'+(mod?[mod]:MODULES).map(m=>'<section class="ac-module"><h2>'+esc(m.title)+'</h2><p>'+LESSONS.filter(l=>l.module===m.id&&Accel.done(l.id)).length+' of 6 complete</p><div class="lessons">'+LESSONS.filter(l=>l.module===m.id).map(l=>'<a class="lcard '+(Accel.done(l.id)?'done':'')+'" href="'+href(l)+'"><span class="lnum">'+l.n+'</span><div><h3>'+esc(l.title)+'</h3><p>'+esc(l.short)+'</p></div><span class="ltag">'+state(l.id)+'</span></a>').join('')+'</div></section>').join('')+
+    return '<div class="wrap ac-course">'+outline()+'<header class="hero"><div class="eyebrow">Interactive learning · 12 lessons</div><h1>'+(mod?esc(mod.title):'The Accelerator')+'<em>Hear it. Shape it. Make it yours.</em></h1><p>Hear each idea before you read why it works, then take it to your own writing. Your progress stays in this browser.</p><a class="btn gold" href="#'+resume+'">Resume learning</a></header>'+(mod?[mod]:MODULES).map(m=>'<section class="ac-module"><h2>'+esc(m.title)+'</h2><p>'+LESSONS.filter(l=>l.module===m.id&&Accel.done(l.id)).length+' of 6 complete</p><div class="lessons">'+LESSONS.filter(l=>l.module===m.id).map(l=>'<a class="lcard '+(Accel.done(l.id)?'done':'')+'" href="'+href(l)+'"><span class="lnum">'+l.n+'</span><div><h3>'+esc(l.title)+'</h3><p>'+esc(l.short)+'</p></div><span class="ltag">'+state(l.id)+'</span></a>').join('')+'</div></section>').join('')+
     '<section class="ac-backups"><h2>Your saved work</h2><p>Download a backup to keep progress and sketches or move them to another browser. Import retains completed progress and replaces the shared sketch with the imported version.</p><button class="btn" data-export>Download backup</button><label class="btn">Import backup<input type="file" data-import accept=".json,application/json"></label><p role="status" data-backup-status></p></section></div>';
   }
   /* A lesson is a run of micro levels. The activity holds one column and stays
@@ -20,7 +20,6 @@
     if(n>=80){out.push({p:cur});cur=[];n=0;}});if(cur.length)out.push({p:cur});return out;}
   function stepsOf(l){const steps=[{type:'try',label:'Try it'}];
     (l.beats||autoBeats(l)).forEach(b=>steps.push({type:'read',beat:b,label:'Why'}));
-    steps.push({type:'challenge',label:'Challenge'});
     steps.push({type:'do',label:'Practise'});
     l.quiz.forEach((q,qi)=>steps.push({type:'quiz',qi,label:'Check'}));
     steps.push({type:'end',label:'Done'});return steps;}
@@ -54,20 +53,6 @@
       box.innerHTML='<div><div class="eyebrow">Why it works</div>'+
         (st.beat.t?'<h2 class="step-h">'+esc(st.beat.t)+'</h2>':'<div style="height:8px"></div>')+
         '<div class="prose">'+st.beat.p.map(k=>'<p>'+l.body[k]+'</p>').join('')+'</div></div>';
-    } else if(st.type==='challenge'){
-      box.innerHTML='<div><div class="eyebrow">Challenge</div><h2 class="step-h">Try it yourself</h2>'+
-        '<p data-challenge-prompt></p>'+
-        '<div class="ac-actions"><button class="btn gold" data-challenge>Check my attempt</button>'+
-        '<button class="btn" data-hint>Show a hint</button>'+
-        '<button class="btn" data-replay>Replay my work</button></div>'+
-        '<p class="ac-feedback" role="status" data-challenge-feedback></p></div>';
-      box.querySelector('[data-challenge-prompt]').textContent=prompts[l.id];
-      const fb=box.querySelector('[data-challenge-feedback]');
-      box.querySelector('[data-challenge]').onclick=()=>{const r=active.check(),q=Accel.lesson(l.id);
-        Accel.patch(l.id,{challengeAttempts:(q.challengeAttempts||0)+1,challengePassed:!!q.challengePassed||r.ok});
-        fb.textContent=(r.ok?'Exercise constraint met. ':'Keep exploring. ')+r.text;};
-      box.querySelector('[data-hint]').onclick=()=>fb.textContent=active.check().text;
-      box.querySelector('[data-replay]').onclick=()=>active.play();
     } else if(st.type==='do'){
       const level=['beginner','intermediate','advanced'].includes(p.level)?p.level:'beginner';
       box.innerHTML='<div><div class="eyebrow">Practise</div><h2 class="step-h">Take it to your own work</h2>'+
@@ -90,6 +75,9 @@
         (Accel.lesson(l.id).exerciseDone?' · exercise recorded':'')+'<br>Based on '+esc(l.source)+', Cinematic Music Accelerator.</p>'+
         '<a class="btn gold go" href="'+(next?href(next):'#/')+'">'+(next?'Next: '+esc(next.title):'Review progress and saved work')+'</a></div>';
     }
+
+    /* the demonstration follows the explanation */
+    if(active)active.step({index:i,type:st.type,scene:st.beat&&st.beat.scene||st.type,beat:st.beat,label:st.label});
 
     const seen=Math.max(Accel.lesson(l.id).step||0,i);Accel.patch(l.id,{step:seen});
     const rail=document.getElementById('rail');
@@ -133,7 +121,6 @@
     draw();
   }
 
-  const prompts={overtones:'Hear the target, then recreate its harmonic balance.',perspective:'Bring Harmony forward and confirm the result by listening.',separation:'Make the melody easier to follow using exactly one separation tool.','tone-colour':'Play a mystery sample, then select the instrument you hear.',voicing:'Keep a complete C-major triad, reinforce C and try wider low spacing.','voice-leading':'Keep Am, F, C and G complete, moving each voice by no more than two semitones.',motifs:'Write three to five notes that you can sing back.',prevade:'Build a phrase with familiar material, a variation and an independent new ending.','question-answer':'Compare B4 over V followed by C5 over I to hear the leading tone resolve.',harmony:'Include ii or vi, finish on I, then compare the primary chords.',countermelody:'Place at least one response in a rest in the theme.',ostinato:'Use at least four onsets and an accent. Lower the pattern until the melody is clear.'};
   function init(l){
     Accel.patch(l.id,{seen:true});Accel.setLast('/'+l.module+'/'+l.id);
     active=AccelWidgets.mount(document.getElementById('demo-host'),l);

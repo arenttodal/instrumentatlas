@@ -122,3 +122,17 @@
   .lstep{padding:12px 0;overflow:visible}
   .atl-nav-sep,.atl-nav-crumb{display:none!important}
 }
+
+/* A coachmark inside the stage. One shape for every lesson's nudges, so a tip
+   never looks like part of the activity it is pointing at. */
+.w-stage{position:relative}
+.w-tip{position:absolute;z-index:5;max-width:236px;padding:8px 11px;border-radius:8px;
+  background:#16202F;border:1px solid var(--hair-gold,rgba(212,160,74,.24));
+  box-shadow:0 8px 22px rgba(0,0,0,.45);pointer-events:none;
+  animation:tipIn .32s cubic-bezier(.16,1,.3,1) both}
+.w-tip span{display:block;font-size:11.5px;line-height:1.45;color:var(--text,#BEC0C8)}
+.w-tip i{position:absolute;top:-5px;left:50%;margin-left:-5px;width:9px;height:9px;
+  background:#16202F;border-left:1px solid var(--hair-gold,rgba(212,160,74,.24));
+  border-top:1px solid var(--hair-gold,rgba(212,160,74,.24));transform:rotate(45deg)}
+@keyframes tipIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.w-tip{animation:none}}
