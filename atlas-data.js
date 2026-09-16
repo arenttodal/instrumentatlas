@@ -115,7 +115,7 @@ const FAMILIES = [
     },
     members:['trumpet','horn','trombone','tuba'] },
 
-  { id:'percussion', name:'Percussion', tagline:'Rhythm and dramatic flair',
+  { id:'percussion', name:'Percussion', tagline:'Rhythm and dramatic flair', video:'video/percussion.mp4',
     lede:'The percussion family has the widest dynamic range in the orchestra, from tonal percussion such as the marimba and xylophone, all the way to the big grand cassa and timpani, cymbals and snares - this is the heartbeat of the orchestra.',
     role:[
       '<b>Pitched or unpitched.</b> Timpani, glockenspiel and celesta are tonal instruments; snare, bass drum and cymbals are atonal.',
