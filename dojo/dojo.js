@@ -489,17 +489,39 @@ async function playQuestion(){
 }
 
 /* --------------------------------------------------------------- options --- */
+/* ⭐ On a wrong answer the correct row and the one you picked BECOME the A/B.
+   Both clips are already running, so clicking either is a gain ramp on a node
+   that is already going — the same switch as before, with no second pair of
+   buttons under the list and no page growing by the height of them. The lit
+   bars on the right say which one you are hearing. */
+const HEAR_ICON = `<span class="dj-hear" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"
+  stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <path d="M3 6.4v3.2M6.3 3.8v8.4M9.7 5.6v4.8M13 7.2v1.6"/></svg></span>`;
+
 function paintOptions(){
   const locked = S.phase !== 'asking';
+  const ab = (S.phase === 'wrong' && S.ab) ? S.ab : null;
+
   $('dj-options').innerHTML = S.q.options.map(id => {
     const state = !locked ? '' :
       id === S.q.answer ? ' is-right' :
       id === S.picked   ? ' is-wrong' : ' is-off';
-    return `<button class="dj-opt${state}" data-id="${esc(id)}"
-              ${locked || !S.heard ? 'disabled' : ''}>${esc(nameOf(id))}</button>`;
+    const isAB    = !!ab && (id === ab.answer || id === ab.picked);
+    const hearing = isAB && ab.on === id;
+    const dead    = locked ? !isAB : !S.heard;
+    return `<button class="dj-opt${state}${isAB ? ' is-ab' : ''}${hearing ? ' is-hearing' : ''}"
+              data-id="${esc(id)}"${dead ? ' disabled' : ''}${
+              isAB ? ` aria-pressed="${hearing}" aria-label="Hear the ${esc(nameOf(id))}"` : ''
+            }>${esc(nameOf(id))}${isAB ? HEAR_ICON : ''}</button>`;
   }).join('');
+
   if(!S.heard && !locked) $('dj-options').dataset.waiting = '1';
   else delete $('dj-options').dataset.waiting;
+
+  /* Once an answer is in, the clip loops for the comparison and the progress
+     fill just resets over and over — a dash flickering under the button that
+     measures nothing. It belongs to the question, so it goes with it. */
+  $('dj-meter').hidden = locked;
 }
 
 /* ---------------------------------------------------------------- answer --- */
@@ -537,23 +559,14 @@ function showRight(){
    gain nodes: no restart, no click, and it works mid-note. */
 function showWrong(){
   const a = S.q.answer, p = S.picked;
-  S.ab = { answer:a, picked:p, on:'a', ready:false };
+  S.ab = { answer:a, picked:p, on:a, ready:false, clips:{} };
 
+  /* nothing here but the way forward — the comparison lives in the rows above */
   $('dj-result').innerHTML = `
-    <div class="dj-ab" id="dj-ab">
-      <div class="dj-ab-label">Hear them back to back</div>
-      <button class="dj-ab-btn is-on" data-side="a" aria-pressed="true">${esc(nameOf(a))}</button>
-      <button class="dj-ab-btn" data-side="b" aria-pressed="false">${esc(nameOf(p))}</button>
-    </div>
     <button class="dj-next" id="dj-next">Next</button>
     <a class="dj-link" href="${atlasHref(a)}">Open the ${esc(nameOf(a))} in the atlas</a>`;
-
   $('dj-next').onclick = next;
-  $('dj-ab').querySelectorAll('.dj-ab-btn').forEach(b => {
-    b.onclick = () => setAB(b.dataset.side);
-  });
 
-  reveal($('dj-result'));
   startAB();
 }
 
@@ -565,27 +578,27 @@ async function startAB(){
   const ok = await DojoAudio.play([ans, pick], { loop:true, lock:false, gains:{ [ans]:1, [pick]:0 } });
   if(S.ab !== ab) return;          // Next was pressed while this was decoding
   if(!ok){ $('dj-note').textContent = DojoAudio.error || 'Comparison unavailable.'; return; }
-  ab.clips = { a:ans, b:pick };
+  ab.clips = { [ab.answer]:ans, [ab.picked]:pick };
   ab.ready = true;
+  paintOptions();                  // the two rows can light up now
   paintPlay();
 }
 
-function setAB(side){
-  if(!S.ab || !S.ab.ready || S.ab.on === side) return;
-  S.ab.on = side;
-  DojoAudio.select(S.ab.clips[side]);
-  $('dj-ab').querySelectorAll('.dj-ab-btn').forEach(b => {
-    const on = b.dataset.side === side;
-    b.classList.toggle('is-on', on);
-    b.setAttribute('aria-pressed', String(on));
-  });
-}
-
-/* scroll something into view without fighting anyone who asked for less motion */
-function reveal(el){
-  if(!el) return;
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  el.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block:'nearest' });
+/* keyed by instrument, because the switch IS the two option rows now */
+function setAB(id){
+  if(!S.ab || !S.ab.ready || S.ab.on === id) return;
+  if(id !== S.ab.answer && id !== S.ab.picked) return;
+  S.ab.on = id;
+  DojoAudio.select(S.ab.clips[id]);
+  /* paintOptions rebuilds the row being switched to, so whether focus was in
+     the list has to be read BEFORE the repaint — afterwards it has already
+     fallen to the body and there is nothing left to tell */
+  const hadFocus = $('dj-options').contains(document.activeElement);
+  paintOptions();
+  if(hadFocus){
+    const el = $('dj-options').querySelector(`.dj-opt[data-id="${CSS.escape(id)}"]`);
+    if(el) el.focus();
+  }
 }
 
 /* the clip that represents an answer — for belt 2 the answer IS an instrument
@@ -629,7 +642,9 @@ $('dj-reset').onclick = () => {
 
 $('dj-options').addEventListener('click', e => {
   const b = e.target.closest('.dj-opt');
-  if(b && !b.disabled) answer(b.dataset.id);
+  if(!b || b.disabled) return;
+  if(S.phase === 'wrong'){ setAB(b.dataset.id); return; }
+  answer(b.dataset.id);
 });
 
 document.addEventListener('keydown', e => {
@@ -651,9 +666,9 @@ document.addEventListener('keydown', e => {
     if(b && !b.disabled){ e.preventDefault(); answer(b.dataset.id); }
     return;
   }
-  if(S.phase === 'wrong' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
+  if(S.phase === 'wrong' && S.ab && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
     e.preventDefault();
-    setAB(e.key === 'ArrowLeft' ? 'a' : 'b');
+    setAB(e.key === 'ArrowLeft' ? S.ab.answer : S.ab.picked);
   }
 });
 
