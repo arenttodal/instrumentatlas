@@ -38,6 +38,10 @@
   transition:box-shadow .2s,background .2s}
 .bl-band.is-over,[data-drop].is-over .bl-band{background:rgba(212,160,74,.13);
   box-shadow:inset 0 0 0 1px var(--hair-gold)}
+/* the grid is a target too: dropping a card back on it takes it out again */
+.bl-pool.is-over{box-shadow:inset 0 0 0 1px var(--hair-gold);border-radius:14px;
+  background:rgba(212,160,74,.035)}
+.bl-card.is-dragging{opacity:.3}
 .bl-band-empty{align-self:center;margin:auto;font-size:11.5px;color:#3C3E48;letter-spacing:.3px}
 
 /* level 3: the same band three times, labelled, with the label outside so
@@ -49,7 +53,9 @@
 .bl-tier:first-child .bl-tier-name{color:var(--gold);opacity:.75}
 
 /* --- the grid, by family --- */
-.bl-pool{width:100%;margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.bl-pool{width:100%;margin-top:18px;display:flex;flex-direction:column;gap:10px;
+  padding:6px;margin-left:-6px;margin-right:-6px;width:calc(100% + 12px);
+  transition:box-shadow .2s,background .2s}
 .bl-fam{display:grid;grid-template-columns:104px 1fr;align-items:center;gap:12px;text-align:left}
 .bl-fam-name{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--fam);opacity:.8}
 .bl-fam-row{display:flex;flex-wrap:wrap;gap:8px;min-height:38px;align-items:center}
@@ -85,7 +91,13 @@
 .bl-card.is-misplaced{border-color:var(--gold);background:rgba(212,160,74,.12);color:#fff}
 .bl-card.is-missed{border-color:var(--ok);border-style:dashed;background:transparent;color:var(--text-dim)}
 
-/* --- the A/B: two mixes --- */
+/* --- the A/B: two mixes ---
+   A dead control that still lights up is worse than a disabled one, so the row
+   goes flat while its clips decode and again whenever the transport is stopped.
+   And a card that is not in the mix you are hearing goes quiet — the difference
+   between the two sides is often one instrument in unison with another, which
+   is exactly the case where hearing it is the whole exercise and seeing it is
+   the difference between a control that works and one that seems not to. */
 .bl-ab{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;
   width:100%;min-height:44px;margin-top:20px}
 .bl-ab:empty{min-height:44px}
@@ -93,7 +105,9 @@
   border:1px solid var(--hair);background:rgba(0,0,0,.25);font-size:13px;color:var(--text-dim);
   transition:border-color .2s,background .2s,color .2s}
 .bl-ab-btn:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
-.bl-ab-btn:disabled{opacity:.35;cursor:default}
+.bl-ab-btn:disabled{opacity:.3;cursor:default}
+.bl-ab-btn:disabled.is-on{border-color:var(--hair);background:rgba(0,0,0,.25)}
+.bl-card.is-quiet{opacity:.34}
 .bl-ab-btn.is-on{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
 .bl-ab-btn .dj-hear{position:static;transform:none;opacity:.5;width:15px;height:15px}
 .bl-ab-btn.is-on .dj-hear{opacity:1;color:var(--gold);transform:none}

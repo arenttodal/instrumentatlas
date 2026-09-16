@@ -14,7 +14,7 @@ const DOJO_MODES = [
   {
     id:'layers', name:'Layers', href:'layers.html', status:'live',
     blurb:'A real passage, three to five parts at once. Drag each one into the job it is doing — melody, countermelody or harmony.',
-    meta:'8 passages · themes 4 and 5, and Valley Sunrise'
+    meta:'5 passages · themes 4 and 5'
   },
   {
     id:'blend', name:'Blend', href:'blend.html', status:'live',
