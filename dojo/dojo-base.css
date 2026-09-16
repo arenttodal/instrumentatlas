@@ -62,6 +62,104 @@ body{background:#080C14;margin:0}
 
 .atl-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);line-height:1.4}
 
+/* ============================================================================
+   The controls every mode is built from — the eyebrow and display line, the
+   play button and its meter, the stacked answer rows with the in-row A/B, and
+   the result block. Belts, Layers and Blend all use them, which is why they
+   are here and not in three stylesheets drifting apart. Each mode's own sheet
+   sets only its layout: the page frame, its column width, and whatever the
+   mode has that the others do not.
+   ============================================================================ */
+
+/* --- the question, and then the answer ---
+   One display line carries both: it asks before you answer and names the
+   instrument after, so the eye never has to move to find out what happened. */
+.dj-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;
+  color:var(--gold);opacity:.85}
+.dj-display{font-size:clamp(26px,4.4vw,40px);line-height:1.14;margin:14px 0 0;
+  letter-spacing:-.6px;transition:color .3s ease}
+.dj-display[data-state="right"]{color:#fff}
+.dj-display[data-state="wrong"]{color:#fff}
+.dj-mark{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:12px;
+  vertical-align:middle;position:relative;top:-4px}
+.dj-mark[data-v="right"]{background:var(--ok);box-shadow:0 0 12px rgba(95,184,154,.75)}
+.dj-mark[data-v="wrong"]{background:var(--warn);box-shadow:0 0 12px rgba(192,96,58,.65)}
+.dj-note{font-size:12px;color:var(--text-faint);margin-top:10px;min-height:18px}
+
+/* --- transport --- */
+.dj-play{display:inline-flex;align-items:center;justify-content:center;gap:11px;
+  margin-top:26px;padding:12px 30px;border-radius:100px;
+  border:1px solid var(--hair-gold);background:rgba(212,160,74,.07);color:var(--gold);
+  font-size:14px;font-weight:500;min-width:148px;
+  transition:background .25s,border-color .25s,color .25s}
+.dj-play:hover{border-color:var(--gold);background:rgba(212,160,74,.15);color:#fff}
+.dj-play .ico{width:0;height:0;border-style:solid;border-width:6px 0 6px 11px;
+  border-color:transparent transparent transparent currentColor}
+.dj-play[data-state="playing"]{background:rgba(212,160,74,.18);border-color:var(--gold);color:#fff}
+.dj-play[data-state="playing"] .ico{width:11px;height:12px;border:none;background:currentColor;
+  -webkit-mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat;
+          mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat}
+.dj-play[data-state="loading"]{opacity:.55;pointer-events:none}
+
+/* No rule under the play button at rest — the track is transparent, so the
+   only thing that ever draws here is the gold fill while a clip is running.
+   Belts keeps it where Layers dropped it entirely, because a belt clip plays
+   once and how much is left is real information; a Layers passage loops. */
+.dj-meter{width:148px;height:2px;border-radius:2px;background:transparent;
+  overflow:hidden;margin-top:14px}
+.dj-meter[data-idle]{visibility:hidden}   /* keeps its 16px; only the ink goes */
+.dj-meter i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);
+  transition:transform .1s linear}
+
+/* --- answers: one per row, centred --- */
+.dj-options{display:flex;flex-direction:column;gap:9px;width:100%;margin-top:30px}
+.dj-opt{position:relative;display:flex;align-items:center;justify-content:center;
+  min-height:52px;padding:8px 40px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.015);font-size:16px;font-weight:400;color:var(--text);
+  transition:border-color .2s,background .2s,color .2s,opacity .2s,box-shadow .2s}
+.dj-opt:not(:disabled):hover{border-color:var(--hair-gold);background:rgba(212,160,74,.07);color:#fff}
+.dj-opt:disabled{cursor:default}
+.dj-options[data-waiting] .dj-opt{opacity:.35}
+.dj-opt.is-right{border-color:var(--ok);background:rgba(95,184,154,.12);color:#fff}
+.dj-opt.is-wrong{border-color:var(--warn);background:rgba(192,96,58,.12);color:#fff}
+.dj-opt.is-off{opacity:.28}
+
+/* --- result --- */
+/* Always holds a Next and a link row, drawn as ghosts in the phases that have
+   no use for them (see resultRows in dojo.js), so the block cannot change
+   height between asking, right and wrong. */
+.dj-result{width:100%;display:flex;flex-direction:column;align-items:center}
+.is-ghost{visibility:hidden;pointer-events:none}
+
+/* ⭐ the A/B, living in the two rows it is about. The clips are already
+   running, so these only move the gains; the bars on the right say which one
+   is audible. A second pair of buttons underneath used to push the page down
+   by its own height every time you were wrong. */
+.dj-opt.is-ab{cursor:pointer}
+.dj-opt.is-ab:hover{box-shadow:inset 0 0 0 1px var(--hair-gold)}
+.dj-hear{position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  width:17px;height:17px;display:flex;color:var(--text-faint);opacity:.5;
+  transition:color .2s,opacity .2s,transform .2s}
+.dj-hear svg{width:100%;height:100%}
+.dj-opt.is-ab:hover .dj-hear{color:var(--gold);opacity:.9}
+/* The lit bars alone say which one is audible. An outline here as well fought
+   the green and the red that say which one was right. */
+.dj-opt.is-hearing .dj-hear{color:var(--gold);opacity:1;transform:translateY(-50%) scale(1.15)}
+
+.dj-next{margin-top:26px;padding:12px 32px;border-radius:100px;border:1px solid var(--gold);
+  background:var(--gold);color:#0A0C14;font-size:14px;font-weight:500;line-height:24px;
+  transition:background .25s,border-color .25s}
+.dj-next:hover{background:var(--gold-lift);border-color:var(--gold-lift)}
+
+.dj-link{font-size:12px;line-height:20px;color:var(--text-faint);margin-top:16px;
+  border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.dj-link:hover{color:var(--gold);border-color:var(--hair-gold)}
+
+.dj-reset{margin-top:40px;font-size:11px;color:var(--text-faint);opacity:.7;
+  letter-spacing:.3px;transition:color .2s,opacity .2s}
+.dj-reset:hover{color:var(--text-dim);opacity:1}
+
+
 /* --- nav --- */
 .atl-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;
   padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}

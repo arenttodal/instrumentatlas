@@ -1,0 +1,61 @@
+/* ============================================================================
+   EAR TRAINING · BLEND
+   ----------------------------------------------------------------------------
+   Loads after dojo-base.css, which owns the tokens, the header and every
+   control this mode uses — the play button, the stacked answer rows, the
+   in-row A/B and the result block are all shared with Belts. Only the scoring
+   strip below is this mode's own.
+   ============================================================================ */
+
+.atl-main{position:relative;z-index:10;display:flex;justify-content:center;
+  padding:clamp(30px,6vh,64px) 20px 80px}
+.bl-col{width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.dj-options,.dj-result{max-width:380px}
+
+/* --- the scoring ---
+   The three voices of the passage, drawn with the atlas's own thumbnails so a
+   horn looks the same here as on its instrument page. Lit means audible in
+   what you are hearing NOW, which means it follows the A/B rather than the
+   answer: switching between two mixes lights and dims the doubling while the
+   horn between them stays put, which is the thing this mode is about.
+
+   It is always rendered, dimmed as a row of silhouettes before you answer, so
+   that answering does not change the height of anything. */
+.bl-scoring{display:flex;align-items:flex-end;justify-content:center;gap:26px;margin-top:20px}
+.bl-voice{display:flex;flex-direction:column;align-items:center;gap:7px;
+  transition:opacity .3s ease}
+.bl-voice-art{height:30px;display:flex;align-items:center;justify-content:center}
+.bl-voice-art svg{height:30px;width:auto;transition:filter .3s ease,opacity .3s ease}
+.bl-voice b{font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  transition:color .3s ease}
+
+.bl-voice[data-on="false"]{opacity:.26}
+.bl-voice[data-on="false"] b{color:var(--text-faint)}
+.bl-voice[data-on="true"] b{color:var(--gold)}
+.bl-voice[data-on="true"] .bl-voice-art svg{filter:drop-shadow(0 0 10px rgba(212,160,74,.45))}
+/* before an answer, nothing is given away: all three sit at the same low tone */
+.bl-scoring[data-idle="1"] .bl-voice{opacity:.26}
+.bl-scoring[data-idle="1"] .bl-voice b{color:var(--text-faint)}
+.bl-scoring[data-idle="1"] .bl-voice-art svg{filter:none}
+
+/* line-height pinned to the reserve: left to inherit 1.7 the filled line came
+   out 20px against an empty 17px, and answering nudged the whole board down */
+.bl-detail{font-size:11.5px;line-height:17px;min-height:17px;
+  color:var(--text-faint);letter-spacing:.3px;margin-top:11px}
+
+/* What separates the two mixes you just heard, or what the doubling was doing
+   when you got it right. One line on a desktop, two on a phone; the reserve is
+   the measured worst case so the ghost and every real note are the same box
+   and answering moves nothing. */
+.bl-note{font-size:12.5px;line-height:20px;min-height:40px;color:var(--text-dim);
+  font-weight:300;max-width:62ch;margin-top:16px}
+
+@media (max-width:760px){
+  .atl-main{padding:24px 18px 64px}
+  .dj-score{display:none}
+  .bl-scoring{gap:20px}
+  .bl-note{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .bl-voice,.bl-voice-art svg,.bl-voice b{transition:none}
+}

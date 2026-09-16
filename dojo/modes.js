@@ -17,9 +17,9 @@ const DOJO_MODES = [
     meta:'3 passages · Valley Sunrise'
   },
   {
-    id:'blend', name:'Blend', href:'', status:'soon',
-    blurb:'Two instruments playing as one colour. Say which two, when neither is audible on its own.',
-    meta:'Needs the doubling renders'
+    id:'blend', name:'Blend', href:'blend.html', status:'live',
+    blurb:'The horn has the tune and something is doubling it, an octave above or below — or nothing is. Say what, when it is not audible on its own.',
+    meta:'4 answers · Theme 1'
   }
 ];
 
