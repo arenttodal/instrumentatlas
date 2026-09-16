@@ -46,15 +46,16 @@
      theme 3  viola     named PC_Vla_Leg_8vb, measures level.
      theme 4  viola     the same. Both renamed to viola.aac.
      theme 3  bassoon   theme 2's bassoon is an octave down and unmarked, so
-     theme 4  bassoon   these were expected to be too. Both measure level.
+                        this was expected to be too. It measures level.
      theme 3  flute     SO_Flute is the written octave in theme 2 and an octave
      theme 4  flute     over it in themes 3 and 4. The two flute parts of a
                         theme are always one octave apart, which is what their
                         names say; where that pair sits is what offset says.
 
-   theme 2 has no bassoon: the render that arrived is digital silence for eight
-   seconds and then a fragment. Re-render it and add one line — nothing else
-   needs to change.
+   Neither theme 2 nor theme 4 has a bassoon. Theme 2's render is digital
+   silence for eight seconds and then a fragment; theme 4's does not work in
+   that register and was pulled. Re-render either and add one line — nothing
+   else needs to change.
 
    ── file names ─────────────────────────────────────────────────────────────
    audio/blend/<theme>/<file>.aac. A melody part is named for its instrument and
@@ -122,7 +123,6 @@ const THEMES = [
       { role:'melody',  instrument:'flute',    offset:+1, file:'flute'       },
       { role:'melody',  instrument:'oboe',     offset:+1, file:'oboe-8va'    },
       { role:'melody',  instrument:'clarinet', offset: 0, file:'clarinet'    },
-      { role:'melody',  instrument:'bassoon',  offset: 0, file:'bassoon'     },
       { role:'melody',  instrument:'violin',   offset:+1, file:'violin-8va'  },
       { role:'melody',  instrument:'violin',   offset: 0, file:'violin'      },
       { role:'melody',  instrument:'violin',   offset: 0, file:'violin-solo' },

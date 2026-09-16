@@ -34,8 +34,7 @@
 /* The tray keeps its height when the last card leaves it. Collapsing it
    reclaimed some empty space and paid for it by yanking the zones and
    everything under them 64px up the screen at the exact moment you placed
-   your last instrument. */
-.ly-tray-empty{align-self:center;margin:auto;font-size:12px;color:var(--text-faint)}
+   your last instrument. It empties to nothing rather than to a caption. */
 
 /* --- the three zones --- */
 /* Three regions, not three boxes. The only thing drawn at rest is the label

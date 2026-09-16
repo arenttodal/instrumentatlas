@@ -71,7 +71,7 @@ function makeDojoAudio(opts){
   function killId(id){ [...LIVE].forEach(n => { if(n.id === id) killNode(n); }); }
   function killAll(){ [...LIVE].forEach(killNode); LIVE.clear(); }
 
-  function startNode(id, buf, when, gainValue, loopEnd){
+  function startNode(id, buf, when, gainValue, loopEnd, offset){
     killId(id);                                  // never two nodes for one clip
     if(!buf) return null;
     const src = ctx.createBufferSource();
@@ -85,7 +85,7 @@ function makeDojoAudio(opts){
       LIVE.delete(n);
       if(!LIVE.size && playing){ playing = false; onstate(); }
     };
-    src.start(when, 0);
+    src.start(when, offset || 0);
     LIVE.add(n);
     return n;
   }
@@ -198,6 +198,52 @@ function makeDojoAudio(opts){
     return playing;
   }
 
+  /* ---- extend: add to a mix that is already sounding, in step with it ----
+     play() replaces everything and starts from zero. That is right when the
+     question changes and wrong when it has not: Blend's A/B needs the clips you
+     did NOT hear brought in underneath the ones you did, silent, so that
+     switching sides is a gain ramp over music that never stopped. A new source
+     starts at the buffer position the running loop is already at, so it lands
+     in phase rather than at the top of the phrase.
+
+     It assumes what the material guarantees: every clip of a set is the same
+     length, bounced from one project. Anything shorter is wrapped by the
+     modulo and would sit out of phase. */
+  async function extend(ids, options){
+    const o = options || {};
+    if(!playing || !LIVE.size) return play(ids, o);
+    const mine = ++gen;
+    const want = ids.filter(id => !nodeFor(id));
+    try {
+      if(want.length){
+        loading = true; onstate();
+        const bufs = [];
+        for(const id of want){
+          bufs.push(await decode(id, o.cut || null));
+          if(mine !== gen) return false;         // superseded while decoding
+        }
+        evict();
+        loading = false;
+        const when = ctx.currentTime + LEAD;
+        want.forEach((id, i) => {
+          const b = bufs[i];
+          const at = b.duration ? (((when - startTime) % b.duration) + b.duration) % b.duration : 0;
+          startNode(id, b, when, o.gains ? (id in o.gains ? o.gains[id] : 0) : 1,
+                    o.loop ? b.duration : 0, at);
+        });
+      }
+      if(o.gains) setGains(o.gains);
+    } catch(e){
+      if(mine !== gen) return false;
+      loading = false; failed = e.message;
+      console.error(e);
+      return false;
+    } finally {
+      if(mine === gen) onstate();
+    }
+    return true;
+  }
+
   function stop(){
     gen++;                                       // abandon anything still decoding
     killAll();
@@ -246,7 +292,7 @@ function makeDojoAudio(opts){
   }
 
   return {
-    play, stop, setGains, select, solo, position, levels, ensureCtx,
+    play, extend, stop, setGains, select, solo, position, levels, ensureCtx,
     get playing(){ return playing; },
     get loading(){ return loading; },
     get duration(){ return duration; },

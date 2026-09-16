@@ -44,6 +44,7 @@ const S = {
   phase:   'asking', // asking · marked
   heard:   false,
   asked:   0, correct: 0, streak: 0,
+  recent:  [],       // the instruments of the last few questions, newest first
   held:    null,     // level 3 only: the card in hand, on the tap path
   ab:      null      // {on:'heard'|'picked', ready}
 };
@@ -68,18 +69,44 @@ function arrangeable(set){
          Math.max(...g) - Math.min(...g) <= BLEND_SPAN;
 }
 
+/* How far back an instrument still counts as just-asked. */
+const RECALL = 2;
+
+/* The theme never repeats twice running, and it is weighted by how much it has
+   to offer. Theme 2 can build a question out of nine instruments; theme 5 has
+   three melody parts and only one of them sits at a different octave, so every
+   question it can possibly ask contains its clarinet. Drawing the four evenly
+   would make a quarter of all questions contain that clarinet. */
+const PASSAGE_POOL = BLEND_PASSAGES.flatMap(t => {
+  const n = new Set(partsOf(t, 'melody').map(p => p.instrument)).size;
+  return Array(Math.max(1, Math.round(n / 3))).fill(t);
+});
+let lastPassage = null;
+function nextPassage(){
+  const pool = PASSAGE_POOL.filter(t => t !== lastPassage);
+  return (lastPassage = pick(pool.length ? pool : PASSAGE_POOL));
+}
+
 function buildQuestion(){
-  const passage = pick(BLEND_PASSAGES);
+  const passage = nextPassage();
   const renders = partsOf(passage, 'melody');
   const byInstrument = {};
   renders.forEach(r => (byInstrument[r.instrument] = byInstrument[r.instrument] || []).push(r));
   const names = Object.keys(byInstrument);
 
-  let sounding = null;
-  for(let tries = 0; tries < 240 && !sounding; tries++){
+  /* Four questions running on the same clarinet, bassoon and flute is not four
+     questions. Candidates are scored against what has just been asked and the
+     least repetitive one wins. A theme with few melody instruments cannot
+     always avoid an overlap, which is the other half of why the theme
+     rotates. */
+  const recent = new Set(S.recent.flat());
+  let sounding = null, best = Infinity;
+  for(let tries = 0; tries < 240; tries++){
     const take = shuffle([...names]).slice(0, 2 + ((Math.random() * 3) | 0));
     const set = take.map(n => pick(byInstrument[n]));
-    if(arrangeable(set)) sounding = set;
+    if(!arrangeable(set)) continue;
+    const seen = take.filter(n => recent.has(n)).length;
+    if(seen < best){ sounding = set; best = seen; if(!seen) break; }
   }
   if(!sounding){            // exhaustive fallback: the first pair an octave apart
     const g = renders.filter(r => !r.free);
@@ -88,6 +115,7 @@ function buildQuestion(){
       if(b){ sounding = [a, b]; break; }
     }
   }
+  S.recent = [sounding.map(r => r.instrument), ...S.recent].slice(0, RECALL);
   return { passage, sounding, pool: buildPool(passage, sounding) };
 }
 
@@ -178,6 +206,7 @@ function cardHTML(id, where){
   const dead = S.phase === 'marked' || (!S.heard && where === 'pool');
   const held = S.held === id && where === 'heard';
   return `<button class="bl-card${v ? ' ' + v : ''}${held ? ' is-held' : ''}" data-id="${esc(id)}" data-where="${where}"
+            draggable="${!dead}"
             ${dead ? 'disabled' : ''} aria-pressed="${!!S.picked[id]}" ${held ? 'aria-grabbed="true"' : ''}
             aria-label="${esc(blendName(id))}${S.picked[id] ? ', selected' : ''}">
     <span class="bl-card-art">${blendIcon(id)}</span>
@@ -262,8 +291,8 @@ function paintActions(){
   if(v.extra.length)  bits.push(`${v.extra.map(blendName).join(', ')} ${v.extra.length > 1 ? 'were' : 'was'} not there`);
   if(tiered() && v.placed && v.placed.length < v.graded.length)
     bits.push(`${v.graded.filter(i => !v.placed.includes(i)).map(blendName).join(', ')} in the wrong register`);
-  $('bl-note').textContent = bits.length ? bits.join(' · ') : 'Nothing missed, nothing added.';
-  $('bl-note').classList.toggle('is-ghost', false);
+  $('bl-note').innerHTML = bits.length ? esc(bits.join(' · ')) : '&nbsp;';
+  $('bl-note').classList.toggle('is-ghost', !bits.length);
 }
 
 function render(){ paintChrome(); paintHeard(); paintPool(); paintActions(); paintAB(); paintPlay(); }
@@ -311,35 +340,57 @@ document.addEventListener('click', e => {
   if(S.held){ S.held = null; render(); }
 });
 
-/* drag between tiers at level 3, and tap-a-card-then-tap-a-row for touch */
+/* ---------------------------------------------------------------- drag ---
+   Dragging is a way of ANSWERING, not just of rearranging: a card goes from the
+   grid straight into the row it belongs in, at every level. At levels 1 and 2
+   there is one row and dropping in it means "I hear this"; at level 3 there are
+   three and the row you drop in is your answer about its octave. Dropping back
+   on the grid takes it out again.
+
+   Clicking still works and still means the same thing — at level 3 a click puts
+   the card in the middle row, which you can then drag off. The tap path in
+   #bl-heard covers touch, where none of these events fire at all. */
 let dragging = null;
+const clearOver = () => document.querySelectorAll('.is-over').forEach(el => el.classList.remove('is-over'));
+
+function drop(id, target){
+  if(S.phase !== 'asking' || !S.heard || !id) return;
+  if(target === null) delete S.picked[id];
+  else S.picked[id] = tiered() ? target : true;
+  S.held = null;
+  render();
+}
+
 document.addEventListener('dragstart', e => {
   const c = e.target.closest && e.target.closest('.bl-card');
-  if(!c || c.disabled || !tiered()){ return; }
+  if(!c || c.disabled || S.phase !== 'asking' || !S.heard){ if(e.preventDefault) e.preventDefault(); return; }
   dragging = c.dataset.id;
+  c.classList.add('is-dragging');
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/plain', dragging);
 });
 document.addEventListener('dragover', e => {
-  const t = e.target.closest && e.target.closest('[data-drop]');
-  if(!t || !dragging) return;
+  if(!dragging) return;
+  const t = e.target.closest && e.target.closest('[data-drop], #bl-pool');
+  if(!t) return;
   e.preventDefault();
-  document.querySelectorAll('.is-over').forEach(el => el.classList.remove('is-over'));
-  t.classList.add('is-over');
+  e.dataTransfer.dropEffect = 'move';
+  clearOver();
+  (t.closest('.bl-tier') || t).classList.add('is-over');
 });
 document.addEventListener('drop', e => {
-  const t = e.target.closest && e.target.closest('[data-drop]');
-  document.querySelectorAll('.is-over').forEach(el => el.classList.remove('is-over'));
+  const t = e.target.closest && e.target.closest('[data-drop], #bl-pool');
+  clearOver();
   if(!t || !dragging) return;
   e.preventDefault();
-  S.picked[dragging] = t.dataset.drop;
+  const id = e.dataTransfer.getData('text/plain') || dragging;
+  drop(id, t.id === 'bl-pool' ? null : t.dataset.drop);
   dragging = null;
-  S.held = null;
-  render();
 });
 document.addEventListener('dragend', () => {
   dragging = null;
-  document.querySelectorAll('.is-over').forEach(el => el.classList.remove('is-over'));
+  clearOver();
+  document.querySelectorAll('.is-dragging').forEach(el => el.classList.remove('is-dragging'));
 });
 
 /* -------------------------------------------------------------- transport --- */
@@ -361,9 +412,18 @@ function frame(){
 }
 
 async function playQuestion(){
-  if(BlendAudio.playing){ BlendAudio.stop(); return; }
+  if(BlendAudio.playing){ BlendAudio.stop(); render(); return; }
   const q = S.q;
-  const ok = await BlendAudio.play(q.sounding.map(r => themeClip(q.passage.id, r.file)), { loop:true });
+  /* Once the question is marked this button is the comparison's transport: it
+     brings the whole union back on the side you left the toggle, rather than
+     replaying the question and leaving the toggle pointing at a mix that no
+     longer has any nodes. */
+  const ab = S.phase === 'marked' && S.ab && S.ab.mix ? S.ab : null;
+  const ids = ab ? [...new Set([...ab.mix.heard, ...ab.mix.picked])]
+                 : q.sounding.map(r => themeClip(q.passage.id, r.file));
+  const o = { loop:true };
+  if(ab){ o.gains = {}; ids.forEach(f => o.gains[f] = ab.mix[ab.on].includes(f) ? 1 : 0); }
+  const ok = await BlendAudio.play(ids, o);
   if(S.q !== q || !ok) return;
   S.heard = true;
   render();
@@ -390,7 +450,11 @@ async function check(){
   const union = [...new Set([...A, ...B])];
   const gains = {}; union.forEach(f => gains[f] = A.includes(f) ? 1 : 0);
   const ab = S.ab;
-  const ok = await BlendAudio.play(union, { loop:true, gains });
+  /* The passage does not restart to be marked. Whatever you are hearing keeps
+     running and the clips you did not hear are brought in underneath it,
+     silent, in phase — so the answer arrives without a seam and the switch
+     afterwards is nothing but a gain ramp. */
+  const ok = await BlendAudio.extend(union, { loop:true, gains });
   if(S.ab !== ab || !ok) return;
   ab.ready = true;
   ab.mix = { heard:A, picked:B };
@@ -398,12 +462,57 @@ async function check(){
 }
 
 function setAB(side){
-  if(!S.ab || !S.ab.ready || S.ab.on === side) return;
+  if(!abLive() || S.ab.on === side) return;
   S.ab.on = side;
   const gains = {};
   S.ab.mix[side].forEach(f => gains[f] = 1);
   BlendAudio.setGains(gains);
-  paintAB();
+  /* in place, never a rebuild: the button you just pressed keeps focus, so the
+     arrow keys keep working and nothing under the pointer is replaced */
+  markAB(); syncAB(); paintMix();
+}
+
+/* the comparison is usable only while it is ready AND something is sounding */
+const abLive = () => !!(S.ab && S.ab.ready && S.ab.mix && BlendAudio.playing);
+
+/* which instruments are audible right now — the cards of the rest go quiet, so
+   the difference between the two mixes can be seen as well as heard */
+function soundingNow(){
+  if(S.phase !== 'marked' || !S.ab || !S.ab.mix) return null;
+  const files = new Set(S.ab.mix[S.ab.on]);
+  const ids = new Set();
+  [...heardIds(), ...Object.keys(S.picked)].forEach(id => {
+    const r = renderFor(id) || anyRenderFor(id);
+    if(r && files.has(clipOf(r))) ids.add(id);
+  });
+  return ids;
+}
+function paintMix(){
+  const now = BlendAudio.playing ? soundingNow() : null;
+  document.querySelectorAll('.bl-card').forEach(c => {
+    c.classList.toggle('is-quiet',
+      !!now && /is-(right|wrong|missed|misplaced)/.test(c.className) && !now.has(c.dataset.id));
+  });
+}
+function markAB(){
+  $('bl-ab').querySelectorAll('.bl-ab-btn').forEach(b => {
+    const on = b.dataset.side === S.ab.on;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+}
+/* A dead control that still lights up is worse than a disabled one. The
+   comparison goes flat while its clips are still decoding, and again the moment
+   the transport is stopped — press play and it comes back on the side you left
+   it. */
+function syncAB(){
+  const row = $('bl-ab');
+  if(!row.children.length) return;
+  const live = abLive();
+  row.dataset.state = !S.ab ? '' : !S.ab.ready ? 'loading' : live ? 'live' : 'paused';
+  row.querySelectorAll('.bl-ab-btn').forEach(b => {
+    b.disabled = !live || (b.dataset.side === 'picked' && !S.ab.mix.picked.length);
+  });
 }
 
 function paintAB(){
@@ -414,13 +523,15 @@ function paintAB(){
     <button class="bl-ab-btn${S.ab.on === 'heard' ? ' is-on' : ''}" data-side="heard"
       aria-pressed="${S.ab.on === 'heard'}">What was playing${HEAR_ICON}</button>
     <button class="bl-ab-btn${S.ab.on === 'picked' ? ' is-on' : ''}" data-side="picked"
-      aria-pressed="${S.ab.on === 'picked'}"${S.ab.mix && !S.ab.mix.picked.length ? ' disabled' : ''}
+      aria-pressed="${S.ab.on === 'picked'}"
       >What you picked${HEAR_ICON}</button>` +
     (silent.length ? `<span class="bl-ab-none">${esc(silent.map(blendName).join(', '))} ${
       silent.length > 1 ? 'are' : 'is'} not in this passage at all</span>` : '');
   $('bl-ab').querySelectorAll('.bl-ab-btn').forEach(b => {
     b.onclick = () => setAB(b.dataset.side);
   });
+  syncAB();
+  paintMix();
 }
 
 /* ------------------------------------------------------------------ level --- */
@@ -503,7 +614,7 @@ function next(){
   render();
 }
 
-BlendAudio.onstate = paintPlay;
+BlendAudio.onstate = () => { paintPlay(); syncAB(); paintMix(); };
 $('bl-play').onclick = playQuestion;
 
 document.addEventListener('keydown', e => {

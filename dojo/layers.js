@@ -3,11 +3,10 @@
    ----------------------------------------------------------------------------
    Loads after atlas-data.js, themes.js and layers-data.js, all deferred.
 
-   A real passage plays with four or five parts at once; you drag each one into
-   the job it is doing. Being told you are wrong means the material disagrees
-   with you, not that a quiz was written to: a theme exercise reads each part's
-   role straight out of themes.js, and a Valley Sunrise one reads the piece's
-   own annotations.
+   A passage plays with three to five parts at once; you drag each one into the
+   job it is doing. Being told you are wrong means the material disagrees with
+   you, not that a quiz was written to: each part's role is read straight out of
+   themes.js, where it sits beside the audio it describes.
 
    A CARD IS NOT ALWAYS A CLIP. Theme 5's horn and tuba are one gesture and are
    never used apart, so they arrive as one card playing two clips — which is
@@ -24,17 +23,16 @@ const roleOf = id => LAYER_ROLES.find(r => r.id === id);
 /* ============================================================================
    1. AUDIO
    ----------------------------------------------------------------------------
-   The shared engine from audio.js, with the two settings this mode needs.
+   The shared engine from audio.js, at its own sample rate.
 
-   32 kHz, as the score view uses: twelve stems of this piece decode to 553 MB
-   at 48 kHz, and that constraint is what the whole score view was built around.
-
-   And `cut`, which copies the decoded buffer down to the exercise's bars and
-   drops the full one — a section is ten to sixteen seconds of a 113-second
-   piece, so a five-stem exercise holds about 20 MB instead of 145 MB.
+   It ran at 32 kHz while this mode played Valley Sunrise, whose twelve stems
+   decode to 553 MB at 48 kHz — the constraint the whole score view was built
+   around. A theme part is ten seconds rather than a hundred and thirteen, so
+   sixteen of them cached is about 60 MB at full rate, and a mode about timbre
+   should not be the one throwing away the top octave.
    ============================================================================ */
 
-const LayerAudio = makeDojoAudio({ srcOf: layerSrc, sampleRate:32000, cacheMax:16 });
+const LayerAudio = makeDojoAudio({ srcOf: themeSrc, cacheMax:16 });
 
 /* ============================================================================
    2. THE BOARD
@@ -54,18 +52,12 @@ const S = {
 const stemIds  = () => S.items.map(it => it.id);
 const itemOf   = id => S.items.find(it => it.id === id);
 const answerOf = id => itemOf(id).role;
-const exStart  = () => barTime(S.ex.from);
-const exDur    = () => barTime(S.ex.to) - barTime(S.ex.from);
 const allPlaced = () => stemIds().every(id => S.placed[id]);
 
 /* ------------------------------------------------------------------ cards ---
-   One shape for both kinds of exercise. A theme exercise's roles come from the
-   parts themselves; a Valley Sunrise one's from its answer key. */
+   A card is a part, except where two parts are one gesture and share a pair id;
+   those become one card playing two clips, which is the only way they are used. */
 function buildItems(ex){
-  if(!ex.theme) return Object.keys(ex.answers).map(id => ({
-    id, name:LAYER_STEMS[id].name, icon:layerStemIcon(id),
-    clips:[id], role:ex.answers[id], gain:1
-  }));
   const t = themeById(ex.theme);
   const seen = new Set(), out = [];
   ex.use.forEach(file => {
@@ -118,9 +110,7 @@ function cardHTML(id){
 
 function render(){
   const ex = S.ex;
-  $('ly-eyebrow').textContent = ex.from
-    ? `Layers · ${ex.section} · bars ${ex.from}–${ex.to - 1}`
-    : `Layers · ${ex.section}`;
+  $('ly-eyebrow').textContent = `Layers · ${ex.section}`;
   $('ly-display').textContent = S.checked
     ? `${score()} of ${stemIds().length} right`
     : 'What is each one doing?';
@@ -128,9 +118,10 @@ function render(){
 
   const loose = stemIds().filter(id => !S.placed[id]);
   const tray = $('ly-tray');
-  tray.innerHTML = loose.length
-    ? loose.map(cardHTML).join('')
-    : `<p class="ly-tray-empty">All placed — check them, or take one back out.</p>`;
+  /* Nothing is written here when the tray empties. Its height is held either
+     way, so the board does not move, and an empty space that used to hold cards
+     needs no caption saying so. */
+  tray.innerHTML = loose.length ? loose.map(cardHTML).join('') : '';
   tray.toggleAttribute('data-empty', !loose.length);
 
   $('ly-zones').innerHTML = LAYER_ROLES.map(r => {
@@ -281,9 +272,8 @@ async function playPassage(){
   if(LayerAudio.playing){ LayerAudio.stop(); S.soloed = null; render(); return; }
   const ex = S.ex;
   $('ly-note').textContent = 'Decoding the passage…';
-  const o = { loop:true, gains:mixMap(null) };
-  if(ex.from) o.cut = { start:exStart(), dur:exDur() };
-  const ok = await LayerAudio.play(S.items.flatMap(it => it.clips), o);
+  const ok = await LayerAudio.play(S.items.flatMap(it => it.clips),
+                                   { loop:true, gains:mixMap(null) });
   if(S.ex !== ex) return;
   if(!ok){ $('ly-note').textContent = LayerAudio.error || ''; return; }
   S.heard = true;

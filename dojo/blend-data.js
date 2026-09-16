@@ -19,9 +19,9 @@ const BLEND_PASSAGES = THEMES.filter(t => {
 });
 
 const BLEND_LEVELS = [
-  { id:1, name:'Handful',   note:'Six instruments to choose from',        pool:'few'  },
-  { id:2, name:'Orchestra', note:'Every instrument of every family here', pool:'all'  },
-  { id:3, name:'Placement', note:'And where each one sits',               pool:'all', tiers:true }
+  { id:1, name:'Level 1', note:'Easier options to choose from',      pool:'few'  },
+  { id:2, name:'Level 2', note:'No guidelines — trust your ear',     pool:'all'  },
+  { id:3, name:'Level 3', note:'Pick the instrument and its octave', pool:'all', tiers:true }
 ];
 
 /* Level 3's three rows, named for what they say about each other rather than
