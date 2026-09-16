@@ -199,6 +199,84 @@ code{font-family:inherit;color:var(--gold)}
 .pd-sel:hover{border-color:var(--hair-gold);color:#fff}
 .pd-sel option{background:#0E1420;color:var(--text)}
 
+/* ===========================================================================
+   STEPPED LESSON — playground left, one micro level at a time on the right
+   The page height becomes max(widget, step) instead of widget + prose + quest
+   + quiz stacked. The widget mounts once per lesson and stays live while the
+   right column steps, so the demonstration is there while you read about it.
+   =========================================================================== */
+.lwrap{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:0 30px;
+  display:flex;flex-direction:column;width:100%}
+
+/* On a lesson the page is exactly the viewport and never scrolls. The chain is
+   flex the whole way down rather than a magic nav height, so nothing depends on
+   guessing how tall the chrome happens to be. */
+@media (min-width:1001px){
+  html.lesson-view{overflow:hidden}
+  html.lesson-view body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  html.lesson-view #view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  html.lesson-view .lwrap{flex:1 1 auto;min-height:0}
+}
+.lhead{flex:0 0 auto;padding:14px 0 0}
+.lhead .crumb{padding:0}
+.lhead h1{font-size:clamp(21px,2.4vw,28px);line-height:1.12;margin:4px 0 0}
+
+.lcols{flex:1 1 auto;display:grid;grid-template-columns:1fr minmax(330px,392px);
+  gap:30px;align-items:start;padding:14px 0 0;min-height:0}
+.lcols{align-items:stretch}
+.lplay{min-width:0;align-self:center;max-height:100%;overflow-y:auto;width:100%}
+.lside{display:flex;flex-direction:column;min-height:0}
+
+.rail{display:flex;align-items:center;gap:5px;flex:0 0 auto;padding-bottom:3px}
+.rail button{flex:1 1 0;height:4px;border-radius:2px;background:rgba(255,255,255,.09);
+  padding:0;min-width:7px;transition:background .3s,transform .2s}
+.rail button:hover{transform:scaleY(1.8)}
+.rail button.seen{background:rgba(212,160,74,.42)}
+.rail button.on{background:var(--gold)}
+.rail-n{flex:0 0 auto;margin-left:10px;font-size:9.5px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--faint);white-space:nowrap}
+
+.lstep{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;
+  padding:14px 0;min-height:0;overflow-y:auto;scrollbar-width:thin}
+.lstep>div{width:100%}
+.step-h{font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;
+  font-size:22px;line-height:1.22;letter-spacing:-.3px;margin:7px 0 12px}
+.lstep .prose p{font-size:15px;line-height:1.62;margin-bottom:13px}
+.lstep .prose p:last-child{margin-bottom:0}
+.lstep .ex{gap:7px}
+.lstep .ex-row{grid-template-columns:1fr;gap:5px;padding:12px 15px}
+.lstep .ex-row p{font-size:13.5px}
+.lstep .q{margin-bottom:0;padding:0;border:none;background:none}
+.lstep .q>p{font-size:16px;margin-bottom:12px}
+.lstep .opt{font-size:13.5px;padding:10px 13px}
+.lstep .why{font-size:12.5px}
+
+.lnav{flex:0 0 auto;display:flex;align-items:center;gap:9px;
+  padding:12px 0 18px;border-top:1px solid var(--hair)}
+.lnav .sp{flex:1 1 auto}
+.lnav .hint{font-size:10.5px;color:#3E404A}
+.btn.next{border-color:rgba(212,160,74,.45);color:#fff;background:rgba(212,160,74,.1)}
+.btn.next:hover{background:rgba(212,160,74,.2)}
+.btn:disabled{opacity:.28;cursor:default}
+.btn:disabled:hover{border-color:var(--hair);color:var(--dim)}
+
+.step-try .claim{font-size:17px;margin:6px 0 0}
+.step-end{text-align:center}
+.step-end .tick{width:42px;height:42px;border-radius:100px;margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+  border:1px solid rgba(95,184,154,.4);color:var(--ok);background:rgba(95,184,154,.08)}
+.step-end h2{font-family:'Playfair Display',Georgia,serif;font-size:23px;color:#fff;font-weight:500}
+.step-end .src{margin:12px 0 0;font-size:11px;color:#3E404A;font-weight:300;line-height:1.6}
+.step-end .src em{color:var(--faint);font-style:italic}
+.step-end .go{margin-top:18px}
+
+@media (max-width:1000px){
+  .lwrap{padding:0 20px}
+  .lcols{grid-template-columns:1fr;gap:16px;padding-bottom:26px}
+  .lplay{max-height:none;overflow:visible}
+  .lstep{padding:12px 0;overflow:visible}
+}
+
 @media (max-width:860px){
   .w-grid{grid-template-columns:1fr}
   .w-side{border-left:none;border-top:1px solid var(--hair)}
@@ -274,6 +352,12 @@ const LESSONS = [
   demo:'overtones',
   demoNote:'Click any bar to silence that partial. The fundamental alone is a bare sine wave. Everything that makes it sound like an instrument is sitting above it.',
   source:'Core Pillars of Music — Overtones / A Look At The Overtones',
+  beats:[
+    { t:'One note is never one note', p:[0] },
+    { t:'The string vibrates in halves, thirds, quarters', p:[1] },
+    { t:'Wide at the bottom, tight at the top', p:[2] },
+    { t:'The two rules that follow', p:[3] }
+  ],
   body:[
     'Most sounds are more complex than they appear. When you pluck a guitar string you hear a note, but inside that note is a rainbow of overtones, and they are what create the timbre and the character of the sound.',
     'The fundamental is the root frequency. The rate at which the string vibrates determines the pitch — an A at 110Hz is a string vibrating 110 times a second. But the string does not only vibrate along its whole length. It also vibrates in halves, thirds, quarters and so on, and each division produces its own pitch. The first overtone is the fundamental doubled, an octave above at 220Hz. The next is the fundamental tripled, at 330Hz. Then 440, then 550.',
@@ -2080,6 +2164,37 @@ function paintProgress() {
 /* ---------------------------------------------------------------------------
    VIEWS
    --------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------
+   STEPS
+   A lesson is a run of micro levels in the right-hand column: try it, then one
+   idea at a time, then the quest, then one question at a time, then the close.
+   `beats` on a lesson names and groups the body paragraphs; a lesson without
+   one has them grouped by length so nothing has to be authored twice.
+   --------------------------------------------------------------------------- */
+const wordsIn = html => html.replace(/<[^>]+>/g, ' ').trim().split(/\s+/).length;
+
+function autoBeats(l) {
+  const out = []; let cur = [], n = 0;
+  l.body.forEach((p, i) => {
+    cur.push(i); n += wordsIn(p);
+    if (n >= 80) { out.push({ p: cur }); cur = []; n = 0; }
+  });
+  if (cur.length) out.push({ p: cur });
+  return out;
+}
+
+function stepsOf(l) {
+  const steps = [{ type: 'try', label: 'Try it' }];
+  (l.beats || autoBeats(l)).forEach(b => steps.push({ type: 'read', beat: b, label: 'Why' }));
+  steps.push({ type: 'do', label: 'Practise' });
+  l.quiz.forEach((q, qi) => steps.push({ type: 'quiz', qi, label: 'Check' }));
+  steps.push({ type: 'end', label: 'Done' });
+  return steps;
+}
+
+/* ---------------------------------------------------------------------------
+   VIEWS
+   --------------------------------------------------------------------------- */
 function viewModule(mod) {
   const list = LESSONS.filter(l => l.module === mod.id);
   return `<div class="wrap">
@@ -2101,105 +2216,154 @@ function viewModule(mod) {
 
 function viewLesson(l) {
   const mod = MODULES.find(m => m.id === l.module);
-  const sibs = LESSONS.filter(x => x.module === l.module);
-  const i = sibs.indexOf(l), prev = sibs[i - 1], next = sibs[i + 1];
-  const p = Progress.get(l.id);
-
-  return `<div class="wrap"><article class="lesson">
-    <nav class="crumb"><a href="#/${mod.id}">${esc(mod.title)}</a><i>/</i><span>${esc(l.title)}</span></nav>
-    <div class="eyebrow lesson-n">Lesson ${l.n}</div>
-    <h1>${esc(l.title)}</h1>
-    <p class="claim">${esc(l.claim)}</p>
-
-    <section class="sec">
-      <div class="sec-h"><b>Try it</b><span></span></div>
-      <div class="demo">
-        <div id="demo-host"></div>
-        <p class="demo-note">${esc(l.demoNote)}</p>
+  const steps = stepsOf(l);
+  return `<div class="lwrap">
+    <div class="lhead">
+      <nav class="crumb"><a href="#/${mod.id}">${esc(mod.title)}</a><i>/</i><span>Lesson ${l.n}</span></nav>
+      <h1>${esc(l.title)}</h1>
+    </div>
+    <div class="lcols">
+      <div class="lplay">
+        <div class="demo">
+          <div id="demo-host"></div>
+          <p class="demo-note">${esc(l.demoNote)}</p>
+        </div>
       </div>
-    </section>
-
-    <section class="sec">
-      <div class="sec-h"><b>Why it works</b><span></span></div>
-      <div class="prose">${l.body.map(t => `<p>${t}</p>`).join('')}</div>
-    </section>
-
-    <section class="sec">
-      <div class="sec-h"><b>Practise</b><span></span></div>
-      <div class="ex">${['beginner','intermediate','advanced'].map(k =>
-        `<div class="ex-row"><b>${k}</b><p>${esc(l.ex[k])}</p></div>`).join('')}</div>
-      <div class="ex-done">
-        <button id="ex-btn" aria-pressed="${!!p.exerciseDone}">
-          <span>${p.exerciseDone ? '✓' : '○'}</span> I have done this
-        </button>
-      </div>
-    </section>
-
-    <section class="sec">
-      <div class="sec-h"><b>Check yourself</b><span></span></div>
-      ${l.quiz.map((q, qi) => `
-        <div class="q" data-q="${qi}">
-          <p>${esc(q.q)}</p>
-          <div class="opts">${q.o.map((o, oi) =>
-            `<button class="opt" data-o="${oi}">${esc(o)}</button>`).join('')}</div>
-          <div class="why"><b>Why:</b> ${esc(q.why)}</div>
-        </div>`).join('')}
-    </section>
-
-    <p class="source">Condensed from <em>${esc(l.source)}</em> — Cinematic Music Accelerator.</p>
-
-    <nav class="pager">
-      ${prev ? `<a href="#/${mod.id}/${prev.id}"><span>Previous</span><b>${esc(prev.title)}</b></a>` : '<span></span>'}
-      ${next ? `<a class="r" href="#/${mod.id}/${next.id}"><span>Next</span><b>${esc(next.title)}</b></a>` : ''}
-    </nav>
-  </article></div>`;
+      <aside class="lside">
+        <div class="rail" id="rail">
+          ${steps.map((s, i) => `<button data-s="${i}" aria-label="Step ${i + 1}: ${s.label}"></button>`).join('')}
+          <span class="rail-n" id="rail-n"></span>
+        </div>
+        <div class="lstep" id="lstep"></div>
+        <div class="lnav">
+          <button class="btn" id="st-back">Back</button>
+          <span class="sp"></span>
+          <span class="hint" id="st-hint"></span>
+          <button class="btn next" id="st-next">Next</button>
+        </div>
+      </aside>
+    </div>
+  </div>`;
 }
 
 /* ---------------------------------------------------------------------------
    LESSON BEHAVIOUR
+   The widget mounts once and lives for the whole lesson; only the right
+   column changes as the reader steps.
    --------------------------------------------------------------------------- */
-let activeHost = null;
+let activeHost = null, curLesson = null, curSteps = [], curStep = 0, answers = {};
 
 function initLesson(l) {
-  /* widget */
+  curLesson = l; curSteps = stepsOf(l); curStep = 0; answers = {};
+
   const host = $('demo-host');
   activeHost = host;
   if (WIDGETS[l.demo]) {
     try { WIDGETS[l.demo](host, l); }
     catch (err) { console.error('[accelerator] widget failed:', l.demo, err); missing(host, l.demo); }
-  } else {
-    missing(host, l.demo);
-  }
+  } else missing(host, l.demo);
 
-  /* exercise */
-  const b = $('ex-btn');
-  b.onclick = () => {
-    const v = b.getAttribute('aria-pressed') !== 'true';
-    b.setAttribute('aria-pressed', String(v));
-    b.querySelector('span').textContent = v ? '✓' : '○';
-    Progress.set(l.id, 'exerciseDone', v);
+  $('rail').onclick = e => {
+    const b = e.target.closest('button[data-s]'); if (!b) return;
+    showStep(+b.dataset.s);
   };
+  $('st-back').onclick = () => showStep(curStep - 1);
+  $('st-next').onclick = () => {
+    if (curStep === curSteps.length - 1) {
+      const sibs = LESSONS.filter(x => x.module === l.module);
+      const next = sibs[sibs.indexOf(l) + 1];
+      navigate(next ? `/${l.module}/${next.id}` : `/${l.module}`);
+    } else showStep(curStep + 1);
+  };
+  showStep(0);
+}
 
-  /* quiz */
-  document.querySelectorAll('.q').forEach((qEl, qi) => {
-    const q = l.quiz[qi];
-    qEl.querySelectorAll('.opt').forEach((btn, oi) => {
+function showStep(i) {
+  const l = curLesson;
+  if (!l || i < 0 || i >= curSteps.length) return;
+  curStep = i;
+  const s = curSteps[i], box = $('lstep');
+
+  if (s.type === 'try') {
+    box.innerHTML = `<div class="step-try">
+      <div class="eyebrow">Try it first</div>
+      <p class="claim">${esc(l.claim)}</p></div>`;
+  } else if (s.type === 'read') {
+    box.innerHTML = `<div>
+      <div class="eyebrow">Why it works</div>
+      ${s.beat.t ? `<h2 class="step-h">${esc(s.beat.t)}</h2>` : '<div style="height:8px"></div>'}
+      <div class="prose">${s.beat.p.map(k => `<p>${l.body[k]}</p>`).join('')}</div></div>`;
+  } else if (s.type === 'do') {
+    const p = Progress.get(l.id);
+    box.innerHTML = `<div>
+      <div class="eyebrow">Practise</div>
+      <h2 class="step-h">Take it to your own work</h2>
+      <div class="ex">${['beginner','intermediate','advanced'].map(k =>
+        `<div class="ex-row"><b>${k}</b><p>${esc(l.ex[k])}</p></div>`).join('')}</div>
+      <div class="ex-done">
+        <button id="ex-btn" aria-pressed="${!!p.exerciseDone}">
+          <span>${p.exerciseDone ? '✓' : '○'}</span> I have done this
+        </button></div></div>`;
+    const b = $('ex-btn');
+    b.onclick = () => {
+      const v = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(v));
+      b.querySelector('span').textContent = v ? '✓' : '○';
+      Progress.set(l.id, 'exerciseDone', v);
+    };
+  } else if (s.type === 'quiz') {
+    const q = l.quiz[s.qi], picked = answers[s.qi];
+    box.innerHTML = `<div>
+      <div class="eyebrow">Check yourself · ${s.qi + 1} of ${l.quiz.length}</div>
+      <div class="q" data-q="${s.qi}" style="margin-top:10px">
+        <p>${esc(q.q)}</p>
+        <div class="opts">${q.o.map((o, oi) => {
+          const cls = picked === undefined ? '' : oi === q.a ? ' right' : oi === picked ? ' wrong' : '';
+          return `<button class="opt${cls}" data-o="${oi}"${picked === undefined ? '' : ' disabled'}>${esc(o)}</button>`;
+        }).join('')}</div>
+        <div class="why${picked === undefined ? '' : ' on'}"><b>Why:</b> ${esc(q.why)}</div>
+      </div></div>`;
+    box.querySelectorAll('.opt').forEach((btn, oi) => {
       btn.onclick = () => {
-        qEl.querySelectorAll('.opt').forEach(x => x.disabled = true);
-        btn.classList.add(oi === q.a ? 'right' : 'wrong');
-        if (oi !== q.a) qEl.querySelectorAll('.opt')[q.a].classList.add('right');
-        qEl.querySelector('.why').classList.add('on');
-        const all = [...document.querySelectorAll('.q')]
-          .every(x => x.querySelector('.opt.right, .opt.wrong'));
-        if (all) {
-          const pass = [...document.querySelectorAll('.q')]
-            .every(x => !x.querySelector('.opt.wrong'));
-          Progress.set(l.id, 'quizPassed', pass);
-        }
+        answers[s.qi] = oi;
+        Progress.set(l.id, 'quizPassed',
+          l.quiz.every((qq, k) => answers[k] === qq.a));
+        showStep(i);
       };
     });
+  } else {
+    const sibs = LESSONS.filter(x => x.module === l.module);
+    const next = sibs[sibs.indexOf(l) + 1];
+    const p = Progress.get(l.id);
+    const right = l.quiz.filter((q, k) => answers[k] === q.a).length;
+    box.innerHTML = `<div class="step-end">
+      <div class="tick">✓</div>
+      <h2>${esc(l.title)}</h2>
+      <p class="src">${right} of ${l.quiz.length} right${p.exerciseDone ? ' · quest marked done' : ''}<br>
+        Condensed from <em>${esc(l.source)}</em> — Cinematic Music Accelerator.</p>
+      <a class="btn gold go" href="#/${l.module}${next ? '/' + next.id : ''}">${
+        next ? 'Next: ' + esc(next.title) : 'Back to ' + esc(MODULES.find(m => m.id === l.module).title)}</a>
+    </div>`;
+  }
+
+  const seen = Math.max(Progress.get(l.id).step || 0, i);
+  Progress.set(l.id, 'step', seen);
+  [...$('rail').querySelectorAll('button')].forEach((b, k) => {
+    b.className = k === i ? 'on' : k <= seen ? 'seen' : '';
   });
+  $('rail-n').textContent = `${i + 1} / ${curSteps.length} · ${s.label}`;
+  $('st-back').disabled = i === 0;
+  $('st-next').textContent = i === curSteps.length - 1 ? 'Finish' : 'Next';
+  $('st-hint').textContent = s.type === 'quiz' && answers[s.qi] === undefined ? 'Pick an answer' : '';
+  box.scrollTop = 0;
 }
+
+document.addEventListener('keydown', e => {
+  if (!curLesson || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); showStep(curStep + 1); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); showStep(curStep - 1); }
+});
 
 function missing(host, type) {
   host.innerHTML = `<div class="w-missing">
@@ -2228,6 +2392,7 @@ function route(path) {
   activeHost = null;
 
   const v = $('view');
+  document.documentElement.classList.toggle('lesson-view', !!lesson);
   if (lesson) {
     v.innerHTML = viewLesson(lesson);
     initLesson(lesson);
