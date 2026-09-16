@@ -67,6 +67,19 @@ body{background:#080C14;margin:0}
   padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}
 .atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
 .atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
+/* The breadcrumb, lifted from atlas.css so it reads identically: same size,
+   same 2.2px tracking, same 14px gaps, same faint slash. It sits after the
+   module switcher behind a hairline, exactly as ORCHESTRAL / WOODWINDS does
+   in the atlas — a way back to the modes menu and a note of which mode you
+   are in. The modes menu itself has none, the same as the atlas home. */
+.atl-nav-sep{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
+.atl-nav-crumb{display:flex;min-width:0}
+.atl-crumb{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:2.2px;
+  text-transform:uppercase;font-weight:700;color:var(--text-dim);
+  flex-wrap:nowrap;overflow:hidden}
+.atl-crumb a:hover{color:var(--gold)}
+.atl-crumb i{font-style:normal;color:#3E404A}
+
 .atl-nav-right{display:flex;align-items:center;gap:14px}
 .dj-score{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--text-dim);
   font-variant-numeric:tabular-nums;letter-spacing:.4px}

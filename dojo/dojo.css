@@ -48,17 +48,21 @@
           mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat}
 .dj-play[data-state="loading"]{opacity:.55;pointer-events:none}
 
-.dj-meter{width:148px;height:2px;border-radius:2px;background:rgba(255,255,255,.07);
+/* No rule under the play button at rest — the track is transparent, so the
+   only thing that ever draws here is the gold fill while a clip is running.
+   Belts keeps it where Layers dropped it entirely, because a belt clip plays
+   once and how much is left is real information; a Layers passage loops. */
+.dj-meter{width:148px;height:2px;border-radius:2px;background:transparent;
   overflow:hidden;margin-top:14px}
 .dj-meter i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);
   transition:transform .1s linear}
 
 /* --- answers: one per row, centred --- */
 .dj-options{display:flex;flex-direction:column;gap:9px;width:100%;margin-top:30px}
-.dj-opt{display:flex;align-items:center;justify-content:center;
-  min-height:52px;padding:8px 18px;border:1px solid var(--hair);border-radius:11px;
+.dj-opt{position:relative;display:flex;align-items:center;justify-content:center;
+  min-height:52px;padding:8px 40px;border:1px solid var(--hair);border-radius:11px;
   background:rgba(255,255,255,.015);font-size:16px;font-weight:400;color:var(--text);
-  transition:border-color .2s,background .2s,color .2s,opacity .2s}
+  transition:border-color .2s,background .2s,color .2s,opacity .2s,box-shadow .2s}
 .dj-opt:not(:disabled):hover{border-color:var(--hair-gold);background:rgba(212,160,74,.07);color:#fff}
 .dj-opt:disabled{cursor:default}
 .dj-options[data-waiting] .dj-opt{opacity:.35}
@@ -70,17 +74,20 @@
 .dj-result{width:100%;display:flex;flex-direction:column;align-items:center}
 .dj-result:empty{display:none}
 
-/* ⭐ the A/B. Two clips already running; these only move the gains. */
-.dj-ab{width:100%;margin-top:26px;display:flex;flex-direction:column;align-items:center;gap:9px}
-.dj-ab-label{font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
-  color:var(--gold);opacity:.8;margin-bottom:3px}
-.dj-ab-btn{width:100%;min-height:48px;padding:8px 18px;border:1px solid var(--hair);border-radius:11px;
-  background:rgba(0,0,0,.25);font-size:15px;color:var(--text-dim);
-  display:flex;align-items:center;justify-content:center;
-  transition:border-color .2s,background .2s,color .2s,box-shadow .2s}
-.dj-ab-btn:hover{border-color:var(--hair-gold);color:#fff}
-.dj-ab-btn.is-on{border-color:var(--gold);background:rgba(212,160,74,.15);color:#fff;
-  box-shadow:0 0 0 3px rgba(212,160,74,.07)}
+/* ⭐ the A/B, living in the two rows it is about. The clips are already
+   running, so these only move the gains; the bars on the right say which one
+   is audible. A second pair of buttons underneath used to push the page down
+   by its own height every time you were wrong. */
+.dj-opt.is-ab{cursor:pointer}
+.dj-opt.is-ab:hover{box-shadow:inset 0 0 0 1px var(--hair-gold)}
+.dj-hear{position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  width:17px;height:17px;display:flex;color:var(--text-faint);opacity:.5;
+  transition:color .2s,opacity .2s,transform .2s}
+.dj-hear svg{width:100%;height:100%}
+.dj-opt.is-ab:hover .dj-hear{color:var(--gold);opacity:.9}
+/* The lit bars alone say which one is audible. An outline here as well fought
+   the green and the red that say which one was right. */
+.dj-opt.is-hearing .dj-hear{color:var(--gold);opacity:1;transform:translateY(-50%) scale(1.15)}
 
 .dj-next{margin-top:26px;padding:12px 32px;border-radius:100px;border:1px solid var(--gold);
   background:var(--gold);color:#0A0C14;font-size:14px;font-weight:500;

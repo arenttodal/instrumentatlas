@@ -28,40 +28,47 @@
   -webkit-mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat;
           mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat}
 .dj-play[data-state="loading"]{opacity:.55;pointer-events:none}
-.dj-meter{width:148px;height:2px;border-radius:2px;background:rgba(255,255,255,.07);
-  overflow:hidden;margin-top:14px}
-.dj-meter i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);
-  transition:transform .1s linear}
-.dj-note{font-size:12px;color:var(--text-faint);margin-top:10px;min-height:18px;max-width:52ch}
+/* No progress line under the play button here. The passage loops until you
+   stop it, so a bar filling and resetting says nothing you need — unlike the
+   belts mode, where the clip plays once and how much is left is real. */
+.dj-note{font-size:12px;color:var(--text-faint);margin-top:14px;min-height:18px;max-width:52ch}
 
 /* --- the tray of instruments still to place --- */
+/* The tray has no box. At rest it is just the cards, sitting in the space
+   above the zones; the outline only appears while something is being dragged,
+   which is the only moment it needs to read as a target. */
 .ly-tray{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-  width:100%;margin-top:26px;padding:12px;min-height:104px;
-  border:1px dashed var(--hair);border-radius:12px;
-  transition:border-color .2s,background .2s}
-.ly-tray.is-over{border-color:var(--hair-gold);background:rgba(212,160,74,.04)}
-.ly-tray[data-empty]{min-height:0;padding:11px 12px}
+  width:100%;margin-top:30px;padding:10px;min-height:96px;border-radius:14px;
+  box-shadow:inset 0 0 0 1px transparent;
+  transition:box-shadow .2s,background .2s}
+.ly-tray.is-over{box-shadow:inset 0 0 0 1px var(--hair-gold);background:rgba(212,160,74,.04)}
+.ly-tray[data-empty]{min-height:0;padding:6px}
 .ly-tray-empty{align-self:center;margin:auto;font-size:12px;color:var(--text-faint)}
 
 /* --- the three zones --- */
-.ly-zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;
-  width:100%;margin-top:14px}
-.ly-zone{display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:12px;
-  background:rgba(255,255,255,.015);overflow:hidden;
-  transition:border-color .2s,background .2s}
-.ly-zone.is-over{border-color:var(--role);background:color-mix(in srgb,var(--role) 8%,transparent)}
-@supports not (background:color-mix(in srgb,red 8%,transparent)){
-  .ly-zone.is-over{background:rgba(255,255,255,.05)}
-}
-.ly-zone header{display:flex;flex-direction:column;gap:2px;padding:12px 14px 11px;
-  border-bottom:1px solid var(--hair);
-  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
-.ly-zone header b{font-size:11px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;
-  color:var(--role)}
-.ly-zone header span{font-size:11.5px;color:var(--text-faint);font-weight:300;letter-spacing:.2px}
+/* Three regions, not three boxes. The only thing drawn at rest is the label
+   and a barely-there tint in the role's own colour — no outer border, nothing
+   ruled between the label and the area under it. The outline appears while a
+   card is in the air, which is the only moment a target needs edges. */
+.ly-zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;
+  width:100%;margin-top:22px}
+.ly-zone{display:flex;flex-direction:column;gap:12px}
+.ly-zone-label{font-size:11px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;
+  color:var(--role);opacity:.9}
 .ly-slot{flex:1 1 auto;display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:center;
-  gap:9px;padding:12px;min-height:128px}
-.ly-slot-empty{align-self:center;margin:auto;font-size:11.5px;color:#3C3E48;letter-spacing:.3px}
+  gap:9px;padding:14px 10px;min-height:132px;border-radius:14px;
+  background:color-mix(in srgb,var(--role) 5%,transparent);
+  box-shadow:inset 0 0 0 1px transparent;
+  transition:box-shadow .2s,background .2s}
+.ly-zone.is-over .ly-slot{background:color-mix(in srgb,var(--role) 13%,transparent);
+  box-shadow:inset 0 0 0 1px var(--role)}
+@supports not (background:color-mix(in srgb,red 5%,transparent)){
+  .ly-slot{background:rgba(255,255,255,.022)}
+  .ly-zone.is-over .ly-slot{background:rgba(255,255,255,.07)}
+}
+/* cards pack to the top of a region; the placeholder sits in the middle of it */
+.ly-slot[data-empty]{align-content:center}
+.ly-slot-empty{font-size:11.5px;color:#3C3E48;letter-spacing:.3px}
 
 /* --- the instrument card: the atlas .atl-sc, with a solo control --- */
 .ly-card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;
@@ -103,17 +110,14 @@
 .dj-link{font-size:13px;color:var(--text-faint);border-bottom:1px solid transparent;
   transition:color .2s,border-color .2s}
 .dj-link:hover{color:var(--gold);border-color:var(--hair-gold)}
-.ly-back{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-  color:var(--text-faint);transition:color .2s}
-.ly-back:hover{color:var(--gold)}
 
 /* --- narrow ---
    The zones stack rather than shrink: three columns of 108px cards do not fit
    a phone, and a card narrower than its own name is not a card. Dragging is
    gone on touch anyway — tap a card, tap a zone. */
 @media (max-width:860px){
-  .ly-zones{grid-template-columns:1fr;gap:10px}
-  .ly-slot{min-height:88px}
+  .ly-zones{grid-template-columns:1fr;gap:16px}
+  .ly-slot{min-height:92px}
   .dj-score{display:none}
 }
 @media (max-width:760px){

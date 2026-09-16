@@ -245,10 +245,13 @@ function render(){
 
   $('ly-zones').innerHTML = LAYER_ROLES.map(r => {
     const inZone = stemIds().filter(id => S.placed[id] === r.id);
+    /* the hint is the accessible name rather than a subtitle on screen: it is
+       useful to someone who cannot see the colour, and clutter to everyone
+       else once they have read it twice */
     return `<section class="ly-zone" data-role="${esc(r.id)}" style="--role:${r.colour}"
-             aria-label="${esc(r.name)}">
-      <header><b>${esc(r.name)}</b><span>${esc(r.hint)}</span></header>
-      <div class="ly-slot">${inZone.map(cardHTML).join('') ||
+             aria-label="${esc(r.name)} — ${esc(r.hint)}">
+      <div class="ly-zone-label">${esc(r.name)}</div>
+      <div class="ly-slot"${inZone.length ? '' : ' data-empty'}>${inZone.map(cardHTML).join('') ||
         `<p class="ly-slot-empty">Drop here</p>`}</div>
     </section>`;
   }).join('');
@@ -382,15 +385,6 @@ function paintPlay(){
   if(LayerAudio.error) $('ly-note').textContent = LayerAudio.error;
 }
 
-let lastBar = -1;
-function frame(){
-  const f = LayerAudio.playing && LayerAudio.duration
-    ? LayerAudio.position() / LayerAudio.duration : 0;
-  const q = Math.round(f * 400);
-  if(q !== lastBar){ lastBar = q; $('ly-meter').style.transform = `scaleX(${f})`; }
-  requestAnimationFrame(frame);
-}
-
 async function playPassage(){
   if(LayerAudio.playing){ LayerAudio.stop(); S.soloed = null; render(); return; }
   const ex = S.ex;
@@ -415,7 +409,6 @@ function load(i){
   S.checked = false;
   S.heard = false;
   $('ly-note').textContent = '';
-  $('ly-meter').style.transform = 'scaleX(0)';
   render();
 }
 
@@ -426,4 +419,3 @@ window.addEventListener('scroll', () => {
 }, { passive:true });
 
 load(0);
-requestAnimationFrame(frame);
