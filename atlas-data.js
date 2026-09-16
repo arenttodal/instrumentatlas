@@ -25,7 +25,7 @@
 const COLLECTION = {
   id:'orchestral', name:'Orchestral',
   title:['The instruments of', 'the orchestra'],
-  lede:'Every instrument in the orchestra: how it sounds, where it sits, what it blends with, and where it stops. Built as a working reference for composers, not a museum catalogue.'
+  lede:'An interactive guide to the orchestra and its instruments and families. Learn about the characteristics, tone colors, limitations and possibilities - with sound examples and interactive explanations.'
 };
 
 /* Six ensemble tiers, used by every family page.
