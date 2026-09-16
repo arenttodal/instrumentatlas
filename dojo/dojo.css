@@ -54,6 +54,7 @@
    once and how much is left is real information; a Layers passage loops. */
 .dj-meter{width:148px;height:2px;border-radius:2px;background:transparent;
   overflow:hidden;margin-top:14px}
+.dj-meter[data-idle]{visibility:hidden}   /* keeps its 16px; only the ink goes */
 .dj-meter i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);
   transition:transform .1s linear}
 
@@ -71,8 +72,11 @@
 .dj-opt.is-off{opacity:.28}
 
 /* --- result --- */
+/* Always holds a Next and a link row, drawn as ghosts in the phases that have
+   no use for them (see resultRows in dojo.js), so the block cannot change
+   height between asking, right and wrong. */
 .dj-result{width:100%;display:flex;flex-direction:column;align-items:center}
-.dj-result:empty{display:none}
+.is-ghost{visibility:hidden;pointer-events:none}
 
 /* ⭐ the A/B, living in the two rows it is about. The clips are already
    running, so these only move the gains; the bars on the right say which one
@@ -90,11 +94,11 @@
 .dj-opt.is-hearing .dj-hear{color:var(--gold);opacity:1;transform:translateY(-50%) scale(1.15)}
 
 .dj-next{margin-top:26px;padding:12px 32px;border-radius:100px;border:1px solid var(--gold);
-  background:var(--gold);color:#0A0C14;font-size:14px;font-weight:500;
+  background:var(--gold);color:#0A0C14;font-size:14px;font-weight:500;line-height:24px;
   transition:background .25s,border-color .25s}
 .dj-next:hover{background:var(--gold-lift);border-color:var(--gold-lift)}
 
-.dj-link{font-size:12px;color:var(--text-faint);margin-top:16px;
+.dj-link{font-size:12px;line-height:20px;color:var(--text-faint);margin-top:16px;
   border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
 .dj-link:hover{color:var(--gold);border-color:var(--hair-gold)}
 

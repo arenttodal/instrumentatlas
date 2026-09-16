@@ -520,8 +520,10 @@ function paintOptions(){
 
   /* Once an answer is in, the clip loops for the comparison and the progress
      fill just resets over and over — a dash flickering under the button that
-     measures nothing. It belongs to the question, so it goes with it. */
-  $('dj-meter').hidden = locked;
+     measures nothing. Hidden with visibility, NOT with hidden/display:none:
+     collapsing it took its 16px out of the flow and pulled every option up by
+     that much the instant you answered. */
+  $('dj-meter').toggleAttribute('data-idle', locked);
 }
 
 /* ---------------------------------------------------------------- answer --- */
@@ -547,10 +549,27 @@ function answer(id){
   right ? showRight() : showWrong();
 }
 
+/* Every phase renders the same two rows, so the block is always exactly the
+   same height and answering moves nothing below the options. A row with no job
+   in this phase is still drawn — invisible, unfocusable, and carrying no
+   answer text. That is why there is no reserved height to keep in step with
+   the padding and line-heights: the reserve IS the content. */
+function resultRows(next, link){
+  return (next
+      ? `<button class="dj-next" id="dj-next">Next</button>`
+      : `<span class="dj-next is-ghost" aria-hidden="true">Next</span>`)
+    + (link
+      ? `<a class="dj-link" href="${esc(link.href)}">${esc(link.text)}</a>`
+      : `<span class="dj-link is-ghost" aria-hidden="true">&nbsp;</span>`);
+}
+
 function showRight(){
-  $('dj-result').innerHTML = `<button class="dj-next" id="dj-next">Next</button>`;
+  $('dj-result').innerHTML = resultRows(true, null);
   $('dj-next').onclick = next;
-  $('dj-next').focus();
+  /* preventScroll: focusing a button the browser thinks is out of view scrolls
+     the page to it, which is the whole screen sliding under the reader at the
+     exact moment they are reading the answer */
+  $('dj-next').focus({ preventScroll:true });
 }
 
 /* ⭐ The A/B on a wrong answer.
@@ -562,9 +581,8 @@ function showWrong(){
   S.ab = { answer:a, picked:p, on:a, ready:false, clips:{} };
 
   /* nothing here but the way forward — the comparison lives in the rows above */
-  $('dj-result').innerHTML = `
-    <button class="dj-next" id="dj-next">Next</button>
-    <a class="dj-link" href="${atlasHref(a)}">Open the ${esc(nameOf(a))} in the atlas</a>`;
+  $('dj-result').innerHTML = resultRows(true,
+    { href: atlasHref(a), text: `Open the ${nameOf(a)} in the atlas` });
   $('dj-next').onclick = next;
 
   startAB();
@@ -615,7 +633,7 @@ function next(){
   S.heard  = false;
   S.ab     = null;
   S.q      = buildQuestion(BELT);
-  $('dj-result').innerHTML = '';
+  $('dj-result').innerHTML = resultRows(false, null);
   $('dj-note').textContent = '';
   $('dj-bar-fill').style.transform = 'scaleX(0)';
   display(BELT.ask, null, null);
