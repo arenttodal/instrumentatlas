@@ -165,7 +165,7 @@ const INSTRUMENTS = {
       {id:'flute', label:'Flute an octave below', note:'The standard doubling; adds brilliance to the line'},
       {id:'oboe', label:'Oboe', note:'Sharpens the attack of a woodwind chord'},
       {id:'violin', label:'Violins at the octave', note:'Lifts a string melody into the light'},
-      {id:'cymbals', label:'Percussion accents', note:'Both cut through a tutti at the same moment'}
+      {id:'cymbals', label:'Percussion accents', note:'Nothing else lands that high that hard'}
     ],
     limits:[
       'Use it sparingly. Sustained high piccolo is genuinely tiring to listen to and will dominate any mix you put it in.',
@@ -496,7 +496,7 @@ const INSTRUMENTS = {
       {id:'trombone', label:'Trombone', note:'Completes the brass chord from the bottom'},
       {id:'double-bass', label:'Double basses', note:'The orchestral floor'},
       {id:'bassoon', label:'Bassoon', note:'Woody definition under the weight'},
-      {id:'timpani', label:'Timpani', note:'Attack under sustained low brass'}
+      {id:'timpani', label:'Timpani', note:'Marks where the tuba chord starts'}
     ],
     limits:[
       'Fast repeated articulation in the bottom octave will not speak cleanly. Simplify it.',
@@ -667,9 +667,9 @@ const INSTRUMENTS = {
     articulations:['Arco','Pizzicato','Legato','Staccato','Marcato','Tremolo','Harmonics','Con sordino'],
     blends:[
       {id:'cello', label:'Cello in octaves', note:'The standard bass line; the cello supplies the pitch clarity'},
-      {id:'bassoon', label:'Bassoon', note:'Woody reinforcement of the fundamental'},
+      {id:'bassoon', label:'Bassoon', note:'A reed on the fundamental, so the pitch reads'},
       {id:'tuba', label:'Tuba', note:'Weight, at the cost of definition'},
-      {id:'timpani', label:'Timpani', note:'Attack under sustained bass'}
+      {id:'timpani', label:'Timpani', note:'A drum gives the bass line an edge it cannot play'}
     ],
     limits:[
       'Fast runs in the bottom octave turn to mud. Simplify the bass line and let the cellos carry the detail.',
@@ -707,7 +707,7 @@ const INSTRUMENTS = {
     ],
     articulations:['Glissando','Arpeggio','Harmonics','Près de la table','Bisbigliando','Damped','Pedal slides'],
     blends:[
-      {id:'flute', label:'Flute', note:'The classic pairing: air over plucked attack'},
+      {id:'flute', label:'Flute', note:'Air over a plucked attack'},
       {id:'cello', label:'Pizzicato strings', note:'Two plucked colours, one sustaining longer'},
       {id:'celesta', label:'Celesta', note:'Doubling makes both sound larger and stranger'},
       {id:'violin', label:'Violins', note:'Harp supplies attack the bowed line lacks'}
@@ -752,8 +752,8 @@ const INSTRUMENTS = {
     ],
     articulations:['Single strokes','Roll','Muffled','Glissando','Wood mallets','Rim'],
     blends:[
-      {id:'double-bass', label:'Double basses', note:'Attack under a sustained bass note'},
-      {id:'tuba', label:'Low brass', note:'Timpani supplies the transient the brass lacks'},
+      {id:'double-bass', label:'Double basses', note:'The basses sustain, the timpani strikes'},
+      {id:'tuba', label:'Low brass', note:'Brass has no attack of its own down there'},
       {id:'bass-drum', label:'Bass drum', note:'Weight without pitch, layered under pitch'},
       {id:'cello', label:'Cellos', note:'Reinforces the harmonic root'}
     ],
@@ -793,10 +793,10 @@ const INSTRUMENTS = {
     ],
     articulations:['Crash','Suspended roll','Struck with mallets','Choked','Scraped','Sizzle'],
     blends:[
-      {id:'bass-drum', label:'Bass drum', note:'The classic pairing: weight plus brilliance'},
-      {id:'trumpet', label:'Brass', note:'Cymbal supplies the transient the brass attack lacks'},
+      {id:'bass-drum', label:'Bass drum', note:'Weight underneath, brilliance on top'},
+      {id:'trumpet', label:'Brass', note:'A crash sharpens an entry that would otherwise bloom'},
       {id:'gong', label:'Gong', note:'Layered impact with a much longer tail'},
-      {id:'piccolo', label:'Piccolo', note:'Both cut through a tutti at the same instant'}
+      {id:'piccolo', label:'Piccolo', note:'The top of the orchestra, struck and blown at once'}
     ],
     limits:[
       'It is a moment, not a texture. Repeated crashes lose all impact within a few bars.',
@@ -872,7 +872,7 @@ const INSTRUMENTS = {
     ],
     articulations:['Single strokes','Roll','Damped','Two-mallet roll','Struck with timpani mallets'],
     blends:[
-      {id:'cymbals', label:'Cymbals', note:'The classic pairing; weight plus brilliance'},
+      {id:'cymbals', label:'Cymbals', note:'Struck together they read as one accent, not two'},
       {id:'tuba', label:'Low brass', note:'Adds physical size beneath the pitch'},
       {id:'timpani', label:'Timpani', note:'Pitch and weight together'},
       {id:'double-bass', label:'Double basses', note:'Reinforces the bottom without muddying it'}
@@ -1053,18 +1053,18 @@ const GALLERY = [
   {v:'a9UApyClFKA', title:'Beethoven, Symphony No. 5 (complete)', perf:'Concertgebouworkest · Iván Fischer', why:'A modern reading, filmed close enough to watch the sections work', chan:'Concertgebouworkest'},
   {v:'P_1N6_O254g', title:'Dvořák, Symphony No. 9, "From the New World"', perf:'Berliner Philharmoniker · Herbert von Karajan', why:'The cor anglais Largo: woodwind as the emotional centre', chan:'Berliner Philharmoniker'},
   {v:'pGdtkUiKaA8', title:'Dvořák, Symphony No. 9, IV. Allegro con fuoco', perf:'Wiener Philharmoniker', why:'Brass fanfare writing, and how the horns carry a hall', chan:'Wiener Philharmoniker'},
-  {v:'hvPlV56VtFs', title:'Dvořák, Symphony No. 9 (full performance)', perf:'Cristian Măcelaru, conductor', why:'Full-length, useful for following orchestration across a whole arc', chan:'Official concert upload'},
+  {v:'hvPlV56VtFs', title:'Dvořák, Symphony No. 9 (full performance)', perf:'Cristian Măcelaru, conductor', why:'The whole thing, if you want to follow the scoring end to end', chan:'Official concert upload'},
   {v:'8UfpgT9FMAk', title:'Holst, The Planets: Mars, the Bringer of War', perf:'Berliner Philharmoniker · Herbert von Karajan', why:'The col legno ostinato against sustained brass: two layers, total clarity', chan:'Universal Music Group'},
   {v:'sHsFIv8VA7w', title:'Mahler, Symphony No. 2, "Resurrection"', perf:'Concertgebouworkest · Mariss Jansons', why:'Extremes of dynamic range, from near-silence to full forces', chan:'Concertgebouworkest'},
   {v:'j2Hk2SZGrRY', title:'Mahler, Symphony No. 8, "Symphony of a Thousand"', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'What the Maximum tier on the ensemble slider actually looks like', chan:'Berliner Philharmoniker'},
-  {v:'GrrvAHhWKIw', title:'Mahler, Symphony No. 9', perf:'Berliner Philharmoniker · Kirill Petrenko', why:'Late-Romantic orchestration at its most transparent', chan:'Berliner Philharmoniker'},
+  {v:'GrrvAHhWKIw', title:'Mahler, Symphony No. 9', perf:'Berliner Philharmoniker · Kirill Petrenko', why:'Late-Romantic scoring you can hear through', chan:'Berliner Philharmoniker'},
   {v:'waP1N446Zb0', title:'Britten, The Young Person’s Guide to the Orchestra', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'Every family and most of these instruments, introduced one at a time and then fugued together', chan:'Berliner Philharmoniker'},
-  {v:'5Eqj9G5j1ss', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra: the clearest listening exercise in orchestral colour there is', chan:'Berliner Philharmoniker'},
+  {v:'5Eqj9G5j1ss', title:'Ravel, Boléro', perf:'Berliner Philharmoniker · Waldbühne 2024', why:'One melody handed round the orchestra, instrument by instrument', chan:'Berliner Philharmoniker'},
   {v:'ki0xu6Gl9Nc', title:'Prokofiev, Peter and the Wolf (with score)', perf:'Vancouver Symphony Orchestra · Bramwell Tovey', why:'Every solo instrument given a character, with the score on screen as it plays', chan:'Concert upload'},
   {v:'6exoB7IW8qw', title:'Rimsky-Korsakov, Scheherazade', perf:'hr-Sinfonieorchester · Alain Altinoglu', why:'The concertmaster returns as a character, and almost every principal gets a solo', chan:'hr-Sinfonieorchester'},
   {v:'ghkljW0ZmJU', title:'Stravinsky, The Rite of Spring', perf:'London Symphony Orchestra · Sir Simon Rattle', why:'Opens on a bassoon at the very top of its range, and never stops rethinking the orchestra', chan:'London Symphony Orchestra'},
   {v:'clK9rM9JoIs', title:'Saint-Saëns, The Carnival of the Animals', perf:'Omaha Symphony · Ankush Kumar Bahl', why:'Written as instrument portraits: the swan is a cello, the elephant a double bass', chan:'Omaha Symphony'},
-  {v:'fEGNNuEM3Fc', title:'Mahler, Symphony No. 5', perf:'hr-Sinfonieorchester · Andrés Orozco-Estrada', why:'Opens on a solo trumpet, and hands the third movement to an obbligato horn', chan:'hr-Sinfonieorchester'},
+  {v:'fEGNNuEM3Fc', title:'Mahler, Symphony No. 5', perf:'hr-Sinfonieorchester · Andrés Orozco-Estrada', why:'A solo trumpet starts it, and the third movement belongs to an obbligato horn', chan:'hr-Sinfonieorchester'},
   {v:'b4rfWegZi_M', title:'Tchaikovsky, Symphony No. 5', perf:'hr-Sinfonieorchester · Roderick Cox', why:'The slow movement carries the most famous horn solo in the repertoire', chan:'hr-Sinfonieorchester'},
   {v:'HP5xhyPn58U', title:'Holst, The Planets', perf:'hr-Sinfonieorchester · Hugh Wolff', why:'The full percussion battery, organ, two harps, and a tuba that has to carry Uranus', chan:'hr-Sinfonieorchester'},
   {v:'6wRKpdM9ra8', title:'Mahler, Symphony No. 3', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'The first movement gives the trombone the longest solo in the symphonic repertoire', chan:'Berliner Philharmoniker'},
@@ -1076,7 +1076,7 @@ const GALLERY = [
   {v:'n5gUu65Pmrk', title:'Tchaikovsky, Symphony No. 5, the horn solo', perf:'Marc Gruber · Frankfurt Radio Symphony', why:'Filmed on the player: what the horn’s middle register is for', chan:'hr-Sinfonieorchester'},
   {v:'gumy04TFPBk', title:'Tchaikovsky, Dance of the Sugar Plum Fairy', perf:'Berliner Philharmoniker · Sir Simon Rattle', why:'The celesta’s debut, and still the sound everyone reaches for', chan:'Berliner Philharmoniker'},
   {v:'VGvuUOtHGkk', title:'Gershwin, Rhapsody in Blue (1924 recording)', perf:'Paul Whiteman Orchestra · George Gershwin, piano', why:'The clarinet glissando as first recorded, a year after it was written', chan:'Concert upload'},
-  {v:'JEi23_uSGNE', title:'Holst, The Planets', perf:'Singapore Symphony Orchestra · Andrew Litton', why:'A second reading, filmed close enough to watch the percussion section work', chan:'Singapore Symphony Orchestra'},
+  {v:'JEi23_uSGNE', title:'Holst, The Planets', perf:'Singapore Symphony Orchestra · Andrew Litton', why:'Shot from behind the percussion, where the section actually sits', chan:'Singapore Symphony Orchestra'},
   {v:'qsCZP3wdF4w', title:'John Williams, Hedwig’s Theme', perf:'Wiener Philharmoniker · John Williams · Anne-Sophie Mutter', why:'The celesta melody the whole world knows, played by the orchestra it was written for', chan:'Deutsche Grammophon'},
   {v:'2EsNGS9vYe8', title:'Bartók, Music for Strings, Percussion and Celesta', perf:'Oslo Philharmonic · Vasily Petrenko', why:'The celesta is in the title, and Bartók treats it as a third section rather than a colour', chan:'Oslo Philharmonic'},
   {v:'YB_PTA4dGws', title:'Bartók, Music for Strings, Percussion and Celesta', perf:'Berliner Philharmoniker · Pierre Boulez', why:'A second reading of the piece that made the celesta a structural instrument', chan:'Berliner Philharmoniker'}
