@@ -19,6 +19,12 @@ const LESSONS = [
   demo:'overtones',
   demoNote:'Click any bar to silence that partial. The fundamental alone is a bare sine wave. Everything that makes it sound like an instrument is sitting above it.',
   source:'Core Pillars of Music : Overtones / A Look At The Overtones',
+  beats:[
+    {t:'One note is never one note',p:[0]},
+    {t:'The string vibrates in halves, thirds, quarters',p:[1]},
+    {t:'Wide at the bottom, tight at the top',p:[2]},
+    {t:'The two rules that follow',p:[3]}
+  ],
   body:[
     'Most sounds are more complex than they appear. When you pluck a guitar string you hear a note, but inside that note is a rainbow of overtones, and they are what create the timbre and the character of the sound.',
     'The fundamental is the root frequency. The rate at which the string vibrates determines the pitch : an A at 110Hz is a string vibrating 110 times a second. But the string does not only vibrate along its whole length. It also vibrates in halves, thirds, quarters and so on, and each division produces its own pitch. The first overtone is the fundamental doubled, an octave above at 220Hz. The next is the fundamental tripled, at 330Hz. Then 440, then 550.',
