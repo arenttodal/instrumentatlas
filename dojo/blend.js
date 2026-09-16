@@ -1,138 +1,346 @@
 /* ============================================================================
    EAR TRAINING · BLEND
    ----------------------------------------------------------------------------
-   Loads after atlas-data.js, audio.js and blend-data.js, all deferred.
+   Loads after atlas-data.js, themes.js, dojo-data.js (for CONFUSIONS),
+   audio.js and blend-data.js, all deferred.
 
-   The horn has the tune. Something is doubling it an octave above, an octave
-   below, both, or nothing is. A doubling that is doing its job is not
-   separately audible, so this is not a naming question — you are being asked
-   what the colour is made of.
+   Which instruments do you hear? You answer by lighting up cards in a grid
+   grouped by family; what you pick lifts into a band above it. Three levels:
+   a handful of candidates, the whole orchestra, or the whole orchestra plus
+   where each one sits against the others.
 
-   What this mode needed from the shared engine that the other two did not: the
-   A/B compares two MIXES rather than two clips. Both mixes are started at one
-   scheduled time and the switch is setGains over the union of them — so the
-   horn, which is in both, simply stays at 1 and never dips. You hear the
-   doubling arrive and leave over a horn that never moves, which is the only
-   way to hear what a doubling actually does.
+   Two things this mode asks of the shared engine that the others did not:
+
+   The A/B compares two MIXES, not two clips. Every render either mix needs is
+   started at one scheduled time and the switch is setGains across the union,
+   so an instrument in both simply holds its level and never dips. With a
+   multi-select answer that becomes genuinely useful — the comparison is what
+   was playing against what you said you heard, and the difference you hear is
+   exactly your misses and your false alarms.
+
+   And the pool is bigger than the passage. A level-2 grid offers twenty cards
+   over a nine-instrument passage; an instrument you picked that this passage
+   cannot play has no audio and is marked as such rather than given an invented
+   part.
+
+   Each question draws a theme from BLEND_PASSAGES and takes its MELODY parts —
+   the countermelody and chord parts of a theme belong to Layers, because "an
+   octave above" only means something between parts playing the same line. Every
+   clip id is "<theme>/<file>", so the engine's buffer cache cannot confuse
+   theme 3's flute with theme 2's.
    ============================================================================ */
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $ = id => document.getElementById(id);
 
-const BlendAudio = makeDojoAudio({ srcOf: blendSrc });
+const BlendAudio = makeDojoAudio({ srcOf: themeSrc, cacheMax: 12 });
+
+const LEVEL_KEY = 'dojo-blend-level';
 
 const S = {
-  q:       null,     // {answer, sizes:{horn, cello}}
-  picked:  null,
-  phase:   'asking', // asking · right · wrong
+  level:   2,
+  q:       null,     // {passage, sounding:[render], pool:[ids]}
+  picked:  {},       // instrument -> tier id, or true at levels 1 and 2
+  phase:   'asking', // asking · marked
   heard:   false,
-  streak:  0,
-  asked:   0,
-  correct: 0,
-  ab:      null      // {answer, picked, on, ready}
+  asked:   0, correct: 0, streak: 0,
+  held:    null,     // level 3 only: the card in hand, on the tap path
+  ab:      null      // {on:'heard'|'picked', ready}
 };
 
-const RECENT = [];
+const pick   = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { for(let i=a.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const level  = () => BLEND_LEVELS.find(l => l.id === S.level);
+const tiered = () => !!level().tiers;
 
 /* ------------------------------------------------------------- questions --- */
-const pick = a => a[Math.floor(Math.random() * a.length)];
+/* Two to four instruments of one passage, at most one render each. Two things
+   have to hold, and they hold at every level because the level can be changed
+   mid-question:
+
+   the set has to SAY something about octaves — at least two renders that state
+   one, at two different octaves — or level 3 has nothing to arrange; and it has
+   to FIT the three rows, which themes 3 and 4 can break on their own, since
+   their flute sits two octaves over the line and their cello one under it. */
+function arrangeable(set){
+  const g = set.filter(r => !r.free).map(r => r.offset);
+  return g.length > 1 && new Set(g).size > 1 &&
+         Math.max(...g) - Math.min(...g) <= BLEND_SPAN;
+}
 
 function buildQuestion(){
-  /* never the same answer twice running — with four of them a repeat reads as
-     the app having got stuck rather than as a coincidence */
-  let ans;
-  do { ans = pick(BLEND_ANSWERS).id; } while(BLEND_ANSWERS.length > 1 && ans === RECENT[RECENT.length - 1]);
-  RECENT.push(ans);
-  if(RECENT.length > 2) RECENT.shift();
-  return { answer: ans, sizes: { horn: pick(BLEND_SIZES.horn), cello: pick(BLEND_SIZES.cello) } };
+  const passage = pick(BLEND_PASSAGES);
+  const renders = partsOf(passage, 'melody');
+  const byInstrument = {};
+  renders.forEach(r => (byInstrument[r.instrument] = byInstrument[r.instrument] || []).push(r));
+  const names = Object.keys(byInstrument);
+
+  let sounding = null;
+  for(let tries = 0; tries < 240 && !sounding; tries++){
+    const take = shuffle([...names]).slice(0, 2 + ((Math.random() * 3) | 0));
+    const set = take.map(n => pick(byInstrument[n]));
+    if(arrangeable(set)) sounding = set;
+  }
+  if(!sounding){            // exhaustive fallback: the first pair an octave apart
+    const g = renders.filter(r => !r.free);
+    for(const a of g){
+      const b = g.find(x => x.instrument !== a.instrument && Math.abs(x.offset - a.offset) === 1);
+      if(b){ sounding = [a, b]; break; }
+    }
+  }
+  return { passage, sounding, pool: buildPool(passage, sounding) };
 }
 
-/* the clips a given answer sounds like, under this question's scoring */
-function mixFor(answerId, sizes){
-  const a = blendAnswer(answerId);
-  return [blendClip('horn', sizes.horn)].concat(
-    a.adds.map(v => blendClip(v, v === 'cello' ? sizes.cello : '1')));
+/* Level 1 is the sounding instruments plus decoys, and the decoys come from
+   CONFUSIONS — the table belts uses — so a flute pulls piccolo and clarinet
+   into the grid and never pulls timpani. Levels 2 and 3 are every instrument
+   of every family this passage draws on. */
+function buildPool(passage, sounding){
+  const heard = sounding.map(r => r.instrument);
+  if(level().pool === 'all'){
+    return FAMILIES.filter(f => passage.families.includes(f.id))
+                   .flatMap(f => f.members);
+  }
+  const out = [...heard];
+  const add = id => { if(!out.includes(id) && INSTRUMENTS[id]) out.push(id); };
+  const rest = [...new Set(partsOf(passage, 'melody').map(r => r.instrument))];
+  shuffle(heard.flatMap(h => (CONFUSIONS[h] || []))).forEach(id => { if(out.length < 6) add(id); });
+  shuffle(rest).forEach(id => { if(out.length < 6) add(id); });
+  return out;
 }
 
-const sizeLabel = sizes => {
-  const h = sizes.horn === '1' ? 'Solo horn' : `${sizes.horn} horns`;
-  const needsCello = blendAnswer(S.q.answer).adds.includes('cello');
-  return needsCello ? `${h} · ${sizes.cello === 'ens' ? 'cello section' : 'solo cello'}` : h;
-};
+const P         = () => S.q.passage;
+const renderFor = id => S.q.sounding.find(r => r.instrument === id) || null;
+const heardIds  = () => S.q.sounding.map(r => r.instrument);
+/* What an instrument would sound like here, even when it is not in the answer —
+   for the B side of the A/B. Of several renders take the one nearest the line as
+   written, so a false alarm comes back in a plain register rather than a showy
+   one. */
+const anyRenderFor = id => partsOf(P(), 'melody')
+  .filter(r => r.instrument === id)
+  .sort((x, y) => Math.abs(x.offset) - Math.abs(y.offset))[0] || null;
+const clipOf    = r => themeClip(P().id, r.file);
 
-/* ------------------------------------------------------------------ view --- */
+/* ------------------------------------------------------------------ tiers --- */
+/* Three rows, checked as an arrangement rather than as absolute positions:
+   a flute an octave over a horn is the same statement whether you put them in
+   the top two rows or the bottom two. Both sides are shifted so their lowest
+   used row is zero, then compared. */
+function normalise(map){
+  const vals = Object.values(map);
+  if(!vals.length) return {};
+  const lo = Math.min(...vals);
+  const out = {};
+  for(const k in map) out[k] = map[k] - lo;
+  return out;
+}
+const tierIndex = id => BLEND_TIERS.findIndex(t => t.id === id);
+
+/* ---------------------------------------------------------------- verdict --- */
+function verdict(){
+  const heard = heardIds();
+  const chosen = Object.keys(S.picked);
+  const hits = chosen.filter(i => heard.includes(i));
+  const missed = heard.filter(i => !chosen.includes(i));
+  const extra = chosen.filter(i => !heard.includes(i));
+
+  /* a free render plays its own figure rather than doubling the line, so it
+     states no octave against the rest and level 3 takes it in any row */
+  let placed = null, graded = [];
+  if(tiered()){
+    graded = hits.filter(i => !renderFor(i).free);
+    const mine = {}, real = {};
+    graded.forEach(i => { mine[i] = -tierIndex(S.picked[i]); real[i] = renderFor(i).offset; });
+    const a = normalise(mine), b = normalise(real);
+    placed = graded.filter(i => a[i] === b[i]);
+  }
+  const right = !missed.length && !extra.length &&
+                (!tiered() || placed.length === graded.length);
+  return { heard, hits, missed, extra, placed, graded, right };
+}
+
+function verdictFor(id){
+  if(S.phase !== 'marked') return '';
+  const v = verdict();
+  if(v.extra.includes(id)) return 'is-wrong';
+  if(v.missed.includes(id)) return 'is-missed';
+  if(v.hits.includes(id)) return (tiered() && v.graded.includes(id) && !v.placed.includes(id)) ? 'is-misplaced' : 'is-right';
+  return '';
+}
+
+/* ------------------------------------------------------------------- view --- */
 const HEAR_ICON = `<span class="dj-hear" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"
   stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
   <path d="M3 6.4v3.2M6.3 3.8v8.4M9.7 5.6v4.8M13 7.2v1.6"/></svg></span>`;
 
-function display(text, state, mark){
-  $('bl-display').innerHTML = (mark ? `<span class="dj-mark" data-v="${mark}"></span>` : '') + esc(text);
-  if(state) $('bl-display').dataset.state = state; else delete $('bl-display').dataset.state;
+function cardHTML(id, where){
+  const v = verdictFor(id);
+  const dead = S.phase === 'marked' || (!S.heard && where === 'pool');
+  const held = S.held === id && where === 'heard';
+  return `<button class="bl-card${v ? ' ' + v : ''}${held ? ' is-held' : ''}" data-id="${esc(id)}" data-where="${where}"
+            ${dead ? 'disabled' : ''} aria-pressed="${!!S.picked[id]}" ${held ? 'aria-grabbed="true"' : ''}
+            aria-label="${esc(blendName(id))}${S.picked[id] ? ', selected' : ''}">
+    <span class="bl-card-art">${blendIcon(id)}</span>
+    <b>${esc(blendName(id))}</b>
+  </button>`;
 }
 
-function paintScore(){
+function paintHeard(){
+  const chosen = Object.keys(S.picked);
+  if(!tiered()){
+    $('bl-heard').innerHTML = `<div class="bl-band" data-drop="mid">${
+      chosen.length ? chosen.map(id => cardHTML(id, 'heard')).join('')
+                    : `<p class="bl-band-empty">Click what you hear</p>`}</div>`;
+    return;
+  }
+  $('bl-heard').innerHTML = BLEND_TIERS.map(t => {
+    const inTier = chosen.filter(id => S.picked[id] === t.id);
+    return `<div class="bl-tier${S.held ? ' is-target' : ''}" data-drop="${esc(t.id)}">
+      <span class="bl-tier-name">${esc(t.name)}</span>
+      <div class="bl-band">${inTier.map(id => cardHTML(id, 'heard')).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function paintPool(){
+  const chosen = Object.keys(S.picked);
+  const fams = FAMILIES.filter(f => P().families.includes(f.id))
+                       .filter(f => f.members.some(m => S.q.pool.includes(m)));
+  $('bl-pool').innerHTML = fams.map(f => {
+    const members = f.members.filter(m => S.q.pool.includes(m) && !chosen.includes(m));
+    return `<div class="bl-fam" style="--fam:${STUDIO_FAM[f.id] || '#8FB4E0'}">
+      <span class="bl-fam-name">${esc(f.name)}</span>
+      <div class="bl-fam-row">${members.map(id => cardHTML(id, 'pool')).join('') ||
+        `<span class="bl-fam-empty">all chosen</span>`}</div>
+    </div>`;
+  }).join('');
+}
+
+function paintChrome(){
+  const n = S.q.sounding.length;
+  $('bl-eyebrow').textContent = S.streak > 1
+    ? `Blend · ${P().title} · ${S.streak} in a row`
+    : `Blend · ${P().title}`;
   $('bl-score').innerHTML = S.asked
     ? `<b>${S.correct}</b><span>/${S.asked}</span><i>${Math.round(100 * S.correct / S.asked)}%</i>`
     : '';
-  $('bl-eyebrow').textContent = S.streak > 1
-    ? `Blend · Doubling · ${S.streak} in a row`
-    : 'Blend · Doubling';
+  $('bl-level-label').textContent = level().name;
+  if(S.phase === 'asking'){
+    $('bl-display').textContent = 'Which instruments do you hear?';
+    delete $('bl-display').dataset.state;
+  } else {
+    const v = verdict();
+    /* naming everything and then stacking it wrong is its own result, and it is
+       not "3 of 3" — that reads like a pass */
+    const named = !v.missed.length && !v.extra.length;
+    $('bl-display').innerHTML =
+      `<span class="dj-mark" data-v="${v.right ? 'right' : 'wrong'}"></span>` +
+      esc(v.right  ? (tiered() ? 'All of them, in the right order' : 'All of them')
+        : named    ? 'The right instruments, out of order'
+                   : `${v.hits.length} of ${v.heard.length}`);
+    $('bl-display').dataset.state = v.right ? 'right' : 'wrong';
+  }
+  $('bl-count').textContent = S.phase === 'asking' && S.heard
+    ? `${n} instrument${n > 1 ? 's' : ''} playing`
+    : '';
 }
 
-/* The three voices, drawn as the atlas draws them. Lit means in the mix you
-   are hearing right now, so they follow the A/B rather than the answer. */
-function paintScoring(){
-  const asking = S.phase === 'asking';
-  const live = asking ? null : mixFor(S.ab ? S.ab.on : S.q.answer, S.q.sizes);
-  $('bl-scoring').innerHTML = ['flute','horn','cello'].map(v => {
-    const on = !asking && live.some(c => c.startsWith(v + ':'));
-    return `<span class="bl-voice" data-on="${on}" title="${esc(BLEND_VOICES[v].role)}">
-      <span class="bl-voice-art">${blendIcon(v)}</span>
-      <b>${esc(BLEND_VOICES[v].label)}</b></span>`;
-  }).join('');
-  $('bl-scoring').dataset.idle = asking ? '1' : '';
-  $('bl-detail').textContent = asking ? '' : sizeLabel(S.q.sizes);
-}
-
-function paintOptions(){
-  const locked = S.phase !== 'asking';
-  const ab = (S.phase === 'wrong' && S.ab) ? S.ab : null;
-
-  $('bl-options').innerHTML = BLEND_ANSWERS.map(a => {
-    const state = !locked ? '' :
-      a.id === S.q.answer ? ' is-right' :
-      a.id === S.picked   ? ' is-wrong' : ' is-off';
-    const isAB    = !!ab && (a.id === ab.answer || a.id === ab.picked);
-    const hearing = isAB && ab.on === a.id;
-    const dead    = locked ? !isAB : !S.heard;
-    return `<button class="dj-opt${state}${isAB ? ' is-ab' : ''}${hearing ? ' is-hearing' : ''}"
-              data-id="${esc(a.id)}"${dead ? ' disabled' : ''}${
-              isAB ? ` aria-pressed="${hearing}" aria-label="Hear ${esc(a.name)}"` : ''
-            }>${esc(a.name)}${isAB ? HEAR_ICON : ''}</button>`;
-  }).join('');
-  $('bl-options').dataset.waiting = (!S.heard && !locked) ? '1' : '';
-  $('bl-meter').toggleAttribute('data-idle', locked);
-}
-
-/* Every phase renders the same rows, so answering moves nothing below the
-   options — the same bargain as the belts mode. */
-function resultRows(next, line){
-  return (next
-      ? `<button class="dj-next" id="bl-next">Next</button>`
-      : `<span class="dj-next is-ghost" aria-hidden="true">Next</span>`)
-    + `<p class="bl-note${line ? '' : ' is-ghost'}"${line ? '' : ' aria-hidden="true"'}>${
-        line ? esc(line) : '&nbsp;'}</p>`;
-}
-
-function paintResult(){
-  if(S.phase === 'asking'){ $('bl-result').innerHTML = resultRows(false, null); return; }
-  const line = S.phase === 'wrong' ? blendNote(S.q.answer, S.picked) : blendAnswer(S.q.answer).note;
-  $('bl-result').innerHTML = resultRows(true, line);
+function paintActions(){
+  const ready = Object.keys(S.picked).length > 0;
+  if(S.phase === 'asking'){
+    $('bl-actions').innerHTML = `<button class="dj-next" id="bl-check" ${S.heard && ready ? '' : 'disabled'}>Check</button>`;
+    $('bl-check').onclick = check;
+    $('bl-note').innerHTML = '&nbsp;';
+    $('bl-note').classList.add('is-ghost');
+    return;
+  }
+  const v = verdict();
+  $('bl-actions').innerHTML = `<button class="dj-next" id="bl-next">Next</button>`;
   $('bl-next').onclick = next;
-  if(S.phase === 'right') $('bl-next').focus({ preventScroll:true });
+  const bits = [];
+  if(v.missed.length) bits.push(`missed ${v.missed.map(blendName).join(', ')}`);
+  if(v.extra.length)  bits.push(`${v.extra.map(blendName).join(', ')} ${v.extra.length > 1 ? 'were' : 'was'} not there`);
+  if(tiered() && v.placed && v.placed.length < v.graded.length)
+    bits.push(`${v.graded.filter(i => !v.placed.includes(i)).map(blendName).join(', ')} in the wrong register`);
+  $('bl-note').textContent = bits.length ? bits.join(' · ') : 'Nothing missed, nothing added.';
+  $('bl-note').classList.toggle('is-ghost', false);
 }
 
-function render(){ paintScore(); paintScoring(); paintOptions(); paintResult(); paintPlay(); }
+function render(){ paintChrome(); paintHeard(); paintPool(); paintActions(); paintAB(); paintPlay(); }
+
+/* ------------------------------------------------------------- selecting --- */
+function choose(id, tier){
+  if(S.phase !== 'asking' || !S.heard) return;
+  if(S.picked[id] && (!tiered() || S.picked[id] === tier || !tier)) delete S.picked[id];
+  else S.picked[id] = tiered() ? (tier || 'mid') : true;
+  S.held = null;
+  render();
+}
+
+/* Level 3 has to be operable by thumb, and HTML5 drag events never fire on
+   touch at all — so a tap lifts the card, a tap on a row drops it there, and a
+   second tap on the card itself takes it back out of the answer. The same two
+   taps at levels 1 and 2 are just select and deselect, because there is nowhere
+   to put anything. The Layers tray works this way; so does this. */
+let heardClick = null;
+$('bl-heard').addEventListener('click', e => {
+  heardClick = e;
+  const row = e.target.closest('[data-drop]');
+  const c = e.target.closest('.bl-card');
+  if(S.phase !== 'asking' || !S.heard) return;
+  if(!tiered()){ if(c && !c.disabled) choose(c.dataset.id, null); return; }
+
+  if(S.held){
+    if(c && c.dataset.id === S.held){ choose(S.held, null); return; }   // out of the answer
+    if(row){ S.picked[S.held] = row.dataset.drop; S.held = null; render(); return; }
+  }
+  if(c && !c.disabled){ S.held = c.dataset.id; render(); }
+});
+$('bl-pool').addEventListener('click', e => {
+  const c = e.target.closest('.bl-card');
+  if(!c || c.disabled) return;
+  S.held = null;
+  choose(c.dataset.id, tiered() ? 'mid' : null);
+});
+/* Clicking away puts the card back down where it was. It cannot ask the event
+   where it landed: the handler above has already re-rendered #bl-heard, so the
+   card the click started on is detached and closest() walks to nothing. The
+   event itself is the identity that survives that. */
+document.addEventListener('click', e => {
+  if(e === heardClick) return;
+  if(S.held){ S.held = null; render(); }
+});
+
+/* drag between tiers at level 3, and tap-a-card-then-tap-a-row for touch */
+let dragging = null;
+document.addEventListener('dragstart', e => {
+  const c = e.target.closest && e.target.closest('.bl-card');
+  if(!c || c.disabled || !tiered()){ return; }
+  dragging = c.dataset.id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragging);
+});
+document.addEventListener('dragover', e => {
+  const t = e.target.closest && e.target.closest('[data-drop]');
+  if(!t || !dragging) return;
+  e.preventDefault();
+  document.querySelectorAll('.is-over').forEach(el => el.classList.remove('is-over'));
+  t.classList.add('is-over');
+});
+document.addEventListener('drop', e => {
+  const t = e.target.closest && e.target.closest('[data-drop]');
+  document.querySelectorAll('.is-over').forEach(el => el.classList.remove('is-over'));
+  if(!t || !dragging) return;
+  e.preventDefault();
+  S.picked[dragging] = t.dataset.drop;
+  dragging = null;
+  S.held = null;
+  render();
+});
+document.addEventListener('dragend', () => {
+  dragging = null;
+  document.querySelectorAll('.is-over').forEach(el => el.classList.remove('is-over'));
+});
 
 /* -------------------------------------------------------------- transport --- */
 function paintPlay(){
@@ -141,12 +349,12 @@ function paintPlay(){
   el.dataset.state = BlendAudio.loading ? 'loading' : (on ? 'playing' : 'idle');
   $('bl-play-lbl').textContent = BlendAudio.loading ? 'Loading' : (on ? 'Stop' : (S.heard ? 'Replay' : 'Play'));
   el.setAttribute('aria-label', on ? 'Stop' : 'Play the passage');
+  $('bl-meter').toggleAttribute('data-idle', S.phase !== 'asking');
 }
 
 let lastBar = -1;
 function frame(){
-  const f = BlendAudio.playing && BlendAudio.duration
-    ? BlendAudio.position() / BlendAudio.duration : 0;
+  const f = BlendAudio.playing && BlendAudio.duration ? BlendAudio.position() / BlendAudio.duration : 0;
   const q = Math.round(f * 400);
   if(q !== lastBar){ lastBar = q; $('bl-fill').style.transform = `scaleX(${f})`; }
   requestAnimationFrame(frame);
@@ -155,84 +363,148 @@ function frame(){
 async function playQuestion(){
   if(BlendAudio.playing){ BlendAudio.stop(); return; }
   const q = S.q;
-  const mix = mixFor(q.answer, q.sizes);
-  const ok = await BlendAudio.play(mix, { loop:false });
-  if(S.q !== q || !ok) return;          // Next was pressed while this was decoding
+  const ok = await BlendAudio.play(q.sounding.map(r => themeClip(q.passage.id, r.file)), { loop:true });
+  if(S.q !== q || !ok) return;
   S.heard = true;
   render();
 }
 
-/* ---------------------------------------------------------------- answer --- */
-function answer(id){
-  if(S.phase !== 'asking' || !S.heard) return;
-  S.picked = id;
-  const right = id === S.q.answer;
-  S.phase = right ? 'right' : 'wrong';
+/* ⭐ the A/B: what was playing against what you said you heard */
+function pickedMix(){
+  return Object.keys(S.picked).map(id => {
+    const r = renderFor(id) || anyRenderFor(id);
+    return r ? clipOf(r) : null;
+  }).filter(Boolean);
+}
+
+async function check(){
+  S.phase = 'marked';
   S.asked++;
-  if(right){ S.correct++; S.streak++; } else S.streak = 0;
-
-  display(blendAnswer(S.q.answer).name, S.phase, right ? 'right' : 'wrong');
-  if(!right) S.ab = { answer:S.q.answer, picked:id, on:S.q.answer, ready:false };
+  const v = verdict();
+  if(v.right){ S.correct++; S.streak++; } else S.streak = 0;
+  S.ab = { on:'heard', ready:false };
   render();
-  if(!right) startAB();
-}
 
-/* ⭐ The A/B, over two MIXES. Every clip either mix needs is started at one
-   scheduled time; switching is setGains across the union, so the horn both
-   mixes share holds its level and only the doubling comes and goes. */
-async function startAB(){
-  const ab = S.ab;
-  const A = mixFor(ab.answer, S.q.sizes);
-  const B = mixFor(ab.picked, S.q.sizes);
+  const A = S.q.sounding.map(clipOf);
+  const B = pickedMix();
   const union = [...new Set([...A, ...B])];
-  const gains = {}; union.forEach(c => gains[c] = A.includes(c) ? 1 : 0);
-
+  const gains = {}; union.forEach(f => gains[f] = A.includes(f) ? 1 : 0);
+  const ab = S.ab;
   const ok = await BlendAudio.play(union, { loop:true, gains });
-  if(S.ab !== ab) return;               // Next was pressed while this was decoding
-  if(!ok) return;
+  if(S.ab !== ab || !ok) return;
   ab.ready = true;
+  ab.mix = { heard:A, picked:B };
   render();
 }
 
-function setAB(id){
-  if(!S.ab || !S.ab.ready || S.ab.on === id) return;
-  if(id !== S.ab.answer && id !== S.ab.picked) return;
-  S.ab.on = id;
-  const mix = mixFor(id, S.q.sizes);
-  const gains = {}; mix.forEach(c => gains[c] = 1);
+function setAB(side){
+  if(!S.ab || !S.ab.ready || S.ab.on === side) return;
+  S.ab.on = side;
+  const gains = {};
+  S.ab.mix[side].forEach(f => gains[f] = 1);
   BlendAudio.setGains(gains);
-  /* read before the repaint: afterwards focus has already fallen to the body */
-  const hadFocus = $('bl-options').contains(document.activeElement);
-  render();
-  if(hadFocus){
-    const el = $('bl-options').querySelector(`.dj-opt[data-id="${CSS.escape(id)}"]`);
-    if(el) el.focus();
-  }
+  paintAB();
 }
 
-/* ------------------------------------------------------------------ loop --- */
+function paintAB(){
+  if(S.phase !== 'marked' || !S.ab){ $('bl-ab').innerHTML = ''; return; }
+  const v = verdict();
+  const silent = v.extra.filter(id => !anyRenderFor(id));
+  $('bl-ab').innerHTML = `
+    <button class="bl-ab-btn${S.ab.on === 'heard' ? ' is-on' : ''}" data-side="heard"
+      aria-pressed="${S.ab.on === 'heard'}">What was playing${HEAR_ICON}</button>
+    <button class="bl-ab-btn${S.ab.on === 'picked' ? ' is-on' : ''}" data-side="picked"
+      aria-pressed="${S.ab.on === 'picked'}"${S.ab.mix && !S.ab.mix.picked.length ? ' disabled' : ''}
+      >What you picked${HEAR_ICON}</button>` +
+    (silent.length ? `<span class="bl-ab-none">${esc(silent.map(blendName).join(', '))} ${
+      silent.length > 1 ? 'are' : 'is'} not in this passage at all</span>` : '');
+  $('bl-ab').querySelectorAll('.bl-ab-btn').forEach(b => {
+    b.onclick = () => setAB(b.dataset.side);
+  });
+}
+
+/* ------------------------------------------------------------------ level --- */
+function setLevel(n, keep){
+  S.level = n;
+  try { localStorage.setItem(LEVEL_KEY, String(n)); } catch(_){}
+  /* The pool changes with the level, so it is rebuilt — but the audio is not
+     touched and the selection is not thrown away. Anything you picked that the
+     new pool still offers stays picked; at level 3 a selection with no row yet
+     lands on "as written". */
+  if(S.q){
+    S.q.pool = buildPool(P(), S.q.sounding);
+    const kept = {};
+    Object.keys(keep || S.picked).forEach(id => {
+      if(S.q.pool.includes(id)) kept[id] = tiered() ? ((keep || S.picked)[id] === true ? 'mid' : (keep || S.picked)[id]) : true;
+    });
+    S.picked = kept;
+  }
+  if(S.phase === 'marked') next();   // it was marked against a different question
+  else render();
+}
+
+(function wireLevel(){
+  const wrap = $('bl-level'), btn = $('bl-level-btn'), menu = $('bl-level-menu');
+  menu.innerHTML = BLEND_LEVELS.map(l => `<a class="ev-item" role="menuitem" tabindex="-1"
+      href="#" data-level="${l.id}"><span class="ev-item-name">${esc(l.name)}</span>
+      <span class="bl-level-note">${esc(l.note)}</span></a>`).join('');
+  const items = () => [...menu.querySelectorAll('.ev-item')];
+  const mark = () => items().forEach(a => a.toggleAttribute('data-active', +a.dataset.level === S.level));
+  let open = false;
+  const place = () => {
+    const r = btn.getBoundingClientRect();
+    menu.style.top = Math.round(r.bottom + 10) + 'px';
+    menu.style.left = Math.round(Math.max(8, Math.min(r.right - menu.offsetWidth, innerWidth - menu.offsetWidth - 8))) + 'px';
+  };
+  const show = (on, focusFirst) => {
+    open = on; menu.hidden = !on;
+    wrap.dataset.open = on ? '1' : '0';
+    btn.setAttribute('aria-expanded', String(on));
+    if(on){ mark(); place(); if(focusFirst) items()[0].focus();
+            addEventListener('resize', place); addEventListener('scroll', place, true); }
+    else { removeEventListener('resize', place); removeEventListener('scroll', place, true); }
+  };
+  btn.onclick = e => { e.stopPropagation(); show(!open, false); };
+  btn.addEventListener('keydown', e => {
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); if(!open) show(true, true); }
+  });
+  menu.addEventListener('keydown', e => {
+    const i = items(), at = i.indexOf(document.activeElement);
+    if(e.key === 'ArrowDown'){ e.preventDefault(); i[(at + 1) % i.length].focus(); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); i[(at - 1 + i.length) % i.length].focus(); }
+    else if(e.key === 'Home'){ e.preventDefault(); i[0].focus(); }
+    else if(e.key === 'End'){ e.preventDefault(); i[i.length - 1].focus(); }
+    else if(e.key === 'Escape'){ e.preventDefault(); show(false); btn.focus(); }
+    else if(e.key === 'Tab'){ show(false); }
+  });
+  menu.addEventListener('click', e => {
+    const a = e.target.closest('.ev-item');
+    if(!a) return;
+    e.preventDefault();
+    show(false); btn.focus();
+    if(+a.dataset.level !== S.level) setLevel(+a.dataset.level);
+  });
+  document.addEventListener('click', e => { if(open && !wrap.contains(e.target)) show(false); });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && open && !menu.contains(document.activeElement)){ show(false); btn.focus(); }
+  });
+})();
+
+/* ------------------------------------------------------------------- loop --- */
 function next(){
   BlendAudio.stop();
   S.phase = 'asking';
-  S.picked = null;
+  S.picked = {};
   S.heard = false;
+  S.held = null;
   S.ab = null;
   S.q = buildQuestion();
   $('bl-fill').style.transform = 'scaleX(0)';
-  display('What is doubling the horn?', null, null);
   render();
 }
 
-/* ----------------------------------------------------------------- wire --- */
 BlendAudio.onstate = paintPlay;
 $('bl-play').onclick = playQuestion;
-
-$('bl-options').addEventListener('click', e => {
-  const b = e.target.closest('.dj-opt');
-  if(!b || b.disabled) return;
-  if(S.phase === 'wrong'){ setAB(b.dataset.id); return; }
-  answer(b.dataset.id);
-});
 
 document.addEventListener('keydown', e => {
   const onControl = !!(e.target.closest && e.target.closest('button, a'));
@@ -242,18 +514,16 @@ document.addEventListener('keydown', e => {
     if(S.phase === 'asking') playQuestion();
     return;
   }
-  if(e.key === 'Enter' && S.phase !== 'asking'){
-    if(onControl) return;
-    e.preventDefault(); next(); return;
+  if(e.key === 'Enter' && S.phase === 'marked'){ if(onControl) return; e.preventDefault(); next(); return; }
+  if(S.phase === 'marked' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
+    e.preventDefault(); setAB(e.key === 'ArrowLeft' ? 'heard' : 'picked');
   }
-  if(S.phase === 'asking' && /^[1-4]$/.test(e.key)){
-    const b = $('bl-options').querySelectorAll('.dj-opt')[+e.key - 1];
-    if(b && !b.disabled){ e.preventDefault(); answer(b.dataset.id); }
-    return;
-  }
-  if(S.phase === 'wrong' && S.ab && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
-    e.preventDefault();
-    setAB(e.key === 'ArrowLeft' ? S.ab.answer : S.ab.picked);
+  if(e.key === 'Escape' && S.held){ e.preventDefault(); S.held = null; render(); return; }
+  /* at level 3, 1/2/3 move the card in hand, or the focused one */
+  if(tiered() && S.phase === 'asking' && /^[1-3]$/.test(e.key)){
+    const c = e.target.closest && e.target.closest('.bl-card');
+    const id = S.held || (c && S.picked[c.dataset.id] ? c.dataset.id : null);
+    if(id){ e.preventDefault(); S.picked[id] = BLEND_TIERS[+e.key - 1].id; S.held = null; render(); }
   }
 });
 
@@ -261,5 +531,6 @@ window.addEventListener('scroll', () => {
   $('atl-nav').classList.toggle('is-stuck', window.scrollY > 20);
 }, { passive:true });
 
+try { const v = +localStorage.getItem(LEVEL_KEY); if(BLEND_LEVELS.some(l => l.id === v)) S.level = v; } catch(_){}
 next();
 requestAnimationFrame(frame);
