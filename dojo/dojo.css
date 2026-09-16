@@ -1,78 +1,9 @@
 /* ============================================================================
-   THE DOJO · STYLES
+   EAR TRAINING · BELTS
    ----------------------------------------------------------------------------
-   The dojo is a top-level section, not a page inside the atlas, so it carries
-   its own stylesheet rather than inheriting atlas.css — that file is 50 KB of
-   page-specific layout the dojo has no use for, and its instrument-page rules
-   would have to be fought rather than reused.
-
-   What IS shared is the design system in HANDOFF §2, restated here as tokens.
-   Anything that reads as "the same product" comes from these values, so a
-   change to the palette is a change to this block.
+   The naming quiz. Loads after dojo-base.css, which owns the tokens, the reset
+   and the header.
    ============================================================================ */
-
-.atl,.atl *,.atl *::before,.atl *::after{margin:0;padding:0;box-sizing:border-box}
-html{background:#080C14;overflow-y:scroll;scrollbar-gutter:stable}
-body{background:#080C14;margin:0}
-
-.atl{
-  --bg:#080C14;
-  --bg-lift:#0C1220;
-  --gold:#D4A04A;
-  --gold-deep:#C08830;
-  --gold-lift:#DEB05A;
-  --blue:#8FB4E0;
-  --ok:#5FB89A;
-  --warn:#C0603A;
-  --text:#BEC0C8;
-  --text-dim:#7E808A;
-  --text-faint:#4E505A;
-  --hair:rgba(255,255,255,.07);
-  --hair-gold:rgba(212,160,74,.24);
-  font-family:'DM Sans',-apple-system,sans-serif;
-  font-size:17px;color:var(--text);background:var(--bg);line-height:1.7;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;min-height:100vh;
-}
-/* The element-level reset is wrapped in :where() so it carries NO specificity.
-   Written plainly as `.atl button` it scores (0,1,1) and silently beats every
-   single-class rule below it — `.dj-next{background:var(--gold)}` and friends
-   lose their background and border with nothing in the cascade to show for it.
-   atlas.css has the un-wrapped version and the same shadow: .atl-play asks for
-   a gold hairline there and does not get one. Noted, not changed here: that is
-   a change to how the atlas looks. */
-:where(.atl) :where(h1,h2,h3){font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;letter-spacing:-.4px}
-:where(.atl) :where(a){text-decoration:none;color:inherit}
-:where(.atl) :where(button){font:inherit;color:inherit;background:none;border:none;cursor:pointer}
-:where(.atl) :where(img){max-width:100%;display:block}
-.atl ::selection{background:rgba(212,160,74,.35);color:#fff}
-.atl :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
-
-/* --- ambient layers, identical to the atlas so the two read as one site --- */
-.atl-grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")}
-.atl-atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.20) 0%,transparent 55%),
-    radial-gradient(ellipse at 85% 25%,rgba(74,140,212,.08) 0%,transparent 45%),
-    radial-gradient(ellipse at 10% 70%,rgba(20,50,120,.10) 0%,transparent 45%)}
-
-.atl-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);line-height:1.4}
-
-/* --- nav --- */
-.atl-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;
-  padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}
-.atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
-.atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
-.atl-nav-right{display:flex;align-items:center;gap:14px}
-.dj-score{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--text-dim);
-  font-variant-numeric:tabular-nums;letter-spacing:.4px}
-.dj-score b{font-size:15px;color:#fff;font-weight:500}
-.dj-score span{margin-right:2px}
-.dj-score i{font-style:normal;color:var(--gold);margin-left:6px}
-.atl-select-btn{display:flex;align-items:center;gap:11px;padding:9px 18px;border:1px solid rgba(212,160,74,.42);
-  border-radius:100px;font-size:13px;font-weight:500;color:#fff;background:rgba(212,160,74,.07);white-space:nowrap;
-  letter-spacing:0;text-transform:none;transition:border-color .25s,background .25s,box-shadow .25s}
-.atl-select-btn:hover{border-color:var(--gold);background:rgba(212,160,74,.14);box-shadow:0 0 0 3px rgba(212,160,74,.08)}
 
 /* --- page frame ---
    One column, centred horizontally, anchored a fixed distance from the top.

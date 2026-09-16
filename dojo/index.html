@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Dojo · Evenant</title>
-<meta name="description" content="Ear training for orchestration: hear an instrument, name it, and when you are wrong, hear the two side by side.">
+<title>Ear Training · Evenant</title>
+<meta name="description" content="Ear training for orchestration. Two modes: name the instrument you hear, or sort a passage into the layers it is built from.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="dojo.css">
+<link rel="stylesheet" href="dojo-base.css">
+<link rel="stylesheet" href="modes.css">
 <link rel="stylesheet" href="../evenant-nav.css">
 </head>
 <body>
@@ -20,42 +21,22 @@
     <div class="atl-nav-left">
       <div data-ev-switch></div>
     </div>
-    <div class="atl-nav-right">
-      <div class="dj-score" id="dj-score" aria-live="off"></div>
-    </div>
   </nav>
 
-  <!-- One centred column, anchored a fixed distance from the top rather than
-       vertically centred: the card grows when an answer is revealed, and a
-       centred column would slide the whole question up the screen every time. -->
-  <main class="atl-main">
-    <div class="dj-col">
-      <div class="dj-eyebrow" id="dj-belt"></div>
-      <h1 class="dj-display" id="dj-display"></h1>
-
-      <button class="dj-play" id="dj-play" aria-label="Play the clip">
-        <span class="ico" aria-hidden="true"></span><span id="dj-play-lbl">Play</span>
-      </button>
-      <div class="dj-meter" aria-hidden="true"><i id="dj-bar-fill"></i></div>
-      <div class="dj-note" id="dj-note"></div>
-
-      <div class="dj-options" id="dj-options" role="group" aria-label="Answers"></div>
-      <div class="dj-result" id="dj-result" aria-live="polite"></div>
-
-      <button class="dj-reset" id="dj-reset">Reset progress</button>
+  <main class="dj-modes-page">
+    <div class="dj-modes-head">
+      <div class="atl-eyebrow">Ear Training · 2 modes</div>
+      <h1><span>Hearing is a skill</span><span class="atl-serif-em">you can practise</span></h1>
+      <p>Two ways in. Name what you are hearing, or take a passage apart and say what each instrument is actually doing in it.</p>
     </div>
+
+    <div class="dj-modes" id="dj-modes"></div>
   </main>
 
 </div>
 
-<!-- atlas-data.js first: INSTRUMENTS supplies the names, families, epithets and
-     the deep links back into the atlas, so the dojo can never drift out of step
-     with the reference it is practising. Then the dojo's own data, then the
-     renderer. All deferred, in dependency order, never async. -->
 <script defer src="../evenant-modules.js" data-module="dojo"></script>
 <script defer src="../evenant-nav.js"></script>
-<script defer src="../atlas-data.js"></script>
-<script defer src="dojo-data.js"></script>
-<script defer src="dojo.js"></script>
+<script defer src="modes.js"></script>
 </body>
 </html>
