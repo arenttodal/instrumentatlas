@@ -1013,7 +1013,11 @@ const PASSAGES = {
     subtitle:'Horn melody with octave doublings',
     tempo:   73,
     beats:   4,
-    bars:    7,
+    /* Eight, not seven. The phrase lands its final note on the downbeat of bar
+       8 and rings through it, and the stems are cut to exactly this many bars
+       so the loop turns over on the barline. Changing this without recutting
+       the audio puts the playhead and the grid back out of step with it. */
+    bars:    8,
     tracks: [
       { id:'flute', instrument:'flute', family:'woodwinds', role:'Doubling, 8va',
         variants:[ {v:'1', label:'Solo', file:'flute_1'} ],
