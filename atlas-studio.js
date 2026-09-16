@@ -304,7 +304,9 @@ function draw(){
     const lo = Math.min(...pitches), hi = Math.max(...pitches);
     const span = Math.max(hi - lo, 6);
     t.notes.forEach(([st, du, pit]) => {
-      const x = px(st), w = Math.max(px(du) - 2, 3);
+      /* A held final note is notated longer than the passage, so clamp the bar
+         to the grid rather than letting it draw off the right edge. */
+      const x = px(st), w = Math.max(Math.min(px(du), W - x) - 2, 3);
       const rel = (pit - lo) / span;
       const y = y0 + LANE_H - 9 - rel * (LANE_H - 20);
       s += `<rect x="${x+1}" y="${y}" width="${w}" height="6" rx="2.5"
