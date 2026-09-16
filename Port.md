@@ -1,3 +1,5 @@
+> Implementation note (September 2026): This document is the original design brief. The current Accelerator implementation and verification instructions are documented in [accelerator/README.md](accelerator/README.md). Earlier descriptions of audio, persistence and interaction below are historical.
+
 # The Accelerator — portable specification
 
 Everything another agent needs to rebuild, extend or port this. Self-contained:
