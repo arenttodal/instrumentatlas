@@ -99,7 +99,8 @@ Every family's `sizes` array must have exactly six entries, in this order.
 {
   id, name, tagline,
   lede,                    // one or two sentences
-  role: [ '<b>Lead.</b> Explanation.', … ],   // HTML allowed, 3–5 items
+  role: [ 'A plain sentence or two.', … ],     // escaped, 3–5 items. No
+                           // bolded lead-in: it made all sixteen read alike
   video,                   // optional: hover footage for the home page card
   demos,                   // optional: [{label, note, file}] × 3, played as
                            // pills under the lede. No key renders nothing.

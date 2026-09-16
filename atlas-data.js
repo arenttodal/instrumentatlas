@@ -49,11 +49,11 @@ const FAMILIES = [
   { id:'strings', name:'Strings', tagline:'The bread and butter', video:'video/strings.mp4',
     lede:'The most versatile family in the orchestra: staccato chase scenes, sweeping romantic themes, harmonic beds, rhythmic accents. The bread and butter of orchestral writing.',
     role:[
-      '<b>Pitch flexibility.</b> Any pitch in range, including microtones and glissandi.',
-      '<b>No breathing.</b> Sustained lines can run indefinitely.',
-      '<b>Speed and dexterity.</b> Fast runs, scales and arpeggios sit comfortably.',
-      '<b>Multiple notes at once.</b> Double and triple stops, within limits.',
-      '<b>Range shapes colour.</b> Dark and warm below, bright and penetrating above.'
+      'Any pitch in the range. Microtones and glissandi too.',
+      'Nobody breathes, so a line holds for as long as you want it.',
+      'Fast runs, scales and arpeggios sit under the hand.',
+      'Double and triple stops put more than one note under a single bow, within limits.',
+      'Range does the colour work: dark and warm at the bottom, bright and penetrating at the top.'
     ],
     demos:[
       {label:'Mozart 40', note:'High violins carrying a fast, urgent melody', file:'mozart-40'},
@@ -73,10 +73,10 @@ const FAMILIES = [
   { id:'woodwinds', name:'Woodwinds', tagline:'The overlooked colours', video:'video/woodwinds.mp4',
     lede:'Beautiful and versatile, able to play everything from lyrical melodies, to quick runs and arpeggios, and ultra soft airy textures. Often overlooked in modern epic writing, but adds colors and textures that breathe a ton of life into orchestrations.',
     role:[
-      '<b>Two mechanisms.</b> Edge-tone flutes, and reeds: single (clarinet) or double (oboe, bassoon).',
-      '<b>Fast and intricate.</b> Runs and arpeggios are idiomatic, not a stretch.',
-      '<b>One note at a time.</b> Monophonic, but arpeggios cover harmonic ground.',
-      '<b>Breath is structural.</b> Phrases need rests, or the mockup stops sounding human.'
+      'Flutes make their sound on an edge. Everything else is a reed, single on the clarinet, double on the oboe and bassoon.',
+      'Runs and arpeggios are idiomatic here, not a stretch.',
+      'One note at a time. Harmony has to come from an arpeggio or a second player.',
+      'Phrases need rests written into them, or the mockup stops sounding human.'
     ],
     demos:[
       {label:'Beethoven 6', note:'Flute, oboe and clarinet as a trio, imitating birdsong', file:'beethoven-6'},
@@ -96,10 +96,10 @@ const FAMILIES = [
   { id:'brass', name:'Brass', tagline:'The powerhouse', video:'video/brass.mp4',
     lede:'Heroic melodies, intense stabs and rips, and massive chords and tutti statements that can overpower all the other orchestral tonal instruments. Dynamic, rich, and surprisingly versatile.',
     role:[
-      '<b>Lips, not reeds.</b> Pitch comes from lip tension and air pressure, so higher usually means louder.',
-      '<b>Bore shapes tone.</b> Cylindrical (trumpet, trombone) is bright and penetrating; conical (horn) is mellow and round.',
-      '<b>Breathing is non-negotiable.</b> Continuous melodies need breaks written in.',
-      '<b>Fast runs fight the mechanics.</b> Especially on trombone.'
+      'Pitch comes from lip tension and air pressure, which is why higher usually means louder.',
+      'The bore shapes the tone. Trumpet and trombone are cylindrical and penetrating; the horn is conical, mellow and round.',
+      'Continuous melodies need breaks written in for air.',
+      'Fast runs fight the mechanics, trombone most of all.'
     ],
     demos:[
       {label:'Beethoven 5', note:'Four horns blasting a powerful thematic transition', file:'beethoven-5'},
@@ -118,9 +118,9 @@ const FAMILIES = [
   { id:'percussion', name:'Percussion', tagline:'Rhythm and dramatic flair', video:'video/percussion.mp4',
     lede:'The percussion family has the widest dynamic range in the orchestra, from tonal percussion such as the marimba and xylophone, all the way to the big grand cassa and timpani, cymbals and snares - this is the heartbeat of the orchestra.',
     role:[
-      '<b>Pitched or unpitched.</b> Timpani, glockenspiel and celesta are tonal instruments; snare, bass drum and cymbals are atonal.',
-      '<b>Timing is everything.</b> Ten milliseconds delay in violins might be forgiven, but for percussion it can throw everything off balance.',
-      '<b>One player, many instruments.</b> Parts move between instruments constantly.'
+      'Timpani, glockenspiel and celesta are tonal instruments. Snare, bass drum and cymbals are atonal.',
+      'Timing is everything. Ten milliseconds delay in violins might be forgiven, but for percussion it can throw everything off balance.',
+      'One player covers several instruments, moving between them constantly.'
     ],
     demos:[
       {label:'The Moldau', note:'A high metal triangle keeping time on the off-beats', file:'smetana-moldau'},
