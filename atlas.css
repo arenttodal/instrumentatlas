@@ -61,14 +61,14 @@ body{background:#080C14;margin:0}   /* the .atl reset never covered body itself:
   padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}
 .atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
 .atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
-.atl-logo{height:15px;width:auto;object-fit:contain}
-.atl-logo-fallback{font-family:'Playfair Display',serif;font-size:19px;color:#fff;letter-spacing:.5px}
-.atl-nav-div{width:1px;height:20px;background:var(--hair)}
-.atl-nav-title{font-size:11px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
-/* Inside the atlas the breadcrumb states where you are, so the wordmark line
-   is only shown on the front page and the crumb takes its place, in line with
-   the logo, as the topmost element on the page. */
-.atl-nav.is-sub .atl-nav-title,.atl-nav.is-sub .atl-nav-div{display:none}
+/* The logo, the divider and the module title used to be written here and in
+   every other tool's header. They are one shared component now — see .ev-switch
+   in evenant-nav.css — so that all five headers cannot drift apart again. */
+/* The wordmark used to be hidden on sub-pages so the breadcrumb could take its
+   place. It is the module switcher now, and a switcher you cannot reach from an
+   instrument page is not one, so it stays and the crumb follows it. The crumb
+   is still the first thing dropped when the bar runs out of room — see the
+   phone block near the end of this file. */
 /* the announcement bar belongs to the collection front page; inside the atlas it
    is just 32px of vertical space taken from the content */
 /* The announcement bar and the footer are switched off for now. The bar used
@@ -514,9 +514,6 @@ a.atl-chip:hover{border-color:var(--hair-gold);color:var(--gold);background:rgba
 @media (max-width:760px){
   .atl{font-size:16px}
   .atl-wrap{padding:0 20px}
-  .atl-nav{padding:12px 20px}
-  .atl-logo{height:13px}
-  .atl-nav-div,.atl-nav-title{display:none}
   .atl-topbar{font-size:9.5px;letter-spacing:2px}
   .atl-home{min-height:auto;padding:36px 0 52px}
   .atl-hero{margin-bottom:32px}

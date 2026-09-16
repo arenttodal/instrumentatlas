@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const storage=new Map();const box={localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)}};
+vm.createContext(box);vm.runInContext(fs.readFileSync('accelerator/data.js','utf8')+'\n'+fs.readFileSync('accelerator/model.js','utf8')+'\nglobalThis.model=Accel',box);const a=box.model;
+assert.equal(a.voicing([36,48,60,72]).every(x=>x.ok),false,'roots alone fail');
+assert.equal(a.voicing([36,48,55,64]).every(x=>x.ok),true,'complete spread triad passes');
+assert.equal(a.voicing([36,50,55,64]).every(x=>x.ok),false,'foreign note fails');
+assert.equal(a.transform([{m:60,s:0,d:1},{m:64,s:1,d:1}],'invert')[1].m,56);
+const end=[{m:72,s:0,d:4}];const phrase=a.phrase(a.seed(),['original','original','invert','ending'],end);
+assert.equal(phrase.at(-1).s,12);assert.equal(phrase.at(-1).m,72);
+const fit=a.fit([{m:60,s:3,d:2}],a.chords[0],1);assert.equal(fit.total,1);assert.equal(fit.fit,1);
+a.patch('overtones',{exerciseDone:true});a.quiz('overtones',[0],[{a:0}]);a.quiz('overtones',[1],[{a:0}]);assert.equal(a.done('overtones'),true);
+a.setSketch({motif:end});a.import(a.export());assert.equal(a.sketch().motif[0].m,72);
+assert.throws(()=>a.import('{"version":2,"lessons":{},"sketch":{"motif":[{}]}}'));
+console.log('PASS model: harmony, transforms, overlaps, progress retention, backup validation');

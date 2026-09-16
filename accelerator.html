@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Accelerator — Evenant</title>
+<title>The Accelerator : Evenant</title>
 <meta name="description" content="An interactive companion to the Cinematic Music Accelerator. Every concept demonstrated before it is explained.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,17 +36,13 @@ code{font-family:inherit;color:var(--gold)}
   background:radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.16) 0%,transparent 55%)}
 
 /* --- nav --- */
-.nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
-  gap:20px;padding:13px 30px;background:rgba(8,12,20,.86);
-  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+/* the bar itself is evenant-nav.css's .ev-bar — height, padding, background
+   and hairline are shared with every other tool */
 .nav-l{display:flex;align-items:center;gap:13px;font-size:11px;font-weight:700;letter-spacing:2.2px;
   text-transform:uppercase;color:var(--dim);min-width:0}
 .nav-l i{font-style:normal;color:#33353D}
 .nav-l a:hover{color:var(--gold)}
 .nav-l span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mark{width:15px;height:13px;display:flex;flex-direction:column;justify-content:space-between;flex:0 0 auto}
-.mark i{display:block;height:2px;background:#fff;border-radius:1px}
-.mark i:nth-child(2){width:70%}
 .prog{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:700;letter-spacing:1.6px;
   text-transform:uppercase;color:var(--faint);flex:0 0 auto}
 .prog-bar{width:74px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
@@ -284,23 +280,26 @@ code{font-family:inherit;color:var(--gold)}
   .ltag{grid-column:2;justify-self:start}
   .ex-row{grid-template-columns:1fr;gap:8px}
   .wrap{padding:0 20px}
-  .nav{padding:12px 18px}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 
 </style>
+<link rel="stylesheet" href="evenant-nav.css">
 </head>
 <body>
 <div class="grain"></div>
 <div class="atmos"></div>
 
-<nav class="nav">
+<nav class="nav ev-bar">
   <div class="nav-l">
-    <span class="mark"><i></i><i></i><i></i></span>
-    <a href="#/foundations">The Accelerator</a><i>/</i><span id="nav-where">Foundations</span>
+    <!-- The hand-drawn three-bar mark is gone: every tool shows the same Evenant
+         logo, drawn by evenant-nav.js, and it keeps this module's #/foundations
+         destination. -->
+    <div data-ev-switch data-ev-home="#/foundations"></div>
+    <i>/</i><span id="nav-where">Foundations</span>
   </div>
   <div class="prog">
-    <span id="prog-txt">0 of 6</span>
+    <span id="prog-txt">0 of 12</span>
     <span class="prog-bar"><i id="prog-fill"></i></span>
   </div>
 </nav>
