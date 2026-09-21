@@ -8,6 +8,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="evenant-gate.css">
+<!-- Held back until the code is typed. This line runs before anything paints,
+     which the gate's own deferred script cannot; see evenant-gate.js, and note
+     what it says about this being a curtain rather than a lock. -->
+<script>document.documentElement.dataset.gate = 'locked';</script>
 <style>
 /* ============================================================================
    THE ACCELERATOR — STYLES
@@ -211,6 +216,8 @@ code{font-family:inherit;color:var(--gold)}
 <main id="view"></main>
 
 <script defer src="evenant-modules.js" data-module="accelerator"></script>
+<script defer src="evenant-gate.js" data-gate="accelerator" data-gate-hash="g3j74oa"
+        data-gate-name="The Accelerator"></script>
 <script defer src="evenant-nav.js"></script>
 <script defer src="accelerator/data.js"></script>
 <script defer src="accelerator/model.js"></script>

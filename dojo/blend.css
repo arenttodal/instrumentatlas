@@ -12,7 +12,10 @@
 
 .atl-main{position:relative;z-index:10;display:flex;justify-content:center;
   padding:clamp(22px,4.5vh,48px) 20px 72px}
-.bl-col{width:100%;max-width:780px;display:flex;flex-direction:column;align-items:center;text-align:center}
+/* Wider than the 780px the centred column used to be, by exactly the two
+   label gutters below, so the rows keep the width they had while sitting on
+   the page's centre line rather than 58px to the right of it. */
+.bl-col{width:100%;max-width:896px;display:flex;flex-direction:column;align-items:center;text-align:center}
 
 .dj-display{font-size:clamp(24px,3.4vw,34px);margin:12px 0 0}
 .dj-play{margin-top:20px}
@@ -45,8 +48,13 @@
 .bl-band-empty{align-self:center;margin:auto;font-size:11.5px;color:#3C3E48;letter-spacing:.3px}
 
 /* level 3: the same band three times, labelled, with the label outside so
-   nothing is ruled off from the row it belongs to */
-.bl-tier{display:grid;grid-template-columns:104px 1fr;align-items:center;gap:12px;text-align:left}
+   nothing is ruled off from the row it belongs to.
+   THE THIRD COLUMN IS EMPTY AND THAT IS THE POINT: a label gutter on one side
+   only pushes everything it labels off the page's centre line, and every other
+   thing on this page — the question, the play control, Check — is centred on
+   it. The matching gutter costs nothing and puts the rows back. */
+.bl-tier{display:grid;grid-template-columns:104px minmax(0,1fr) 104px;
+  align-items:center;gap:12px;text-align:left}
 .bl-tier .bl-band{min-height:70px}
 .bl-tier-name{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
   color:var(--text-faint)}
@@ -56,9 +64,11 @@
 .bl-pool{width:100%;margin-top:18px;display:flex;flex-direction:column;gap:10px;
   padding:6px;margin-left:-6px;margin-right:-6px;width:calc(100% + 12px);
   transition:box-shadow .2s,background .2s}
-.bl-fam{display:grid;grid-template-columns:104px 1fr;align-items:center;gap:12px;text-align:left}
+.bl-fam{display:grid;grid-template-columns:104px minmax(0,1fr) 104px;
+  align-items:center;gap:12px;text-align:left}
 .bl-fam-name{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--fam);opacity:.8}
-.bl-fam-row{display:flex;flex-wrap:wrap;gap:8px;min-height:38px;align-items:center}
+.bl-fam-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-height:38px;
+  align-items:center}
 .bl-fam-empty{font-size:11px;color:#34363E;letter-spacing:.3px}
 
 /* --- the card --- */
@@ -111,7 +121,6 @@
 .bl-ab-btn.is-on{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
 .bl-ab-btn .dj-hear{position:static;transform:none;opacity:.5;width:15px;height:15px}
 .bl-ab-btn.is-on .dj-hear{opacity:1;color:var(--gold);transform:none}
-.bl-ab-none{font-size:11.5px;color:var(--text-faint);width:100%}
 
 .bl-actions{display:flex;align-items:center;justify-content:center;min-height:48px;margin-top:16px}
 .dj-next{margin-top:0}
@@ -122,9 +131,11 @@
 .bl-note{font-size:12.5px;line-height:20px;min-height:40px;max-width:62ch;
   color:var(--text-dim);font-weight:300;margin-top:12px}
 
+/* Narrow: the label goes above the row it names, and centres over it — there
+   is no gutter left to balance. */
 @media (max-width:860px){
-  .bl-tier,.bl-fam{grid-template-columns:1fr;gap:5px}
-  .bl-tier-name,.bl-fam-name{padding-left:2px}
+  .bl-tier,.bl-fam{grid-template-columns:minmax(0,1fr);gap:5px}
+  .bl-tier-name,.bl-fam-name{text-align:center}
   .dj-score{display:none}
 }
 /* Below this the verdict can take a second line where the question took one
@@ -136,6 +147,11 @@
   .dj-display{min-height:2.3em;display:flex;align-items:center;justify-content:center;
     flex-wrap:nowrap;column-gap:0}
   .dj-display .dj-mark{flex:0 0 auto}
+  /* the longest thing this line can say — missed, plus not-there, plus
+     not-in-this-passage — takes three lines on a phone and two everywhere
+     else. It is the last element on the page, so growing moves nothing above
+     it, but the rule is the rule. */
+  .bl-note{min-height:60px}
 }
 @media (max-width:760px){
   .atl-main{padding:18px 16px 60px}

@@ -52,9 +52,17 @@ const EVENANT_TOOLS_HOME = {
   blurb:'Every Evenant tool in one place.'
 };
 
-/* `status` is 'available' or 'soon'. A 'soon' entry renders as a disabled row
-   with a Coming soon label and never navigates — it is not a link at all, so
-   there is nothing to click through to a page that does not exist.
+/* `status` is one of three:
+     available   a plain row that navigates.
+     soon        a disabled row with a Coming soon label that never navigates —
+                 not a link at all, so there is nothing to click through to a
+                 page that does not exist.
+     locked      the page EXISTS and the row navigates to it, but it is marked
+                 Coming soon just the same, and the page itself asks for an
+                 access code before it shows anything (evenant-gate.js). This
+                 is the state for a tool being shown to a few people before it
+                 is announced; 'soon' would put the label on a row nobody could
+                 use to reach the code prompt.
 
    The 3D Viewer is deliberately absent: it is reached from the 2D/3D toggle on
    an instrument plate, so it is part of the Atlas rather than a sibling tool.
@@ -76,13 +84,17 @@ const EVENANT_MODULES = [
     blurb:'Hear an instrument and name it. Get it wrong and the two are played back to back.'
   },
   {
-    id:'accelerator', name:'The Accelerator', icon:'accelerator', status:'available',
+    id:'accelerator', name:'The Accelerator', icon:'accelerator', status:'locked',
     path:'accelerator.html',
     blurb:'The interactive companion to the ebook. Six lessons, each with something to play with.'
   }
 ];
 
 const evenantHref = m => EVENANT_ROOT + m.path;
+/* the two questions a row asks about a tool's status, so the switcher and the
+   tools page cannot answer them differently */
+const evenantReachable = m => m.status !== 'soon';
+const evenantUnreleased = m => m.status !== 'available';
 /* the hub is addressable by id like any other tool, so the switcher on
    tools.html names itself and ticks its own row */
 const evenantModule = id =>
