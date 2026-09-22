@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Accelerator — Evenant</title>
+<meta name="description" content="An interactive companion to the Cinematic Music Accelerator. Every concept demonstrated before it is explained.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="accelerator/base.css">
+<link rel="stylesheet" href="accelerator/ui.css">
+<link rel="stylesheet" href="evenant-nav.css">
+</head>
+<body>
+<div class="grain"></div>
+<div class="atmos"></div>
+
+<!-- evenant-nav.js draws the logo, the divider, the module name and the chevron
+     into [data-ev-switch]. Same component as the atlas, the dojo and the viewer;
+     nothing about the bar is defined in this repository twice. The breadcrumb
+     beside it is filled by app.js on every route. -->
+<nav class="nav ev-bar" id="atl-nav">
+  <div class="nav-l">
+    <div data-ev-switch data-ev-home="#/"></div>
+    <div class="atl-nav-sep"></div>
+    <div class="atl-nav-crumb" id="atl-nav-crumb"></div>
+  </div>
+</nav>
+
+<main id="view"></main>
+
+<script defer src="evenant-modules.js" data-module="accelerator"></script>
+<script defer src="evenant-nav.js"></script>
+<script defer src="accelerator/data.js"></script>
+<script defer src="accelerator/model.js"></script>
+<script defer src="accelerator/audio.js"></script>
+<script defer src="accelerator/widgets.js"></script>
+<script defer src="accelerator/app.js"></script>
+</body>
+</html>

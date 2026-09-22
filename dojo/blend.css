@@ -1,0 +1,155 @@
+/* ============================================================================
+   EAR TRAINING · BLEND
+   ----------------------------------------------------------------------------
+   Loads after dojo-base.css, which owns the tokens, the header, the play
+   control and the result block. The grid, the heard band and the tiers are
+   this mode's.
+
+   The card is the atlas's instrument card made compact: same thumbnail, same
+   centred name, sized so twenty of them across four families still fit a
+   laptop screen with the heard band above them.
+   ============================================================================ */
+
+.atl-main{position:relative;z-index:10;display:flex;justify-content:center;
+  padding:clamp(22px,4.5vh,48px) 20px 72px}
+.bl-col{width:100%;max-width:780px;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+.dj-display{font-size:clamp(24px,3.4vw,34px);margin:12px 0 0}
+.dj-play{margin-top:20px}
+.bl-count{font-size:11.5px;line-height:17px;min-height:17px;color:var(--text-faint);
+  letter-spacing:.3px;margin-top:11px}
+
+/* --- the level selector, in the bar --- */
+.bl-level{position:relative}
+.bl-level .chev{transition:transform .25s ease;color:var(--gold)}
+.bl-level[data-open="1"] .chev{transform:rotate(180deg)}
+.bl-level-note{display:block;font-size:10.5px;color:var(--text-faint);letter-spacing:.2px;margin-top:2px}
+#bl-level-menu .ev-item{flex-direction:column;align-items:flex-start;gap:0}
+
+/* --- what you have chosen ---
+   Reserved at full height from the start, so the grid under it does not jump
+   when the first card lands. The lesson from the belts result block and the
+   Layers tray, applied a third time. */
+.bl-heard{width:100%;margin-top:22px;display:flex;flex-direction:column;gap:8px}
+.bl-band{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:8px;
+  min-height:86px;padding:10px;border-radius:14px;
+  background:rgba(212,160,74,.05);
+  box-shadow:inset 0 0 0 1px transparent;
+  transition:box-shadow .2s,background .2s}
+.bl-band.is-over,[data-drop].is-over .bl-band{background:rgba(212,160,74,.13);
+  box-shadow:inset 0 0 0 1px var(--hair-gold)}
+/* the grid is a target too: dropping a card back on it takes it out again */
+.bl-pool.is-over{box-shadow:inset 0 0 0 1px var(--hair-gold);border-radius:14px;
+  background:rgba(212,160,74,.035)}
+.bl-card.is-dragging{opacity:.3}
+.bl-band-empty{align-self:center;margin:auto;font-size:11.5px;color:#3C3E48;letter-spacing:.3px}
+
+/* level 3: the same band three times, labelled, with the label outside so
+   nothing is ruled off from the row it belongs to */
+.bl-tier{display:grid;grid-template-columns:104px 1fr;align-items:center;gap:12px;text-align:left}
+.bl-tier .bl-band{min-height:70px}
+.bl-tier-name{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--text-faint)}
+.bl-tier:first-child .bl-tier-name{color:var(--gold);opacity:.75}
+
+/* --- the grid, by family --- */
+.bl-pool{width:100%;margin-top:18px;display:flex;flex-direction:column;gap:10px;
+  padding:6px;margin-left:-6px;margin-right:-6px;width:calc(100% + 12px);
+  transition:box-shadow .2s,background .2s}
+.bl-fam{display:grid;grid-template-columns:104px 1fr;align-items:center;gap:12px;text-align:left}
+.bl-fam-name{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--fam);opacity:.8}
+.bl-fam-row{display:flex;flex-wrap:wrap;gap:8px;min-height:38px;align-items:center}
+.bl-fam-empty{font-size:11px;color:#34363E;letter-spacing:.3px}
+
+/* --- the card --- */
+.bl-card{display:flex;align-items:center;gap:9px;padding:7px 13px 7px 9px;
+  border:1px solid var(--hair);border-radius:9px;background:rgba(255,255,255,.02);
+  font-size:13px;color:var(--text);white-space:nowrap;
+  transition:border-color .2s,background .2s,color .2s,opacity .2s,transform .2s}
+.bl-card-art{width:22px;height:26px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.bl-card-art svg{height:26px;width:auto;transition:filter .3s ease}
+.bl-card b{font-weight:400}
+.bl-card:not(:disabled):hover{border-color:var(--hair-gold);background:rgba(212,160,74,.07);
+  color:#fff;transform:translateY(-1px)}
+.bl-card:not(:disabled):hover .bl-card-art svg{filter:drop-shadow(0 0 8px rgba(212,160,74,.4))}
+.bl-card:disabled{cursor:default}
+.bl-pool[data-waiting] .bl-card{opacity:.35}
+
+/* chosen cards, sitting in the band */
+.bl-heard .bl-card{border-color:var(--hair-gold);background:rgba(212,160,74,.1);color:#fff;cursor:grab}
+.bl-heard .bl-card:active{cursor:grabbing}
+/* in hand: lifted off the row, with the rows it can go to showing themselves */
+.bl-heard .bl-card.is-held{border-color:var(--gold);background:rgba(212,160,74,.22);
+  transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.bl-tier.is-target .bl-band{box-shadow:inset 0 0 0 1px var(--hair-gold)}
+.bl-tier.is-target .bl-band:hover{background:rgba(212,160,74,.1)}
+
+/* after Check. A hit and a hit-in-the-wrong-row have to read differently from
+   each other and from a miss, which is why there are four of these. */
+.bl-card.is-right{border-color:var(--ok);background:rgba(95,184,154,.12);color:#fff}
+.bl-card.is-wrong{border-color:var(--warn);background:rgba(192,96,58,.12);color:#fff}
+.bl-card.is-misplaced{border-color:var(--gold);background:rgba(212,160,74,.12);color:#fff}
+.bl-card.is-missed{border-color:var(--ok);border-style:dashed;background:transparent;color:var(--text-dim)}
+
+/* --- the A/B: two mixes ---
+   A dead control that still lights up is worse than a disabled one, so the row
+   goes flat while its clips decode and again whenever the transport is stopped.
+   And a card that is not in the mix you are hearing goes quiet — the difference
+   between the two sides is often one instrument in unison with another, which
+   is exactly the case where hearing it is the whole exercise and seeing it is
+   the difference between a control that works and one that seems not to. */
+.bl-ab{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;
+  width:100%;min-height:44px;margin-top:20px}
+.bl-ab:empty{min-height:44px}
+.bl-ab-btn{display:flex;align-items:center;gap:9px;padding:9px 16px;border-radius:9px;
+  border:1px solid var(--hair);background:rgba(0,0,0,.25);font-size:13px;color:var(--text-dim);
+  transition:border-color .2s,background .2s,color .2s}
+.bl-ab-btn:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
+.bl-ab-btn:disabled{opacity:.3;cursor:default}
+.bl-ab-btn:disabled.is-on{border-color:var(--hair);background:rgba(0,0,0,.25)}
+.bl-card.is-quiet{opacity:.34}
+.bl-ab-btn.is-on{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
+.bl-ab-btn .dj-hear{position:static;transform:none;opacity:.5;width:15px;height:15px}
+.bl-ab-btn.is-on .dj-hear{opacity:1;color:var(--gold);transform:none}
+.bl-ab-none{font-size:11.5px;color:var(--text-faint);width:100%}
+
+.bl-actions{display:flex;align-items:center;justify-content:center;min-height:48px;margin-top:16px}
+.dj-next{margin-top:0}
+.dj-next:disabled{opacity:.3;cursor:default}
+.dj-next:disabled:hover{background:var(--gold);border-color:var(--gold)}
+
+/* one line, and its room is held whether or not there is anything to say */
+.bl-note{font-size:12.5px;line-height:20px;min-height:40px;max-width:62ch;
+  color:var(--text-dim);font-weight:300;margin-top:12px}
+
+@media (max-width:860px){
+  .bl-tier,.bl-fam{grid-template-columns:1fr;gap:5px}
+  .bl-tier-name,.bl-fam-name{padding-left:2px}
+  .dj-score{display:none}
+}
+/* Below this the verdict can take a second line where the question took one
+   ("The right instruments, out of order" against "Which instruments do you
+   hear?"), which would drop the play control and everything under it by a line
+   at the moment of answering. Two lines are held from the start and the text is
+   centred in them, so one line or two reads the same and nothing moves. */
+@media (max-width:420px){
+  .dj-display{min-height:2.3em;display:flex;align-items:center;justify-content:center;
+    flex-wrap:nowrap;column-gap:0}
+  .dj-display .dj-mark{flex:0 0 auto}
+}
+@media (max-width:760px){
+  .atl-main{padding:18px 16px 60px}
+  .bl-card{font-size:12.5px;padding:8px 12px 8px 9px}
+  .bl-fam-row{min-height:42px}
+  /* A phone fits two or three chosen cards to a row, so the band has to hold
+     two rows from the start or the grid under it drops as the second one
+     appears. The card in the band is shrunk to keep that reserve affordable. */
+  .bl-heard .bl-card{font-size:12px;padding:6px 10px 6px 8px;gap:7px}
+  .bl-heard .bl-card-art{width:18px;height:20px}
+  .bl-heard .bl-card-art svg{height:20px}
+  .bl-band,.bl-tier .bl-band{min-height:96px}
+}
+@media (prefers-reduced-motion:reduce){
+  .bl-card,.bl-band,.bl-card-art svg{transition:none}
+  .bl-card:not(:disabled):hover{transform:none}
+}

@@ -1,0 +1,33 @@
+/* ============================================================================
+   EAR TRAINING · BELTS
+   ----------------------------------------------------------------------------
+   The naming quiz. Loads after dojo-base.css, which owns the tokens, the reset,
+   the header and the controls. Only this mode's layout is here.
+   ============================================================================ */
+
+/* --- page frame ---
+   One column, centred horizontally, anchored a fixed distance from the top.
+   Not vertically centred: revealing an answer makes the column taller, and a
+   centred column would slide the question upward every single time. The
+   references this is modelled on do the same — content in the upper middle,
+   space below it. */
+.atl-main{position:relative;z-index:10;display:flex;justify-content:center;
+  padding:clamp(34px,7vh,74px) 20px 80px}
+/* The column is wider than the controls in it: the question wants one line,
+   the answers want a comfortable click target rather than a wide one. */
+.dj-col{width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.dj-options,.dj-ab,.dj-result{max-width:360px}
+
+/* --- narrow --- */
+@media (max-width:760px){
+  .dj-score{display:none}
+  .atl-main{padding:26px 20px 64px}
+  .dj-opt{min-height:54px;font-size:16.5px}
+  .dj-ab-btn{min-height:50px}
+  .dj-play{min-height:48px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .atl *,.atl *::before,.atl *::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  .dj-meter i{transition:none}
+}

@@ -1,0 +1,191 @@
+/* ============================================================================
+   EAR TRAINING · SHELL
+   ----------------------------------------------------------------------------
+   Tokens, reset, ambient layers and the header, shared by every mode in this
+   section — the modes menu, Belts and Layers. Each mode then loads its own
+   stylesheet after this one.
+
+   Ear training is a top-level section, not a page inside the atlas, so it
+   carries its own stylesheet rather than inheriting atlas.css — that file is
+   50 KB of page-specific layout no mode here has a use for, and its
+   instrument-page rules would have to be fought rather than reused.
+
+   What IS shared is the design system in HANDOFF §2, restated below as tokens.
+   Anything that reads as "the same product" comes from these values, so a
+   change to the palette is a change to this block.
+   ============================================================================ */
+
+.atl,.atl *,.atl *::before,.atl *::after{margin:0;padding:0;box-sizing:border-box}
+html{background:#080C14;overflow-y:scroll;scrollbar-gutter:stable}
+body{background:#080C14;margin:0}
+
+.atl{
+  --bg:#080C14;
+  --bg-lift:#0C1220;
+  --gold:#D4A04A;
+  --gold-deep:#C08830;
+  --gold-lift:#DEB05A;
+  --blue:#8FB4E0;
+  --ok:#5FB89A;
+  --warn:#C0603A;
+  --text:#BEC0C8;
+  --text-dim:#7E808A;
+  --text-faint:#4E505A;
+  --hair:rgba(255,255,255,.07);
+  --hair-gold:rgba(212,160,74,.24);
+  font-family:'DM Sans',-apple-system,sans-serif;
+  font-size:17px;color:var(--text);background:var(--bg);line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative;min-height:100vh;
+}
+/* The element-level reset is wrapped in :where() so it carries NO specificity.
+   Written plainly as `.atl button` it scores (0,1,1) and silently beats every
+   single-class rule below it — `.dj-next{background:var(--gold)}` and friends
+   lose their background and border with nothing in the cascade to show for it.
+   atlas.css has the un-wrapped version and the same shadow: .atl-play asks for
+   a gold hairline there and does not get one. Noted, not changed here: that is
+   a change to how the atlas looks. */
+:where(.atl) :where(h1,h2,h3){font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;letter-spacing:-.4px}
+:where(.atl) :where(a){text-decoration:none;color:inherit}
+:where(.atl) :where(button){font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:where(.atl) :where(img){max-width:100%;display:block}
+.atl ::selection{background:rgba(212,160,74,.35);color:#fff}
+.atl :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+
+/* --- ambient layers, identical to the atlas so the two read as one site --- */
+.atl-grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")}
+.atl-atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.20) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 25%,rgba(74,140,212,.08) 0%,transparent 45%),
+    radial-gradient(ellipse at 10% 70%,rgba(20,50,120,.10) 0%,transparent 45%)}
+
+.atl-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);line-height:1.4}
+
+/* ============================================================================
+   The controls every mode is built from — the eyebrow and display line, the
+   play button and its meter, the stacked answer rows with the in-row A/B, and
+   the result block. Belts, Layers and Blend all use them, which is why they
+   are here and not in three stylesheets drifting apart. Each mode's own sheet
+   sets only its layout: the page frame, its column width, and whatever the
+   mode has that the others do not.
+   ============================================================================ */
+
+/* --- the question, and then the answer ---
+   One display line carries both: it asks before you answer and names the
+   instrument after, so the eye never has to move to find out what happened. */
+.dj-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;
+  color:var(--gold);opacity:.85}
+.dj-display{font-size:clamp(26px,4.4vw,40px);line-height:1.14;margin:14px 0 0;
+  letter-spacing:-.6px;transition:color .3s ease}
+.dj-display[data-state="right"]{color:#fff}
+.dj-display[data-state="wrong"]{color:#fff}
+.dj-mark{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:12px;
+  vertical-align:middle;position:relative;top:-4px}
+.dj-mark[data-v="right"]{background:var(--ok);box-shadow:0 0 12px rgba(95,184,154,.75)}
+.dj-mark[data-v="wrong"]{background:var(--warn);box-shadow:0 0 12px rgba(192,96,58,.65)}
+.dj-note{font-size:12px;color:var(--text-faint);margin-top:10px;min-height:18px}
+
+/* --- transport --- */
+.dj-play{display:inline-flex;align-items:center;justify-content:center;gap:11px;
+  margin-top:26px;padding:12px 30px;border-radius:100px;
+  border:1px solid var(--hair-gold);background:rgba(212,160,74,.07);color:var(--gold);
+  font-size:14px;font-weight:500;min-width:148px;
+  transition:background .25s,border-color .25s,color .25s}
+.dj-play:hover{border-color:var(--gold);background:rgba(212,160,74,.15);color:#fff}
+.dj-play .ico{width:0;height:0;border-style:solid;border-width:6px 0 6px 11px;
+  border-color:transparent transparent transparent currentColor}
+.dj-play[data-state="playing"]{background:rgba(212,160,74,.18);border-color:var(--gold);color:#fff}
+.dj-play[data-state="playing"] .ico{width:11px;height:12px;border:none;background:currentColor;
+  -webkit-mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat;
+          mask:linear-gradient(#000 0 0) 0/3.5px 100% no-repeat,linear-gradient(#000 0 0) 100%/3.5px 100% no-repeat}
+.dj-play[data-state="loading"]{opacity:.55;pointer-events:none}
+
+/* No rule under the play button at rest — the track is transparent, so the
+   only thing that ever draws here is the gold fill while a clip is running.
+   Belts keeps it where Layers dropped it entirely, because a belt clip plays
+   once and how much is left is real information; a Layers passage loops. */
+.dj-meter{width:148px;height:2px;border-radius:2px;background:transparent;
+  overflow:hidden;margin-top:14px}
+.dj-meter[data-idle]{visibility:hidden}   /* keeps its 16px; only the ink goes */
+.dj-meter i{display:block;height:100%;background:var(--gold);transform-origin:0 50%;transform:scaleX(0);
+  transition:transform .1s linear}
+
+/* --- answers: one per row, centred --- */
+.dj-options{display:flex;flex-direction:column;gap:9px;width:100%;margin-top:30px}
+.dj-opt{position:relative;display:flex;align-items:center;justify-content:center;
+  min-height:52px;padding:8px 40px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.015);font-size:16px;font-weight:400;color:var(--text);
+  transition:border-color .2s,background .2s,color .2s,opacity .2s,box-shadow .2s}
+.dj-opt:not(:disabled):hover{border-color:var(--hair-gold);background:rgba(212,160,74,.07);color:#fff}
+.dj-opt:disabled{cursor:default}
+.dj-options[data-waiting] .dj-opt{opacity:.35}
+.dj-opt.is-right{border-color:var(--ok);background:rgba(95,184,154,.12);color:#fff}
+.dj-opt.is-wrong{border-color:var(--warn);background:rgba(192,96,58,.12);color:#fff}
+.dj-opt.is-off{opacity:.28}
+
+/* --- result --- */
+/* Always holds a Next and a link row, drawn as ghosts in the phases that have
+   no use for them (see resultRows in dojo.js), so the block cannot change
+   height between asking, right and wrong. */
+.dj-result{width:100%;display:flex;flex-direction:column;align-items:center}
+.is-ghost{visibility:hidden;pointer-events:none}
+
+/* ⭐ the A/B, living in the two rows it is about. The clips are already
+   running, so these only move the gains; the bars on the right say which one
+   is audible. A second pair of buttons underneath used to push the page down
+   by its own height every time you were wrong. */
+.dj-opt.is-ab{cursor:pointer}
+.dj-opt.is-ab:hover{box-shadow:inset 0 0 0 1px var(--hair-gold)}
+.dj-hear{position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  width:17px;height:17px;display:flex;color:var(--text-faint);opacity:.5;
+  transition:color .2s,opacity .2s,transform .2s}
+.dj-hear svg{width:100%;height:100%}
+.dj-opt.is-ab:hover .dj-hear{color:var(--gold);opacity:.9}
+/* The lit bars alone say which one is audible. An outline here as well fought
+   the green and the red that say which one was right. */
+.dj-opt.is-hearing .dj-hear{color:var(--gold);opacity:1;transform:translateY(-50%) scale(1.15)}
+
+.dj-next{margin-top:26px;padding:12px 32px;border-radius:100px;border:1px solid var(--gold);
+  background:var(--gold);color:#0A0C14;font-size:14px;font-weight:500;line-height:24px;
+  transition:background .25s,border-color .25s}
+.dj-next:hover{background:var(--gold-lift);border-color:var(--gold-lift)}
+
+.dj-link{font-size:12px;line-height:20px;color:var(--text-faint);margin-top:16px;
+  border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+.dj-link:hover{color:var(--gold);border-color:var(--hair-gold)}
+
+.dj-reset{margin-top:40px;font-size:11px;color:var(--text-faint);opacity:.7;
+  letter-spacing:.3px;transition:color .2s,opacity .2s}
+.dj-reset:hover{color:var(--text-dim);opacity:1}
+
+
+/* --- nav --- */
+.atl-nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:14px 32px;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease}
+.atl-nav.is-stuck{background:rgba(8,12,20,.86);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom-color:var(--hair)}
+.atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
+/* The breadcrumb, lifted from atlas.css so it reads identically: same size,
+   same 2.2px tracking, same 14px gaps, same faint slash. It sits after the
+   module switcher behind a hairline, exactly as ORCHESTRAL / WOODWINDS does
+   in the atlas — a way back to the modes menu and a note of which mode you
+   are in. The modes menu itself has none, the same as the atlas home. */
+.atl-nav-sep{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
+.atl-nav-crumb{display:flex;min-width:0}
+.atl-crumb{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:2.2px;
+  text-transform:uppercase;font-weight:700;color:var(--text-dim);
+  flex-wrap:nowrap;overflow:hidden}
+.atl-crumb a:hover{color:var(--gold)}
+.atl-crumb i{font-style:normal;color:#3E404A}
+
+.atl-nav-right{display:flex;align-items:center;gap:14px}
+.dj-score{display:flex;align-items:baseline;gap:5px;font-size:12px;color:var(--text-dim);
+  font-variant-numeric:tabular-nums;letter-spacing:.4px}
+.dj-score b{font-size:15px;color:#fff;font-weight:500}
+.dj-score span{margin-right:2px}
+.dj-score i{font-style:normal;color:var(--gold);margin-left:6px}
+.atl-select-btn{display:flex;align-items:center;gap:11px;padding:9px 18px;border:1px solid rgba(212,160,74,.42);
+  border-radius:100px;font-size:13px;font-weight:500;color:#fff;background:rgba(212,160,74,.07);white-space:nowrap;
+  letter-spacing:0;text-transform:none;transition:border-color .25s,background .25s,box-shadow .25s}
+.atl-select-btn:hover{border-color:var(--gold);background:rgba(212,160,74,.14);box-shadow:0 0 0 3px rgba(212,160,74,.08)}
+

@@ -1,0 +1,122 @@
+/* ============================================================================
+   EAR TRAINING · LAYERS
+   ----------------------------------------------------------------------------
+   Loads after dojo-base.css. The instrument card is the atlas's .atl-sc — the
+   same thumbnail at the same 34px, the same centred name — so an instrument
+   looks here exactly as it looks on a family page.
+   ============================================================================ */
+
+.atl-main{position:relative;z-index:10;display:flex;justify-content:center;
+  padding:clamp(24px,5vh,54px) 20px 72px}
+.ly-col{width:100%;max-width:940px;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+/* a shorter display line than the other modes: this one is a question, not a
+   name, and it has three zones of board under it to leave room for */
+.dj-display{font-size:clamp(24px,3.6vw,36px);margin:12px 0 0}
+
+/* --- transport ---
+   The button itself comes from dojo-base.css. Two differences here: it sits a
+   little closer to the question, and there is no progress line under it — the
+   passage loops until you stop it, so a bar filling and resetting measures
+   nothing. The belts mode keeps the fill because its clip plays once. */
+.dj-play{margin-top:22px}
+.dj-note{margin-top:14px;max-width:52ch}
+
+/* --- the tray of instruments still to place --- */
+/* The tray has no box. At rest it is just the cards, sitting in the space
+   above the zones; the outline only appears while something is being dragged,
+   which is the only moment it needs to read as a target. */
+.ly-tray{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+  width:100%;margin-top:30px;padding:10px;min-height:96px;border-radius:14px;
+  box-shadow:inset 0 0 0 1px transparent;
+  transition:box-shadow .2s,background .2s}
+.ly-tray.is-over{box-shadow:inset 0 0 0 1px var(--hair-gold);background:rgba(212,160,74,.04)}
+/* The tray keeps its height when the last card leaves it. Collapsing it
+   reclaimed some empty space and paid for it by yanking the zones and
+   everything under them 64px up the screen at the exact moment you placed
+   your last instrument. It empties to nothing rather than to a caption. */
+
+/* --- the three zones --- */
+/* Three regions, not three boxes. The only thing drawn at rest is the label
+   and a barely-there tint in the role's own colour — no outer border, nothing
+   ruled between the label and the area under it. The outline appears while a
+   card is in the air, which is the only moment a target needs edges. */
+.ly-zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;
+  width:100%;margin-top:22px}
+.ly-zone{display:flex;flex-direction:column;gap:12px}
+.ly-zone-label{font-size:11px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;
+  color:var(--role);opacity:.9}
+.ly-slot{flex:1 1 auto;display:flex;flex-wrap:wrap;align-content:flex-start;justify-content:center;
+  gap:9px;padding:14px 10px;min-height:132px;border-radius:14px;
+  background:color-mix(in srgb,var(--role) 5%,transparent);
+  box-shadow:inset 0 0 0 1px transparent;
+  transition:box-shadow .2s,background .2s}
+.ly-zone.is-over .ly-slot{background:color-mix(in srgb,var(--role) 13%,transparent);
+  box-shadow:inset 0 0 0 1px var(--role)}
+@supports not (background:color-mix(in srgb,red 5%,transparent)){
+  .ly-slot{background:rgba(255,255,255,.022)}
+  .ly-zone.is-over .ly-slot{background:rgba(255,255,255,.07)}
+}
+/* cards pack to the top of a region; the placeholder sits in the middle of it */
+.ly-slot[data-empty]{align-content:center}
+.ly-slot-empty{font-size:11.5px;color:#3C3E48;letter-spacing:.3px}
+
+/* --- the instrument card: the atlas .atl-sc, with a solo control --- */
+.ly-card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:6px;width:108px;padding:10px 7px 9px;
+  border:1px solid var(--hair);border-radius:9px;background:rgba(255,255,255,.02);cursor:grab;
+  transition:border-color .25s,background .25s,transform .25s,box-shadow .25s,opacity .2s}
+.ly-card:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05);transform:translateY(-2px)}
+.ly-card:hover .ly-card-art svg{filter:drop-shadow(0 0 9px rgba(212,160,74,.42));transform:scale(1.06)}
+.ly-card-art{height:34px;display:flex;align-items:center;justify-content:center}
+.ly-card-art svg{height:34px;width:auto;transition:filter .3s ease,transform .3s cubic-bezier(.16,1,.3,1)}
+.ly-card b{font-size:12px;color:#fff;font-weight:500;line-height:1.25}
+.ly-card.is-dragging{opacity:.35;cursor:grabbing}
+.ly-card.is-picked{border-color:var(--gold);background:rgba(212,160,74,.12);
+  box-shadow:0 0 0 3px rgba(212,160,74,.10)}
+.ly-card.is-right{border-color:var(--ok);background:rgba(95,184,154,.10);cursor:default}
+.ly-card.is-wrong{border-color:var(--warn);background:rgba(192,96,58,.10);cursor:default}
+.ly-card.is-right:hover,.ly-card.is-wrong:hover{transform:none}
+
+/* the solo control. Four little level bars rather than a headphone, because it
+   is a level it changes: the stem stays exactly where it is and everything
+   else ramps down around it. */
+.ly-solo{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;color:#4E505A;opacity:0;
+  transition:opacity .2s,color .2s,background .2s}
+.ly-card:hover .ly-solo,.ly-card:focus-within .ly-solo{opacity:1}
+.ly-solo svg{width:14px;height:14px}
+/* the button stays 22px, its hit area does not: a thumb needs 44 and the
+   pseudo-element gives it one without moving anything on screen */
+.ly-solo::after{content:'';position:absolute;top:50%;left:50%;width:44px;height:44px;
+  transform:translate(-50%,-50%)}
+.ly-solo:hover{color:var(--gold);background:rgba(212,160,74,.12)}
+.ly-card.is-solo .ly-solo{opacity:1;color:#0A0C14;background:var(--gold)}
+.ly-card.is-solo{border-color:var(--gold)}
+
+/* --- actions --- */
+.ly-actions{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;
+  margin-top:24px;min-height:44px}
+/* Check is the only button in any mode that can be disabled */
+.dj-next{margin-top:0}
+.dj-next:disabled{opacity:.3;cursor:default}
+.dj-next:disabled:hover{background:var(--gold);border-color:var(--gold)}
+
+/* --- narrow ---
+   The zones stack rather than shrink: three columns of 108px cards do not fit
+   a phone, and a card narrower than its own name is not a card. Dragging is
+   gone on touch anyway — tap a card, tap a zone. */
+@media (max-width:860px){
+  .ly-zones{grid-template-columns:1fr;gap:16px}
+  .ly-slot{min-height:92px}
+  .dj-score{display:none}
+}
+@media (max-width:760px){
+  .atl-main{padding:20px 16px 56px}
+  .ly-card{width:calc(50% - 5px);max-width:150px}
+  .ly-solo{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){
+  .ly-card,.ly-zone,.ly-tray{transition:none}
+  .ly-card:hover{transform:none}
+}

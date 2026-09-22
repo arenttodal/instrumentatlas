@@ -1,0 +1,138 @@
+/* Accelerator-only layout and legibility. */
+:root{--faint:#9699A4;--dim:#A0A3AD}
+.hero .btn{margin-top:24px}.ac-course{padding-bottom:70px}.ac-module h2{font-size:30px}.ac-module>.lessons{padding:20px 0 35px}
+.ac-outline{position:relative;margin-top:18px;border:1px solid var(--hair);border-radius:10px;background:#0D1420}
+.ac-outline summary{padding:12px 16px;cursor:pointer;font-size:14px;color:var(--text)}
+.ac-outline nav{padding:0 16px 18px;display:grid;gap:4px;max-height:65vh;overflow:auto}.ac-outline nav>p{color:var(--gold);font-size:13px;margin-top:12px}
+.ac-outline a{padding:9px 12px;border-radius:7px;display:flex;justify-content:space-between;gap:16px;font-size:14px}.ac-outline a:hover,.ac-outline [aria-current]{background:rgba(212,160,74,.12);color:#fff}.ac-outline a span{color:var(--dim);font-size:12px}
+.ac-sections{display:flex;gap:8px;flex-wrap:wrap;margin-top:28px;position:sticky;top:54px;background:rgba(8,12,20,.96);z-index:20;padding:10px 0}.ac-sections a{padding:8px 12px;font-size:13px;border:1px solid var(--hair);border-radius:100px}.ac-sections [aria-current]{border-color:var(--gold);color:#fff}
+.sec{scroll-margin-top:155px}.sec h2{font-size:28px;margin-bottom:18px}.ac-instruction{max-width:700px;margin:0 0 18px;color:#CDD0D8;font-size:16px}
+#demo-host{padding:22px}.ac-transport{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.ac-inline{display:flex;align-items:center;gap:8px;font-size:13px}.ac-inline input[type=range]{width:94px}
+.ac-audio-status,.ac-caption{font-size:13px;color:var(--dim);margin:12px 0}.ac-timeline{height:4px;background:#202A38;border-radius:2px;margin:12px 0}.ac-timeline i{display:block;height:100%;background:var(--gold);width:0}
+[data-roll] svg{width:100%;height:auto;display:block;min-height:150px}.ac-legend{display:flex;flex-wrap:wrap;gap:15px;font-size:13px}
+.ac-roll-stage{position:relative}.ac-playhead{position:absolute;top:8%;height:75%;width:2px;background:#fff;opacity:.6;visibility:hidden;pointer-events:none}
+.ac-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:20px}
+/* The controls used to be a fixed two columns, which was right when they sat
+   under a full-width stage. In the stepped layout they have a whole column to
+   themselves, so let them flow: at ~900px this is three abreast and the demo
+   loses roughly a third of its height. */.ac-controls>.btn{justify-self:start}
+.ac-group{border:1px solid var(--hair);border-radius:10px;padding:14px;min-width:0}.ac-group legend{padding:0 6px;font-size:14px;color:#CDD0D8}
+.ac-field{display:flex;flex-direction:column;gap:6px;font-size:13px;margin-bottom:10px;min-width:0}.ac-field select{font:inherit;padding:10px 12px;min-height:44px;background:#141D2B;color:#D8DAE1;border:1px solid #354052;border-radius:7px;max-width:100%}.ac-field input[type=range]{width:100%;height:28px;accent-color:var(--gold)}.ac-field output{font-variant-numeric:tabular-nums;color:var(--gold)}.ac-group .btn{margin:4px 5px 0 0}
+.ac-editor{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ac-step{border-bottom:1px solid var(--hair);padding-bottom:10px}.ac-step .btn{font-size:12px;padding:8px;min-height:44px}
+.ac-spectrum{width:100%;height:140px;border-bottom:1px solid var(--hair);grid-column:1/-1}.ac-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.ac-actions>.ac-group{width:100%}
+.ac-feedback{font-size:15px;border-left:2px solid var(--gold);padding:10px 16px;margin-top:18px;max-width:700px}.ac-feedback:empty{display:none}.w-read{font-size:14px;color:#ADB1BC;line-height:1.7}
+.source{font-size:12px;color:var(--dim)}.source a{text-decoration:underline;text-underline-offset:3px}.btn{font-size:13px;min-height:44px;white-space:normal}.btn:disabled{opacity:.5;cursor:default}.btn[aria-pressed=true]{border-color:var(--gold);color:#fff;background:rgba(212,160,74,.12)}
+.q{min-width:0;margin-top:20px}.q legend{font-size:16px;color:#fff;padding:0 5px}.why{color:#B2B6C1}.opt{min-height:44px}.ltag{font-size:11px;letter-spacing:.5px;color:var(--dim)}.prose{max-width:680px}.prose p{font-weight:400;font-size:17px;line-height:1.8}
+.ac-backups h2{font-size:26px}.ac-backups p{margin:14px 0;max-width:640px}.ac-backups input[type=file]{max-width:210px;font-size:12px;margin-left:8px}.ac-backups>.btn{margin-right:8px}
+.ac-partials{height:200px;display:flex;align-items:flex-end;justify-content:space-around;gap:10px;margin:20px 0}.ac-partials>div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px}.ac-partials i{display:block;width:75%;max-width:48px;background:var(--gold);border-radius:4px 4px 0 0}
+@media(max-width:600px){.wrap{padding:0 16px}.hero{padding-top:35px}.claim{font-size:19px}#demo-host{padding:14px}.ac-controls{grid-template-columns:1fr}.ac-editor{grid-template-columns:repeat(2,minmax(0,1fr))}.ac-sections{top:50px;gap:5px}.ac-sections a{font-size:12px;padding:8px}.ac-outline a{align-items:flex-start}.ac-outline a span{max-width:85px;text-align:right}.ac-transport{gap:8px}.ac-transport>.btn{flex:1}.lcard{padding:16px;gap:12px}.lcard h3{font-size:21px}.pager b{font-size:18px}.nav{gap:8px}.nav-l{gap:7px}.prog-bar{display:none}.prog{font-size:9px;letter-spacing:.3px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* ============================================================================
+   STEPPED LESSON — explanation left, playground right
+   The page height is max(activity, step) rather than five sections stacked, so
+   a lesson is exactly one viewport on every step. The activity mounts once and
+   stays live while the left column advances, which is the point: the
+   demonstration is in front of you while you read about it and while you are
+   answering questions on it.
+   ============================================================================ */
+.lwrap{position:relative;z-index:10;max-width:1400px;margin:0 auto;padding:0 30px;
+  display:flex;flex-direction:column;width:100%}
+.lhead{flex:0 0 auto;padding:14px 0 0}
+.lhead h1{font-size:clamp(21px,2.4vw,28px);line-height:1.12;margin:10px 0 0}
+.lhead .ac-outline{margin-top:0}
+
+/* The viewport lock is a flex chain from html down, not a subtracted bar
+   height: .ev-bar is 76px where the old local bar was 46px, and any hardcoded
+   guess left the page a pixel or two scrollable. */
+@media (min-width:1001px){
+  html.lesson-view{overflow:hidden}
+  html.lesson-view body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+  html.lesson-view #view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  html.lesson-view .lwrap{flex:1 1 auto;min-height:0}
+}
+
+.lcols{flex:1 1 auto;display:grid;grid-template-columns:minmax(330px,392px) 1fr;
+  gap:30px;align-items:stretch;padding:14px 0 0;min-height:0}
+.lside{display:flex;flex-direction:column;min-height:0}
+.lplay{min-width:0;align-self:stretch;max-height:100%;overflow-y:auto;width:100%}
+/* The heading is focused on every route so a screen reader announces the new
+   lesson. It carries tabindex="-1" and is not a tab stop, so the visible ring
+   is noise — it reads as a text field. */
+.lhead h1:focus{outline:none}
+.lplay .demo-note{padding:13px 22px;border-top:1px solid var(--hair);font-size:12.5px;
+  color:var(--faint);line-height:1.6;margin:0}
+
+.rail{display:flex;align-items:center;gap:5px;flex:0 0 auto;padding-bottom:3px}
+.rail button{flex:1 1 0;height:4px;border-radius:2px;background:rgba(255,255,255,.09);
+  padding:0;min-width:7px;border:none;transition:background .3s,transform .2s}
+.rail button:hover{transform:scaleY(1.8)}
+.rail button.seen{background:rgba(212,160,74,.42)}
+.rail button.on{background:var(--gold)}
+.rail-n{flex:0 0 auto;margin-left:10px;font-size:9.5px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--faint);white-space:nowrap}
+
+.lstep{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;
+  padding:14px 0;min-height:0;overflow-y:auto;scrollbar-width:thin}
+.lstep>div{width:100%}
+.step-h{font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;
+  font-size:22px;line-height:1.22;letter-spacing:-.3px;margin:7px 0 12px}
+.lstep .prose p{font-size:15px;line-height:1.62;margin-bottom:13px}
+.lstep .prose p:last-child{margin-bottom:0}
+.lstep .q{margin-bottom:14px;padding:0;border:none;background:none}
+.lstep .q legend{font-size:16px;color:#fff;margin-bottom:12px;padding:0}
+.lstep .opt{font-size:13.5px;padding:10px 13px}
+.lstep .why{font-size:12.5px}
+.lstep .ac-field{display:block;margin-bottom:12px}
+.lstep .ac-actions{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+.lstep .ac-feedback{font-size:13px;line-height:1.55}
+
+.lnav{flex:0 0 auto;display:flex;align-items:center;gap:9px;
+  padding:12px 0 18px;border-top:1px solid var(--hair)}
+.lnav .sp{flex:1 1 auto}
+.lnav .hint{font-size:10.5px;color:#3E404A}
+.btn.next{border-color:rgba(212,160,74,.45);color:#fff;background:rgba(212,160,74,.1)}
+.btn.next:hover{background:rgba(212,160,74,.2)}
+.btn:disabled{opacity:.28;cursor:default}
+
+.step-try .claim{font-size:17px;margin:6px 0 0}
+.step-end{text-align:center}
+.step-end .tick{width:42px;height:42px;border-radius:100px;margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+  border:1px solid rgba(95,184,154,.4);color:var(--ok,#5FB89A);background:rgba(95,184,154,.08)}
+.step-end h2{font-family:'Playfair Display',Georgia,serif;font-size:23px;color:#fff;font-weight:500}
+.step-end .src{margin:12px 0 0;font-size:11px;color:#3E404A;font-weight:300;line-height:1.6}
+.step-end .go{margin-top:18px;display:inline-flex}
+
+/* the breadcrumb in the shared bar */
+.nav-l{display:flex;align-items:center;gap:15px;min-width:0}
+.atl-nav-sep{display:none;width:1px;height:18px;background:var(--hair);flex:0 0 auto}
+.atl-nav-crumb{display:none;min-width:0}
+.ev-bar.is-sub .atl-nav-sep,.ev-bar.is-sub .atl-nav-crumb{display:flex}
+.atl-crumb{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:2.2px;
+  text-transform:uppercase;font-weight:700;color:var(--dim);flex-wrap:wrap}
+.atl-crumb a:hover{color:var(--gold)}
+.atl-crumb i{font-style:normal;color:#3E404A}
+.atl-crumb-root{display:inline-flex;align-items:center;gap:14px}
+
+@media (max-width:1000px){
+  .lwrap{padding:0 20px}
+  .lcols{grid-template-columns:1fr;gap:16px;padding-bottom:26px}
+  .lplay{max-height:none;overflow:visible;order:-1}
+  .lstep{padding:12px 0;overflow:visible}
+  .atl-nav-sep,.atl-nav-crumb{display:none!important}
+}
+
+/* A coachmark inside the stage. One shape for every lesson's nudges, so a tip
+   never looks like part of the activity it is pointing at. */
+.w-stage{position:relative}
+.w-tip{position:absolute;z-index:5;max-width:236px;padding:8px 11px;border-radius:8px;
+  background:#16202F;border:1px solid var(--hair-gold,rgba(212,160,74,.24));
+  box-shadow:0 8px 22px rgba(0,0,0,.45);pointer-events:none;
+  animation:tipIn .32s cubic-bezier(.16,1,.3,1) both}
+.w-tip span{display:block;font-size:11.5px;line-height:1.45;color:var(--text,#BEC0C8)}
+.w-tip i{position:absolute;top:-5px;left:50%;margin-left:-5px;width:9px;height:9px;
+  background:#16202F;border-left:1px solid var(--hair-gold,rgba(212,160,74,.24));
+  border-top:1px solid var(--hair-gold,rgba(212,160,74,.24));transform:rotate(45deg)}
+@keyframes tipIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.w-tip{animation:none}}
