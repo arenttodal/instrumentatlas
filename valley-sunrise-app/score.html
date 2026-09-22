@@ -313,6 +313,33 @@ body.annotating .lanes{cursor:crosshair}
 .boot.gone{opacity:0;pointer-events:none}
 .boot .n{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--gold)}
 .boot .s{font-size:12px;color:var(--dim);max-width:420px;text-align:center;line-height:1.6}
+/* Decoding a 74 stem score takes long enough that a 104px caption at the edge
+   of the transport reads as a page that has stopped working. This says the same
+   thing in the middle of the screen, and shows how far along it is. */
+.load{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s;
+  background:rgba(8,12,20,.5);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.load.on{opacity:1;visibility:visible}
+.load-card{display:flex;flex-direction:column;align-items:center;gap:13px;
+  padding:26px 34px 22px;border-radius:16px;
+  background:rgba(14,19,30,.97);border:1px solid var(--hair);
+  box-shadow:0 26px 70px rgba(0,0,0,.66);
+  transform:translateY(6px) scale(.97);transition:transform .26s cubic-bezier(.16,1,.3,1)}
+.load.on .load-card{transform:none}
+.load-ring{position:relative;width:54px;height:54px}
+.load-ring svg{width:54px;height:54px;transform:rotate(-90deg)}
+.load-ring .bg{stroke:rgba(255,255,255,.09)}
+.load-ring .fg{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .18s linear}
+/* one stem has no ratio to report, so the arc turns instead of sitting at 0% */
+.load-ring.spin svg{animation:load-spin 1s linear infinite}
+.load-ring.spin .fg{transition:none}
+@keyframes load-spin{to{transform:rotate(270deg)}}
+.load-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.2px}
+.load-label{font-size:12px;color:var(--text);letter-spacing:.2px}
+.load-sub{font-size:10.5px;color:var(--faint);letter-spacing:.3px}
+/* the ring is the only thing that moves, so it keeps turning when motion is
+   reduced only as a stepped fill, never as a spin */
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../evenant-nav.css">
@@ -485,6 +512,21 @@ body.annotating .lanes{cursor:crosshair}
 </div>
 
 
+<div class="load" id="load" role="status" aria-live="polite">
+  <div class="load-card">
+    <div class="load-ring">
+      <svg viewBox="0 0 54 54" aria-hidden="true">
+        <circle class="bg" cx="27" cy="27" r="23" fill="none" stroke-width="3.5"/>
+        <circle class="fg" id="load-arc" cx="27" cy="27" r="23" fill="none" stroke-width="3.5"
+                stroke-dasharray="144.5" stroke-dashoffset="144.5"/>
+      </svg>
+      <span class="load-pct" id="load-pct">0%</span>
+    </div>
+    <div class="load-label" id="load-label">Decoding stems</div>
+    <div class="load-sub" id="load-sub"></div>
+  </div>
+</div>
+
 <div class="boot" id="boot">
   <div class="n" id="boot-n">Valley Sunrise</div>
   <div class="s" id="boot-s">Loading score…</div>
@@ -525,6 +567,26 @@ function placeSide(){
 }
 const audible = id => (typeof audibleTrack === 'function') ? audibleTrack(id) : !muted.has(id);
 
+/* The circumference the arc is drawn on: 2 x PI x r, r = 23. */
+const ARC = 144.5;
+function showLoad(label, done, total, sub){
+  const ring = document.querySelector('.load-ring');
+  if(total){
+    const pct = Math.round(done / total * 100);
+    ring.classList.remove('spin');
+    $('load-arc').setAttribute('stroke-dashoffset', (ARC * (1 - pct / 100)).toFixed(1));
+    $('load-pct').textContent = pct + '%';
+  } else {
+    ring.classList.add('spin');
+    $('load-arc').setAttribute('stroke-dashoffset', (ARC * 0.75).toFixed(1));
+    $('load-pct').textContent = '';
+  }
+  $('load-label').textContent = label;
+  $('load-sub').textContent = sub || '';
+  $('load').classList.add('on');
+}
+function hideLoad(){ $('load').classList.remove('on'); }
+
 /* ---------- the score library --------------------------------------------
    scores.json lists what this viewer can open. Each entry names its own score
    and annotation files, so adding a piece is a JSON file and one row, never a
@@ -559,6 +621,7 @@ async function openScore(id){
     $('boot-s').innerHTML = 'Could not load <b>' + entry.score + '</b> — it must sit beside this page, served over http://';
     return false;
   }
+  hideLoad();
   pause(); killAll(); buffers.clear(); missing.clear(); overBudget.clear(); decoded = 0;
   muted.clear(); solos.clear(); tempSolo = null;
   loopA = loopB = null; loopOn = false; $('loop-btn').setAttribute('aria-pressed','false');
@@ -684,10 +747,15 @@ async function play(){
     killAll();                            // belt and braces
     const want = S.tracks.filter(t => audible(t.id));
     let n = 0;
+    /* One stem decodes fast enough that a card would only flash, so the panel
+       waits for a score big enough to be worth explaining. */
+    if(want.length > 2) showLoad('Decoding stems', 0, want.length, `0 of ${want.length}`);
     for(const t of want){
       await decode(t); n++;
       $('status').textContent = `decoding ${n}/${want.length}`;
+      if(want.length > 2) showLoad('Decoding stems', n, want.length, `${n} of ${want.length}`);
     }
+    hideLoad();
     const gone = want.filter(t => missing.has(t.id)).length;
     const over = want.filter(t => overBudget.has(t.id)).length;
     $('status').textContent =
@@ -704,7 +772,7 @@ async function play(){
   } catch(err){
     $('status').textContent = 'audio error — see console';
     console.error(err);
-  } finally { starting = false; }
+  } finally { starting = false; hideLoad(); }
 }
 
 function pause(){
@@ -746,7 +814,9 @@ async function applyGains(){
     for(const t of S.tracks){
       if(audible(t.id) && !nodeFor(t.id)){
         $('status').textContent = 'adding ' + t.name + '…';
+        showLoad('Loading ' + t.name, 0, 0);
         await decode(t);
+        hideLoad();
         if(!playing) break;
         const at = position() + 0.06;
         const node = startNode(t, at, ctx.currentTime + 0.06, 0);
