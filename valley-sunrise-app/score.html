@@ -553,7 +553,7 @@ async function openScore(id){
     $('boot-s').innerHTML = 'Could not load <b>' + entry.score + '</b> — it must sit beside this page, served over http://';
     return false;
   }
-  pause(); killAll(); buffers.clear(); missing.clear();
+  pause(); killAll(); buffers.clear(); missing.clear(); overBudget.clear(); decoded = 0;
   muted.clear(); solos.clear(); tempSolo = null;
   loopA = loopB = null; loopOn = false; $('loop-btn').setAttribute('aria-pressed','false');
   selTrack = null; offset = 0; startTime = 0;
@@ -599,7 +599,9 @@ function ensureCtx(){
 }
 
 async function fetchStem(t){
-  for(const e of EXTS){
+  /* A score may name its own extension. Without one every stem costs two 404s
+     before the probe finds the file — 148 of them on a 74 lane score. */
+  for(const e of (S.audioExt ? [S.audioExt] : EXTS)){
     const url = encodeURI(`${S.audioBase}${t.file || t.id}.${e}`);
     try { const r = await fetch(url); if(r.ok) return await r.arrayBuffer(); } catch(_){}
   }
@@ -610,13 +612,24 @@ async function fetchStem(t){
    instead of throwing: play() used to abort the whole transport on the first
    404, so one absent file silenced every other lane. */
 const missing = new Set();
+const overBudget = new Set();
+
+/* A decoded buffer is Float32 per sample per channel, so it costs far more
+   than the file it came from: a three minute stereo stem is 47 MB at 32 kHz
+   whatever its bitrate. Seventy-four of those is 3.5 GB, which kills the tab
+   rather than playing quietly, so decoding stops at a budget and says so. */
+const BUDGET = 700 * 1024 * 1024;
+const bufBytes = b => b.length * b.numberOfChannels * 4;
+let decoded = 0;
 
 async function decode(t){
   if(buffers.has(t.id)) return buffers.get(t.id);
-  if(missing.has(t.id)) return null;
+  if(missing.has(t.id) || overBudget.has(t.id)) return null;
   try {
     const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
+    if(decoded + bufBytes(buf) > BUDGET){ overBudget.add(t.id); return null; }
     buffers.set(t.id, buf);
+    decoded += bufBytes(buf);
     duration = Math.max(duration, buf.duration);
     return buf;
   } catch(_){
@@ -670,9 +683,11 @@ async function play(){
       $('status').textContent = `decoding ${n}/${want.length}`;
     }
     const gone = want.filter(t => missing.has(t.id)).length;
-    $('status').textContent = gone
-      ? (gone === want.length ? 'no stems for this track yet' : `${gone} stems missing`)
-      : '';
+    const over = want.filter(t => overBudget.has(t.id)).length;
+    $('status').textContent =
+      gone === want.length ? 'no stems for this track yet'
+      : over ? `${over} lanes silent — too many stems to hold at once`
+      : gone ? `${gone} stems missing` : '';
     const at = Math.min(offset, duration - 0.05);
     const when = ctx.currentTime + 0.08;
     startTime = when - at;
