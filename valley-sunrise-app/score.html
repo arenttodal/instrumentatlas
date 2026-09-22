@@ -319,20 +319,26 @@ body.annotating .lanes{cursor:crosshair}
 </head>
 <body>
 
-<div class="top">
-  <div class="title">
-    <div class="menu-wrap">
-      <button class="score-field" id="sc-btn" aria-haspopup="true" aria-expanded="false" title="Choose a track">
-        <h1 id="t-title">Valley Sunrise</h1>
-        <svg class="pf-chev" viewBox="0 0 10 6" fill="none" width="10" height="6">
-          <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="dmenu wide" id="scmenu">
-        <div class="dgroup"><span class="dlabel">Track</span><div id="sc-list"></div></div>
+<div class="top ev-bar" data-ev-bar="pinned">
+  <div class="top-l">
+    <div data-ev-switch></div>
+    <span class="top-div"></span>
+    <!-- The piece title is also the track picker: same type, same place, and
+         it only shows a border when you go near it. -->
+    <div class="title">
+      <div class="menu-wrap">
+        <button class="score-field" id="sc-btn" aria-haspopup="true" aria-expanded="false" title="Choose a track">
+          <h1 id="t-title">Valley Sunrise</h1>
+          <svg class="pf-chev" viewBox="0 0 10 6" fill="none" width="10" height="6">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="dmenu wide" id="scmenu">
+          <div class="dgroup"><span class="dlabel">Track</span><div id="sc-list"></div></div>
+        </div>
       </div>
+      <span id="t-sub"></span>
     </div>
-    <span id="t-sub"></span>
   </div>
   <div class="tools">
     <div class="menu-wrap preset-wrap">
