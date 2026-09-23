@@ -691,17 +691,27 @@ const BUDGET = 700 * 1024 * 1024;
 const bufBytes = b => b.length * b.numberOfChannels * 4;
 let decoded = 0;
 
+/* The reservation is taken BEFORE decoding, not after. Checking the total once
+   the buffer already existed meant a stem being rejected had still just cost
+   its full allocation, so the tab took the peak it was meant to be spared. The
+   size is known in advance: it is the score's duration at the context's rate,
+   and decodeAudioData resamples to that. */
+const estBytes = () => Math.ceil((S.duration + 1) * ctx.sampleRate) * 2 * 4;
+
 async function decode(t){
   if(buffers.has(t.id)) return buffers.get(t.id);
   if(missing.has(t.id) || overBudget.has(t.id)) return null;
+  const reserve = estBytes();
+  if(decoded + reserve > BUDGET){ overBudget.add(t.id); return null; }
+  decoded += reserve;
   try {
     const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
-    if(decoded + bufBytes(buf) > BUDGET){ overBudget.add(t.id); return null; }
+    decoded += bufBytes(buf) - reserve;                          // settle up
     buffers.set(t.id, buf);
-    decoded += bufBytes(buf);
     duration = Math.max(duration, buf.duration);
     return buf;
   } catch(_){
+    decoded -= reserve;                                          // give it back
     missing.add(t.id);
     return null;
   }
