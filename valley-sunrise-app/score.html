@@ -622,6 +622,7 @@ async function openScore(id){
     return false;
   }
   hideLoad();
+  generation++; inflight.clear();
   pause(); killAll(); buffers.clear(); missing.clear(); overBudget.clear(); decoded = 0; mixMode = false;
   muted.clear(); solos.clear(); tempSolo = null;
   loopA = loopB = null; loopOn = false; $('loop-btn').setAttribute('aria-pressed','false');
@@ -698,23 +699,50 @@ let decoded = 0;
    and decodeAudioData resamples to that. */
 const estBytes = () => Math.ceil((S.duration + 1) * ctx.sampleRate) * 2 * 4;
 
-async function decode(t){
-  if(buffers.has(t.id)) return buffers.get(t.id);
-  if(missing.has(t.id) || overBudget.has(t.id)) return null;
+/* Two things the reservation on its own did not survive.
+
+   The has() test is synchronous and the decode that follows is not, so two
+   callers wanting the same stem both passed it, both reserved, and both
+   decoded. One buffer landed in the map and both settlements were counted, so
+   the total drifted permanently above what was really held and the budget shrank
+   for the rest of the session. In flight promises are shared now, so a second
+   caller waits on the first.
+
+   And a decode outstanding when the score changed used to finish into the new
+   score: its buffer went into the freshly cleared map under the old score's
+   track id, and its bytes onto the new score's total. Each decode carries the
+   generation it started in and discards itself if that has moved on. */
+const inflight = new Map();
+let generation = 0;
+
+function decode(t){
+  if(buffers.has(t.id)) return Promise.resolve(buffers.get(t.id));
+  if(missing.has(t.id) || overBudget.has(t.id)) return Promise.resolve(null);
+  if(inflight.has(t.id)) return inflight.get(t.id);
+
   const reserve = estBytes();
-  if(decoded + reserve > BUDGET){ overBudget.add(t.id); return null; }
+  if(decoded + reserve > BUDGET){ overBudget.add(t.id); return Promise.resolve(null); }
   decoded += reserve;
-  try {
-    const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
-    decoded += bufBytes(buf) - reserve;                          // settle up
-    buffers.set(t.id, buf);
-    duration = Math.max(duration, buf.duration);
-    return buf;
-  } catch(_){
-    decoded -= reserve;                                          // give it back
-    missing.add(t.id);
-    return null;
-  }
+  const mine = generation;
+
+  const job = (async () => {
+    try {
+      const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
+      if(mine !== generation){ decoded -= reserve; return null; }  // score moved on
+      decoded += bufBytes(buf) - reserve;                          // settle up
+      buffers.set(t.id, buf);
+      duration = Math.max(duration, buf.duration);
+      return buf;
+    } catch(_){
+      if(mine === generation){ decoded -= reserve; missing.add(t.id); }
+      else decoded -= reserve;
+      return null;
+    } finally {
+      if(inflight.get(t.id) === job) inflight.delete(t.id);
+    }
+  })();
+  inflight.set(t.id, job);
+  return job;
 }
 
 function killNode(n){
