@@ -63,6 +63,36 @@ def probe(path):
             int(aud.group(1)), 2 if aud.group(2) == 'stereo' else 1)
 
 
+def calibration(out_dir, rate):
+    """A tone that starts at the very first sample, so the player can find out
+    what its own decoder does with encoder priming.
+
+    A lossy encoder cannot produce its first output sample until it has seen a
+    block or two of input, so it writes a short run of padding at the head of
+    every file, and the container carries a note saying how much to discard. A
+    decoder that ignores that note leaves the padding in. For one whole stem
+    that is harmless: the piece starts 20 ms late and nobody can tell. Cut into
+    47 files it is not, because the padding arrives 47 times.
+
+    The amount depends on the encoder AND on the decoder, so it cannot be
+    settled here. The player decodes this file once at startup, finds the first
+    sample of the tone, and trims that many frames off every segment. Measured
+    through Chromium with Opus, which has the same mechanism: frame 2 of 8820,
+    i.e. already trimmed, nothing to remove.
+    """
+    import math
+    n_tone, n_tail = int(rate * 0.12), int(rate * 0.08)
+    pcm = [int(32000 * math.sin(2 * math.pi * 1000 * i / rate)) for i in range(n_tone)] + [0] * n_tail
+    frames = [v for s in pcm for v in (s, s)]
+    wav = out_dir / 'calib.wav'
+    with wave.open(str(wav), 'w') as f:
+        f.setnchannels(2); f.setsampwidth(2); f.setframerate(rate)
+        f.writeframes(struct.pack('<%dh' % len(frames), *frames))
+    run('-i', str(wav), '-c:a', 'aac', '-b:a', '96k', str(out_dir / 'calib.m4a'))
+    wav.unlink()
+    return {'url': 'calib.m4a', 'toneStartsAtFrame': 0, 'sampleRate': rate}
+
+
 def envelope(path, scratch, rate=8000):
     """Peak per short window, used both for silence detection and the preview."""
     tmp = scratch / 'env.wav'
@@ -173,9 +203,9 @@ def main():
     manifest = {
         'version': a.version, 'score': a.id, 'base': a.base,
         'duration': round(duration, 3), 'segmentSeconds': a.seconds, 'segmentCount': n_seg,
-        # Fixed head trim, if a decoder turns out not to honour the edit list.
-        # ffmpeg's does: measured lag 0 on every segment of a real stem.
-        'primingFrames': 0,
+        # Not a fixed number: it depends on the decoder, so the player measures
+        # it once against this file and trims that much off every segment.
+        'calibration': calibration(out_dir, stems[0]['sampleRate'] if stems else 44100),
         'stems': stems,
     }
     (out_dir / 'manifest.json').write_text(json.dumps(manifest, separators=(',', ':')))
