@@ -16,6 +16,13 @@
 /audio/*
   Cache-Control: public, max-age=31536000, immutable
 
+# The score viewer keeps its stems under its own folder, so the rule above
+# never matched them: 78 MB of course track and 33 MB of Valley Sunrise came
+# down from the origin on every single visit. Same rule as the others, and the
+# same condition — re-bouncing a stem means giving it a new name.
+/valley-sunrise-app/audio/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # Converted engravings. Rebuilding one from plates-source/ keeps the file name,
 # so bump the name if a plate is ever re-cut after going live.
 /plates/*
