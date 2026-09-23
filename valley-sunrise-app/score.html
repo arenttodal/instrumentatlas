@@ -750,11 +750,22 @@ async function play(){
     /* One stem decodes fast enough that a card would only flash, so the panel
        waits for a score big enough to be worth explaining. */
     if(want.length > 2) showLoad('Decoding stems', 0, want.length, `0 of ${want.length}`);
-    for(const t of want){
-      await decode(t); n++;
+    /* A pool, not a loop. Awaiting each stem in turn meant a stem's request did
+       not leave the browser until the one before it had finished decoding, so
+       every round trip and every decode was laid end to end: 74 stems took 6.5s
+       to fetch on localhost, where latency is zero, against 0.8s six at a time.
+       Six is the classic per-host connection limit and keeps at most six
+       undecoded ArrayBuffers alive at once, which is the reason not to simply
+       fire all 74. */
+    const queue = [...want];
+    const step = () => {
+      n++;
       $('status').textContent = `decoding ${n}/${want.length}`;
       if(want.length > 2) showLoad('Decoding stems', n, want.length, `${n} of ${want.length}`);
-    }
+    };
+    await Promise.all(Array.from({length:Math.min(6, queue.length)}, async () => {
+      while(queue.length){ await decode(queue.shift()); step(); }
+    }));
     hideLoad();
     const gone = want.filter(t => missing.has(t.id)).length;
     const over = want.filter(t => overBudget.has(t.id)).length;
