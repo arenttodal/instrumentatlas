@@ -622,7 +622,8 @@ async function openScore(id){
     return false;
   }
   hideLoad();
-  pause(); killAll(); buffers.clear(); missing.clear(); overBudget.clear(); decoded = 0;
+  generation++; inflight.clear();
+  pause(); killAll(); buffers.clear(); missing.clear(); overBudget.clear(); decoded = 0; mixMode = false;
   muted.clear(); solos.clear(); tempSolo = null;
   loopA = loopB = null; loopOn = false; $('loop-btn').setAttribute('aria-pressed','false');
   selTrack = null; offset = 0; startTime = 0;
@@ -698,23 +699,50 @@ let decoded = 0;
    and decodeAudioData resamples to that. */
 const estBytes = () => Math.ceil((S.duration + 1) * ctx.sampleRate) * 2 * 4;
 
-async function decode(t){
-  if(buffers.has(t.id)) return buffers.get(t.id);
-  if(missing.has(t.id) || overBudget.has(t.id)) return null;
+/* Two things the reservation on its own did not survive.
+
+   The has() test is synchronous and the decode that follows is not, so two
+   callers wanting the same stem both passed it, both reserved, and both
+   decoded. One buffer landed in the map and both settlements were counted, so
+   the total drifted permanently above what was really held and the budget shrank
+   for the rest of the session. In flight promises are shared now, so a second
+   caller waits on the first.
+
+   And a decode outstanding when the score changed used to finish into the new
+   score: its buffer went into the freshly cleared map under the old score's
+   track id, and its bytes onto the new score's total. Each decode carries the
+   generation it started in and discards itself if that has moved on. */
+const inflight = new Map();
+let generation = 0;
+
+function decode(t){
+  if(buffers.has(t.id)) return Promise.resolve(buffers.get(t.id));
+  if(missing.has(t.id) || overBudget.has(t.id)) return Promise.resolve(null);
+  if(inflight.has(t.id)) return inflight.get(t.id);
+
   const reserve = estBytes();
-  if(decoded + reserve > BUDGET){ overBudget.add(t.id); return null; }
+  if(decoded + reserve > BUDGET){ overBudget.add(t.id); return Promise.resolve(null); }
   decoded += reserve;
-  try {
-    const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
-    decoded += bufBytes(buf) - reserve;                          // settle up
-    buffers.set(t.id, buf);
-    duration = Math.max(duration, buf.duration);
-    return buf;
-  } catch(_){
-    decoded -= reserve;                                          // give it back
-    missing.add(t.id);
-    return null;
-  }
+  const mine = generation;
+
+  const job = (async () => {
+    try {
+      const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
+      if(mine !== generation){ decoded -= reserve; return null; }  // score moved on
+      decoded += bufBytes(buf) - reserve;                          // settle up
+      buffers.set(t.id, buf);
+      duration = Math.max(duration, buf.duration);
+      return buf;
+    } catch(_){
+      if(mine === generation){ decoded -= reserve; missing.add(t.id); }
+      else decoded -= reserve;
+      return null;
+    } finally {
+      if(inflight.get(t.id) === job) inflight.delete(t.id);
+    }
+  })();
+  inflight.set(t.id, job);
+  return job;
 }
 
 function killNode(n){
@@ -755,6 +783,22 @@ async function play(){
     ensureCtx();
     if(ctx.state === 'suspended') await ctx.resume();
     killAll();                            // belt and braces
+    if(wantMix()){
+      const m = mixTrack();
+      showLoad('Loading the full mix', 0, 0);
+      await decode(m);
+      hideLoad();
+      if(buffers.has(MIX_ID)){
+        const at = Math.min(offset, duration - 0.05), when = ctx.currentTime + 0.08;
+        startTime = when - at;
+        startNode(m, at, when, 1);
+        mixMode = true; playing = true; setPlayIcon();
+        $('status').textContent = '';
+        return;
+      }
+      $('status').textContent = 'no full mix — using the stems';
+    }
+    mixMode = false;
     const want = S.tracks.filter(t => audible(t.id));
     let n = 0;
     /* One stem decodes fast enough that a card would only flash, so the panel
@@ -823,6 +867,17 @@ let applying = false;
 async function applyGains(){
   draw(); refreshOff(); drawMini();
   if(!playing || applying) return;
+  /* The mix cannot represent a selection, and the stems should not play under
+     it, so a change either way is a restart at the same position rather than a
+     gain move. It is the one place the transport stops, and only for the first
+     mute or the return to all lanes. */
+  if(mixMode !== wantMix()){
+    const at = position();
+    killAll(); offset = at; playing = false;
+    await play();
+    return;
+  }
+  if(mixMode) return;
   applying = true;
   try {
     const now = ctx.currentTime;
@@ -919,6 +974,20 @@ function audibleTrack(id){
   if(muted.has(id)) return false;
   return solos.size ? solos.has(id) : true;
 }
+
+/* ---------- the full mix ---------------------------------------------------
+   Seventy-four stems decode to 3.25 GB, so "every lane on" was the one state
+   the player could not reach: it is the most stems, not the fewest. But every
+   lane on is exactly the state a single file can serve. When nothing is muted
+   and nothing is soloed the transport runs one mixdown instead of 74 stems,
+   at 47 MB. Touch a mute or a solo and it hands over to the stems, which is a
+   handful of buffers rather than all of them.
+   -------------------------------------------------------------------------- */
+const MIX_ID = '__mix';
+const hasMix = () => !!(S && S.mixdown);
+const wantMix = () => hasMix() && !solos.size && !muted.size;
+const mixTrack = () => ({ id:MIX_ID, name:'Full mix', file:S.mixdown });
+let mixMode = false;
 
 function buildHeads(){
   const h = $('heads-inner');
