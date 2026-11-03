@@ -17,6 +17,8 @@ on:
       - evenant-keyboard.js
       - evenant-keyboard.css
       - evenant-sound.js
+      - evenant-listen.js
+      - evenant-listen.css
       - evenant-gate.js
       - evenant-gate.css
       - evenant-modules.js

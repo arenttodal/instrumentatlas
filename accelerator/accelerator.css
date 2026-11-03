@@ -80,6 +80,25 @@ code{font-family:inherit;color:var(--gold)}
 .lesson{padding-bottom:90px}
 .lesson-n{margin-top:20px}
 .lesson h1{font-size:clamp(32px,4.2vw,48px);line-height:1.06;margin:14px 0 0}
+/* --- the lesson's tab bar ---
+   Only on a lesson whose product declares LESSON_PANELS; the Accelerator has
+   none, so this paints nothing there. The Atlas's instrument tabs in the
+   smaller of their two sizes, so the suite reads as one thing. */
+.ac-tabs{display:flex;flex-wrap:wrap;gap:22px;margin:22px 0 0;
+  border-bottom:1px solid var(--hair)}
+.ac-tab{position:relative;padding:0 0 10px;font-size:9.5px;font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;color:var(--faint);
+  background:none;border:0;cursor:pointer;transition:color .2s}
+.ac-tab:hover{color:var(--dim)}
+.ac-tab[aria-selected="true"]{color:var(--gold)}
+.ac-tab[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:-1px;
+  height:1.5px;background:var(--gold)}
+.ac-tab em{font-style:normal;color:var(--faint);margin-left:5px}
+.ac-tabpanel{display:none}
+.ac-tabpanel.is-active{display:block}
+/* a panel's own content starts clear of the bar */
+.ac-tabpanel[data-panel]:not([data-panel="overview"]).is-active{padding-top:30px}
+
 /* The in-page jump links. app.js has always emitted them and no stylesheet
    has ever had a rule, so they ran together as one unreadable line —
    "ExploreWhy it worksChallengePractiseCheck yourself". The scroll spy that

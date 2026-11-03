@@ -17,6 +17,28 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     p.on('pageerror', e => errors.push(e.message));
     p.on('console', m => { if(m.type() === 'error' && !/Failed to fetch dynamically imported|unpkg|ERR_|net::/i.test(m.text())) errors.push('CONSOLE ' + m.text()); });
     if(unlocked) await p.addInitScript(([k, v]) => { try { localStorage.setItem(k, v); } catch(_){} }, GATE);
+    /* The Listen tab embeds YouTube. Stub all three hosts: a test must never
+       depend on the network, and a thumbnail that 404s is not a failure worth
+       reporting. The IFrame API stub hands back a player whose clock reads a
+       fixed 123.6s, which is what lets the author-mode checks below assert on
+       exactly what Set start wrote. */
+    await p.route('**://*.ytimg.com/**', r => r.fulfill({ status:200, contentType:'image/gif',
+      body: Buffer.from('R0lGODlhAQABAAAAACw=', 'base64') }));
+    /* ORDER MATTERS: Playwright tries the most recently added route first, so
+       the broad youtube.com catch-all goes in BEFORE the iframe_api rule or it
+       would swallow it and window.YT would never arrive. */
+    await p.route('**://*.youtube.com/**', r => r.fulfill({ status:200, contentType:'text/html', body:'<!doctype html>' }));
+    await p.route('**://www.youtube.com/iframe_api', r => r.fulfill({ status:200,
+      contentType:'text/javascript', body: `
+        window.YT = { Player: function(el, cfg){
+          this.getCurrentTime = () => 123.6;
+          this.pauseVideo = () => { window.__paused = (window.__paused||0)+1; };
+          this.destroy = () => {};
+          window.__players = (window.__players||0)+1;
+          const f = document.createElement('div'); f.className = 'evl-fakeplayer'; el.replaceWith(f);
+        }};
+        if(window.onYouTubeIframeAPIReady) window.onYouTubeIframeAPIReady();` }));
+    await p.route('**://*.youtube-nocookie.com/**', r => r.fulfill({ status:200, contentType:'text/html', body:'<!doctype html>' }));
     return p;
   };
 
@@ -263,6 +285,169 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
        'with level 2 open — it was earned — and 3, 4 and 5 still locked');
   }
 
+  /* ====================================== 7b. the Listen tab ============ */
+  {
+    const COLOUR = ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian'];
+
+    /* Ionian and Aeolian are the reference points, so they have no entry, and
+       a tool is a widget with no lesson around it. */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/how-modes-work');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    eq(await p.locator('.ac-tab').count(), 0, 'the intro has no Listen tab');
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/chords-lab');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    eq(await p.locator('.ac-tab').count(), 0, 'nor does a tool');
+
+    for(const mode of COLOUR){
+      await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/' + mode);
+      await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+      eq(await p.evaluate(() => [...document.querySelectorAll('.ac-tab')].map(t => t.dataset.tab)),
+         ['overview', 'listen'], mode + ' has an Overview and a Listen tab');
+      ok(await p.evaluate(() => getComputedStyle(document.querySelector('[data-panel="listen"]')).display) === 'none',
+         mode + ' opens on Overview');
+      /* mounting is lazy: nothing in the Listen panel until its tab is clicked */
+      eq(await p.locator('[data-panel="listen"] .evl-card, [data-panel="listen"] .evl-empty').count(), 0,
+         mode + ' has not mounted its Listen panel yet');
+
+      await p.locator('.ac-tab[data-tab="listen"]').click();
+      await p.waitForTimeout(400);
+      const seen = await p.evaluate(() => ({
+        cards: document.querySelectorAll('.evl-card').length,
+        empty: !!document.querySelector('.evl-empty'),
+        want: (LISTEN[location.hash.split('/')[2].split('?')[0]] || []).filter(i => i.verified && i.yt).length
+      }));
+      eq(seen.cards, seen.want, mode + ' shows only its verified cards');
+      ok(seen.cards ? !seen.empty : seen.empty,
+         mode + (seen.cards ? ' shows a grid' : ' says examples are coming soon'));
+      ok(await p.evaluate(() => getComputedStyle(document.querySelector('[data-panel="overview"]')).display) === 'none',
+         mode + ' hides Overview while Listen is open');
+    }
+
+    /* the deep link Circle will use */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/lydian?tab=listen');
+    /* the widget mounts behind the open Listen tab, so it is attached but not
+       visible: a visibility wait here would hang for ten seconds and fail */
+    await p.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
+    await p.waitForTimeout(400);
+    eq(await p.locator('.ac-tab[data-tab="listen"]').getAttribute('aria-selected'), 'true',
+       '?tab=listen opens the tab directly');
+    eq(await p.locator('.evl-card').count(), 3, 'with Lydian\'s three verified cards');
+    eq(await p.evaluate(() => [...document.querySelectorAll('[data-panel="listen"] [data-play]')]
+         .map(b => b.textContent.trim())),
+       ['Play', 'Play', 'Play'], 'each offering Play, because every verified start is 0');
+
+    /* Leaving Overview stops the lesson: the transport's Stop button goes with
+       it, and audio playing behind a hidden panel has nothing to stop it. */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/lydian');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    await p.locator('#demo-host [data-play]').click();
+    await p.waitForFunction(() => AccelAudio.inspect().status === 'playing', null, { timeout:10000 });
+    await p.locator('.ac-tab[data-tab="listen"]').click();
+    await p.waitForTimeout(300);
+    eq(await p.evaluate(() => AccelAudio.inspect().status), 'idle',
+       'opening Listen stops whatever the lesson was playing');
+
+    /* nothing reaches YouTube until a click */
+    eq(await p.locator('.evl-frame iframe').count(), 0, 'no iframe before a click');
+    await p.evaluate(() => { window.__stops = 0; const s = AccelAudio.stop;
+      AccelAudio.stop = function(){ window.__stops++; return s.apply(this, arguments); }; });
+    await p.locator('.evl-card').nth(0).locator('.evl-frame').click();
+    await p.waitForTimeout(300);
+    const first = await p.evaluate(() => ({
+      n: document.querySelectorAll('.evl-frame iframe').length,
+      src: document.querySelector('.evl-frame iframe').src,
+      stops: window.__stops }));
+    eq(first.n, 1, 'a click makes exactly one player');
+    ok(/^https:\/\/www\.youtube-nocookie\.com\/embed\/TcvnuqLFpkU\?start=0&/.test(first.src),
+       'pointed at the card\'s video and start time: ' + first.src);
+    eq(first.stops, 1, 'and stops the lesson transport and its drone first');
+
+    /* only one plays at a time */
+    await p.locator('.evl-card').nth(1).locator('.evl-frame').click();
+    await p.waitForTimeout(300);
+    const second = await p.evaluate(() => ({
+      n: document.querySelectorAll('.evl-frame iframe').length,
+      thumbs: document.querySelectorAll('.evl-frame img').length,
+      stops: window.__stops }));
+    eq(second.n, 1, 'starting a second card leaves one player');
+    eq(second.thumbs, 2, 'and puts the first card back to its thumbnail');
+    eq(second.stops, 2, 'stopping the transport again');
+
+    /* leaving the lesson takes the panel with it */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/phrygian');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    eq(await p.locator('.evl-card').count(), 0, 'routing away destroys the Listen panel');
+  }
+
+  /* ====================================== 7c. author mode =============== */
+  {
+    const a = await openPage();
+    const open = async mode => {
+      await a.goto(BASE + '/theory-lab/modes/lessons.html?author=1#/lessons/' + mode + '?tab=listen');
+      await a.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
+      await a.waitForTimeout(400);
+    };
+
+    let total = 0;
+    for(const mode of ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian']){
+      await open(mode);
+      total += await a.locator('.evl-card').count();
+    }
+    eq(total, 27, 'author mode shows all 27 cards, unverified and video-less included');
+
+    await open('mixolydian');
+    eq(await a.locator('[data-flag="novideo"]').count(), 1, 'Treasure Planet is flagged as having no video');
+    eq(await a.locator('[data-flag="unverified"]').count(), 7, 'and every Mixolydian card is flagged unverified');
+
+    /* Set start reads the player's clock, which the stub fixes at 123.6s */
+    await open('lydian');
+    const card = a.locator('.evl-card').first();
+    await card.locator('.evl-frame').click();
+    await a.waitForTimeout(700);
+    eq(await a.evaluate(() => window.__players || 0), 1, 'author mode builds an IFrame API player');
+    await card.locator('[data-set="start"]').click();
+    await a.waitForTimeout(150);
+    ok(/start 2:04 \(124s\)/.test(await card.locator('[data-times]').innerText()),
+       'Set start rounds the clock to 124s');
+    await card.locator('[data-nudge="-1"]').click();
+    await a.waitForTimeout(150);
+    ok(/start 2:03 \(123s\)/.test(await card.locator('[data-times]').innerText()), 'and \u22121 s nudges it');
+    eq((await card.locator('[data-play]').innerText()).trim(), 'Play from 2:03',
+       'the Play button follows the new start');
+
+    /* the draft survives a reload */
+    eq(await a.evaluate(() => { try { return JSON.parse(localStorage.getItem('evenant-listen-draft'))
+      .lydian['beethoven-heiliger-dankgesang'].start; } catch(_){ return null; } }), 123,
+       'the edit is kept as a draft in this browser');
+    await a.reload();
+    await a.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
+    await a.waitForTimeout(400);
+    ok(/start 2:03 \(123s\)/.test(await a.locator('.evl-card').first().locator('[data-times]').innerText()),
+       'and is still there after a reload');
+
+    /* Copy data round-trips through EvListen.source */
+    const js = await a.evaluate(() => {
+      const merged = {};
+      const draft = JSON.parse(localStorage.getItem('evenant-listen-draft') || '{}');
+      for(const k of Object.keys(LISTEN))
+        merged[k] = LISTEN[k].map(it => ({ ...it, ...((draft[k] || {})[it.id] || {}) }));
+      return EvListen.source(merged, 'LISTEN');
+    });
+    const back = new Function(js + ';return LISTEN;')();
+    eq(Object.values(back).flat().length, 27, 'Copy data writes all 27 cards back as valid JS');
+    eq(back.lydian[0].start, 123, 'carrying the edit');
+    eq(Object.keys(back), ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian'], 'in the same five groups');
+
+    /* Discard draft puts it back */
+    await a.locator('[data-discard]').click();
+    await a.waitForTimeout(900);
+    await a.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
+    await a.waitForTimeout(400);
+    ok(/start 0:00 \(0s\)/.test(await a.locator('.evl-card').first().locator('[data-times]').innerText()),
+       'Discard draft restores what the data file says');
+    await a.close();
+  }
+
   /* ================================ 8a. nothing renders "undefined" ===== */
   {
     /* A missing optional field used to reach the page as the word itself —
@@ -327,6 +512,6 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
 
   eq(errors, [], 'no page errors');
   console.log('PASS modes: ' + checks + ' checks — gate and deep links, hub, 9 lesson pages, presets, ' +
-              'separate stores, mode change mid-loop, chord grid, ear quiz, nav row, 390px');
+              'separate stores, mode change mid-loop, chord grid, ear quiz, Listen and author mode, nav row, 390px');
   await browser.close();
 })().catch(e => { console.error(e); process.exit(1); });

@@ -49,6 +49,22 @@
       'Samples transposed and level-adjusted during playback. ' +
       '<a href="accelerator/AUDIO-CREDITS.md">Audio credits and limitations</a>.';
 
+  /* EXTRA PANELS. A second product may want more on a lesson than the five
+     sections — Scales & Modes adds Listen, a grid of recordings. It declares
+     LESSON_PANELS(lesson) and gets back a tab bar; a product that declares
+     nothing gets exactly the markup it got before, which is what keeps the
+     Accelerator byte-identical.
+
+     Each panel is {id, label, badge?, mount(host) -> {destroy}}. mount runs
+     the first time its tab is shown and never again, so a tab nobody opens
+     costs nothing. */
+  const panelsFor=l=>{
+    if(typeof LESSON_PANELS!=='function') return [];
+    try{ return LESSON_PANELS(l)||[]; }
+    catch(err){ console.error('[lesson panels]',err); return []; }
+  };
+  let mounted=[];
+
   const SECTIONS=[['explore','Explore'],['why','Why it works'],['challenge','Challenge'],['practice','Practise'],['check','Check yourself']];
 
   function videoRow(l){
@@ -68,10 +84,12 @@
       '<nav class="crumb"><a href="#/">Course</a><span>/</span><a href="#/'+l.module+'">'+esc(mod?mod.title:l.module)+'</a></nav>'+
       (lab?'<div class="eyebrow lesson-n">Tool</div>':'<div class="eyebrow lesson-n">Lesson '+(i+1)+' of '+COUNTED.length+'</div>')+
       '<h1 tabindex="-1">'+esc(l.title)+'</h1>'+
-      (l.claim?'<p class="claim">'+esc(l.claim)+'</p>':'')+videoRow(l)+
-      (lab?'':'<nav class="ac-sections" aria-label="Lesson sections">'+SECTIONS.map(([id,name])=>'<a href="#'+id+'" data-section="'+id+'">'+name+'</a>').join('')+'</nav>');
+      (l.claim?'<p class="claim">'+esc(l.claim)+'</p>':'')+videoRow(l);
+    /* The jump links belong to the Overview panel, not to the page: on the
+       Listen tab they would point at hidden sections. */
+    const nav=lab?'':'<nav class="ac-sections" aria-label="Lesson sections">'+SECTIONS.map(([id,name])=>'<a href="#'+id+'" data-section="'+id+'">'+name+'</a>').join('')+'</nav>';
 
-    if(lab) return head+
+    if(lab) return head+nav+
       '<section class="sec" id="explore"><h2 class="sr-only">Explore</h2>'+
       (l.demoNote?'<p class="ac-instruction">'+esc(l.demoNote)+'</p>':'')+
       '<div class="demo" id="demo-host"></div></section>'+
@@ -79,14 +97,30 @@
       '<nav class="pager"><a href="#/'+l.module+'">Back to '+esc(mod?mod.title:'tools')+'</a></nav></article></div>';
 
     const prev=COUNTED[i-1], next=COUNTED[i+1];
-    return head+
+    const panels=panelsFor(l);
+    const tabs=panels.length
+      ? '<nav class="ac-tabs" role="tablist" aria-label="Lesson views">'+
+        [{id:'overview',label:'Overview'}].concat(panels).map((t,n)=>
+          '<button class="ac-tab" type="button" role="tab" data-tab="'+esc(t.id)+'" '+
+          'aria-selected="'+(n===0)+'" aria-controls="panel-'+esc(t.id)+'">'+esc(t.label)+
+          (t.badge?' <em>'+esc(t.badge)+'</em>':'')+'</button>').join('')+'</nav>'
+      : '';
+    const body=
     '<section class="sec" id="explore"><h2>Explore</h2>'+(l.demoNote?'<p class="ac-instruction">'+esc(l.demoNote)+'</p>':'')+'<div class="demo" id="demo-host"></div></section>'+
     '<section class="sec" id="why"><h2>Why it works</h2><div class="prose">'+l.body.map(p=>'<p>'+p+'</p>').join('')+'</div></section>'+
     '<section class="sec" id="challenge"><h2>Try a challenge</h2><p data-challenge-prompt></p><div class="ac-actions"><button class="btn gold" data-challenge>Check my attempt</button><button class="btn" data-hint>Show a hint</button><button class="btn" data-replay>Replay my work</button></div><p class="ac-feedback" role="status" data-challenge-feedback></p></section>'+
     '<section class="sec" id="practice"><h2>Practise</h2><label class="ac-field">Choose your exercise<select data-level>'+['beginner','intermediate','advanced'].map(k=>'<option value="'+k+'" '+(level===k?'selected':'')+'>'+k[0].toUpperCase()+k.slice(1)+'</option>').join('')+'</select></label><p data-exercise>'+esc(l.ex[level])+'</p><button class="btn" data-exercise-done aria-pressed="'+!!p.exerciseDone+'">'+(p.exerciseDone?'✓ Exercise recorded':'Mark this exercise practised')+'</button><p class="ac-caption">Record the exercise you practised. You can try another level at any time.</p></section>'+
     '<section class="sec" id="check"><h2>Check yourself</h2><div data-quiz></div><button class="btn" data-retry>Try the questions again</button><p role="status" data-quiz-status></p></section>'+
-    '<p class="source">'+credit(l)+'</p>'+
-    '<nav class="pager">'+(prev?'<a href="'+href(prev)+'"><span>Previous</span><b>'+esc(prev.title)+'</b></a>':'<a href="#/">Course overview</a>')+(next?'<a class="r" href="'+href(next)+'"><span>'+(next.module!==l.module?'Next module':'Next lesson')+'</span><b>'+esc(next.title)+'</b></a>':'<a class="r" href="#/"><span>Finish</span><b>Review progress and saved work</b></a>')+'</nav></article></div>';
+    '<p class="source">'+credit(l)+'</p>';
+    const pager=
+    '<nav class="pager">'+(prev?'<a href="'+href(prev)+'"><span>Previous</span><b>'+esc(prev.title)+'</b></a>':'<a href="#/">Course overview</a>')+(next?'<a class="r" href="'+href(next)+'"><span>'+(next.module!==l.module?'Next module':'Next lesson')+'</span><b>'+esc(next.title)+'</b></a>':'<a class="r" href="#/"><span>Finish</span><b>Review progress and saved work</b></a>')+'</nav>';
+
+    /* No panels: the same string this returned before any of this existed. */
+    if(!panels.length) return head+nav+body+pager+'</article></div>';
+    return head+tabs+
+      '<div class="ac-tabpanel is-active" id="panel-overview" role="tabpanel" data-panel="overview">'+nav+body+'</div>'+
+      panels.map(t=>'<div class="ac-tabpanel" id="panel-'+esc(t.id)+'" role="tabpanel" data-panel="'+esc(t.id)+'"></div>').join('')+
+      pager+'</article></div>';
   }
   function quizzes(l){const host=view.querySelector('[data-quiz]'),old=Accel.lesson(l.id).answers;let answers=Array.isArray(old)&&old.length===l.quiz.length?old.map((v,i)=>Number.isInteger(v)&&v>=0&&v<l.quiz[i].o.length?v:null):l.quiz.map(()=>null);
     function draw(){host.innerHTML=l.quiz.map((q,i)=>'<fieldset class="q"><legend>'+esc(q.q)+'</legend><div class="opts">'+q.o.map((o,j)=>'<button class="opt '+(answers[i]===null?'':j===q.a?'right':answers[i]===j?'wrong':'')+'" data-q="'+i+'" data-answer="'+j+'" '+(answers[i]!==null?'disabled':'')+'>'+esc(o)+'</button>').join('')+'</div>'+(answers[i]!==null?'<p class="why on">'+(answers[i]===q.a?'Correct. ':'Compare the highlighted answer. ')+esc(q.why)+'</p>':'')+'</fieldset>').join('');if(answers.every(a=>a!==null)){const score=Accel.quiz(l.id,answers,l.quiz);view.querySelector('[data-quiz-status]').textContent=score+' of '+l.quiz.length+' correct. '+(score===l.quiz.length?'Understanding check passed.':'Review the explanations and retry. Your previous best result is retained.');progress();}}
@@ -94,10 +128,51 @@
     view.querySelector('[data-retry]').onclick=()=>{answers=l.quiz.map(()=>null);Accel.patch(l.id,{answers});draw();view.querySelector('[data-quiz-status]').textContent='New attempt. Your best result is retained.';host.querySelector('button').focus();};draw();
   }
   const prompts={overtones:'Hear the target, then recreate its harmonic balance.',perspective:'Bring Harmony forward and confirm the result by listening.',separation:'Make the melody easier to follow using exactly one separation tool.','tone-colour':'Play a mystery sample, then select the instrument you hear.',voicing:'Keep a complete C-major triad, reinforce C and try wider low spacing.','voice-leading':'Keep Am, F, C and G complete, moving each voice by no more than two semitones.',motifs:'Write three to five notes that you can sing back.',prevade:'Build a phrase with familiar material, a variation and an independent new ending.','question-answer':'Compare B4 over V followed by C5 over I to hear the leading tone resolve.',harmony:'Include ii or vi, finish on I, then compare the primary chords.',countermelody:'Place at least one response in a rest in the theme.',ostinato:'Use at least four onsets and an accent. Lower the pattern until the melody is clear.'};
+  /* THE TAB BAR. Panels mount lazily and are destroyed on the way out of the
+     lesson, so leaving a lesson stops anything a panel started. */
+  function wireTabs(l,want){
+    const bar=view.querySelector('.ac-tabs');
+    if(!bar) return;
+    const panels=panelsFor(l), byId={};
+    panels.forEach(t=>{byId[t.id]=t;});
+    const show=id=>{
+      const target=view.querySelector('[data-panel="'+id.replace(/"/g,'')+'"]');
+      if(!target) return;
+      /* Leaving Overview hides the transport, and audio playing behind a panel
+         with no visible Stop is a trap. Leaving the lesson already stops it;
+         leaving its tab should too. */
+      if(id!=='overview') AccelAudio.stop();
+      bar.querySelectorAll('.ac-tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===id)));
+      view.querySelectorAll('.ac-tabpanel').forEach(p=>p.classList.toggle('is-active',p.dataset.panel===id));
+      const spec=byId[id];
+      if(spec&&!target.dataset.on){
+        target.dataset.on='1';
+        try{ const live=spec.mount(target); if(live&&live.destroy) mounted.push(live); }
+        catch(err){ console.error('[lesson panels]',err);
+          target.innerHTML='<p class="ac-feedback" role="alert">This tab could not load.</p>'; }
+      }
+    };
+    bar.addEventListener('click',e=>{
+      const b=e.target.closest('.ac-tab');
+      if(!b) return;
+      show(b.dataset.tab);
+      /* the hash carries the open tab, so the link is shareable */
+      const base='/'+l.module+'/'+l.id;
+      const next=b.dataset.tab==='overview'?base:base+'?tab='+encodeURIComponent(b.dataset.tab);
+      params=b.dataset.tab==='overview'?{}:{tab:b.dataset.tab};
+      if(!inFrame) history.replaceState({path:next},'','#'+next);
+    });
+    if(want&&byId[want]) show(want);
+  }
+
   function init(l){Accel.patch(l.id,{seen:true});Accel.setLast('/'+l.module+'/'+l.id);
-    /* the widget gets the preset merged with whatever the deep link asked for */
-    active=AccelWidgets.mount(document.getElementById('demo-host'),l,params);
+    /* the widget gets the preset merged with whatever the deep link asked for.
+       `tab` is the page's own, not the widget's, so it is held back — the
+       widget would otherwise persist it as a piece of its state. */
+    const {tab:wantTab,...widgetParams}=params;
+    active=AccelWidgets.mount(document.getElementById('demo-host'),l,widgetParams);
     if(isLab(l)) return;                       // a lab entry has no lesson around it
+    wireTabs(l,wantTab);
     view.querySelector('[data-challenge-prompt]').textContent=l.challenge||prompts[l.id]||'';const feedback=view.querySelector('[data-challenge-feedback]');
     view.querySelector('[data-challenge]').onclick=()=>{const r=active.check(),p=Accel.lesson(l.id);Accel.patch(l.id,{challengeAttempts:(p.challengeAttempts||0)+1,challengePassed:!!p.challengePassed||r.ok});feedback.textContent=(r.ok?'Exercise constraint met. ':'Keep exploring. ')+r.text;};view.querySelector('[data-hint]').onclick=()=>feedback.textContent=active.check().text;view.querySelector('[data-replay]').onclick=()=>active.play();
     view.querySelector('[data-level]').onchange=e=>{Accel.patch(l.id,{level:e.target.value});view.querySelector('[data-exercise]').textContent=l.ex[e.target.value];};view.querySelector('[data-exercise-done]').onclick=e=>{Accel.patch(l.id,{exerciseDone:true,practisedLevel:view.querySelector('[data-level]').value});e.currentTarget.setAttribute('aria-pressed','true');e.currentTarget.textContent='✓ Exercise recorded';progress();};quizzes(l);
@@ -105,7 +180,7 @@
   }
   function backups(){view.querySelector('[data-export]').onclick=()=>{const blob=new Blob([Accel.export()],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='accelerator-progress-and-sketches.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};view.querySelector('[data-import]').onchange=async e=>{const f=e.target.files[0],feedback=view.querySelector('[data-backup-status]');if(!f)return;try{if(f.size>2e6)throw Error('Choose an Accelerator backup smaller than 2 MB.');Accel.import(await f.text());feedback.textContent='Backup imported. Completed progress was retained.';progress();}catch(err){feedback.textContent=err.message;}};}
   function route(next,restore=false){
-    const old=LESSONS.find(l=>path==='/'+l.module+'/'+l.id);if(old)Accel.patch(old.id,{scroll:window.scrollY});if(active){active.capture();active.destroy();active=null;}AccelAudio.stop();observer?.disconnect();observer=null;
+    const old=LESSONS.find(l=>path==='/'+l.module+'/'+l.id);if(old)Accel.patch(old.id,{scroll:window.scrollY});if(active){active.capture();active.destroy();active=null;}mounted.forEach(m=>{try{m.destroy();}catch(_){}});mounted=[];AccelAudio.stop();observer?.disconnect();observer=null;
     const parsed=parseRoute(next||'/');path=parsed.route||'/';params=parsed.query;
     const parts=path.replace(/^\/?/,'').split('/').filter(Boolean),mod=MODULES.find(m=>m.id===parts[0]),l=LESSONS.find(l=>l.module===parts[0]&&l.id===parts[1]);view.innerHTML=l?lessonView(l):overview(mod);document.getElementById('nav-where').textContent=l?l.title:mod?mod.title:'Course';
     try{if(l)init(l);else backups();}catch(err){const h=document.getElementById('demo-host');if(h)h.innerHTML='<p class="ac-feedback" role="alert">The activity could not start. Your saved progress is retained. Reload to retry.</p>';console.error('[Accelerator]',err);}

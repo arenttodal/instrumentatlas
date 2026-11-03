@@ -31,8 +31,9 @@ theory-lab/
 Shared across the suite, one level up: `evenant-theory.js` (pure theory, no
 DOM), `evenant-keyboard.js` + `.css` (the Voicing Atlas keyboard as a
 component), `evenant-sound.js` (its 71 instruments as transport voices),
-`evenant-gate.js`, `evenant-nav.js`, `evenant-modules.js`, and the Accelerator
-engine in `accelerator/`.
+`evenant-listen.js` + `.css` (the Instrument Atlas's video grid as a
+component), `evenant-gate.js`, `evenant-nav.js`, `evenant-modules.js`, and the
+Accelerator engine in `accelerator/`.
 
 There is no build step. Scripts are classic `<script defer>` in dependency
 order and top-level `const` is the module system — nothing exports. Order in
@@ -181,7 +182,47 @@ to this repo's own banks and the phrase still sounds.
 Every widget that plays anything should play over an optional tonic drone, on
 by default. A mode without a tonic underneath it is not a mode.
 
-## 6. A page that is not a lesson
+## 6. Extra tabs on a lesson
+
+A lesson is five sections in a fixed order. A module that wants more declares
+`LESSON_PANELS(lesson)`, and the engine draws a tab bar — **Overview** for the
+sections it already had, plus one tab per panel. Declare nothing and the page
+is exactly what it was.
+
+```js
+const LESSON_PANELS = lesson => {
+  if(lesson.kind === 'lab') return [];          // a tool has no lesson around it
+  return [{ id:'listen', label:'Listen', badge:6,
+            mount(host){ return EvListen.render(host, …); } }];
+};
+```
+
+`mount` runs the first time its tab is opened and never again, so a tab nobody
+clicks costs nothing. What it returns is destroyed when the reader leaves the
+lesson. Opening a tab other than Overview stops the transport, because the
+transport's own Stop button goes off screen with it.
+
+`#/lessons/lydian?tab=listen` opens a tab directly, which is what a video
+description links to. Clicking a tab rewrites the hash, so what the reader is
+looking at is always what the address bar says.
+
+**The Listen grid.** `EvListen.render(host, items, opts)` returns `{destroy}`
+and draws the Instrument Atlas's video card: thumbnail, play disc, metadata.
+Nothing reaches YouTube until a click — `i.ytimg.com` serves one image per card
+and the player is built on demand, from `youtube-nocookie.com`. Only one plays
+at a time, and `opts.onPlay` is where the host stops its own audio first.
+
+Items carry `verified`. **A reader sees only `verified: true` cards**, so a
+timestamp nobody has listened to never ships; a mode with none shows
+"Examples coming soon" rather than an empty grid. `?author=1` on the page URL
+(the 3D viewer's convention) shows every card, loads YouTube's IFrame API so
+the page can read the player's clock, and adds per-card Set start / ±1 s / Set
+end / Clear end / Mark verified and a field for a different video. Edits are a
+draft in `localStorage`; **Copy data** writes the whole object back as source
+to paste into the data file, and **Discard draft** clears it. Nothing is
+written to the repo and nothing is posted anywhere.
+
+## 7. A page that is not a lesson
 
 `ear.html` is the pattern: its own engine on `AccelAudio.Transport`, its own
 CSS, the Dojo's chrome, no Accelerator app. It still loads
@@ -191,7 +232,7 @@ to exist — hence `accelerator/data-stub.js`, which declares both empty.
 Progress is keyed by `<html data-store="…">`. Give the module **one** store key
 and use it on every page of it, so lessons and tools share a record.
 
-## 7. Tests
+## 8. Tests
 
 ```
 node tests/theory.cjs                       # pure Node, no browser
@@ -211,7 +252,7 @@ Add `<module>/tests/*.cjs` for a new module — `.github/workflows/theory-lab-ch
 runs every file matching `theory-lab/*/tests/*.cjs`, so a new suite is picked
 up by existing CI without touching the workflow.
 
-## 8. Before launch, check
+## 9. Before launch, check
 
 - The gate's plain code is nowhere in the repo.
 - After unlocking, the gate continues to the URL the buyer arrived on — hash
