@@ -19,6 +19,9 @@ const {chromium} = require('playwright');
   assert.ok(await page.evaluate(()=>AccelAudio.inspect().sources>0),l.id+' schedules sound');
   await page.locator('[data-stop]').click();
   assert.equal(await page.evaluate(()=>AccelAudio.inspect().sources),0);
+  /* a missing optional field used to reach the page as the word itself */
+  assert.ok(!/\b(undefined|NaN|\[object Object\])\b/.test(await page.evaluate(()=>document.body.innerText)),
+            l.id+' renders undefined/NaN');
   await page.setViewportSize({width:390,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),l.id+' mobile overflow');
   await page.setViewportSize({width:1280,height:900});

@@ -80,6 +80,17 @@ code{font-family:inherit;color:var(--gold)}
 .lesson{padding-bottom:90px}
 .lesson-n{margin-top:20px}
 .lesson h1{font-size:clamp(32px,4.2vw,48px);line-height:1.06;margin:14px 0 0}
+/* The in-page jump links. app.js has always emitted them and no stylesheet
+   has ever had a rule, so they ran together as one unreadable line —
+   "ExploreWhy it worksChallengePractiseCheck yourself". The scroll spy that
+   sets aria-current was equally invisible; it marks the current section now. */
+.ac-sections{display:flex;flex-wrap:wrap;gap:8px 22px;margin:22px 0 0;
+  padding-top:16px;border-top:1px solid var(--hair);
+  font-size:10.5px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;
+  color:var(--faint)}
+.ac-sections a{color:var(--faint);transition:color .2s}
+.ac-sections a:hover{color:var(--gold)}
+.ac-sections a[aria-current]{color:var(--gold)}
 .claim{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;line-height:1.5;
   color:var(--gold);max-width:640px;margin:18px 0 0}
 .sec{margin-top:52px}

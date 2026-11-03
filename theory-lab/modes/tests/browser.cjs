@@ -263,6 +263,20 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
        'with level 2 open — it was earned — and 3, 4 and 5 still locked');
   }
 
+  /* ================================ 8a. nothing renders "undefined" ===== */
+  {
+    /* A missing optional field used to reach the page as the word itself —
+       the Explore instruction did, under its own heading. */
+    for(const url of ['/theory-lab/modes/', '/theory-lab/modes/ear.html',
+                      ...ids.map(l => '/theory-lab/modes/lessons.html#/' + l.module + '/' + l.id)]){
+      await p.goto(BASE + url);
+      await p.waitForTimeout(700);
+      const found = await p.evaluate(() =>
+        /\b(undefined|NaN|\[object Object\])\b/.test(document.body.innerText));
+      ok(!found, 'nothing renders undefined/NaN: ' + url);
+    }
+  }
+
   /* ======================================= 8b. the nav row is one row ==== */
   {
     /* The lab pages do not load the Dojo's chrome, so .atl-nav-left and its

@@ -47,6 +47,7 @@ const LESSONS = [
   activity:'brightness',
   preset:{ rootPc:2, mode:'lydian', drone:true },
   challenge:'Walk the slider down from Lydian and stop at the mode that is minor everywhere except one raised note.',
+  demoNote:'Press play and move the slider. Every step down lowers exactly one degree — watch which key flashes, and listen to what it does against the drone.',
   videos:[
     { part:'theory',  title:'The colour-note idea',    url:V('intro','theory'),  minutes:5 },
     { part:'hearing', title:'Drone and brightness',    url:V('intro','hearing'), minutes:5 }
@@ -82,6 +83,7 @@ const LESSONS = [
   activity:'reharm',
   preset:{ theme:'rise', rootPc:2, mode:'lydian', from:'ionian' },
   challenge:'Switch Rise from major to Lydian and find the one melody note that moved. Then turn on Idiomatic and listen to what replaces the IV chord.',
+  demoNote:'Rise is written in major. Switch it to Lydian and the marked notes are the ones that moved. Idiomatic swaps in the chord Lydian actually wants.',
   videos:[
     { part:'melody',  title:'Lydian · Melody',  url:V('lydian','melody'),  minutes:5 },
     { part:'harmony', title:'Lydian · Harmony', url:V('lydian','harmony'), minutes:5 },
@@ -118,6 +120,7 @@ const LESSONS = [
   activity:'reharm',
   preset:{ theme:'rise', rootPc:7, mode:'mixolydian', from:'ionian' },
   challenge:'Take Rise from major to Mixolydian and listen to what happens to the chord on the fifth degree.',
+  demoNote:'Rise again, this time to Mixolydian. One note drops; watch what it does to the chord on the fifth degree.',
   videos:[
     { part:'melody',  title:'Mixolydian · Melody',  url:V('mixolydian','melody'),  minutes:5 },
     { part:'harmony', title:'Mixolydian · Harmony', url:V('mixolydian','harmony'), minutes:5 },
@@ -154,6 +157,7 @@ const LESSONS = [
   activity:'reharm',
   preset:{ theme:'pulse', rootPc:2, mode:'dorian', from:'aeolian' },
   challenge:'Take Pulse from natural minor to Dorian. The ostinato sits on the sixth degree — find the moment it lifts.',
+  demoNote:'Pulse is in natural minor. Take it to Dorian and the sixth degree lifts — in the melody and under the ostinato at once.',
   videos:[
     { part:'melody',  title:'Dorian · Melody',  url:V('dorian','melody'),  minutes:5 },
     { part:'harmony', title:'Dorian · Harmony', url:V('dorian','harmony'), minutes:5 },
@@ -190,6 +194,7 @@ const LESSONS = [
   activity:'reharm',
   preset:{ theme:'lament', rootPc:4, mode:'phrygian', from:'aeolian' },
   challenge:'Take Lament from natural minor to Phrygian and listen to the second bar of the melody, where the line passes through the second degree.',
+  demoNote:'Lament, from natural minor to Phrygian. The second degree drops, and with it the chord the phrase leans on.',
   videos:[
     { part:'melody',  title:'Phrygian · Melody',  url:V('phrygian','melody'),  minutes:5 },
     { part:'harmony', title:'Phrygian · Harmony', url:V('phrygian','harmony'), minutes:5 },
@@ -226,6 +231,7 @@ const LESSONS = [
   activity:'chords',
   preset:{ rootPc:11, mode:'locrian', sevenths:false, against:true },
   challenge:'Play the first two chords of the Locrian cadence, in order.',
+  demoNote:'Tap a tile to hear it. "Mark what differs" shows how little of Locrian behaves the way a minor key would.',
   videos:[
     { part:'unstable', title:'Why Locrian is unstable', url:V('locrian','unstable'), minutes:5 },
     { part:'uses',     title:'Where it still works',    url:V('locrian','uses'),     minutes:5 }

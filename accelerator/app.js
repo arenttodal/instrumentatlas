@@ -80,7 +80,7 @@
 
     const prev=COUNTED[i-1], next=COUNTED[i+1];
     return head+
-    '<section class="sec" id="explore"><h2>Explore</h2><p class="ac-instruction">'+esc(l.demoNote)+'</p><div class="demo" id="demo-host"></div></section>'+
+    '<section class="sec" id="explore"><h2>Explore</h2>'+(l.demoNote?'<p class="ac-instruction">'+esc(l.demoNote)+'</p>':'')+'<div class="demo" id="demo-host"></div></section>'+
     '<section class="sec" id="why"><h2>Why it works</h2><div class="prose">'+l.body.map(p=>'<p>'+p+'</p>').join('')+'</div></section>'+
     '<section class="sec" id="challenge"><h2>Try a challenge</h2><p data-challenge-prompt></p><div class="ac-actions"><button class="btn gold" data-challenge>Check my attempt</button><button class="btn" data-hint>Show a hint</button><button class="btn" data-replay>Replay my work</button></div><p class="ac-feedback" role="status" data-challenge-feedback></p></section>'+
     '<section class="sec" id="practice"><h2>Practise</h2><label class="ac-field">Choose your exercise<select data-level>'+['beginner','intermediate','advanced'].map(k=>'<option value="'+k+'" '+(level===k?'selected':'')+'>'+k[0].toUpperCase()+k.slice(1)+'</option>').join('')+'</select></label><p data-exercise>'+esc(l.ex[level])+'</p><button class="btn" data-exercise-done aria-pressed="'+!!p.exerciseDone+'">'+(p.exerciseDone?'✓ Exercise recorded':'Mark this exercise practised')+'</button><p class="ac-caption">Record the exercise you practised. You can try another level at any time.</p></section>'+
