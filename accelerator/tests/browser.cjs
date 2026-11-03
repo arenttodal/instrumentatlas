@@ -3,6 +3,10 @@ const {chromium} = require('playwright');
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});
  const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ // The Accelerator is behind evenant-gate.js. Seed the unlock so the suite is
+ // what gets tested rather than the code prompt. The value is the djb2 of the
+ // access code, which is what the gate stores; see evenant-gate.js.
+ await page.addInitScript(()=>{try{localStorage.setItem('evenant-gate-accelerator','g3j74oa');}catch(_){}});
  await page.goto((process.env.ACCEL_URL||'http://127.0.0.1:8765')+'/accelerator.html');
  const lessons=await page.evaluate(()=>LESSONS.map(l=>({id:l.id,module:l.module})));
  assert.equal(lessons.length,12);

@@ -1,3 +1,7 @@
+> **Superseded. See [accelerator/README.md](accelerator/README.md) and
+> [docs/SPEC-modes.md](docs/SPEC-modes.md).** Kept for the design reasoning only;
+> its file names, widget registry and persistence model no longer match the code.
+>
 > Implementation note (September 2026): This document is the original design brief. The current Accelerator implementation and verification instructions are documented in [accelerator/README.md](accelerator/README.md). Earlier descriptions of audio, persistence and interaction below are historical.
 
 # The Accelerator — portable specification
