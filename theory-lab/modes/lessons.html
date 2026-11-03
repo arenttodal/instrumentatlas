@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-store="modes-work-v1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scales &amp; Modes · Theory Lab · Evenant</title>
+<meta name="description" content="The seven modes from brightest to darkest: what changes, what it does to a chord, and how to hear it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../evenant-gate.css">
+<!-- Held back until the code is typed. This line runs before anything paints,
+     which the gate's own deferred script cannot. The page's router still runs
+     behind the curtain, so a deep link from the course lands on the right
+     lesson the moment the code is accepted. -->
+<script>document.documentElement.dataset.gate = 'locked';</script>
+<link rel="stylesheet" href="../../accelerator/accelerator.css">
+<link rel="stylesheet" href="../../evenant-keyboard.css">
+<link rel="stylesheet" href="modes.css">
+<link rel="stylesheet" href="../../evenant-nav.css">
+</head>
+<body>
+<div class="grain"></div>
+<div class="atmos"></div>
+
+<nav class="nav ev-bar">
+  <div class="nav-l">
+    <div data-ev-switch data-ev-home="../index.html"></div>
+    <i>/</i><a href="index.html" class="md-up">Scales &amp; Modes</a>
+    <i>/</i><span id="nav-where">Lessons</span>
+  </div>
+  <div class="prog">
+    <span id="prog-txt">0 of 6</span>
+    <span class="prog-bar"><i id="prog-fill"></i></span>
+  </div>
+</nav>
+
+<main id="view"></main>
+
+<!-- LOAD ORDER IS LOAD-BEARING. Data, then engine, then app, all defer, never
+     async: top-level const in a classic script is this repo's module system,
+     and nothing exports. The shared layers come before the module's data
+     because activities.js reads EvTheory at load. -->
+<script defer src="../../evenant-modules.js" data-module="lab"></script>
+<script defer src="../../evenant-gate.js" data-gate="lab-modes" data-gate-hash="g1ctlzg"
+        data-gate-name="Scales &amp; Modes"></script>
+<script defer src="../../evenant-nav.js"></script>
+<script defer src="../../evenant-theory.js"></script>
+<script defer src="../../evenant-keyboard.js"></script>
+<script defer src="../../evenant-sound.js"></script>
+<script defer src="themes.js"></script>
+<script defer src="data.js"></script>
+<script defer src="../../accelerator/model.js"></script>
+<script defer src="../../accelerator/audio.js"></script>
+<script defer src="activities.js"></script>
+<script defer src="../../accelerator/widgets.js"></script>
+<script defer src="boot.js"></script>
+<script defer src="../../accelerator/app.js"></script>
+</body>
+</html>

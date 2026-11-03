@@ -149,6 +149,13 @@ code{font-family:inherit;color:var(--gold)}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--hair);
   border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s;white-space:nowrap}
 .btn:hover{border-color:var(--hair-gold);color:#fff}
+/* The import control is a <label class="btn"> wrapping a file input. Left
+   unstyled the native picker sits inside the pill and makes it 380px wide,
+   which pushes a 390px page sideways. Hide the input rather than display:none
+   it, so the label still opens it and it stays reachable by keyboard. */
+.btn input[type=file]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.btn:focus-within{border-color:var(--hair-gold);color:#fff}
 .btn.wide{border-radius:9px;justify-content:flex-start;width:100%}
 .btn.gold{border-color:rgba(212,160,74,.4);color:#fff;background:rgba(212,160,74,.09)}
 .btn.gold:hover{background:rgba(212,160,74,.18)}

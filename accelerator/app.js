@@ -37,6 +37,18 @@
      And a lesson may carry VIDEOS, which render as a row of links under the
      claim — links, never an embed, because the video lives behind the course
      platform's own paywall and only it may serve them. */
+  /* The credit line. The Accelerator's own is the default; a second product
+     sets LESSON_CREDIT in its data file, because the samples it plays and the
+     thing its lessons condense are not this one's. It is raw HTML by design —
+     these are attribution links and they are legally required to work. */
+  const credit = l => (typeof LESSON_CREDIT === 'function')
+    ? LESSON_CREDIT(l, esc)
+    : 'Based on ' + esc(l.source) + ', Cinematic Music Accelerator. Samples: ' +
+      '<a href="https://github.com/gleitz/midi-js-soundfonts">FluidR3 GM / MIDI.js Soundfonts</a>, ' +
+      '<a href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0</a>. ' +
+      'Samples transposed and level-adjusted during playback. ' +
+      '<a href="accelerator/AUDIO-CREDITS.md">Audio credits and limitations</a>.';
+
   const SECTIONS=[['explore','Explore'],['why','Why it works'],['challenge','Challenge'],['practice','Practise'],['check','Check yourself']];
 
   function videoRow(l){
@@ -73,7 +85,7 @@
     '<section class="sec" id="challenge"><h2>Try a challenge</h2><p data-challenge-prompt></p><div class="ac-actions"><button class="btn gold" data-challenge>Check my attempt</button><button class="btn" data-hint>Show a hint</button><button class="btn" data-replay>Replay my work</button></div><p class="ac-feedback" role="status" data-challenge-feedback></p></section>'+
     '<section class="sec" id="practice"><h2>Practise</h2><label class="ac-field">Choose your exercise<select data-level>'+['beginner','intermediate','advanced'].map(k=>'<option value="'+k+'" '+(level===k?'selected':'')+'>'+k[0].toUpperCase()+k.slice(1)+'</option>').join('')+'</select></label><p data-exercise>'+esc(l.ex[level])+'</p><button class="btn" data-exercise-done aria-pressed="'+!!p.exerciseDone+'">'+(p.exerciseDone?'✓ Exercise recorded':'Mark this exercise practised')+'</button><p class="ac-caption">Record the exercise you practised. You can try another level at any time.</p></section>'+
     '<section class="sec" id="check"><h2>Check yourself</h2><div data-quiz></div><button class="btn" data-retry>Try the questions again</button><p role="status" data-quiz-status></p></section>'+
-    '<p class="source">Based on '+esc(l.source)+', Cinematic Music Accelerator. Samples: <a href="https://github.com/gleitz/midi-js-soundfonts">FluidR3 GM / MIDI.js Soundfonts</a>, <a href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0</a>. Samples transposed and level-adjusted during playback. <a href="accelerator/AUDIO-CREDITS.md">Audio credits and limitations</a>.</p>'+
+    '<p class="source">'+credit(l)+'</p>'+
     '<nav class="pager">'+(prev?'<a href="'+href(prev)+'"><span>Previous</span><b>'+esc(prev.title)+'</b></a>':'<a href="#/">Course overview</a>')+(next?'<a class="r" href="'+href(next)+'"><span>'+(next.module!==l.module?'Next module':'Next lesson')+'</span><b>'+esc(next.title)+'</b></a>':'<a class="r" href="#/"><span>Finish</span><b>Review progress and saved work</b></a>')+'</nav></article></div>';
   }
   function quizzes(l){const host=view.querySelector('[data-quiz]'),old=Accel.lesson(l.id).answers;let answers=Array.isArray(old)&&old.length===l.quiz.length?old.map((v,i)=>Number.isInteger(v)&&v>=0&&v<l.quiz[i].o.length?v:null):l.quiz.map(()=>null);

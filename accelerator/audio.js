@@ -5,7 +5,12 @@ const AccelAudio = (() => {
   const banks={piano:[36,43,48,55,60,67,72,79,84],flute:[48,60,72],oboe:[48,60,72],clarinet:[48,60,72],horn:[48,60,72],trumpet:[48,60,72],violin:[48,60,72],viola:[48,60,72],cello:[36,48,60]};
   function context(){if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error('Interactive audio is unavailable in this browser.');ctx=new C();master=ctx.createGain();master.gain.value=volume;analyser=ctx.createAnalyser();analyser.fftSize=2048;master.connect(analyser).connect(ctx.destination);}return ctx;}
   const anchor=(instrument,m)=>banks[instrument].reduce((a,b)=>Math.abs(b-m)<Math.abs(a-m)?b:a);
-  const path=n=>'accelerator/audio/'+(n.instrument||'piano')+'/'+Accel.note(anchor(n.instrument||'piano',n.m))+'.mp3';
+  /* The samples sit beside this file, so the base is derived from this
+     script's own URL rather than written relative to the document. A page
+     hosting this engine from a subfolder — theory-lab/modes/lessons.html —
+     would otherwise look for them beside itself and find nothing. */
+  const BASE=(()=>{const el=document.currentScript;return el&&el.src?new URL('.',el.src).href:'accelerator/';})();
+  const path=n=>BASE+'audio/'+(n.instrument||'piano')+'/'+Accel.note(anchor(n.instrument||'piano',n.m))+'.mp3';
   async function load(url){
     if(cache.has(url))return cache.get(url);if(pending.has(url))return pending.get(url);
     const p=(async()=>{const response=await fetch(url);if(!response.ok)throw Error('Audio could not load. Check your connection and retry.');const buffer=await context().decodeAudioData(await response.arrayBuffer());

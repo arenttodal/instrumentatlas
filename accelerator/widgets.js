@@ -41,7 +41,17 @@ const AccelWidgets = (() => {
   function mount(host,lesson,params){
     const saved=Accel.lesson(lesson.id);let state=Accel.clone(saved.widget||{});if(!state||typeof state!=='object'||Array.isArray(state))state={};
     const linked=!!(params&&Object.keys(params).length);
-    const wanted={...(lesson.preset||{}),...(params||{})};
+    /* A URL carries everything as a string. A preset carries real types, and
+       kit.defaults() rejects a value whose type does not match its default —
+       which is right for a corrupted saved state and wrong for '?rootPc=2',
+       so the query is coerced back to what it plainly is before it is merged. */
+    const typed={};
+    for(const k in (params||{})){
+      const v=params[k];
+      typed[k] = v==='true' ? true : v==='false' ? false
+               : (v!=='' && v!=null && !isNaN(v)) ? Number(v) : v;
+    }
+    const wanted={...(lesson.preset||{}),...typed};
     if(linked||!saved.widget) Object.assign(state,Accel.clone(wanted));
     let alive=true;let comparisons=saved.comparisons||{},undo=[],redo=[],previous=null,revising=false,cleanup=()=>{},spec,info;
     host.innerHTML='<div class="ac-transport"><button class="btn gold" data-play>Play</button><button class="btn" data-restart>Restart</button><button class="btn" data-stop>Stop</button><label class="ac-inline">Loop <input type="checkbox" data-loop checked></label><label class="ac-inline">Volume <input type="range" data-volume min="0" max="1" step=".01"></label><span data-time>0:00</span></div><p class="ac-audio-status" data-status role="status">Audio loads when you press Play.</p><div class="ac-timeline"><i data-progress></i></div><div data-roll></div><div class="ac-controls" data-controls></div><p class="w-read" data-read aria-live="polite"></p><div class="ac-actions" data-actions></div>';

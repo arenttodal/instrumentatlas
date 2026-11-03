@@ -1,0 +1,76 @@
+/* ============================================================================
+   NAME THE MODE
+   ----------------------------------------------------------------------------
+   Loads after dojo-base.css, which owns the tokens, the nav, the breadcrumb,
+   the display line, the play control, the meter, the mark and the Next button.
+   Only the option cards, the keyboard's place and the level pill are here.
+
+   Nothing moves when you answer: the actions row and the note line hold their
+   height from the start, the keyboard is always present, and the options are
+   marked rather than replaced. That rule came out of the Dojo and it applies
+   just as much to a quiz that generates its own audio.
+   ============================================================================ */
+
+.atl-main{position:relative;z-index:10;display:flex;justify-content:center;
+  padding:clamp(22px,4.5vh,48px) 20px 72px}
+/* wider than the column needs, so the row of four options is centred on the
+   page rather than 58px to the right of it */
+.ear-col{width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+.dj-display{font-size:clamp(24px,3.4vw,34px);margin:12px 0 0}
+.dj-play{margin-top:20px}
+.ear-count{font-size:11.5px;line-height:17px;min-height:17px;color:var(--text-faint);
+  letter-spacing:.3px;margin-top:11px}
+
+/* --- the four answers --- */
+.ear-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+  width:100%;max-width:560px;margin-top:24px}
+.ear-opt{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:14px 14px 12px;border-radius:11px;text-align:center;
+  border:1px solid var(--hair);background:rgba(255,255,255,.02);color:var(--text);
+  transition:border-color .2s,background .2s,color .2s,opacity .2s}
+.ear-opt:not(:disabled):hover{border-color:var(--hair-gold);background:rgba(212,160,74,.07);color:#fff}
+.ear-opt:disabled{cursor:default}
+.ear-opt b{font-family:'Playfair Display',Georgia,serif;font-weight:500;font-size:19px;color:#fff}
+.ear-opt span{font-size:11.5px;font-weight:300;color:var(--text-dim);line-height:1.4}
+.ear-opt.is-right{border-color:var(--ok);background:rgba(95,184,154,.12)}
+.ear-opt.is-wrong{border-color:var(--warn);background:rgba(192,96,58,.12)}
+
+/* --- the keyboard ---
+   Always there, so answering never changes the height of the page. Until the
+   answer it is dark and says nothing. */
+.ear-kb{width:100%;max-width:560px;margin-top:20px}
+.ear-kb .va-kb[data-dim]{opacity:.3;transition:opacity .3s}
+.ear-kb .va-kb{opacity:1;transition:opacity .3s}
+
+/* --- actions and the note, both holding their room --- */
+.ear-actions{display:flex;align-items:center;justify-content:center;gap:18px;
+  min-height:48px;margin-top:18px}
+.dj-next{margin-top:0}
+.ear-note{font-size:12.5px;line-height:20px;min-height:40px;max-width:60ch;
+  color:var(--text-dim);font-weight:300;margin-top:12px}
+
+/* --- the level pill, as Blend has it --- */
+.bl-level{position:relative}
+.bl-level .chev{transition:transform .25s ease;color:var(--gold)}
+.bl-level[data-open="1"] .chev{transform:rotate(180deg)}
+.bl-level-note{display:block;font-size:10.5px;color:var(--text-faint);letter-spacing:.2px;margin-top:2px}
+#ear-level-menu .ev-item{flex-direction:column;align-items:flex-start;gap:0}
+#ear-level-menu .ev-item[data-locked]{opacity:.45;cursor:default}
+
+@media (max-width:860px){ .dj-score{display:none} }
+@media (max-width:620px){
+  .atl-main{padding:18px 16px 60px}
+  .ear-opts{grid-template-columns:1fr;gap:8px}
+  .ear-opt{flex-direction:row;justify-content:space-between;gap:10px;text-align:left;padding:12px 14px}
+  .ear-opt b{font-size:16px}
+  .ear-opt span{text-align:right;flex:0 1 auto}
+}
+@media (max-width:420px){
+  /* the verdict can take a second line where the question took one */
+  .dj-display{min-height:2.3em;display:flex;align-items:center;justify-content:center;
+    flex-wrap:nowrap;column-gap:0}
+  .dj-display .dj-mark{flex:0 0 auto}
+  .ear-note{min-height:60px}
+}
+@media (prefers-reduced-motion:reduce){ .ear-opt,.ear-kb .va-kb{transition:none} }
