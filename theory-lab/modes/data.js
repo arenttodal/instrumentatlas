@@ -14,11 +14,14 @@
    That keeps the Accelerator's convention — every lesson says where it came
    from — and points it at the course.
 
-   THE PROSE IS A DRAFT. It is written from the facts in evenant-theory.js, so
-   nothing here contradicts what the widgets do, but the spec has it written
-   from the video transcripts once those exist, in the owner's voice. Treat
-   every `body`, `ex` and `quiz` below as a starting point to be replaced, and
-   every `url` in `videos` as a placeholder.
+   HOW A MODE IS DESCRIBED LIVES IN mode-copy.js, not here. That file holds the
+   owner's own words — tagline, one-note line, the Overview opening and what to
+   use the mode for — and `short` below points at it rather than restating it.
+
+   THE REST OF THE PROSE IS STILL A DRAFT. `body`, `ex` and `quiz` are written
+   from the facts in evenant-theory.js, so nothing here contradicts what the
+   widgets do, but the spec has them rewritten from the video transcripts once
+   those exist. Every `url` in `videos` is a placeholder.
 
    Unlike accelerator/data.js, NOTHING MUTATES THIS ARRAY after the literal.
    What is written here is the whole truth about these lessons.
@@ -78,7 +81,7 @@ const LESSONS = [
 {
   id:'lydian', module:'lessons', n:2,
   title:'Lydian',
-  short:'Major with a raised 4th.',
+  short:MODE_COPY.lydian.oneNote,
   claim:'Lydian is major with a raised 4th. One note turns home into somewhere slightly unreal.',
   activity:'reharm',
   preset:{ theme:'rise', rootPc:2, mode:'lydian', from:'ionian' },
@@ -115,7 +118,7 @@ const LESSONS = [
 {
   id:'mixolydian', module:'lessons', n:3,
   title:'Mixolydian',
-  short:'Major with a lowered 7th.',
+  short:MODE_COPY.mixolydian.oneNote,
   claim:'Mixolydian is major with a lowered 7th. Take away the leading tone and the music stops needing to resolve.',
   activity:'reharm',
   preset:{ theme:'rise', rootPc:7, mode:'mixolydian', from:'ionian' },
@@ -152,7 +155,7 @@ const LESSONS = [
 {
   id:'dorian', module:'lessons', n:4,
   title:'Dorian',
-  short:'Minor with a raised 6th.',
+  short:MODE_COPY.dorian.oneNote,
   claim:'Dorian is minor with a raised 6th. One bright note inside a minor scale, and it changes everything above it.',
   activity:'reharm',
   preset:{ theme:'pulse', rootPc:2, mode:'dorian', from:'aeolian' },
@@ -189,7 +192,7 @@ const LESSONS = [
 {
   id:'phrygian', module:'lessons', n:5,
   title:'Phrygian',
-  short:'Minor with a lowered 2nd.',
+  short:MODE_COPY.phrygian.oneNote,
   claim:'Phrygian is minor with a lowered 2nd. The note next to the tonic, a semitone away, pressing on it.',
   activity:'reharm',
   preset:{ theme:'lament', rootPc:4, mode:'phrygian', from:'aeolian' },
@@ -226,7 +229,7 @@ const LESSONS = [
 {
   id:'locrian', module:'lessons', n:6,
   title:'Locrian',
-  short:'Phrygian with a lowered 5th, and no stable home.',
+  short:MODE_COPY.locrian.oneNote,
   claim:'Locrian lowers the fifth, so the tonic chord is diminished. It is the one mode that cannot sit still — which is exactly what it is for.',
   activity:'chords',
   preset:{ rootPc:11, mode:'locrian', sevenths:false, against:true },

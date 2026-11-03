@@ -1,7 +1,11 @@
 /* ============================================================================
-   SCALES & MODES · THE LISTEN TAB
+   SCALES & MODES · THE HOOKS THE ENGINE LOOKS FOR
    ----------------------------------------------------------------------------
-   The one function accelerator/app.js looks for. It turns LISTEN into a tab on
+   Two globals accelerator/app.js checks for and does without if they are not
+   there: LESSON_COPY, which puts the owner's words at the top of a mode, and
+   LESSON_PANELS, which adds the Listen tab.
+
+   ---------------------------------------------------------------- LISTEN --- It turns LISTEN into a tab on
    the five colour modes' lessons and nothing anywhere else: Ionian and Aeolian
    are the reference points every other mode is defined against, so they have
    nothing to point at, and a tool is a widget with no lesson around it.
@@ -50,5 +54,41 @@ const LESSON_PANELS = (() => {
         });
       }
     }];
+  };
+})();
+
+
+/* ============================================================================
+   LESSON_COPY · the owner's words, where a reader meets the mode first
+   ----------------------------------------------------------------------------
+   `tagline` takes the italic line under the heading. On a mode that has one it
+   REPLACES the lesson's own `claim` rather than joining it: both are a short
+   italic line saying what the mode is, and two of those under one heading is
+   the kind of duplication nobody reads twice. `claim` is untouched in the data
+   and is still what the intro lesson and the three tools show.
+
+   `lede` opens the Overview tab, above the jump links and the sections — what
+   the mode is, in prose, before anything asks you to do something.
+   ============================================================================ */
+const LESSON_COPY = (() => {
+  const esc = s => String(s == null ? '' : s)
+    .replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  return function(lesson){
+    if(!lesson || typeof MODE_COPY === 'undefined') return null;
+    const c = MODE_COPY[lesson.id];
+    if(!c) return null;
+    return {
+      tagline: c.tagline,
+      lede:
+        '<div class="ac-lede">' +
+          (c.about || []).map(p => '<p>' + esc(p) + '</p>').join('') +
+          ((c.useFor || []).length
+            ? '<div class="ac-usefor"><span class="ac-usefor-lab">Use it for</span>' +
+              c.useFor.map(u => '<span class="ac-chip">' + esc(u) + '</span>').join('') +
+              '</div>'
+            : '') +
+        '</div>'
+    };
   };
 })();

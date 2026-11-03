@@ -285,6 +285,62 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
        'with level 2 open — it was earned — and 3, 4 and 5 still locked');
   }
 
+  /* ================================ 7a. the owner's words =============== */
+  {
+    for(const mode of ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian']){
+      await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/' + mode);
+      await p.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
+      const got = await p.evaluate(id => {
+        const c = MODE_COPY[id];
+        const lede = document.querySelector('.ac-lede');
+        return {
+          want: c,
+          claim: (document.querySelector('.claim') || {}).textContent,
+          paras: [...document.querySelectorAll('.ac-lede p')].map(e => e.textContent),
+          chips: [...document.querySelectorAll('.ac-usefor .ac-chip')].map(e => e.textContent),
+          /* the opening of the tab means above the jump links too */
+          beforeNav: !!lede &&
+            (lede.compareDocumentPosition(document.querySelector('.ac-sections')) & 4) !== 0,
+          inOverview: !!(lede && lede.closest('[data-panel="overview"]')),
+          /* one italic line under the heading, not two */
+          claims: document.querySelectorAll('.claim').length,
+          short: LESSONS.find(l => l.id === id).short,
+          defined: EvTheory.mode(id).defined
+        };
+      }, mode);
+      eq(got.claim, got.want.tagline, mode + ' shows its tagline under the heading');
+      eq(got.claims, 1, 'and only that one italic line');
+      eq(got.paras, got.want.about, mode + ' opens its Overview with the about text');
+      eq(got.chips, got.want.useFor, 'and a Use it for row');
+      ok(got.beforeNav, mode + "'s lede sits above the jump links");
+      ok(got.inOverview, 'inside the Overview panel');
+      /* nothing is retyped: the lesson's short line and the theory layer's own
+         sentence are the same string as mode-copy.js, not copies of it */
+      eq(got.short, got.want.oneNote, mode + ' takes its short line from MODE_COPY');
+      eq(got.defined, got.want.oneNote, 'and EvTheory agrees with it, so neither can drift');
+    }
+
+    /* the intro has no entry, so it keeps its own claim and gains no lede */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/how-modes-work');
+    await p.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
+    eq(await p.locator('.ac-lede').count(), 0, 'the intro has no lede');
+    ok(/one note away/.test(await p.locator('.claim').innerText()), 'and keeps its own claim');
+
+    /* the module home opens on the same words */
+    await p.goto(BASE + '/theory-lab/modes/');
+    await p.waitForTimeout(700);
+    const cards = await p.evaluate(() => [...document.querySelectorAll('.md-lesson')].map(c => ({
+      title: c.querySelector('h3').textContent,
+      tagline: (c.querySelector('.md-tagline') || {}).textContent || null,
+      line: [...c.querySelectorAll('p:not(.md-tagline)')].map(e => e.textContent)[0]
+    })));
+    eq(cards.filter(c => c.tagline).length, 5, 'five module-home cards carry a tagline');
+    eq(cards.find(c => c.title === 'Dorian'),
+       { title:'Dorian', tagline:'Magic, longing and otherworldliness.', line:'Minor with a raised 6th' },
+       'each showing the tagline over the one-note line');
+    eq(cards.find(c => c.title === 'How modes work').tagline, null, 'and the intro carries none');
+  }
+
   /* ====================================== 7b. the Listen tab ============ */
   {
     const COLOUR = ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian'];
@@ -512,6 +568,6 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
 
   eq(errors, [], 'no page errors');
   console.log('PASS modes: ' + checks + ' checks — gate and deep links, hub, 9 lesson pages, presets, ' +
-              'separate stores, mode change mid-loop, chord grid, ear quiz, Listen and author mode, nav row, 390px');
+              'separate stores, mode change mid-loop, chord grid, ear quiz, the mode copy, Listen and author mode, nav row, 390px');
   await browser.close();
 })().catch(e => { console.error(e); process.exit(1); });

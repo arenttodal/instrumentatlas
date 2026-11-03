@@ -58,6 +58,16 @@
      Each panel is {id, label, badge?, mount(host) -> {destroy}}. mount runs
      the first time its tab is shown and never again, so a tab nobody opens
      costs nothing. */
+  /* THE OWNER'S WORDS. A product may declare LESSON_COPY(lesson) and get back
+     {tagline, lede}: a short italic line to stand under the heading in place of
+     the lesson's own claim, and HTML to open the Overview with. Declare
+     nothing and the page is what it was. */
+  const copyFor=l=>{
+    if(typeof LESSON_COPY!=='function') return {};
+    try{ return LESSON_COPY(l)||{}; }
+    catch(err){ console.error('[lesson copy]',err); return {}; }
+  };
+
   const panelsFor=l=>{
     if(typeof LESSON_PANELS!=='function') return [];
     try{ return LESSON_PANELS(l)||[]; }
@@ -80,11 +90,13 @@
     const lab=isLab(l), i=COUNTED.indexOf(l), p=Accel.lesson(l.id),
           level=['beginner','intermediate','advanced'].includes(p.level)?p.level:'beginner',
           mod=MODULES.find(m=>m.id===l.module);
+    const copy=copyFor(l);
     const head='<div class="wrap">'+outline(l)+'<article class="lesson'+(lab?' is-lab':'')+'">'+
       '<nav class="crumb"><a href="#/">Course</a><span>/</span><a href="#/'+l.module+'">'+esc(mod?mod.title:l.module)+'</a></nav>'+
       (lab?'<div class="eyebrow lesson-n">Tool</div>':'<div class="eyebrow lesson-n">Lesson '+(i+1)+' of '+COUNTED.length+'</div>')+
       '<h1 tabindex="-1">'+esc(l.title)+'</h1>'+
-      (l.claim?'<p class="claim">'+esc(l.claim)+'</p>':'')+videoRow(l);
+      (copy.tagline?'<p class="claim">'+esc(copy.tagline)+'</p>'
+                   :l.claim?'<p class="claim">'+esc(l.claim)+'</p>':'')+videoRow(l);
     /* The jump links belong to the Overview panel, not to the page: on the
        Listen tab they would point at hidden sections. */
     const nav=lab?'':'<nav class="ac-sections" aria-label="Lesson sections">'+SECTIONS.map(([id,name])=>'<a href="#'+id+'" data-section="'+id+'">'+name+'</a>').join('')+'</nav>';
@@ -116,9 +128,10 @@
     '<nav class="pager">'+(prev?'<a href="'+href(prev)+'"><span>Previous</span><b>'+esc(prev.title)+'</b></a>':'<a href="#/">Course overview</a>')+(next?'<a class="r" href="'+href(next)+'"><span>'+(next.module!==l.module?'Next module':'Next lesson')+'</span><b>'+esc(next.title)+'</b></a>':'<a class="r" href="#/"><span>Finish</span><b>Review progress and saved work</b></a>')+'</nav>';
 
     /* No panels: the same string this returned before any of this existed. */
-    if(!panels.length) return head+nav+body+pager+'</article></div>';
+    const lede=copy.lede||'';
+    if(!panels.length) return head+lede+nav+body+pager+'</article></div>';
     return head+tabs+
-      '<div class="ac-tabpanel is-active" id="panel-overview" role="tabpanel" data-panel="overview">'+nav+body+'</div>'+
+      '<div class="ac-tabpanel is-active" id="panel-overview" role="tabpanel" data-panel="overview">'+lede+nav+body+'</div>'+
       panels.map(t=>'<div class="ac-tabpanel" id="panel-'+esc(t.id)+'" role="tabpanel" data-panel="'+esc(t.id)+'"></div>').join('')+
       pager+'</article></div>';
   }

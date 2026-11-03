@@ -80,6 +80,18 @@ code{font-family:inherit;color:var(--gold)}
 .lesson{padding-bottom:90px}
 .lesson-n{margin-top:20px}
 .lesson h1{font-size:clamp(32px,4.2vw,48px);line-height:1.06;margin:14px 0 0}
+/* --- the lede: what this is, before anything asks you to do something ---
+   Only on a lesson whose product declares LESSON_COPY. The body copy at the
+   prose size, then one row of chips naming what the thing is good for. */
+.ac-lede{margin:30px 0 0;max-width:62ch}
+.ac-lede p{font-size:16px;line-height:1.75;font-weight:300;color:var(--text)}
+.ac-lede p+p{margin-top:15px}
+.ac-usefor{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:20px}
+.ac-usefor-lab{font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--faint);margin-right:4px}
+.ac-chip{font-size:11.5px;color:var(--dim);padding:5px 12px;border:1px solid var(--hair);
+  border-radius:100px;white-space:nowrap}
+
 /* --- the lesson's tab bar ---
    Only on a lesson whose product declares LESSON_PANELS; the Accelerator has
    none, so this paints nothing there. The Atlas's instrument tabs in the
