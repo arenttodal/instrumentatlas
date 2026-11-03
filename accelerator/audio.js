@@ -13,6 +13,36 @@ const AccelAudio = (() => {
       const trim=Math.min(3,.12/Math.max(.015,Math.sqrt(sum/Math.max(1,count))));const result={buffer,trim};cache.set(url,result);return result;})();
     pending.set(url,p);try{return await p;}finally{pending.delete(url);}
   }
+
+  /* ---- VOICES ----
+     An instrument this engine does not own. A voice says how to load itself
+     and how to start one note on the transport's clock; everything else —
+     when, how long, looping, the playhead, pause and stop — stays here.
+
+     That is the whole of how the Voicing Atlas instruments get played in time:
+     VA has the better sounds and no transport, this has a sample-accurate
+     transport and nine samples. Neither engine has to learn the other.
+
+       AccelAudio.voices.register('va:splendid', {
+         load(ctx, destination),        // Promise, once per instrument
+         start({ m, time, dur, gain }), // schedule one note; may return a stop fn
+         stopAll()                      // pause and stop call this on every voice
+       });
+
+     A note whose `instrument` names no registered voice takes the in-repo
+     sample path exactly as before. */
+  const voices=new Map();
+
+  /* A voice loads once. The promise is kept, so a second phrase asking for the
+     same instrument waits on the first load rather than starting another. */
+  function voiceReady(id){
+    const v=voices.get(id);
+    if(!v) return Promise.resolve(null);
+    if(!v._ready) v._ready=Promise.resolve(v.load?v.load(context(),master):null)
+      .then(x=>{v._loaded=true;return x;}).catch(e=>{v._ready=null;throw e;});
+    return v._ready;
+  }
+
   class Transport {
     constructor(onstate=()=>{},onprogress=()=>{}){this.onstate=onstate;this.onprogress=onprogress;this.events=[];this.bpm=88;this.beats=4;this.loop=true;this.status='idle';this.offset=0;this.token=0;this.sources=new Set();}
     get duration(){return this.beats*60/this.bpm;}
@@ -21,7 +51,7 @@ const AccelAudio = (() => {
     async play(offset=this.offset,lead=.035){
       if(owner&&owner!==this)owner.stop();owner=this;const token=++this.token;this.teardown();this.offset=Math.max(0,Math.min(offset,this.duration-.001));this.error='';this.status='loading';this.onstate(this);
       try{const c=context();if(c.state!=='running')await c.resume();if(c.state!=='running')throw Error('Tap Play again to enable audio.');
-        await Promise.all([...new Set(this.events.filter(n=>n.instrument!=='synth').map(n=>n.src||path(n)))].map(load));if(token!==this.token)return;
+        const wantsVoice=n=>voices.has(n.instrument);await Promise.all([...[...new Set(this.events.filter(n=>n.instrument!=='synth'&&!wantsVoice(n)).map(n=>n.src||path(n)))].map(load),...[...new Set(this.events.filter(wantsVoice).map(n=>n.instrument))].map(voiceReady)]);if(token!==this.token)return;
         this.start=c.currentTime+lead-this.offset;this.cycle=0;this.queue=null;this.status='playing';this.pump();this.timer=setInterval(()=>this.pump(),25);this.tick();this.onstate(this);
       }catch(e){if(token!==this.token)return;this.status='error';this.error=e.message;this.onstate(this);}
     }
@@ -35,6 +65,19 @@ const AccelAudio = (() => {
       else if(!this.loop&&now>end+.08)this.stop();
     }
     schedule(n,when){
+      /* A voice brings its own envelope and its own connection to the master
+         gain, so there is no per-note gain node to wrap it in. It is given the
+         time, the length and the level; what it gives back is a way to stop
+         early, which teardown uses. */
+      const voice=voices.get(n.instrument);
+      if(voice){
+        if(!voice._loaded) return;
+        const record={voice:true,nodes:[]};this.sources.add(record);
+        try{ record.stop=voice.start({m:n.m,time:when,dur:Math.max(.02,n.end-when),
+          gain:(n.gain??.14)*(n.accent?1.3:1),accent:!!n.accent,event:n}); }
+        catch(e){ this.sources.delete(record); console.error(e); }
+        return;
+      }
       const c=context(),dur=Math.max(.02,n.end-when),env=c.createGain();env.connect(master);
       const gain=(n.gain??.14)*(n.accent?1.3:1);env.gain.setValueAtTime(0,when);env.gain.linearRampToValueAtTime(gain,when+Math.min(.02,dur*.2));env.gain.setValueAtTime(gain,when+Math.max(.02,dur-.04));env.gain.linearRampToValueAtTime(0,when+dur+.015);
       const record={env,nodes:[]};this.sources.add(record);let finished=false;
@@ -51,7 +94,9 @@ const AccelAudio = (() => {
     }
     tick(){cancelAnimationFrame(this.raf);if(this.status!=='playing')return;this.onprogress(this.position,this.duration);this.raf=requestAnimationFrame(()=>this.tick());}
     teardown(){clearInterval(this.timer);cancelAnimationFrame(this.raf);this.queue=null;const now=ctx?ctx.currentTime:0;
-      this.sources.forEach(r=>{try{r.env.gain.cancelScheduledValues(now);r.env.gain.setValueAtTime(r.env.gain.value,now);r.env.gain.linearRampToValueAtTime(0,now+.015);}catch(_){}r.nodes.forEach(n=>{try{if(n.stop)n.stop(now+.02);}catch(_){}});});this.sources.clear();}
+      this.sources.forEach(r=>{if(r.voice){try{if(r.stop)r.stop(now);}catch(_){}return;}try{r.env.gain.cancelScheduledValues(now);r.env.gain.setValueAtTime(r.env.gain.value,now);r.env.gain.linearRampToValueAtTime(0,now+.015);}catch(_){}r.nodes.forEach(n=>{try{if(n.stop)n.stop(now+.02);}catch(_){}});});this.sources.clear();/* smplr queues notes up to the scheduler's horizon ahead of now, so a stop
+         that only cancelled this engine's nodes would leave them sounding. */
+      voices.forEach(v=>{if(v._loaded&&v.stopAll)try{v.stopAll();}catch(_){}});}
     pause(){const p=this.position;++this.token;this.teardown();this.offset=p;this.status='paused';this.onstate(this);}
     stop(){++this.token;this.teardown();this.offset=0;this.status='idle';this.onstate(this);this.onprogress(0,this.duration);}
     replace(events,bpm,beats){const playing=['playing','loading'].includes(this.status),pos=this.position;this.configure(events,bpm,beats);if(playing)this.play(pos%this.duration,0);}
@@ -59,7 +104,7 @@ const AccelAudio = (() => {
   }
   async function preview(events,bpm=88,beats=4){const t=new Transport();t.configure(events,bpm,beats);t.loop=false;await t.play(0);return t;}
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&owner)owner.pause();});window.addEventListener('pagehide',()=>{if(owner)owner.stop();});
-  return {Transport,preview,load,banks,stop:()=>owner?.stop(),volume:()=>volume,
+  return {Transport,preview,load,banks,ctx:()=>context(),get master(){return master;},voices:{register(id,voice){if(id&&voice)voices.set(id,{...voice});return this;},has:id=>voices.has(id),list:()=>[...voices.keys()],ready:voiceReady,loaded:id=>!!(voices.get(id)||{})._loaded,forget(id){const v=voices.get(id);if(v&&v._loaded&&v.stopAll)try{v.stopAll();}catch(_){}return voices.delete(id);}},stop:()=>owner?.stop(),volume:()=>volume,
     setVolume:v=>{volume=Number(v);if(master)master.gain.setTargetAtTime(volume,ctx.currentTime,.015);},
     spectrum:()=>{if(!analyser)return null;const b=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(b);return b;},
     inspect:()=>({status:owner?.status||'idle',sources:owner?.sources.size||0})};
