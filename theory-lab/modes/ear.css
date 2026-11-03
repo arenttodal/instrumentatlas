@@ -11,8 +11,20 @@
    just as much to a quiz that generates its own audio.
    ============================================================================ */
 
+/* The page is one short column. Left hard against the nav it sat in the upper
+   two thirds with a third of the viewport blank under it, which read as an
+   unfinished page rather than a focused one.
+
+   NOT align-items:center, which was the obvious fix and the wrong one. This
+   page reserves space for what appears after you answer so that NOTHING MOVES
+   under the pointer; centring re-couples every element's position to the
+   column's height, so the moment the feedback line wrapped differently the
+   options shifted half a pixel and the whole discipline was gone. A viewport
+   -proportional top padding puts the column in the same place and keeps it
+   there whatever the content does. */
 .atl-main{position:relative;z-index:10;display:flex;justify-content:center;
-  padding:clamp(22px,4.5vh,48px) 20px 72px}
+  align-items:flex-start;min-height:calc(100dvh - 78px);
+  padding:clamp(28px,9vh,92px) 20px 28px}
 /* wider than the column needs, so the row of four options is centred on the
    page rather than 58px to the right of it */
 .ear-col{width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -58,7 +70,16 @@
 #ear-level-menu .ev-item{flex-direction:column;align-items:flex-start;gap:0}
 #ear-level-menu .ev-item[data-locked]{opacity:.45;cursor:default}
 
-@media (max-width:860px){ .dj-score{display:none} }
+/* The round counter is four characters and it is the only thing telling you
+   how far through you are, so it stays on a phone; only the level button's
+   label shortens. */
+.dj-score em{font-style:normal;font-size:15px;color:#fff;font-weight:500}
+.dj-score i{margin-left:5px}
+.dj-score b{margin-left:11px;padding-left:11px;border-left:1px solid var(--hair)}
+.dj-score span{color:var(--text-faint);margin-left:4px}
+@media (max-width:620px){
+  .dj-score b,.dj-score span{display:none}
+}
 @media (max-width:620px){
   .atl-main{padding:18px 16px 60px}
   .ear-opts{grid-template-columns:1fr;gap:8px}

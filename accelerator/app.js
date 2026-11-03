@@ -24,7 +24,10 @@
     return {route:text.slice(0,cut), query};
   }
   function progress(){const n=COUNTED.filter(l=>Accel.done(l.id)).length,total=COUNTED.length||1;document.getElementById('prog-txt').textContent=n+' of '+COUNTED.length;document.getElementById('prog-fill').style.width=n/total*100+'%';document.querySelector('.prog').setAttribute('aria-label',n+' of '+COUNTED.length+' lessons completed');view.querySelectorAll('[data-lesson-status]').forEach(e=>e.textContent=state(e.dataset.lessonStatus));}
-  function outline(l){return '<details class="ac-outline"><summary>Lessons'+(l?' · '+esc(l.title):'')+'</summary><nav aria-label="Accelerator lessons"><a href="#/">Course overview</a>'+MODULES.map(m=>'<p>'+esc(m.title)+'</p>'+LESSONS.filter(x=>x.module===m.id).map(x=>'<a href="'+href(x)+'" '+(x===l?'aria-current="page"':'')+'>'+(x.n?x.n+'. ':'')+esc(x.title)+(isLab(x)?'':'<span data-lesson-status="'+x.id+'">'+state(x.id)+'</span>')+'</a>').join('')).join('')+'</nav></details>';}
+  /* The summary used to read "Lessons · Dorian" directly above an <h1> saying
+     Dorian, under a nav bar saying Dorian. It is a disclosure for the lesson
+     list; it says so and no more. */
+  function outline(l){return '<details class="ac-outline"><summary>Lessons</summary><nav aria-label="Accelerator lessons"><a href="#/">Course overview</a>'+MODULES.map(m=>'<p>'+esc(m.title)+'</p>'+LESSONS.filter(x=>x.module===m.id).map(x=>'<a href="'+href(x)+'" '+(x===l?'aria-current="page"':'')+'>'+(x.n?x.n+'. ':'')+esc(x.title)+(isLab(x)?'':'<span data-lesson-status="'+x.id+'">'+state(x.id)+'</span>')+'</a>').join('')).join('')+'</nav></details>';}
   function overview(mod){const next=COUNTED.find(l=>!Accel.done(l.id))||COUNTED[0]||LESSONS[0],last=Accel.last(),resume=LESSONS.some(l=>last==='/'+l.module+'/'+l.id)?last:'/'+next.module+'/'+next.id;
     return '<div class="wrap ac-course">'+outline()+'<header class="hero"><div class="eyebrow">Interactive learning · 12 lessons</div><h1>'+(mod?esc(mod.title):'The Accelerator')+'<em>Hear it. Shape it. Make it yours.</em></h1><p>Explore a musical idea, apply it in a short challenge, then develop your own sketch. Your progress and musical work stay in this browser.</p><a class="btn gold" href="#'+resume+'">Resume learning</a></header>'+(mod?[mod]:MODULES).map(m=>'<section class="ac-module"><h2>'+esc(m.title)+'</h2><p>'+(countedIn(m.id).length?countedIn(m.id).filter(l=>Accel.done(l.id)).length+' of '+countedIn(m.id).length+' complete':esc(m.subtitle||''))+'</p><div class="lessons">'+LESSONS.filter(l=>l.module===m.id).map(l=>'<a class="lcard '+(Accel.done(l.id)?'done':'')+'" href="'+href(l)+'"><span class="lnum">'+(l.n||'')+'</span><div><h3>'+esc(l.title)+'</h3><p>'+esc(l.short||l.claim||'')+'</p></div><span class="ltag">'+(isLab(l)?'Open':state(l.id))+'</span></a>').join('')+'</div></section>').join('')+
     '<section class="ac-backups"><h2>Your saved work</h2><p>Download a backup to keep progress and sketches or move them to another browser. Import retains completed progress and replaces the shared sketch with the imported version.</p><button class="btn" data-export>Download backup</button><label class="btn">Import backup<input type="file" data-import accept=".json,application/json"></label><p role="status" data-backup-status></p></section></div>';
@@ -92,7 +95,13 @@
           mod=MODULES.find(m=>m.id===l.module);
     const copy=copyFor(l);
     const head='<div class="wrap">'+outline(l)+'<article class="lesson'+(lab?' is-lab':'')+'">'+
-      '<nav class="crumb"><a href="#/">Course</a><span>/</span><a href="#/'+l.module+'">'+esc(mod?mod.title:l.module)+'</a></nav>'+
+      /* THE BREADCRUMB, ONLY WHERE IT IS THE WAY BACK. The Accelerator's nav
+         bar is the logo and the lesson title, so this line is the only link
+         to the module overview. A page whose nav already carries one marks it
+         [data-nav-up], and then this would be the same words a second time
+         under a heading that is the lesson title a third time. */
+      (document.querySelector('.nav-l [data-nav-up]')?''
+        :'<nav class="crumb"><a href="#/">Course</a><span>/</span><a href="#/'+l.module+'">'+esc(mod?mod.title:l.module)+'</a></nav>')+
       (lab?'<div class="eyebrow lesson-n">Tool</div>':'<div class="eyebrow lesson-n">Lesson '+(i+1)+' of '+COUNTED.length+'</div>')+
       '<h1 tabindex="-1">'+esc(l.title)+'</h1>'+
       (copy.tagline?'<p class="claim">'+esc(copy.tagline)+'</p>'
@@ -121,7 +130,7 @@
     '<section class="sec" id="explore"><h2>Explore</h2>'+(l.demoNote?'<p class="ac-instruction">'+esc(l.demoNote)+'</p>':'')+'<div class="demo" id="demo-host"></div></section>'+
     '<section class="sec" id="why"><h2>Why it works</h2><div class="prose">'+l.body.map(p=>'<p>'+p+'</p>').join('')+'</div></section>'+
     '<section class="sec" id="challenge"><h2>Try a challenge</h2><p data-challenge-prompt></p><div class="ac-actions"><button class="btn gold" data-challenge>Check my attempt</button><button class="btn" data-hint>Show a hint</button><button class="btn" data-replay>Replay my work</button></div><p class="ac-feedback" role="status" data-challenge-feedback></p></section>'+
-    '<section class="sec" id="practice"><h2>Practise</h2><label class="ac-field">Choose your exercise<select data-level>'+['beginner','intermediate','advanced'].map(k=>'<option value="'+k+'" '+(level===k?'selected':'')+'>'+k[0].toUpperCase()+k.slice(1)+'</option>').join('')+'</select></label><p data-exercise>'+esc(l.ex[level])+'</p><button class="btn" data-exercise-done aria-pressed="'+!!p.exerciseDone+'">'+(p.exerciseDone?'✓ Exercise recorded':'Mark this exercise practised')+'</button><p class="ac-caption">Record the exercise you practised. You can try another level at any time.</p></section>'+
+    '<section class="sec" id="practice"><h2>Practise</h2><label class="ac-field">Choose your exercise<select data-level>'+['beginner','intermediate','advanced'].map(k=>'<option value="'+k+'" '+(level===k?'selected':'')+'>'+k[0].toUpperCase()+k.slice(1)+'</option>').join('')+'</select></label><p data-exercise>'+esc(l.ex[level])+'</p><button class="btn" data-exercise-done aria-pressed="'+!!p.exerciseDone+'">'+(p.exerciseDone?'✓ Exercise recorded':'Mark this exercise practised')+'</button></section>'+
     '<section class="sec" id="check"><h2>Check yourself</h2><div data-quiz></div><button class="btn" data-retry>Try the questions again</button><p role="status" data-quiz-status></p></section>'+
     '<p class="source">'+credit(l)+'</p>';
     const pager=
@@ -196,6 +205,9 @@
     const old=LESSONS.find(l=>path==='/'+l.module+'/'+l.id);if(old)Accel.patch(old.id,{scroll:window.scrollY});if(active){active.capture();active.destroy();active=null;}mounted.forEach(m=>{try{m.destroy();}catch(_){}});mounted=[];AccelAudio.stop();observer?.disconnect();observer=null;
     const parsed=parseRoute(next||'/');path=parsed.route||'/';params=parsed.query;
     const parts=path.replace(/^\/?/,'').split('/').filter(Boolean),mod=MODULES.find(m=>m.id===parts[0]),l=LESSONS.find(l=>l.module===parts[0]&&l.id===parts[1]);view.innerHTML=l?lessonView(l):overview(mod);document.getElementById('nav-where').textContent=l?l.title:mod?mod.title:'Course';
+    /* a tool is not one of the counted lessons, so the counter has nothing to
+       say about it and says nothing */
+    document.querySelector('.prog')?.classList.toggle('is-hidden',!!(l&&isLab(l)));
     try{if(l)init(l);else backups();}catch(err){const h=document.getElementById('demo-host');if(h)h.innerHTML='<p class="ac-feedback" role="alert">The activity could not start. Your saved progress is retained. Reload to retry.</p>';console.error('[Accelerator]',err);}
     progress();if(!Accel.writable()){const p=document.createElement('p');p.className='ac-feedback';p.textContent='Browser storage is unavailable. Download a backup before closing this page.';view.prepend(p);}
     const heading=view.querySelector('h1');heading.tabIndex=-1;heading.focus({preventScroll:true});window.scrollTo({top:l&&restore?Accel.lesson(l.id).scroll||0:0,behavior:'instant'});

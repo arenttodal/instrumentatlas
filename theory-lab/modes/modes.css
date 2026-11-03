@@ -56,6 +56,18 @@
 a.md-tool:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05);transform:translateY(-2px)}
 .md-tool h3{font-size:19px;margin:0 0 7px}
 .md-tool p{font-size:13.5px;line-height:1.55;color:var(--text-dim);font-weight:300}
+/* --- the quiz band --- */
+.md-test{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  padding:22px 24px;border:1px solid var(--hair);border-radius:11px;margin-top:14px;
+  background:rgba(255,255,255,.02);
+  transition:border-color .3s,background .3s,transform .3s}
+a.md-test:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05);transform:translateY(-2px)}
+.md-test h3{font-size:19px;margin:0 0 6px}
+.md-test p{font-size:13.5px;line-height:1.55;color:var(--text-dim);font-weight:300}
+.md-test-meta{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:700;
+  letter-spacing:1.8px;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
+.md-test-meta i{font-style:normal;opacity:.45}
+
 .md-section{margin-top:clamp(28px,5vh,44px)}
 .md-section > h2{font-size:12px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
   color:var(--text-faint);font-family:'DM Sans',sans-serif;margin-bottom:14px}
@@ -75,6 +87,8 @@ a.md-lesson:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05)}
 @media (max-width:860px){
   .md-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .md-tools,.md-lessons{grid-template-columns:1fr}
+  .md-test{flex-direction:column;align-items:flex-start;gap:14px}
+  .md-test-meta{white-space:normal;flex-wrap:wrap}
 }
 @media (max-width:620px){
   .md-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
@@ -84,5 +98,5 @@ a.md-lesson:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05)}
   .md-modebtn{padding:6px 10px;font-size:12px}
 }
 @media (prefers-reduced-motion:reduce){
-  .md-tile:hover,a.md-tool:hover{transform:none}
+  .md-tile:hover,a.md-tool:hover,a.md-test:hover{transform:none}
 }

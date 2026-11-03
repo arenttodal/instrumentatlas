@@ -87,14 +87,22 @@ const AccelWidgets = (() => {
     const make=AccelActivities[lesson.activity||lesson.id];
     if(typeof make!=='function') throw Error('No activity named '+(lesson.activity||lesson.id));
     spec=make(state,kit);spec.render();update();const original=Accel.clone(state);
+    /* THREE JOBS, NOT SEVEN BUTTONS. Keeping and hearing a version, stepping
+       through history, and starting over are different things, and in one flat
+       row of identical pills they read as one undifferentiated clump. Same
+       buttons, same labels — grouped, with the way out as a quiet link. */
     const compare=group(actions,'Compare and revise');
+    const set=name=>{const d=document.createElement('div');d.className='ac-set';d.dataset.set=name;compare.append(d);return d;};
+    const ab=set('ab');
     for(const slot of ['A','B']){
-      button(compare,'Keep '+slot,()=>{comparisons[slot]=Accel.clone(state);save();kit.say('Version '+slot+' saved.');});
-      button(compare,'Hear '+slot,()=>{if(!comparisons[slot]){kit.say('Keep a version in '+slot+' first.');return;}const playing=transport.status==='playing';restore(comparisons[slot]);if(!playing)transport.play(0);});
+      button(ab,'Keep '+slot,()=>{comparisons[slot]=Accel.clone(state);save();kit.say('Version '+slot+' saved.');});
+      button(ab,'Hear '+slot,()=>{if(!comparisons[slot]){kit.say('Keep a version in '+slot+' first.');return;}const playing=transport.status==='playing';restore(comparisons[slot]);if(!playing)transport.play(0);});
     }
-    button(compare,'Undo',()=>{if(!undo.length)return;redo.push(Accel.clone(state));revising=true;restore(undo.pop());revising=false;});
-    button(compare,'Redo',()=>{if(!redo.length)return;undo.push(Accel.clone(state));revising=true;restore(redo.pop());revising=false;});
-    button(compare,'Restore lesson start',()=>restore(original));
+    const history=set('history');
+    button(history,'Undo',()=>{if(!undo.length)return;redo.push(Accel.clone(state));revising=true;restore(undo.pop());revising=false;});
+    button(history,'Redo',()=>{if(!redo.length)return;undo.push(Accel.clone(state));revising=true;restore(redo.pop());revising=false;});
+    /* "Restore lesson start" on a tool is the wrong words: there is no lesson. */
+    button(set('reset'),lesson.kind==='lab'?'Reset the tool':'Restore lesson start',()=>restore(original));
     return {check:()=>spec.check(),play:()=>transport.play(0),inspect:()=>Accel.clone(info),capture:save,destroy:()=>{alive=false;cleanup();transport.destroy();}};
   }
   return {mount,esc};

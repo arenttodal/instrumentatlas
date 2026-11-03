@@ -27,6 +27,34 @@ const {chromium} = require('playwright');
   await page.setViewportSize({width:1280,height:900});
   console.log('PASS '+l.id+' playback, stop, mobile');
  }
+ /* The chrome the engine emits and nothing used to style. The Accelerator has
+    no [data-nav-up] in its nav, so unlike the Theory Lab it KEEPS its
+    breadcrumb — that line is its only way back to the module. */
+ await page.goto('http://127.0.0.1:8765/accelerator.html#/foundations/overtones');
+ await page.locator('#demo-host .ac-transport').waitFor();
+ const chrome=await page.evaluate(()=>{
+   const cs=s=>{const e=document.querySelector(s);return e&&getComputedStyle(e);};
+   return {select:cs('.ac-field select')&&cs('.ac-field select').appearance,
+           checkbox:cs('.ac-transport input[type=checkbox]').appearance,
+           range:cs('.ac-transport input[type=range]').appearance,
+           ring:cs('h1').outlineStyle, focused:document.activeElement===document.querySelector('h1'),
+           crumb:document.querySelectorAll('.crumb').length,
+           sets:[...document.querySelectorAll('.ac-actions .ac-set')].map(d=>d.dataset.set),
+           caption:document.querySelectorAll('.ac-caption').length,
+           prose:Math.round(document.querySelector('.prose p').getBoundingClientRect().width),
+           source:Math.round(document.querySelector('.source').getBoundingClientRect().width)};
+ });
+ assert.equal(chrome.checkbox,'none','the transport checkbox is painted');
+ assert.equal(chrome.range,'none','and the slider');
+ if(chrome.select!==null) assert.equal(chrome.select,'none','and any select');
+ assert.equal(chrome.ring,'none','the heading arrives without a focus ring');
+ assert.ok(chrome.focused,'while still being focused for a screen reader');
+ assert.equal(chrome.crumb,1,'the Accelerator keeps its breadcrumb: it is the only way back');
+ assert.deepEqual(chrome.sets,['ab','history','reset'],'compare and revise is three groups');
+ assert.equal(chrome.caption,0,'and Practise no longer restates its own controls');
+ assert.ok(chrome.source<=chrome.prose,'the credit line is not the widest text on the page');
+ console.log('PASS chrome painted, heading unringed, breadcrumb kept, measures capped');
+
  await page.goto('http://127.0.0.1:8765/accelerator.html#/foundations/overtones');
  await page.locator('[data-play]').click();await page.waitForFunction(()=>AccelAudio.inspect().status==='playing');
  await page.locator('.crumb a').first().click();

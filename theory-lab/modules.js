@@ -31,7 +31,7 @@ const LAB_MODULES = [
     gate:'lab-modes', hash:'g1ctlzg',           /* placeholder code — rotate before launch */
     status:'available',
     blurb:'The seven modes from brightest to darkest: what changes, what it does to a chord, and how to hear it.',
-    meta:'6 lessons · 4 tools',
+    meta:'6 lessons · 3 tools · 1 test',
     buy:''                                       /* the course URL, once it exists */
   }
   /* ostinatos, voice leading and cinematic chord moves follow */

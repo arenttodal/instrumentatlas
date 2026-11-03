@@ -184,8 +184,14 @@ function render(){
   const done = (saved().passed || []).includes(S.level);
   $('ear-eyebrow').textContent = 'Name the mode · ' + lv.name + ' · ' + lv.note + (done ? ' · passed' : '');
   $('ear-level-label').textContent = lv.name;
-  $('ear-score').innerHTML = S.asked
-    ? '<b>' + S.correct + '</b><span>/' + S.asked + '</span><i>of ' + ROUND + '</i>' : '';
+  /* A TEN-QUESTION ROUND SHOULD SAY SO FROM QUESTION ONE. This used to be
+     empty until the first answer, so you arrived at a quiz with no idea how
+     long it was or how you were doing. The position always shows; the score
+     joins it once there is one. */
+  const at = Math.min(ROUND, S.phase === 'asking' ? S.asked + 1 : S.asked);
+  $('ear-score').innerHTML =
+    '<em>' + at + '</em><i>of ' + ROUND + '</i>' +
+    (S.asked ? '<b>' + S.correct + '</b><span>right</span>' : '');
 
   if(S.phase === 'asking'){
     $('ear-display').textContent = 'Which mode is this?';

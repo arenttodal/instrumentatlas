@@ -285,6 +285,89 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
        'with level 2 open — it was earned — and 3, 4 and 5 still locked');
   }
 
+  /* =============================== 6b. the chrome is painted ============ */
+  {
+    /* Everything here was emitted by the engine and styled by nothing: white
+       OS dropdowns, macOS-blue checkboxes and sliders, labels welded to their
+       fields, <legend> text sitting on its own border, a gold focus ring round
+       every heading on arrival. */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    const skin = await p.evaluate(() => {
+      const cs = s => { const e = document.querySelector(s); return e && getComputedStyle(e); };
+      const sel = cs('.ac-field select'), box = cs('.ac-transport input[type=checkbox]');
+      const rng = cs('.ac-transport input[type=range]'), h1 = cs('h1');
+      const field = document.querySelector('.ac-field');
+      return {
+        select: sel && sel.appearance, selectBg: sel && sel.backgroundColor,
+        checkbox: box && box.appearance, range: rng && rng.appearance,
+        fieldColumn: getComputedStyle(field).flexDirection,
+        legendFloat: cs('.ac-group > legend') && cs('.ac-group > legend').display,
+        groupBorder: cs('.ac-group').borderTopWidth,
+        ring: h1.outlineStyle,
+        focused: document.activeElement === document.querySelector('h1')
+      };
+    });
+    eq(skin.select, 'none', 'the select is painted, not left native');
+    ok(!/rgb\(255, 255, 255\)|rgba\(0, 0, 0, 0\)$/.test(skin.selectBg), 'on the page\'s own background: ' + skin.selectBg);
+    eq(skin.checkbox, 'none', 'and so is the checkbox');
+    eq(skin.range, 'none', 'and the slider');
+    eq(skin.fieldColumn, 'column', 'a field puts its label above its control');
+    eq(skin.groupBorder, '0px', 'a group is a heading and its contents, not a box with a notch');
+    eq(skin.ring, 'none', 'and the heading arrives without a focus ring');
+    ok(skin.focused, 'while still being focused, which is what the ring was for');
+
+    /* the breadcrumb is not printed twice */
+    eq(await p.locator('.crumb').count(), 0,
+       'no second breadcrumb: the nav bar already links back to the module');
+    ok(await p.locator('.nav-l [data-nav-up]').count() === 1, 'which is what marks it');
+    eq((await p.locator('.ac-outline summary').innerText()).trim(), 'Lessons',
+       'and the outline does not echo the lesson title a third time');
+
+    /* compare and revise is three jobs */
+    const sets = await p.evaluate(() => [...document.querySelectorAll('.ac-actions .ac-set')]
+      .map(d => ({ set:d.dataset.set, n:d.querySelectorAll('button').length })));
+    eq(sets, [{ set:'ab', n:4 }, { set:'history', n:2 }, { set:'reset', n:1 }],
+       'compare, history and reset are grouped, not one row of seven');
+    eq((await p.locator('[data-set="reset"] button').innerText()).trim(), 'Restore lesson start',
+       'a lesson restores its start');
+
+    /* the practise caption restated the select and the button */
+    eq(await p.locator('.ac-caption').count(), 0, 'and Practise no longer explains itself twice');
+
+    /* one measure for every block of text */
+    const widths = await p.evaluate(() => {
+      const w = s => { const e = document.querySelector(s); return e ? Math.round(e.getBoundingClientRect().width) : null; };
+      return { prose:w('.prose p'), lede:w('.ac-lede p'), source:w('.source'), exercise:w('[data-exercise]') };
+    });
+    ok(widths.lede === widths.prose, 'the lede reads at the body measure: ' + JSON.stringify(widths));
+    ok(widths.source <= widths.prose, 'and the credit line is no longer the widest text on the page');
+    ok(widths.exercise <= widths.prose, 'nor is the exercise');
+
+    /* a tool has no lesson progress */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/chords-lab');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    eq(await p.evaluate(() => getComputedStyle(document.querySelector('.prog')).visibility), 'hidden',
+       'a tool is not one of the six, so the counter says nothing');
+    eq((await p.locator('[data-set="reset"] button').innerText()).trim(), 'Reset the tool',
+       'and it resets the tool rather than restoring a lesson it does not have');
+
+    /* the nav fits a phone */
+    await p.setViewportSize({ width:390, height:844 });
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    const nav = await p.evaluate(() => {
+      const n = document.querySelector('.nav');
+      return { lines: Math.round(n.getBoundingClientRect().height),
+               up: getComputedStyle(document.querySelector('.nav-l [data-nav-up]')).display,
+               where: document.getElementById('nav-where').textContent };
+    });
+    ok(nav.lines <= 60, 'the nav is one line at 390px, not three: ' + nav.lines + 'px');
+    eq(nav.up, 'none', 'the module link steps aside');
+    eq(nav.where, 'Dorian', 'and the lesson name stays');
+    await p.setViewportSize({ width:1280, height:900 });
+  }
+
   /* ================================ 7a. the owner's words =============== */
   {
     for(const mode of ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian']){
@@ -339,6 +422,11 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
        { title:'Dorian', tagline:'Magic, longing and otherworldliness.', line:'Minor with a raised 6th' },
        'each showing the tagline over the one-note line');
     eq(cards.find(c => c.title === 'How modes work').tagline, null, 'and the intro carries none');
+
+    /* the quiz is not a fourth tool */
+    eq(await p.locator('.md-tool').count(), 3, 'three tools, filling their row');
+    eq(await p.locator('.md-test').count(), 1, 'and the quiz in a band of its own');
+    ok(/5 levels/i.test(await p.locator('.md-test-meta').innerText()), 'saying what it offers');
   }
 
   /* ====================================== 7b. the Listen tab ============ */
@@ -568,6 +656,6 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
 
   eq(errors, [], 'no page errors');
   console.log('PASS modes: ' + checks + ' checks — gate and deep links, hub, 9 lesson pages, presets, ' +
-              'separate stores, mode change mid-loop, chord grid, ear quiz, the mode copy, Listen and author mode, nav row, 390px');
+              'separate stores, mode change mid-loop, chord grid, ear quiz, the chrome, the mode copy, Listen and author mode, nav row, 390px');
   await browser.close();
 })().catch(e => { console.error(e); process.exit(1); });

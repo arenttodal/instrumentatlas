@@ -19,14 +19,24 @@
      </a>`;
   }).join('');
 
-  const tools = L.filter(l => l.kind === 'lab').map(l =>
+  document.getElementById('md-tools').innerHTML = L.filter(l => l.kind === 'lab').map(l =>
     `<a class="md-tool" href="lessons.html#/${esc(l.module)}/${esc(l.id)}">
-       <h3>${esc(l.title)}</h3><p>${esc(l.claim || '')}</p></a>`);
-  /* the quiz is its own page, so it is listed here rather than in LESSONS */
-  tools.push(`<a class="md-tool" href="ear.html">
-       <h3>Name the mode</h3>
-       <p>Hear a phrase over a drone and say which mode it is. Five levels, from major-or-minor up to all seven.</p></a>`);
-  document.getElementById('md-tools').innerHTML = tools.join('');
+       <h3>${esc(l.title)}</h3><p>${esc(l.claim || '')}</p></a>`).join('');
+
+  /* THE QUIZ IS NOT A FOURTH TOOL. It is the one thing here that tests you
+     rather than letting you turn something, and as a fourth card in a row of
+     three it sat alone on a second line with two empty columns beside it. Its
+     own band, full width, with what it actually offers. */
+  document.getElementById('md-test').innerHTML =
+    `<a class="md-test" href="ear.html">
+       <div>
+         <h3>Name the mode</h3>
+         <p>Hear a phrase over a drone and say which mode it is.</p>
+       </div>
+       <div class="md-test-meta">
+         <span>5 levels</span><i>·</i><span>10 questions a round</span><i>·</i><span>8 to pass</span>
+       </div>
+     </a>`;
 
   window.addEventListener('scroll', () => {
     document.getElementById('lab-nav').classList.toggle('is-stuck', window.scrollY > 20);

@@ -30,6 +30,13 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 a{color:inherit;text-decoration:none}
 code{font-family:inherit;color:var(--gold)}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+/* The router focuses the heading on every route so a screen reader announces
+   where it landed. Chrome counts a programmatic focus as :focus-visible, so
+   every lesson used to arrive wearing a gold ring round its title — which read
+   as a text field, and was the loudest thing on the page. The focus still
+   happens; only the ring goes. Nothing interactive is affected: tabindex="-1"
+   is exactly the set of elements that are focusable by script and not by tab. */
+h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
 
 .grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:0;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")}
@@ -80,10 +87,108 @@ code{font-family:inherit;color:var(--gold)}
 .lesson{padding-bottom:90px}
 .lesson-n{margin-top:20px}
 .lesson h1{font-size:clamp(32px,4.2vw,48px);line-height:1.06;margin:14px 0 0}
+/* ============================================================================
+   WIDGET CHROME
+   ----------------------------------------------------------------------------
+   .ac-transport, .ac-controls, .ac-field, .ac-inline, .ac-group, .ac-actions,
+   .ac-caption and the native controls inside them. widgets.js has always
+   emitted these and no stylesheet has ever had a rule for any of them, so a
+   carefully made dark page was full of white OS dropdowns, macOS-blue
+   checkboxes and sliders, labels welded to their fields, and <legend> text
+   sitting on top of its own border.
+
+   The native controls keep being native — appearance:none paints them, it does
+   not replace them, so the keyboard, the screen reader and the phone's own
+   picker all still work.
+   ============================================================================ */
+
+/* --- a labelled field: the label ABOVE the control, never beside it ------- */
+.ac-field{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint);max-width:100%}
+.ac-field>span{display:inline-flex;align-items:baseline;gap:6px}
+.ac-field output{color:var(--gold);font-weight:700;letter-spacing:1px}
+
+/* --- the select, painted ------------------------------------------------- */
+.ac-field select,select.ac-select{appearance:none;-webkit-appearance:none;
+  min-height:34px;max-width:100%;padding:7px 32px 7px 13px;
+  border:1px solid var(--hair);border-radius:8px;background-color:rgba(255,255,255,.03);
+  color:var(--text);font-family:inherit;font-size:12.5px;font-weight:400;
+  letter-spacing:0;text-transform:none;cursor:pointer;transition:border-color .2s,color .2s;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%237E808A' stroke-width='1.4'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+.ac-field select:hover{border-color:var(--hair-gold);color:#fff}
+.ac-field select:focus-visible{border-color:var(--gold)}
+/* the OS paints the open list, so its options need a readable pair of their own */
+.ac-field select option{background:#0C1220;color:var(--text)}
+
+/* --- checkbox and slider ------------------------------------------------- */
+.ac-transport input[type=checkbox],.ac-controls input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;position:relative;flex:0 0 auto;
+  width:15px;height:15px;border:1px solid rgba(255,255,255,.14);border-radius:4px;
+  background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .2s,background .2s}
+.ac-transport input[type=checkbox]:checked,.ac-controls input[type=checkbox]:checked{
+  background:rgba(212,160,74,.2);border-color:var(--gold)}
+.ac-transport input[type=checkbox]:checked::after,.ac-controls input[type=checkbox]:checked::after{
+  content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;
+  border:solid var(--gold);border-width:0 1.6px 1.6px 0;transform:rotate(42deg)}
+
+.ac-transport input[type=range],.ac-controls input[type=range]{
+  appearance:none;-webkit-appearance:none;width:104px;max-width:100%;height:3px;
+  border-radius:3px;background:rgba(255,255,255,.12);cursor:pointer}
+.ac-transport input[type=range]::-webkit-slider-thumb,.ac-controls input[type=range]::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;width:12px;height:12px;border:0;border-radius:50%;
+  background:var(--gold)}
+.ac-transport input[type=range]::-moz-range-thumb,.ac-controls input[type=range]::-moz-range-thumb{
+  width:12px;height:12px;border:0;border-radius:50%;background:var(--gold)}
+.ac-field input[type=range]{width:168px}
+
+/* --- a labelled group: the legend is a heading, not a notch in a border --- */
+.ac-group{border:0;padding:0;margin:0;min-width:0;display:flex;flex-wrap:wrap;
+  align-items:flex-end;gap:8px}
+.ac-group>legend{float:left;width:100%;padding:0;margin:0 0 9px;
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint)}
+
+/* --- the step editor: eight steps, each a unit ---------------------------- */
+.ac-editor{gap:14px 22px}
+.ac-step{display:flex;align-items:flex-end;gap:8px;flex:0 0 auto}
+
+/* --- the control row ----------------------------------------------------- */
+.ac-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px 20px;margin-top:22px}
+.ac-controls>.btn,.ac-group>.btn{align-self:flex-end}
+.w-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+
+/* --- the transport ------------------------------------------------------- */
+.ac-transport{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.ac-inline{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim)}
+.ac-transport [data-time]{margin-left:auto;font-size:12px;color:var(--faint);
+  font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.ac-audio-status{font-size:12px;color:var(--faint);margin-top:10px}
+.ac-timeline{height:3px;margin-top:12px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+.ac-timeline i{display:block;height:100%;width:0;background:var(--gold)}
+
+/* --- compare and revise: three jobs, not seven identical buttons --------- */
+.ac-actions{margin-top:24px}
+.ac-actions .ac-group{gap:10px 26px}
+.ac-set{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ac-set .btn{font-size:12px;padding:7px 14px}
+/* the reset is a way out, not a thing to do: a quiet link at the end */
+.ac-set[data-set="reset"] .btn{border-color:transparent;padding-left:4px;padding-right:4px;
+  color:var(--faint);border-radius:0;border-bottom:1px solid var(--hair)}
+.ac-set[data-set="reset"] .btn:hover{color:var(--gold);border-bottom-color:var(--hair-gold)}
+
+/* --- captions and read-outs --------------------------------------------- */
+.ac-caption{font-size:12px;color:var(--faint);font-weight:300;line-height:1.6;margin-top:12px;
+  max-width:var(--measure)}
+.sec p[data-exercise]{max-width:var(--measure);margin:16px 0}
+.ac-feedback{font-size:14px;color:var(--dim);font-weight:300;margin-top:14px;
+  min-height:1.6em;max-width:var(--measure)}
+
 /* --- the lede: what this is, before anything asks you to do something ---
    Only on a lesson whose product declares LESSON_COPY. The body copy at the
    prose size, then one row of chips naming what the thing is good for. */
-.ac-lede{margin:30px 0 0;max-width:62ch}
+.ac-lede{margin:30px 0 0;max-width:var(--measure)}
 .ac-lede p{font-size:16px;line-height:1.75;font-weight:300;color:var(--text)}
 .ac-lede p+p{margin-top:15px}
 .ac-usefor{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:20px}
@@ -128,14 +233,19 @@ code{font-family:inherit;color:var(--gold)}
 .sec-h{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
 .sec-h b{font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold)}
 .sec-h span{flex:1 1 auto;height:1px;background:var(--hair)}
-.prose{max-width:660px}
+/* ONE MEASURE. Prose, the lede, the exercise and the credit line all read at
+   the same width; before this the credit footnote was the widest text on the
+   page at the full 880px, which put the least important line in the most
+   prominent measure. */
+:root{--measure:660px}
+.prose{max-width:var(--measure)}
 .prose p{margin-bottom:16px;font-weight:300}
 .prose p strong{color:#fff;font-weight:500}
 .prose em{font-style:italic;color:var(--text)}
 .demo{border:1px solid var(--hair);border-radius:14px;background:rgba(255,255,255,.015);overflow:hidden}
 .demo-note{padding:13px 22px;border-top:1px solid var(--hair);font-size:12.5px;
   color:var(--faint);line-height:1.6}
-.source{margin-top:46px;padding-top:18px;border-top:1px solid var(--hair);
+.source{max-width:var(--measure);margin-top:46px;padding-top:18px;border-top:1px solid var(--hair);
   font-size:11.5px;color:#3E404A;font-weight:300}
 .source em{color:var(--faint);font-style:italic}
 
@@ -241,6 +351,27 @@ code{font-family:inherit;color:var(--gold)}
   .ex-row{grid-template-columns:1fr;gap:8px}
   .wrap{padding:0 20px}
 }
+/* THE NAV ON A PHONE. The bar is logo / module / lesson / progress, and on a
+   page whose module is called something as long as "Scales & Modes" all four
+   do not fit at 390px: the breadcrumb wrapped to three lines with the progress
+   counter interleaved through it. Below 620px the module link goes — the logo
+   still leads back and the lesson name is what you need — and below 460px the
+   progress keeps its count and drops its bar. */
+@media (max-width:620px){
+  .nav{padding-left:18px;padding-right:18px}
+  .nav-l{gap:10px;min-width:0}
+  .nav-l [data-nav-up],.nav-l [data-nav-up]+i{display:none}
+  .nav-l #nav-where{min-width:0}
+}
+@media (max-width:460px){
+  .prog-bar{display:none}
+  .prog{gap:0}
+}
+/* A TOOL HAS NO LESSON PROGRESS. The counter reads "0 of 6" whatever you do
+   with a widget that is not one of the six, so it is hidden rather than left
+   to look broken. Set by app.js on the route. */
+.nav .prog.is-hidden{visibility:hidden}
+
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 
 /* ============================================================================
