@@ -67,6 +67,14 @@ a.lab-module:hover .lab-module-art .lit{opacity:1}
 .lab-buy:hover{color:var(--gold)}
 
 /* --- a module's own front page: the same cards, one level down --- */
+/* The nav row. These three class names come from the Dojo's chrome, which the
+   lab pages do not load — only ear.html does, because it is a Dojo page. On
+   the hub and a module's front page they were unstyled, so the row fell to
+   three stacked blocks and the breadcrumb sat under the switcher instead of
+   beside it. Same values as dojo-base.css, so the two read identically. */
+.lab .atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
+.lab .atl-nav-sep{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
+.lab .atl-nav-crumb{display:flex;min-width:0}
 .lab-crumb{display:flex;align-items:center;gap:9px;font-size:10.5px;font-weight:700;
   letter-spacing:2.2px;text-transform:uppercase;color:var(--text-faint)}
 .lab-crumb a:hover{color:var(--gold)}

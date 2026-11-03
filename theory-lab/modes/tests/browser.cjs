@@ -263,6 +263,33 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
        'with level 2 open — it was earned — and 3, 4 and 5 still locked');
   }
 
+  /* ======================================= 8b. the nav row is one row ==== */
+  {
+    /* The lab pages do not load the Dojo's chrome, so .atl-nav-left and its
+       two siblings have to be styled in lab.css. When they were not, the
+       breadcrumb fell under the switcher. */
+    for(const url of ['/theory-lab/modes/', '/theory-lab/modes/ear.html']){
+      await p.goto(BASE + url);
+      await p.waitForTimeout(600);
+      const row = await p.evaluate(() => {
+        const sw = document.querySelector('.ev-switch');
+        const cr = document.querySelector('.atl-nav-crumb');
+        if(!sw || !cr) return null;
+        const a = sw.getBoundingClientRect(), b = cr.getBoundingClientRect();
+        return { sameLine: Math.abs(a.top - b.top) < 6, crumbRight: b.left > a.right };
+      });
+      ok(row && row.sameLine && row.crumbRight,
+         'the switcher and the breadcrumb share one line: ' + url + ' ' + JSON.stringify(row));
+    }
+    /* and the crumb does not repeat what the switcher already says */
+    await p.goto(BASE + '/theory-lab/modes/');
+    await p.waitForTimeout(400);
+    const words = await p.evaluate(() => ({
+      sw: document.querySelector('.ev-switch-label').textContent.trim(),
+      crumb: document.querySelector('.lab-crumb a').textContent.trim() }));
+    ok(words.sw !== words.crumb, 'without saying it twice: ' + JSON.stringify(words));
+  }
+
   /* ========================================================= 9. mobile ==== */
   {
     await p.setViewportSize({ width:390, height:844 });
@@ -286,6 +313,6 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
 
   eq(errors, [], 'no page errors');
   console.log('PASS modes: ' + checks + ' checks — gate and deep links, hub, 9 lesson pages, presets, ' +
-              'separate stores, mode change mid-loop, chord grid, ear quiz, 390px');
+              'separate stores, mode change mid-loop, chord grid, ear quiz, nav row, 390px');
   await browser.close();
 })().catch(e => { console.error(e); process.exit(1); });
