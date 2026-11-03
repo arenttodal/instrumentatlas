@@ -11,10 +11,18 @@
    Scoping them here means the keyboard looks like itself wherever it is dropped
    and leaks nothing into the page around it.
 
-   Component selectors are wrapped in :where() so that an element-qualified
-   reset in the host page — `.atl button{font:inherit}` is (0,1,1) and beats any
-   single class — cannot silently take a rule away. That has bitten this repo
-   three times; see CONTRIBUTING.md §5.10.
+   SPECIFICITY, THE OTHER WAY ROUND. The repo's standing warning is that an
+   element-qualified reset in a host page outranks a single class: `.atl
+   button{font:inherit}` is (0,1,1) and beats `.bl-card` at (0,1,0). The Dojo
+   answers that with , which drops a DEFENSIVE RESET to zero so that a
+   component can still override it.
+
+   That is the wrong tool for a component's own paint.  is ZERO
+   specificity, so `button{background:none}` on a host page — which the
+   Accelerator shell has — beat every rule in this file and the keyboard
+   rendered black on black. These selectors therefore carry their natural
+   weight: `.va-kb .va-kb-white` is (0,2,0) and wins. tests/keyboard.cjs puts
+   that same reset in its fixture so this cannot come back.
    ============================================================================ */
 
 .va-kb{
@@ -35,111 +43,111 @@
 }
 
 /* the instrument itself */
-:where(.va-kb .va-kb-piano){
+.va-kb .va-kb-piano{
   display:flex; position:relative; height:var(--kb-height);
   border-radius:var(--kb-radius); overflow:hidden;
   background:var(--kb-bg); box-shadow:inset 0 2px 4px rgba(0,0,0,.3);
 }
-:where(.va-kb .va-kb-whites){ display:flex; width:100%; height:100% }
-:where(.va-kb .va-kb-blacks){
+.va-kb .va-kb-whites{ display:flex; width:100%; height:100% }
+.va-kb .va-kb-blacks{
   position:absolute; top:0; left:0; right:0; display:flex;
   height:calc(var(--kb-height) * 0.515);     /* 85 of 165, VA's proportion */
   pointer-events:none;
 }
 
-:where(.va-kb .va-kb-key){
+.va-kb .va-kb-key{
   position:relative; padding:0; margin:0; border:0; border-radius:0;
   font:inherit; color:inherit; background:none; cursor:pointer;
   user-select:none; -webkit-user-select:none; touch-action:none;
 }
-:where(.va-kb .va-kb-white){
+.va-kb .va-kb-white{
   flex:1; background:var(--kb-white); border-right:1px solid var(--kb-border);
   display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px;
   transition:background 50ms;
 }
-:where(.va-kb .va-kb-white:last-child){ border-right:none }
-:where(.va-kb .va-kb-slot){ flex:1; display:flex; justify-content:center; position:relative }
-:where(.va-kb .va-kb-black){
+.va-kb .va-kb-white:last-child{ border-right:none }
+.va-kb .va-kb-slot{ flex:1; display:flex; justify-content:center; position:relative }
+.va-kb .va-kb-black{
   position:absolute; right:-30%; width:60%; height:100%; z-index:2;
   background:var(--kb-black); border-radius:0 0 4px 4px;
   box-shadow:0 3px 6px rgba(0,0,0,.4); pointer-events:auto;
   transition:background 50ms;
 }
-:where(.va-kb .va-kb-black[hidden]){ display:none }
+.va-kb .va-kb-black[hidden]{ display:none }
 
 @media (hover:hover){
-  :where(.va-kb .va-kb-white:hover){ filter:brightness(1.05) }
-  :where(.va-kb .va-kb-black:hover){ filter:brightness(1.2) }
+  .va-kb .va-kb-white:hover{ filter:brightness(1.05) }
+  .va-kb .va-kb-black:hover{ filter:brightness(1.2) }
 }
 
-:where(.va-kb .va-kb-label){
+.va-kb .va-kb-label{
   font-size:11px; font-weight:600; color:var(--kb-label); pointer-events:none;
   letter-spacing:0;
 }
-:where(.va-kb .va-kb-white[data-state] .va-kb-label),
-:where(.va-kb .va-kb-white[data-role] .va-kb-label){ color:#fff }
+.va-kb .va-kb-white[data-state] .va-kb-label,
+.va-kb .va-kb-white[data-role] .va-kb-label{ color:#fff }
 
 /* --- ROLES: what a key MEANS. Set by setOverlays(). -----------------------
    root, third, fifth, seventh and ext are Voicing Atlas's own, unchanged.
    scale, colour, changed and chord are this module's, in the same style:
    a two-stop gradient on the white keys, one flat colour on the blacks. */
-:where(.va-kb [data-role="root"].va-kb-white)   { background:linear-gradient(180deg,#FBBF24,#B45309) }
-:where(.va-kb [data-role="root"].va-kb-black)   { background:#92400E }
-:where(.va-kb [data-role="third"].va-kb-white)  { background:linear-gradient(180deg,#4f8fff,#1D4ED8) }
-:where(.va-kb [data-role="third"].va-kb-black)  { background:#1E40AF }
-:where(.va-kb [data-role="fifth"].va-kb-white)  { background:linear-gradient(180deg,#4ADE80,#15803D) }
-:where(.va-kb [data-role="fifth"].va-kb-black)  { background:#14532D }
-:where(.va-kb [data-role="seventh"].va-kb-white),
-:where(.va-kb [data-role="ext"].va-kb-white)    { background:linear-gradient(180deg,#F87171,#DC2626) }
-:where(.va-kb [data-role="seventh"].va-kb-black),
-:where(.va-kb [data-role="ext"].va-kb-black)    { background:#991B1B }
+.va-kb [data-role="root"].va-kb-white   { background:linear-gradient(180deg,#FBBF24,#B45309) }
+.va-kb [data-role="root"].va-kb-black   { background:#92400E }
+.va-kb [data-role="third"].va-kb-white  { background:linear-gradient(180deg,#4f8fff,#1D4ED8) }
+.va-kb [data-role="third"].va-kb-black  { background:#1E40AF }
+.va-kb [data-role="fifth"].va-kb-white  { background:linear-gradient(180deg,#4ADE80,#15803D) }
+.va-kb [data-role="fifth"].va-kb-black  { background:#14532D }
+.va-kb [data-role="seventh"].va-kb-white,
+.va-kb [data-role="ext"].va-kb-white    { background:linear-gradient(180deg,#F87171,#DC2626) }
+.va-kb [data-role="seventh"].va-kb-black,
+.va-kb [data-role="ext"].va-kb-black    { background:#991B1B }
 
 /* a note of the mode, but doing no particular job: present, not shouting */
-:where(.va-kb [data-role="scale"].va-kb-white)  { background:linear-gradient(180deg,#E2E8F0,#CBD5E1) }
-:where(.va-kb [data-role="scale"].va-kb-black)  { background:#475569 }
+.va-kb [data-role="scale"].va-kb-white  { background:linear-gradient(180deg,#E2E8F0,#CBD5E1) }
+.va-kb [data-role="scale"].va-kb-black  { background:#475569 }
 /* a chord tone of whatever chord is being shown */
-:where(.va-kb [data-role="chord"].va-kb-white)  { background:linear-gradient(180deg,#4f8fff,#1D4ED8) }
-:where(.va-kb [data-role="chord"].va-kb-black)  { background:#1E40AF }
+.va-kb [data-role="chord"].va-kb-white  { background:linear-gradient(180deg,#4f8fff,#1D4ED8) }
+.va-kb [data-role="chord"].va-kb-black  { background:#1E40AF }
 /* THE COLOUR NOTE: the one degree that makes the mode. Nothing else is violet. */
-:where(.va-kb [data-role="colour"].va-kb-white) { background:linear-gradient(180deg,#C084FC,#7E22CE) }
-:where(.va-kb [data-role="colour"].va-kb-black) { background:#581C87 }
+.va-kb [data-role="colour"].va-kb-white { background:linear-gradient(180deg,#C084FC,#7E22CE) }
+.va-kb [data-role="colour"].va-kb-black { background:#581C87 }
 /* a degree that just moved, while it is still worth looking at */
-:where(.va-kb [data-role="changed"].va-kb-white){ background:linear-gradient(180deg,#FB923C,#C2410C) }
-:where(.va-kb [data-role="changed"].va-kb-black){ background:#7C2D12 }
+.va-kb [data-role="changed"].va-kb-white{ background:linear-gradient(180deg,#FB923C,#C2410C) }
+.va-kb [data-role="changed"].va-kb-black{ background:#7C2D12 }
 
 /* --- STATES: what a key is DOING. Set by setStates() and by playing. ------
    After the roles, so a key you are holding reads as held whatever it means. */
-:where(.va-kb [data-state="active"].va-kb-white) { background:var(--kb-white-active) }
-:where(.va-kb [data-state="active"].va-kb-black) { background:var(--kb-black-active) }
-:where(.va-kb [data-state="target"].va-kb-white) { background:linear-gradient(180deg,var(--kb-accent) 0%,#1D4ED8 100%) }
-:where(.va-kb [data-state="target"].va-kb-black) { background:linear-gradient(180deg,var(--kb-accent) 0%,#1E3A8A 100%) }
-:where(.va-kb [data-state="correct"].va-kb-white){ background:linear-gradient(180deg,#4ADE80 0%,#22C55E 100%) }
-:where(.va-kb [data-state="correct"].va-kb-black){ background:linear-gradient(180deg,#22C55E 0%,#16A34A 100%) }
-:where(.va-kb [data-state="wrong"].va-kb-white)  { background:linear-gradient(180deg,#F87171 0%,#EF4444 100%) }
-:where(.va-kb [data-state="wrong"].va-kb-black)  { background:linear-gradient(180deg,#EF4444 0%,#DC2626 100%) }
+.va-kb [data-state="active"].va-kb-white { background:var(--kb-white-active) }
+.va-kb [data-state="active"].va-kb-black { background:var(--kb-black-active) }
+.va-kb [data-state="target"].va-kb-white { background:linear-gradient(180deg,var(--kb-accent) 0%,#1D4ED8 100%) }
+.va-kb [data-state="target"].va-kb-black { background:linear-gradient(180deg,var(--kb-accent) 0%,#1E3A8A 100%) }
+.va-kb [data-state="correct"].va-kb-white{ background:linear-gradient(180deg,#4ADE80 0%,#22C55E 100%) }
+.va-kb [data-state="correct"].va-kb-black{ background:linear-gradient(180deg,#22C55E 0%,#16A34A 100%) }
+.va-kb [data-state="wrong"].va-kb-white  { background:linear-gradient(180deg,#F87171 0%,#EF4444 100%) }
+.va-kb [data-state="wrong"].va-kb-black  { background:linear-gradient(180deg,#EF4444 0%,#DC2626 100%) }
 
 /* --- the strip under it: MIDI status and typing hint --------------------- */
-:where(.va-kb .va-kb-foot){
+.va-kb .va-kb-foot{
   display:flex; align-items:center; justify-content:space-between; gap:10px;
   margin-top:8px; font-size:11px; color:var(--kb-label); min-height:18px;
 }
-:where(.va-kb .va-kb-foot b){ font-weight:600; color:#9CA3AF }
-:where(.va-kb .va-kb-foot .is-on){ color:#22C55E }
-:where(.va-kb .va-kb-foot button){
+.va-kb .va-kb-foot b{ font-weight:600; color:#9CA3AF }
+.va-kb .va-kb-foot .is-on{ color:#22C55E }
+.va-kb .va-kb-foot button{
   font:inherit; font-size:11px; color:var(--kb-label); background:none; cursor:pointer;
   border:1px solid var(--kb-border); border-radius:6px; padding:3px 9px;
 }
-:where(.va-kb .va-kb-foot button:hover){ color:#fff; border-color:#4B5563 }
-:where(.va-kb .va-kb-foot button[aria-pressed="true"]){ color:#fff; border-color:var(--kb-accent) }
+.va-kb .va-kb-foot button:hover{ color:#fff; border-color:#4B5563 }
+.va-kb .va-kb-foot button[aria-pressed="true"]{ color:#fff; border-color:var(--kb-accent) }
 
 /* Two octaves have to fit a phone. Below this the keys get narrow rather than
    the board getting scrolled: a keyboard you have to scroll is not a keyboard
    you can see a chord on. */
 @media (max-width:620px){
   .va-kb{ --kb-height:124px; --kb-radius:7px }
-  :where(.va-kb .va-kb-label){ font-size:9.5px }
-  :where(.va-kb .va-kb-white){ padding-bottom:5px }
+  .va-kb .va-kb-label{ font-size:9.5px }
+  .va-kb .va-kb-white{ padding-bottom:5px }
 }
 @media (prefers-reduced-motion:reduce){
-  :where(.va-kb .va-kb-white),:where(.va-kb .va-kb-black){ transition:none }
+  .va-kb .va-kb-white,.va-kb .va-kb-black{ transition:none }
 }

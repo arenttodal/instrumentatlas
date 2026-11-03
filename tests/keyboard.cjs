@@ -59,6 +59,10 @@ function referenceHtml(lo, hi, states){
 
 const page1 = (extraCss, body, theme) => `<!DOCTYPE html><html${theme ? ' data-theme="' + theme + '"' : ''}><head><meta charset="utf-8"><style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+/* The host pages reset buttons, and an element selector at (0,0,1) beats
+   anything at zero. The keyboard must survive sitting inside one — it did not,
+   once — so the fixture carries the same reset the Accelerator shell has. */
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 body{background:#080C14;font-family:system-ui,sans-serif}
 #stage{width:720px;padding:0}
 ${extraCss}
