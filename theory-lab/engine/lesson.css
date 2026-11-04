@@ -220,6 +220,25 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
 .ac-seg-track{display:inline-flex;flex-wrap:wrap;align-items:center;gap:0;
   padding:3px;border:1px solid var(--hair);border-radius:var(--rp);
   background-image:var(--panel);box-shadow:var(--edge);max-width:100%}
+/* ONE EDGE, AND IT IS THE TRACK'S.
+   A segment arrives as a .btn, so it brought a border and --edge's inset top
+   highlight with it — and the track draws a border of its own around all of
+   them. Seven capsules inside one capsule: the control read as a box of boxes
+   and the eye had nothing to settle on. The container already says these
+   belong together and the gold face already says which one is chosen, so a
+   segment carries neither edge nor ground until it is the chosen one. That is
+   also the only one that should look raised, which is what the inset highlight
+   and the shadow are for. */
+.ac-seg-track>.btn{height:26px;padding:0 11px;font-size:12px;
+  border:0;box-shadow:none;background-image:none;border-radius:var(--rp);color:var(--dim)}
+.ac-seg-track>.btn:hover{color:#fff;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
+/* the brighter face, not the standard one: with no edge of its own the chosen
+   segment has only its ground to be chosen by, and over the track's own warm
+   wash the standard face went muddy rather than lit */
+.ac-seg-track>.btn[aria-current="true"]{color:#fff;background-image:var(--gold-face-hi);
+  box-shadow:var(--edge),0 1px 3px rgba(0,0,0,.35)}
+.ac-seg-track>.btn:focus-visible{outline:none;box-shadow:var(--ring);color:#fff}
 
 /* --- the step editor: eight steps, each a unit ---------------------------- */
 .ac-editor{gap:14px 22px}

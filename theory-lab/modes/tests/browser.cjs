@@ -515,6 +515,30 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     /* back to the lesson this section was looking at, for the checks below */
     await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
     await p.locator('#rail button').first().waitFor({ timeout:10000 });
+    await p.waitForTimeout(400);
+
+    /* ONE EDGE PER SEGMENTED CONTROL. The track draws it. A segment arrives as
+       a .btn and so brings a border and an inset highlight of its own unless
+       they are taken off it — and then seven capsules sit inside one capsule
+       and the control reads as a box of boxes. Only the chosen segment has a
+       ground, which is how it is chosen. */
+    const seg = await p.evaluate(() => {
+      const t = document.querySelector('.ac-seg-track');
+      if(!t) return null;
+      const cs = e => getComputedStyle(e);
+      const off = [...t.querySelectorAll(':scope > .btn')].filter(b => !b.hasAttribute('aria-current'));
+      return { track:cs(t).borderTopWidth,
+               borders:[...new Set(off.map(b => cs(b).borderTopWidth))],
+               shadows:[...new Set(off.map(b => cs(b).boxShadow))],
+               grounds:[...new Set(off.map(b => cs(b).backgroundImage))],
+               lit:t.querySelectorAll('[aria-current="true"]').length };
+    });
+    ok(seg, 'the mode row is a segmented control');
+    eq(seg.track, '1px', 'the track carries the edge');
+    eq(seg.borders, ['0px'], 'and no segment inside it carries one of its own');
+    eq(seg.shadows, ['none'], 'nor an inset highlight, which reads as an edge too');
+    eq(seg.grounds, ['none'], 'an unchosen segment has no ground at all');
+    eq(seg.lit, 1, 'exactly one is lit');
 
     /* the lesson rail replaced the breadcrumb and the outline disclosure */
     eq(await p.locator('.crumb').count(), 0, 'no breadcrumb: the rail says where you are');
