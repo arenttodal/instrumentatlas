@@ -23,12 +23,23 @@ const AccelWidgets = (() => {
     const ns=events.filter(n=>Number.isFinite(n.m)),lo=Math.min(36,...ns.map(n=>n.m))-2,hi=Math.max(72,...ns.map(n=>n.m))+2;
     const colors=['#D4A04A','#8FB4E0','#5FB89A','#CB99DF'],layers=[...new Set(ns.map(n=>n.layer||'Theme'))];
     const x=n=>35+n.s/beats*650,y=n=>170-(n.m-lo)/(hi-lo)*145;
-    let svg='<svg viewBox="0 0 720 210" role="img" aria-label="Piano roll. Pitch rises vertically and beats move left to right.">';
-    for(let b=0;b<=beats;b++)svg+='<line x1="'+(35+b/beats*650)+'" x2="'+(35+b/beats*650)+'" y1="16" y2="175" stroke="white" opacity="'+(b%4?'.035':'.13')+'"/>';
+    /* preserveAspectRatio="none" so the roll FILLS its box at whatever shape the
+       layout hands it. It is a chart, not a picture: stretching the grid and the
+       note bars is exactly right, and it is what lets one roll serve a tall
+       lesson column and a short wide tool strip without either letterboxing.
+       Two things make that safe — strokes are marked non-scaling so the grid
+       lines stay hairlines however far the box stretches, and the bar numbers
+       are HTML underneath rather than <text> inside, because type is the one
+       thing that must not stretch. Keeping the box 35..685 of 720 wide also
+       keeps the playhead's percentages honest. */
+    let svg='<svg viewBox="0 0 720 180" preserveAspectRatio="none" role="img" aria-label="Piano roll. Pitch rises vertically and beats move left to right.">';
+    for(let b=0;b<=beats;b++)svg+='<line x1="'+(35+b/beats*650)+'" x2="'+(35+b/beats*650)+'" y1="16" y2="175" stroke="white" vector-effect="non-scaling-stroke" opacity="'+(b%4?'.035':'.13')+'"/>';
     ns.forEach(n=>svg+='<rect x="'+x(n)+'" y="'+y(n)+'" width="'+Math.max(2,Math.min(n.d,beats-n.s)/beats*650-2)+'" height="7" rx="2" fill="'+colors[layers.indexOf(n.layer||'Theme')%4]+'"><title>'+esc(Accel.note(n.m)+' at beat '+(n.s+1)+', '+n.d+' beats')+'</title></rect>');
-    layers.forEach((l,i)=>{const line=ns.filter(n=>n.layer===l&&n.voice).sort((a,b)=>a.s-b.s);if(line.length>1)svg+='<polyline points="'+line.map(n=>x(n)+','+(y(n)+3)).join(' ')+'" fill="none" stroke="'+colors[i%4]+'" opacity=".55"/>';});
-    for(let b=0;b<beats;b+=4)svg+='<text x="'+(35+b/beats*650)+'" y="199" fill="#BEC0C8" font-size="12">Bar '+(b/4+1)+'</text>';
-    host.innerHTML='<div class="ac-roll-stage">'+svg+'</svg><i class="ac-playhead" aria-hidden="true"></i></div><div class="ac-legend">'+layers.map((l,i)=>'<span style="color:'+colors[i%4]+'">'+esc(l)+'</span>').join('')+'</div>';
+    layers.forEach((l,i)=>{const line=ns.filter(n=>n.layer===l&&n.voice).sort((a,b)=>a.s-b.s);if(line.length>1)svg+='<polyline points="'+line.map(n=>x(n)+','+(y(n)+3)).join(' ')+'" fill="none" stroke="'+colors[i%4]+'" vector-effect="non-scaling-stroke" opacity=".55"/>';});
+    let bars='';
+    for(let b=0;b<beats;b+=4)bars+='<span style="left:'+((35+b/beats*650)/720*100)+'%">Bar '+(b/4+1)+'</span>';
+    host.innerHTML='<div class="ac-roll-stage">'+svg+'</svg><i class="ac-playhead" aria-hidden="true"></i></div>'+
+      '<div class="ac-roll-bars" aria-hidden="true">'+bars+'</div><div class="ac-legend">'+layers.map((l,i)=>'<span style="color:'+colors[i%4]+'">'+esc(l)+'</span>').join('')+'</div>';
   }
   /* `params` is what a deep link asked for. It is merged over the lesson's own
      preset — the URL wins, because it is the more specific instruction — and
@@ -54,7 +65,15 @@ const AccelWidgets = (() => {
     const wanted={...(lesson.preset||{}),...typed};
     if(linked||!saved.widget) Object.assign(state,Accel.clone(wanted));
     let alive=true;let comparisons=saved.comparisons||{},undo=[],redo=[],previous=null,revising=false,cleanup=()=>{},spec,info;
-    host.innerHTML='<div class="ac-transport"><button class="btn gold" data-play>Play</button><button class="btn" data-restart>Restart</button><button class="btn" data-stop>Stop</button><label class="ac-inline">Loop <input type="checkbox" data-loop checked></label><label class="ac-inline">Volume <input type="range" data-volume min="0" max="1" step=".01"></label><span data-time>0:00</span></div><p class="ac-audio-status" data-status role="status">Audio loads when you press Play.</p><div class="ac-timeline"><i data-progress></i></div><div data-roll></div><div class="ac-controls" data-controls></div><p class="w-read" data-read aria-live="polite"></p><div class="ac-actions" data-actions></div>';
+    /* TWO BOXES, NOT ONE STACK. `.ac-music` is what you listen to — transport,
+       timeline, piano roll, and whatever the activity hangs off the roll (the
+       keyboard, the chord grid, both inserted with rollHost.after()). `.ac-knobs`
+       is what you turn. A lesson stacks them, because its column is narrow; a
+       tool stands them side by side, because a tool has the whole page and
+       stacking them is what used to put its last button off the bottom of the
+       screen. Everything here is still found with host.querySelector, so the
+       nesting costs the widgets nothing. */
+    host.innerHTML='<div class="ac-music"><div class="ac-transport"><button class="btn gold" data-play>Play</button><button class="btn" data-restart>Restart</button><button class="btn" data-stop>Stop</button><label class="ac-inline">Loop <input type="checkbox" data-loop checked></label><label class="ac-inline">Volume <input type="range" data-volume min="0" max="1" step=".01"></label><span class="ac-audio-status" data-status role="status">Audio loads when you press Play.</span><span data-time>0:00</span></div><div class="ac-timeline"><i data-progress></i></div><div data-roll></div></div><div class="ac-knobs"><div class="ac-controls" data-controls></div><p class="w-read" data-read aria-live="polite"></p><div class="ac-actions" data-actions></div></div>';
     const q=s=>host.querySelector(s),controls=q('[data-controls]'),actions=q('[data-actions]');
     const transport=new AccelAudio.Transport(t=>{
       q('[data-play]').textContent=t.status==='playing'?'Pause':t.status==='loading'?'Cancel loading':t.status==='paused'?'Resume':'Play';q('[data-play]').setAttribute('aria-pressed',String(t.status==='playing'));
@@ -91,6 +110,13 @@ const AccelWidgets = (() => {
        through history, and starting over are different things, and in one flat
        row of identical pills they read as one undifferentiated clump. Same
        buttons, same labels — grouped, with the way out as a quiet link. */
+    /* ONLY ON A TOOL. Keep/Hear A and B, undo, redo and reset are for someone
+       turning the thing over; on a lesson you move with Next, and seven more
+       buttons under the music is the clutter this page exists to avoid. */
+    if(lesson.kind!=='lab') return {check:()=>spec.check(),play:()=>transport.play(0),
+      inspect:()=>Accel.clone(info),capture:save,
+      step:at=>{if(spec.step)try{spec.step(at);}catch(err){console.error('[activity step]',err);}},
+      destroy:()=>{alive=false;cleanup();transport.destroy();}};
     const compare=group(actions,'Compare and revise');
     const set=name=>{const d=document.createElement('div');d.className='ac-set';d.dataset.set=name;compare.append(d);return d;};
     const ab=set('ab');
@@ -103,7 +129,12 @@ const AccelWidgets = (() => {
     button(history,'Redo',()=>{if(!redo.length)return;undo.push(Accel.clone(state));revising=true;restore(redo.pop());revising=false;});
     /* "Restore lesson start" on a tool is the wrong words: there is no lesson. */
     button(set('reset'),lesson.kind==='lab'?'Reset the tool':'Restore lesson start',()=>restore(original));
-    return {check:()=>spec.check(),play:()=>transport.play(0),inspect:()=>Accel.clone(info),capture:save,destroy:()=>{alive=false;cleanup();transport.destroy();}};
+    /* THE DEMONSTRATION CAN FOLLOW THE EXPLANATION. The page tells the widget
+       which step the reader is on; an activity that wants to react declares
+       step(info) and one that does not is simply never asked. */
+    return {check:()=>spec.check(),play:()=>transport.play(0),inspect:()=>Accel.clone(info),capture:save,
+      step:at=>{if(spec.step)try{spec.step(at);}catch(err){console.error('[activity step]',err);}},
+      destroy:()=>{alive=false;cleanup();transport.destroy();}};
   }
   return {mount,esc};
 })();

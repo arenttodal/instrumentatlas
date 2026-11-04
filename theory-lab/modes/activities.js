@@ -76,7 +76,12 @@ const ModeActivities = (() => {
      1. BRIGHTNESS — one note changes each time the mode darkens
      ======================================================================== */
   activities.brightness = (s, u) => {
-    u.defaults({ rootPc:2, mode:'lydian', drone:true, instrument:EvSound.remembered() });
+    /* THE DRONE IS OFF UNTIL IT IS ASKED FOR. A mode only exists against a
+       tonic, so the drone is the thing to reach for when one refuses to sound
+       like itself — but starting every widget with a sustained note under it
+       is an assumption about what the reader wants to hear first, and a loud
+       one. The toggle is right there. */
+    u.defaults({ rootPc:2, mode:'lydian', drone:false, instrument:EvSound.remembered() });
     if(!T.mode(s.mode)) s.mode = 'lydian';
     let moved = null, movedAt = 0;
 
@@ -244,7 +249,7 @@ const ModeActivities = (() => {
      ======================================================================== */
   activities.reharm = (s, u) => {
     u.defaults({ theme:'rise', rootPc:2, mode:'lydian', from:'ionian',
-                 idiomatic:false, melody:true, harmony:true, drone:true,
+                 idiomatic:false, melody:true, harmony:true, drone:false,
                  instrument:EvSound.remembered() });
     if(!T.mode(s.mode)) s.mode = 'lydian';
     if(!T.mode(s.from)) s.from = 'ionian';
