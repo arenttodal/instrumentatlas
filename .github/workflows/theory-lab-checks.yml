@@ -30,7 +30,12 @@ permissions:
   contents: read
 jobs:
   theory-lab:
-    runs-on: ubuntu-latest
+    # PINNED, NOT ubuntu-latest. GitHub moved ubuntu-latest to 26.04 and
+    # Playwright 1.55.0 refuses to install chromium there:
+    #   "ERROR: Playwright does not support chromium on ubuntu26.04-x64".
+    # Pin the runner to the image the pinned Playwright supports — the two
+    # versions move together or neither does.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
