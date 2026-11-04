@@ -1,0 +1,102 @@
+/* ============================================================================
+   SCALES & MODES · MODULE STYLES
+   ----------------------------------------------------------------------------
+   Only what this module adds: the chord tiles, the row of mode buttons, and
+   the keyboard's place under the piano roll. Everything else — the lesson
+   shell, the transport, the controls, the quiz — comes from
+   theory-lab/engine/lesson.css, which both host pages link.
+   ============================================================================ */
+
+/* breadcrumb link in the bar, matching the one the Accelerator draws */
+.md-up{color:var(--dim)}
+.md-up:hover{color:var(--gold)}
+
+/* --- the keyboard, under the roll ---
+   It is placed by spec.draw() rather than built into the controls column,
+   because it belongs with the picture of the music rather than with the
+   knobs. */
+.md-kb-host{margin:14px 0 2px}
+
+/* --- the row of mode buttons ---
+   Seven, in brightness order, and they wrap to two rows on a phone rather
+   than scrolling: a row you have to scroll hides the darkest modes, which
+   are the ones people have not met. */
+.ac-group.md-modebar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.md-modebtn{padding:7px 12px;font-size:12.5px;border-radius:8px;
+  border:1px solid var(--hair);background:rgba(255,255,255,.02);color:var(--text);
+  transition:border-color .2s,background .2s,color .2s}
+.md-modebtn:hover{border-color:var(--hair-gold);color:#fff}
+.md-modebtn[aria-current="true"]{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
+
+/* --- the chord grid: seven tiles, one per degree --- */
+.md-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin:16px 0 2px}
+.md-tile{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:12px 6px 10px;border-radius:10px;text-align:center;
+  border:1px solid var(--hair);background:rgba(255,255,255,.02);
+  /* the function colour is a hairline at the top rather than a fill, so seven
+     tiles do not read as seven different buttons */
+  box-shadow:inset 0 2px 0 -1px var(--fn);
+  transition:border-color .2s,background .2s,transform .2s}
+.md-tile:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.06);transform:translateY(-1px)}
+.md-tile.is-on{border-color:var(--gold);background:rgba(212,160,74,.14)}
+.md-tile.is-sig{border-color:var(--hair-gold)}
+.md-num{font-family:'Playfair Display',Georgia,serif;font-size:17px;color:#fff;line-height:1.1}
+.md-tile b{font-weight:400;font-size:12.5px;color:var(--text)}
+.md-fn{font-size:8.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--fn);opacity:.85}
+.md-sig{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+.md-vs{font-size:8.5px;letter-spacing:.6px;color:var(--faint)}
+
+/* --- a note the reharmonizer just moved, in the roll --- */
+.ac-roll-stage rect[data-changed]{stroke:#FB923C;stroke-width:1.4}
+
+/* --- the module's own front page --- */
+.md-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.md-tool{display:block;padding:20px 18px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.02);transition:border-color .3s,background .3s,transform .3s}
+a.md-tool:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05);transform:translateY(-2px)}
+.md-tool h3{font-size:19px;margin:0 0 7px}
+.md-tool p{font-size:13.5px;line-height:1.55;color:var(--text-dim);font-weight:300}
+/* --- the quiz band --- */
+.md-test{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  padding:22px 24px;border:1px solid var(--hair);border-radius:11px;margin-top:14px;
+  background:rgba(255,255,255,.02);
+  transition:border-color .3s,background .3s,transform .3s}
+a.md-test:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05);transform:translateY(-2px)}
+.md-test h3{font-size:19px;margin:0 0 6px}
+.md-test p{font-size:13.5px;line-height:1.55;color:var(--text-dim);font-weight:300}
+.md-test-meta{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:700;
+  letter-spacing:1.8px;text-transform:uppercase;color:var(--text-faint);white-space:nowrap}
+.md-test-meta i{font-style:normal;opacity:.45}
+
+.md-section{margin-top:clamp(28px,5vh,44px)}
+.md-section > h2{font-size:12px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
+  color:var(--text-faint);font-family:'DM Sans',sans-serif;margin-bottom:14px}
+.md-lessons{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.md-lesson{display:flex;align-items:baseline;gap:14px;padding:16px 18px;
+  border:1px solid var(--hair);border-radius:10px;background:rgba(255,255,255,.02);
+  transition:border-color .25s,background .25s}
+a.md-lesson:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05)}
+.md-lesson .n{font-family:'Playfair Display',Georgia,serif;font-size:15px;color:var(--gold);opacity:.8;min-width:14px}
+.md-lesson h3{font-size:16.5px;margin:0 0 3px}
+.md-lesson p{font-size:12.5px;color:var(--text-dim);font-weight:300;line-height:1.5}
+/* the owner's tagline, in the serif italic the claim line uses, so the card
+   and the mode's own page open on the same words in the same voice */
+.md-lesson .md-tagline{font-family:'Playfair Display',Georgia,serif;font-style:italic;
+  font-size:14px;color:var(--gold);opacity:.92;margin-bottom:4px}
+
+@media (max-width:860px){
+  .md-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .md-tools,.md-lessons{grid-template-columns:1fr}
+  .md-test{flex-direction:column;align-items:flex-start;gap:14px}
+  .md-test-meta{white-space:normal;flex-wrap:wrap}
+}
+@media (max-width:620px){
+  .md-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .md-tile{padding:10px 4px 8px}
+  .md-num{font-size:15px}
+  .md-tile b{font-size:11.5px}
+  .md-modebtn{padding:6px 10px;font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .md-tile:hover,a.md-tool:hover,a.md-test:hover{transform:none}
+}

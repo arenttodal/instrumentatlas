@@ -286,9 +286,17 @@ function paintActions(){
   const v = verdict();
   $('bl-actions').innerHTML = `<button class="dj-next" id="bl-next">Next</button>`;
   $('bl-next').onclick = next;
+  /* An instrument this passage cannot play at all is a different miss from one
+     that simply was not in it, and saying so belongs on this line rather than
+     in the comparison row — that row holds two buttons and a fixed height, and
+     a sentence appearing inside it pushed everything below down by a line at
+     the exact moment of answering. */
   const bits = [];
+  const absent = v.extra.filter(id => !anyRenderFor(id));
+  const wrong  = v.extra.filter(id =>  anyRenderFor(id));
   if(v.missed.length) bits.push(`missed ${v.missed.map(blendName).join(', ')}`);
-  if(v.extra.length)  bits.push(`${v.extra.map(blendName).join(', ')} ${v.extra.length > 1 ? 'were' : 'was'} not there`);
+  if(wrong.length)  bits.push(`${wrong.map(blendName).join(', ')} ${wrong.length > 1 ? 'were' : 'was'} not there`);
+  if(absent.length) bits.push(`${absent.map(blendName).join(', ')} ${absent.length > 1 ? 'are' : 'is'} not in this passage`);
   if(tiered() && v.placed && v.placed.length < v.graded.length)
     bits.push(`${v.graded.filter(i => !v.placed.includes(i)).map(blendName).join(', ')} in the wrong register`);
   $('bl-note').innerHTML = bits.length ? esc(bits.join(' · ')) : '&nbsp;';
@@ -517,16 +525,12 @@ function syncAB(){
 
 function paintAB(){
   if(S.phase !== 'marked' || !S.ab){ $('bl-ab').innerHTML = ''; return; }
-  const v = verdict();
-  const silent = v.extra.filter(id => !anyRenderFor(id));
   $('bl-ab').innerHTML = `
     <button class="bl-ab-btn${S.ab.on === 'heard' ? ' is-on' : ''}" data-side="heard"
       aria-pressed="${S.ab.on === 'heard'}">What was playing${HEAR_ICON}</button>
     <button class="bl-ab-btn${S.ab.on === 'picked' ? ' is-on' : ''}" data-side="picked"
       aria-pressed="${S.ab.on === 'picked'}"
-      >What you picked${HEAR_ICON}</button>` +
-    (silent.length ? `<span class="bl-ab-none">${esc(silent.map(blendName).join(', '))} ${
-      silent.length > 1 ? 'are' : 'is'} not in this passage at all</span>` : '');
+      >What you picked${HEAR_ICON}</button>`;
   $('bl-ab').querySelectorAll('.bl-ab-btn').forEach(b => {
     b.onclick = () => setAB(b.dataset.side);
   });

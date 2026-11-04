@@ -1,0 +1,405 @@
+/* ============================================================================
+   THEORY LAB — LESSON SHELL AND LESSON STYLES
+   ----------------------------------------------------------------------------
+   Linked by theory-lab/modes/lessons.html. Lifted out of the Accelerator's
+   inline <style> when a second product started hosting the same engine, and
+   the two have diverged since: the Accelerator in accelerator/ has moved to
+   base.css + ui.css and a lesson page of its own shape. This file is Theory
+   Lab's, and nothing in accelerator/ reads it.
+
+   Design system shared with the Instrument Atlas. See PORT.md §5.
+   ============================================================================ */
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080C14;--gold:#D4A04A;--gold-deep:#C08830;--blue:#8FB4E0;
+  --warn:#C0603A;--ok:#5FB89A;
+  --text:#BEC0C8;--dim:#7E808A;--faint:#4E505A;
+  --hair:rgba(255,255,255,.07);--hair-gold:rgba(212,160,74,.24);
+}
+html{background:var(--bg);overflow-y:scroll;scrollbar-gutter:stable}
+body{font-family:'DM Sans',-apple-system,sans-serif;font-size:17px;color:var(--text);
+  background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.7}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;letter-spacing:-.3px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+code{font-family:inherit;color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+/* The router focuses the heading on every route so a screen reader announces
+   where it landed. Chrome counts a programmatic focus as :focus-visible, so
+   every lesson used to arrive wearing a gold ring round its title — which read
+   as a text field, and was the loudest thing on the page. The focus still
+   happens; only the ring goes. Nothing interactive is affected: tabindex="-1"
+   is exactly the set of elements that are focusable by script and not by tab. */
+h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
+
+.grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")}
+.atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% -10%,rgba(30,80,160,.16) 0%,transparent 55%)}
+
+/* --- nav --- */
+/* the bar itself is evenant-nav.css's .ev-bar — height, padding, background
+   and hairline are shared with every other tool */
+.nav-l{display:flex;align-items:center;gap:13px;font-size:11px;font-weight:700;letter-spacing:2.2px;
+  text-transform:uppercase;color:var(--dim);min-width:0}
+.nav-l i{font-style:normal;color:#33353D}
+.nav-l a:hover{color:var(--gold)}
+.nav-l span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:700;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--faint);flex:0 0 auto}
+.prog-bar{width:74px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.prog-bar i{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold));
+  transition:width .5s cubic-bezier(.16,1,.3,1)}
+
+.wrap{position:relative;z-index:10;max-width:940px;margin:0 auto;padding:0 30px}
+.eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
+
+/* --- module index --- */
+.hero{padding:66px 0 40px}
+.hero h1{font-size:clamp(38px,5vw,58px);line-height:1.04;margin:16px 0 18px}
+.hero h1 em{font-style:italic;color:var(--gold);display:block}
+.hero p{max-width:620px;color:#9A9CA4;font-weight:300;font-size:16.5px}
+.lessons{display:grid;gap:12px;padding-bottom:80px}
+.lcard{display:grid;grid-template-columns:40px 1fr auto;gap:20px;align-items:center;
+  padding:20px 22px;border:1px solid var(--hair);border-radius:12px;background:rgba(255,255,255,.02);
+  transition:border-color .3s,background .3s,transform .3s}
+.lcard:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03);transform:translateY(-2px)}
+.lnum{font-family:'Playfair Display',serif;font-size:22px;color:var(--faint);text-align:center}
+.lcard.done .lnum{color:var(--gold)}
+.lcard h3{font-size:21px;margin-bottom:5px}
+.lcard p{font-size:14px;color:var(--dim);font-weight:300;line-height:1.55}
+.ltag{font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--faint);
+  padding:5px 11px;border:1px solid var(--hair);border-radius:100px;white-space:nowrap}
+.lcard.done .ltag{color:var(--ok);border-color:rgba(95,184,154,.3)}
+
+/* --- lesson --- */
+.crumb{display:flex;align-items:center;gap:12px;font-size:10.5px;letter-spacing:2.2px;
+  text-transform:uppercase;font-weight:700;color:var(--faint);padding:26px 0 0}
+.crumb a:hover{color:var(--gold)}
+.crumb i{font-style:normal;color:#33353D}
+.lesson{padding-bottom:90px}
+.lesson-n{margin-top:20px}
+.lesson h1{font-size:clamp(32px,4.2vw,48px);line-height:1.06;margin:14px 0 0}
+/* ============================================================================
+   WIDGET CHROME
+   ----------------------------------------------------------------------------
+   .ac-transport, .ac-controls, .ac-field, .ac-inline, .ac-group, .ac-actions,
+   .ac-caption and the native controls inside them. widgets.js has always
+   emitted these and no stylesheet has ever had a rule for any of them, so a
+   carefully made dark page was full of white OS dropdowns, macOS-blue
+   checkboxes and sliders, labels welded to their fields, and <legend> text
+   sitting on top of its own border.
+
+   The native controls keep being native — appearance:none paints them, it does
+   not replace them, so the keyboard, the screen reader and the phone's own
+   picker all still work.
+   ============================================================================ */
+
+/* --- a labelled field: the label ABOVE the control, never beside it ------- */
+.ac-field{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint);max-width:100%}
+.ac-field>span{display:inline-flex;align-items:baseline;gap:6px}
+.ac-field output{color:var(--gold);font-weight:700;letter-spacing:1px}
+
+/* --- the select, painted ------------------------------------------------- */
+.ac-field select,select.ac-select{appearance:none;-webkit-appearance:none;
+  min-height:34px;max-width:100%;padding:7px 32px 7px 13px;
+  border:1px solid var(--hair);border-radius:8px;background-color:rgba(255,255,255,.03);
+  color:var(--text);font-family:inherit;font-size:12.5px;font-weight:400;
+  letter-spacing:0;text-transform:none;cursor:pointer;transition:border-color .2s,color .2s;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%237E808A' stroke-width='1.4'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+.ac-field select:hover{border-color:var(--hair-gold);color:#fff}
+.ac-field select:focus-visible{border-color:var(--gold)}
+/* the OS paints the open list, so its options need a readable pair of their own */
+.ac-field select option{background:#0C1220;color:var(--text)}
+
+/* --- checkbox and slider ------------------------------------------------- */
+.ac-transport input[type=checkbox],.ac-controls input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;position:relative;flex:0 0 auto;
+  width:15px;height:15px;border:1px solid rgba(255,255,255,.14);border-radius:4px;
+  background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .2s,background .2s}
+.ac-transport input[type=checkbox]:checked,.ac-controls input[type=checkbox]:checked{
+  background:rgba(212,160,74,.2);border-color:var(--gold)}
+.ac-transport input[type=checkbox]:checked::after,.ac-controls input[type=checkbox]:checked::after{
+  content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;
+  border:solid var(--gold);border-width:0 1.6px 1.6px 0;transform:rotate(42deg)}
+
+.ac-transport input[type=range],.ac-controls input[type=range]{
+  appearance:none;-webkit-appearance:none;width:104px;max-width:100%;height:3px;
+  border-radius:3px;background:rgba(255,255,255,.12);cursor:pointer}
+.ac-transport input[type=range]::-webkit-slider-thumb,.ac-controls input[type=range]::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;width:12px;height:12px;border:0;border-radius:50%;
+  background:var(--gold)}
+.ac-transport input[type=range]::-moz-range-thumb,.ac-controls input[type=range]::-moz-range-thumb{
+  width:12px;height:12px;border:0;border-radius:50%;background:var(--gold)}
+.ac-field input[type=range]{width:168px}
+
+/* --- a labelled group: the legend is a heading, not a notch in a border --- */
+.ac-group{border:0;padding:0;margin:0;min-width:0;display:flex;flex-wrap:wrap;
+  align-items:flex-end;gap:8px}
+.ac-group>legend{float:left;width:100%;padding:0;margin:0 0 9px;
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint)}
+
+/* --- the step editor: eight steps, each a unit ---------------------------- */
+.ac-editor{gap:14px 22px}
+.ac-step{display:flex;align-items:flex-end;gap:8px;flex:0 0 auto}
+
+/* --- the control row ----------------------------------------------------- */
+.ac-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px 20px;margin-top:22px}
+.ac-controls>.btn,.ac-group>.btn{align-self:flex-end}
+.w-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+
+/* --- the transport ------------------------------------------------------- */
+.ac-transport{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.ac-inline{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim)}
+.ac-transport [data-time]{margin-left:auto;font-size:12px;color:var(--faint);
+  font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.ac-audio-status{font-size:12px;color:var(--faint);margin-top:10px}
+.ac-timeline{height:3px;margin-top:12px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+.ac-timeline i{display:block;height:100%;width:0;background:var(--gold)}
+
+/* --- compare and revise: three jobs, not seven identical buttons --------- */
+.ac-actions{margin-top:24px}
+.ac-actions .ac-group{gap:10px 26px}
+.ac-set{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ac-set .btn{font-size:12px;padding:7px 14px}
+/* the reset is a way out, not a thing to do: a quiet link at the end */
+.ac-set[data-set="reset"] .btn{border-color:transparent;padding-left:4px;padding-right:4px;
+  color:var(--faint);border-radius:0;border-bottom:1px solid var(--hair)}
+.ac-set[data-set="reset"] .btn:hover{color:var(--gold);border-bottom-color:var(--hair-gold)}
+
+/* --- captions and read-outs --------------------------------------------- */
+.ac-caption{font-size:12px;color:var(--faint);font-weight:300;line-height:1.6;margin-top:12px;
+  max-width:var(--measure)}
+.sec p[data-exercise]{max-width:var(--measure);margin:16px 0}
+.ac-feedback{font-size:14px;color:var(--dim);font-weight:300;margin-top:14px;
+  min-height:1.6em;max-width:var(--measure)}
+
+/* --- the lede: what this is, before anything asks you to do something ---
+   Only on a lesson whose product declares LESSON_COPY. The body copy at the
+   prose size, then one row of chips naming what the thing is good for. */
+.ac-lede{margin:30px 0 0;max-width:var(--measure)}
+.ac-lede p{font-size:16px;line-height:1.75;font-weight:300;color:var(--text)}
+.ac-lede p+p{margin-top:15px}
+.ac-usefor{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:20px}
+.ac-usefor-lab{font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--faint);margin-right:4px}
+.ac-chip{font-size:11.5px;color:var(--dim);padding:5px 12px;border:1px solid var(--hair);
+  border-radius:100px;white-space:nowrap}
+
+/* --- the lesson's tab bar ---
+   Only on a lesson whose product declares LESSON_PANELS; the Accelerator has
+   none, so this paints nothing there. The Atlas's instrument tabs in the
+   smaller of their two sizes, so the suite reads as one thing. */
+.ac-tabs{display:flex;flex-wrap:wrap;gap:22px;margin:22px 0 0;
+  border-bottom:1px solid var(--hair)}
+.ac-tab{position:relative;padding:0 0 10px;font-size:9.5px;font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;color:var(--faint);
+  background:none;border:0;cursor:pointer;transition:color .2s}
+.ac-tab:hover{color:var(--dim)}
+.ac-tab[aria-selected="true"]{color:var(--gold)}
+.ac-tab[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:-1px;
+  height:1.5px;background:var(--gold)}
+.ac-tab em{font-style:normal;color:var(--faint);margin-left:5px}
+.ac-tabpanel{display:none}
+.ac-tabpanel.is-active{display:block}
+/* a panel's own content starts clear of the bar */
+.ac-tabpanel[data-panel]:not([data-panel="overview"]).is-active{padding-top:30px}
+
+/* The in-page jump links. app.js has always emitted them and no stylesheet
+   has ever had a rule, so they ran together as one unreadable line —
+   "ExploreWhy it worksChallengePractiseCheck yourself". The scroll spy that
+   sets aria-current was equally invisible; it marks the current section now. */
+.ac-sections{display:flex;flex-wrap:wrap;gap:8px 22px;margin:22px 0 0;
+  padding-top:16px;border-top:1px solid var(--hair);
+  font-size:10.5px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;
+  color:var(--faint)}
+.ac-sections a{color:var(--faint);transition:color .2s}
+.ac-sections a:hover{color:var(--gold)}
+.ac-sections a[aria-current]{color:var(--gold)}
+.claim{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;line-height:1.5;
+  color:var(--gold);max-width:640px;margin:18px 0 0}
+.sec{margin-top:52px}
+.sec-h{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
+.sec-h b{font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold)}
+.sec-h span{flex:1 1 auto;height:1px;background:var(--hair)}
+/* ONE MEASURE. Prose, the lede, the exercise and the credit line all read at
+   the same width; before this the credit footnote was the widest text on the
+   page at the full 880px, which put the least important line in the most
+   prominent measure. */
+:root{--measure:660px}
+.prose{max-width:var(--measure)}
+.prose p{margin-bottom:16px;font-weight:300}
+.prose p strong{color:#fff;font-weight:500}
+.prose em{font-style:italic;color:var(--text)}
+.demo{border:1px solid var(--hair);border-radius:14px;background:rgba(255,255,255,.015);overflow:hidden}
+.demo-note{padding:13px 22px;border-top:1px solid var(--hair);font-size:12.5px;
+  color:var(--faint);line-height:1.6}
+.source{max-width:var(--measure);margin-top:46px;padding-top:18px;border-top:1px solid var(--hair);
+  font-size:11.5px;color:#3E404A;font-weight:300}
+.source em{color:var(--faint);font-style:italic}
+
+/* --- exercise --- */
+.ex{display:grid;gap:10px}
+.ex-row{display:grid;grid-template-columns:112px 1fr;gap:20px;align-items:start;
+  padding:16px 20px;border:1px solid var(--hair);border-radius:10px;background:rgba(255,255,255,.015)}
+.ex-row b{font-size:9.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
+  color:var(--gold);padding-top:3px}
+.ex-row p{font-size:14.5px;line-height:1.6;font-weight:300}
+.ex-done{margin-top:18px}
+.ex-done button{display:inline-flex;align-items:center;gap:9px;padding:9px 17px;
+  border:1px solid var(--hair);border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s}
+.ex-done button:hover{border-color:var(--hair-gold);color:#fff}
+.ex-done button[aria-pressed="true"]{border-color:var(--ok);color:var(--ok);background:rgba(95,184,154,.08)}
+
+/* --- quiz --- */
+.q{padding:20px 22px;border:1px solid var(--hair);border-radius:12px;margin-bottom:12px;
+  background:rgba(255,255,255,.015)}
+.q>p{font-size:16px;margin-bottom:14px;color:#fff;font-weight:400}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;padding:11px 15px;border:1px solid var(--hair);border-radius:9px;
+  font-size:14.5px;color:var(--text);font-weight:300;transition:all .2s}
+.opt:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
+.opt.right{border-color:var(--ok);background:rgba(95,184,154,.1);color:#fff}
+.opt.wrong{border-color:var(--warn);background:rgba(192,96,58,.1);color:#fff}
+.opt:disabled{cursor:default}
+.why{margin-top:13px;padding-top:13px;border-top:1px solid var(--hair);font-size:13.5px;
+  line-height:1.65;color:var(--dim);font-weight:300;display:none}
+.why.on{display:block}
+.why b{color:var(--gold);font-weight:700}
+
+/* --- pager --- */
+.pager{display:flex;justify-content:space-between;gap:20px;margin-top:36px;padding-top:30px;
+  border-top:1px solid var(--hair)}
+.pager span{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:5px}
+.pager b{font-family:'Playfair Display',serif;font-size:20px;color:#fff;font-weight:500}
+.pager a:hover b{color:var(--gold)}
+.pager .r{text-align:right;margin-left:auto}
+
+/* ===========================================================================
+   WIDGET CHROME — shared by every demonstration
+   =========================================================================== */
+.w-grid{display:grid;grid-template-columns:1fr 276px}
+.w-stage{padding:22px 20px 16px;min-width:0}
+.w-stage svg{width:100%;height:auto;display:block;touch-action:none}
+.w-side{border-left:1px solid var(--hair);padding:20px;display:flex;flex-direction:column;gap:17px}
+.w-lab{font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:9px}
+.w-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.w-col{display:grid;gap:5px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--hair);
+  border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s;white-space:nowrap}
+.btn:hover{border-color:var(--hair-gold);color:#fff}
+/* The import control is a <label class="btn"> wrapping a file input. Left
+   unstyled the native picker sits inside the pill and makes it 380px wide,
+   which pushes a 390px page sideways. Hide the input rather than display:none
+   it, so the label still opens it and it stays reachable by keyboard. */
+.btn input[type=file]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.btn:focus-within{border-color:var(--hair-gold);color:#fff}
+.btn.wide{border-radius:9px;justify-content:flex-start;width:100%}
+.btn.gold{border-color:rgba(212,160,74,.4);color:#fff;background:rgba(212,160,74,.09)}
+.btn.gold:hover{background:rgba(212,160,74,.18)}
+.btn.on{border-color:var(--gold);background:rgba(212,160,74,.2);color:#fff}
+.btn[aria-pressed="true"]{border-color:var(--c,var(--gold));color:#fff;
+  background:rgba(212,160,74,.12)}
+/* The roll's key. widgets.js has always emitted this element and nothing has
+   ever styled it, so the layer names ran together at body size — "Slot 1Slot
+   2Slot 3Slot 4". Spaced, and brought down to the scale the rest of the
+   widget chrome uses. */
+.ac-legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 0;
+  font-size:11px;letter-spacing:.3px}
+.w-read{font-size:12.5px;color:var(--dim);font-weight:300;line-height:1.6;
+  padding-top:14px;border-top:1px solid var(--hair)}
+.w-read b{color:#fff;font-weight:500}
+.w-missing{padding:44px 30px;text-align:center}
+.w-missing p{font-size:14px;color:var(--dim);font-weight:300;margin-top:10px}
+.w-missing .hint{font-size:12px;color:#3E404A}
+
+/* voicing checks */
+.checks{display:grid;gap:7px}
+.chk{display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start;font-size:12.5px;
+  line-height:1.5;font-weight:300;transition:color .25s}
+.chk i{font-style:normal;font-size:13px;line-height:1.3;text-align:center}
+.chk.ok{color:var(--dim)}.chk.ok i{color:var(--ok)}
+.chk.bad{color:#fff}.chk.bad i{color:var(--warn)}
+
+/* perspective dials */
+.pv-layer{padding:11px 0;border-bottom:1px solid var(--hair)}
+.pv-layer:last-child{border-bottom:none}
+.pv-name{font-size:12.5px;font-weight:500;margin-bottom:7px}
+.pv-dial{display:block;margin-bottom:6px}
+.pv-dial span{display:block;font-size:9.5px;color:var(--faint);letter-spacing:.4px;margin-bottom:2px}
+.pv-dial input{width:100%;accent-color:var(--gold);height:3px}
+
+@media (max-width:860px){
+  .w-grid{grid-template-columns:1fr}
+  .w-side{border-left:none;border-top:1px solid var(--hair)}
+  .lcard{grid-template-columns:32px 1fr;gap:14px}
+  .ltag{grid-column:2;justify-self:start}
+  .ex-row{grid-template-columns:1fr;gap:8px}
+  .wrap{padding:0 20px}
+}
+/* THE NAV ON A PHONE. The bar is logo / module / lesson / progress, and on a
+   page whose module is called something as long as "Scales & Modes" all four
+   do not fit at 390px: the breadcrumb wrapped to three lines with the progress
+   counter interleaved through it. Below 620px the module link goes — the logo
+   still leads back and the lesson name is what you need — and below 460px the
+   progress keeps its count and drops its bar. */
+@media (max-width:620px){
+  .nav{padding-left:18px;padding-right:18px}
+  .nav-l{gap:10px;min-width:0}
+  .nav-l [data-nav-up],.nav-l [data-nav-up]+i{display:none}
+  .nav-l #nav-where{min-width:0}
+}
+@media (max-width:460px){
+  .prog-bar{display:none}
+  .prog{gap:0}
+}
+/* A TOOL HAS NO LESSON PROGRESS. The counter reads "0 of 6" whatever you do
+   with a widget that is not one of the six, so it is hidden rather than left
+   to look broken. Set by app.js on the route. */
+.nav .prog.is-hidden{visibility:hidden}
+
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+
+/* ============================================================================
+   ADDED WITH THE ENGINE GENERALISATION
+   Two things a second product needs that the Accelerator never did: links out
+   to the videos a lesson condenses, and a lab entry — a widget with no lesson
+   around it.
+   ============================================================================ */
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* --- the video row, under the claim ---
+   Links, never an embed: the videos sit behind the course platform's paywall
+   and only it may serve them. */
+.ac-videos{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0 0}
+.ac-video{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;
+  border:1px solid var(--hair);border-radius:9px;font-size:12.5px;color:var(--text);
+  transition:border-color .2s,background .2s,color .2s}
+.ac-video:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.06);color:#fff}
+.ac-video svg{color:var(--gold);flex:0 0 auto}
+.ac-video b{font-weight:400}
+.ac-video span{color:var(--faint);font-size:11px}
+.ac-videos-note{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--faint)}
+
+/* --- a lab entry ---
+   No section nav, no pager to speak of, and the widget gets the full column. */
+.lesson.is-lab{padding-bottom:70px}
+.lesson.is-lab .demo{margin-top:20px}
+.lesson.is-lab .pager{margin-top:34px}
+
+@media (max-width:760px){
+  .ac-videos{gap:6px}
+  .ac-video{padding:7px 11px;font-size:12px}
+}

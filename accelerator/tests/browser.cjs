@@ -4,6 +4,10 @@ const BASE = process.env.ACCEL_URL || 'http://127.0.0.1:8765';
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});
  const page=await browser.newPage({viewport:{width:1280,height:900}});
+  /* accelerator.html is behind evenant-gate.js. Seed the unlock so the suite
+     tests the product rather than the code prompt; the value is the djb2 of
+     the access code, which is what the gate stores. See evenant-gate.js. */
+  await page.addInitScript(() => { try { localStorage.setItem('evenant-gate-accelerator','g3j74oa'); } catch(_){} });
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  page.on('console',m=>{if(m.type()==='error'){const t=m.text();if(!/fonts\.googleapis|ERR_|CERT/.test(t))errors.push(t);}});
  /* count scheduled oscillators: these activities synthesise, so this is the

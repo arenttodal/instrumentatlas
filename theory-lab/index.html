@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theory Lab · Evenant</title>
+<meta name="description" content="Theory you can hear and play with. One module per topic, starting with scales and modes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lab.css">
+<link rel="stylesheet" href="../evenant-nav.css">
+</head>
+<body>
+<!-- THE LAB HOME IS NOT GATED. It lists every module, open ones go straight in,
+     and a members-only one is still a link, because the code prompt is on the
+     other side of it. A visitor who has bought nothing should be able to see
+     what there is. -->
+<div class="lab" id="lab">
+  <div class="lab-grain"></div>
+  <div class="lab-atmos"></div>
+
+  <nav class="atl-nav is-sub ev-bar" id="lab-nav">
+    <div class="atl-nav-left">
+      <div data-ev-switch></div>
+    </div>
+  </nav>
+
+  <main class="lab-page">
+    <div class="lab-head">
+      <div class="lab-eyebrow" id="lab-count">Theory Lab</div>
+      <h1><span>Theory you can hear</span><span class="lab-serif-em">and play with</span></h1>
+      <p>One module per topic. Each one is a handful of lessons and the tools that go with them — the idea demonstrated before it is explained, and something to turn while you listen.</p>
+    </div>
+    <div class="lab-modules" id="lab-modules"></div>
+  </main>
+</div>
+
+<script defer src="../evenant-modules.js" data-module="lab"></script>
+<script defer src="../evenant-nav.js"></script>
+<script defer src="modules.js"></script>
+<script defer src="lab.js"></script>
+</body>
+</html>

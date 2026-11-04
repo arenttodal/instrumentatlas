@@ -1,0 +1,126 @@
+/* ============================================================================
+   EVENANT · LISTEN GRID
+   ----------------------------------------------------------------------------
+   The Instrument Atlas's video gallery, lifted out so a Theory Lab module can
+   use it too. Same card: thumbnail with a play disc, metadata underneath, the
+   iframe only once someone asks for it.
+
+   WHY EVERY SELECTOR IS PREFIXED WITH .ev-listen AND NOT WRAPPED IN :where().
+   :where() is zero specificity. The host pages reset elements — accelerator.css
+   has `button{background:none;border:none}` at (0,0,1) — and (0,0,1) beats
+   zero, so a :where()-wrapped component paints as the reset and not as itself.
+   The keyboard component shipped that way once and rendered black on black.
+   `.ev-listen .evl-play` is (0,2,0) and wins on its own merits.
+
+   The tokens are read with fallbacks because the two hosts name them
+   differently: the Atlas has --text-dim, the Accelerator has --dim.
+   ============================================================================ */
+
+.ev-listen{
+  --evl-hair:var(--hair,rgba(255,255,255,.07));
+  --evl-hair-gold:var(--hair-gold,rgba(212,160,74,.24));
+  --evl-gold:var(--gold,#D4A04A);
+  --evl-text:var(--text,#BEC0C8);
+  --evl-dim:var(--text-dim,var(--dim,#7E808A));
+  --evl-faint:var(--faint,#4E505A);
+  --evl-warn:var(--warn,#C0603A);
+  --evl-ok:var(--ok,#5FB89A);
+  display:block;
+}
+
+/* --- the grid ------------------------------------------------------------ */
+.ev-listen .evl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.ev-listen .evl-card{border:1px solid var(--evl-hair);border-radius:10px;overflow:hidden;
+  background:rgba(255,255,255,.02);display:flex;flex-direction:column;
+  transition:border-color .3s ease,background .3s ease}
+.ev-listen .evl-card:hover{border-color:var(--evl-hair-gold);background:rgba(212,160,74,.03)}
+
+/* --- the frame: thumbnail, then iframe ----------------------------------- */
+.ev-listen .evl-frame{position:relative;aspect-ratio:16/9;background:#0A0E18;
+  cursor:pointer;overflow:hidden;display:block;width:100%;padding:0;border:0;text-align:left}
+.ev-listen .evl-frame img{width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .5s cubic-bezier(.16,1,.3,1),opacity .3s}
+.ev-listen .evl-frame:hover img{transform:scale(1.04);opacity:.75}
+.ev-listen .evl-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ev-listen .evl-disc{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(4,8,16,.32);transition:background .25s ease}
+.ev-listen .evl-frame:hover .evl-disc{background:rgba(4,8,16,.14)}
+.ev-listen .evl-disc i{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;transition:transform .22s ease}
+.ev-listen .evl-frame:hover .evl-disc i{transform:scale(1.09)}
+/* A card with no video id is a placeholder: no thumbnail to show, so say so. */
+.ev-listen .evl-frame[data-empty]{cursor:default;display:flex;align-items:center;justify-content:center;
+  color:var(--evl-faint);font-size:12px;letter-spacing:.4px}
+
+/* --- the metadata -------------------------------------------------------- */
+.ev-listen .evl-meta{padding:15px 16px 16px;flex:1 1 auto;display:flex;flex-direction:column;gap:7px}
+.ev-listen .evl-title{font-size:14.5px;color:#fff;font-weight:500;line-height:1.4;display:block}
+.ev-listen .evl-by{font-size:12.5px;color:var(--evl-dim);line-height:1.5}
+.ev-listen .evl-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ev-listen .evl-chip{font-size:9.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+  padding:3px 8px;border:1px solid var(--evl-hair);border-radius:100px;color:var(--evl-dim);
+  white-space:nowrap}
+.ev-listen .evl-chip[data-focus]{border-color:var(--evl-hair-gold);color:var(--evl-gold)}
+.ev-listen .evl-chip[data-flag="unverified"]{border-color:var(--evl-hair-gold);
+  color:var(--evl-gold);background:rgba(212,160,74,.1)}
+.ev-listen .evl-chip[data-flag="novideo"]{border-color:rgba(192,96,58,.45);
+  color:var(--evl-warn);background:rgba(192,96,58,.1)}
+.ev-listen .evl-listen{font-size:12.5px;color:var(--evl-text);line-height:1.6;font-weight:300}
+.ev-listen .evl-why{font-size:11px;color:var(--evl-faint);
+  border-bottom:1px solid rgba(255,255,255,.12);align-self:flex-start}
+.ev-listen .evl-why:hover{color:var(--evl-gold);border-bottom-color:var(--evl-hair-gold)}
+
+/* --- the play button ------------------------------------------------------ */
+.ev-listen .evl-go{margin-top:auto;padding-top:12px;display:flex;align-items:center;
+  flex-wrap:wrap;gap:8px}
+.ev-listen .evl-play{display:inline-flex;align-items:center;gap:7px;min-height:32px;
+  padding:6px 14px;border:1px solid var(--evl-hair-gold);border-radius:100px;
+  font-size:12px;color:#fff;background:rgba(212,160,74,.09);cursor:pointer;
+  transition:background .2s,border-color .2s}
+.ev-listen .evl-play:hover{background:rgba(212,160,74,.18);border-color:var(--evl-gold)}
+.ev-listen .evl-play svg{color:var(--evl-gold);flex:0 0 auto}
+.ev-listen .evl-src{font-size:11px;color:var(--evl-faint)}
+.ev-listen .evl-src a{color:#6E707A;border-bottom:1px solid rgba(255,255,255,.12)}
+.ev-listen .evl-src a:hover{color:var(--evl-gold);border-bottom-color:var(--evl-hair-gold)}
+
+/* --- empty state and footnote --------------------------------------------- */
+.ev-listen .evl-empty{font-size:13.5px;color:var(--evl-dim);font-weight:300;
+  padding:34px 0;text-align:center;border:1px dashed var(--evl-hair);border-radius:10px}
+.ev-listen .evl-note{font-size:12px;color:var(--evl-faint);margin-top:24px;
+  line-height:1.6;max-width:760px}
+
+/* --- author mode ----------------------------------------------------------
+   Only ever on screen with ?author=1, so it is allowed to look like a tool
+   rather than like the rest of the suite. */
+.ev-listen .evl-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  margin:0 0 18px;padding:12px 14px;border:1px solid var(--evl-hair-gold);
+  border-radius:10px;background:rgba(212,160,74,.05)}
+.ev-listen .evl-bar-note{font-size:11.5px;color:var(--evl-dim);margin-right:auto}
+.ev-listen .evl-btn{min-height:32px;padding:5px 11px;border:1px solid var(--evl-hair);
+  border-radius:7px;font-size:11.5px;color:var(--evl-text);background:rgba(255,255,255,.02);
+  cursor:pointer;transition:border-color .2s,color .2s}
+.ev-listen .evl-btn:hover{border-color:var(--evl-hair-gold);color:#fff}
+.ev-listen .evl-btn[data-on]{border-color:var(--evl-ok);color:var(--evl-ok)}
+.ev-listen .evl-edit{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  margin-top:10px;padding-top:11px;border-top:1px solid var(--evl-hair)}
+.ev-listen .evl-edit input{min-height:32px;flex:1 1 150px;min-width:0;padding:5px 9px;
+  border:1px solid var(--evl-hair);border-radius:7px;font:inherit;font-size:11.5px;
+  color:var(--evl-text);background:rgba(0,0,0,.25)}
+.ev-listen .evl-edit input:focus{outline:none;border-color:var(--evl-hair-gold)}
+.ev-listen .evl-times{font-size:11px;color:var(--evl-dim);width:100%;letter-spacing:.3px}
+.ev-listen .evl-times b{color:var(--evl-gold);font-weight:500}
+
+/* --- mobile. One column under 600px, which is also where a 16:9 card stops
+   being worth two across. Nothing here sets a width, so nothing can push a
+   390px page sideways. ------------------------------------------------------ */
+@media (max-width:980px){ .ev-listen .evl-grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:600px){
+  .ev-listen .evl-grid{grid-template-columns:1fr}
+  .ev-listen .evl-bar{flex-direction:column;align-items:stretch}
+  .ev-listen .evl-bar-note{margin-right:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .ev-listen .evl-frame img,.ev-listen .evl-disc i{transition:none}
+  .ev-listen .evl-frame:hover img{transform:none}
+  .ev-listen .evl-frame:hover .evl-disc i{transform:none}
+}

@@ -43,7 +43,10 @@ const EVENANT_ICONS = {
   atlas:`<path d="M8 4.2C6.7 3.2 4.9 2.8 2.5 3v9.4c2.4-.2 4.2.2 5.5 1.2 1.3-1 3.1-1.4 5.5-1.2V3c-2.4-.2-4.2.2-5.5 1.2z"/><path d="M8 4.2v9.4"/>`,
   score:`<path d="M2.2 3.4h11.6M2.2 8h11.6M2.2 12.6h11.6"/><path d="M5 1.9v3M10.4 6.5v3M7 11.1v3"/>`,
   ear:`<path d="M3.2 10.8a5.6 5.6 0 1 1 3.4 2.6"/><path d="M5.9 9.6a2.7 2.7 0 1 1 2 1.3"/><circle cx="8" cy="8" r=".9"/>`,
-  accelerator:`<path d="M3 11.5l4-4 2.4 2.4L13.4 5"/><path d="M10.2 5h3.2v3.2"/>`
+  accelerator:`<path d="M3 11.5l4-4 2.4 2.4L13.4 5"/><path d="M10.2 5h3.2v3.2"/>`,
+  /* Theory Lab: a flask, because a module is something you turn and listen to
+     rather than something you read. */
+  lab:`<path d="M6.4 2h3.2M6.9 2v4.1L3.3 12a1.3 1.3 0 0 0 1.1 2h7.2a1.3 1.3 0 0 0 1.1-2L9.1 6.1V2"/><path d="M5.2 9.4h5.6"/>`
 };
 
 /* The hub. A tool in every respect except that it lists the others. */
@@ -52,9 +55,17 @@ const EVENANT_TOOLS_HOME = {
   blurb:'Every Evenant tool in one place.'
 };
 
-/* `status` is 'available' or 'soon'. A 'soon' entry renders as a disabled row
-   with a Coming soon label and never navigates — it is not a link at all, so
-   there is nothing to click through to a page that does not exist.
+/* `status` is one of three:
+     available   a plain row that navigates.
+     soon        a disabled row with a Coming soon label that never navigates —
+                 not a link at all, so there is nothing to click through to a
+                 page that does not exist.
+     locked      the page EXISTS and the row navigates to it, but it is marked
+                 Coming soon just the same, and the page itself asks for an
+                 access code before it shows anything (evenant-gate.js). This
+                 is the state for a tool being shown to a few people before it
+                 is announced; 'soon' would put the label on a row nobody could
+                 use to reach the code prompt.
 
    The 3D Viewer is deliberately absent: it is reached from the 2D/3D toggle on
    an instrument plate, so it is part of the Atlas rather than a sibling tool.
@@ -76,13 +87,25 @@ const EVENANT_MODULES = [
     blurb:'Hear an instrument and name it. Get it wrong and the two are played back to back.'
   },
   {
-    id:'accelerator', name:'The Accelerator', icon:'accelerator', status:'available',
+    id:'accelerator', name:'The Accelerator', icon:'accelerator', status:'locked',
     path:'accelerator.html',
-    blurb:'The interactive companion to the ebook. Six lessons, each with something to play with.'
+    blurb:'The interactive companion to the ebook. Twelve lessons, each a run of short steps with something to play with.'
+  },
+  /* Theory Lab is ONE tool here however many modules it grows. The locks live
+     a level down, on the module cards at theory-lab/, so this list stays the
+     five things the suite is rather than a list of everything for sale. */
+  {
+    id:'lab', name:'Theory Lab', icon:'lab', status:'available',
+    path:'theory-lab/',
+    blurb:'Theory you can hear and play with: one module per topic, starting with scales and modes.'
   }
 ];
 
 const evenantHref = m => EVENANT_ROOT + m.path;
+/* the two questions a row asks about a tool's status, so the switcher and the
+   tools page cannot answer them differently */
+const evenantReachable = m => m.status !== 'soon';
+const evenantUnreleased = m => m.status !== 'available';
 /* the hub is addressable by id like any other tool, so the switcher on
    tools.html names itself and ticks its own row */
 const evenantModule = id =>

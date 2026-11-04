@@ -1,0 +1,86 @@
+/* ============================================================================
+   EVENANT · ACCESS GATE
+   ----------------------------------------------------------------------------
+   Loads alongside the gated page's own stylesheet. The first rule is the one
+   that matters: while data-gate is set on <html>, nothing of the page shows.
+   It is set by an inline line in the head, before any paint, and cleared by
+   evenant-gate.js the moment the code is right or a stored answer is found —
+   so there is no frame in which the tool behind it is visible.
+
+   Tokens are read from the host page (--bg, --gold, --text…), with the atlas
+   values as fallbacks, so the gate matches whatever it is standing in front of.
+   ============================================================================ */
+
+html[data-gate] body > *:not(.ev-gate){ visibility:hidden !important }
+html[data-gate], html[data-gate] body{ overflow:hidden }
+
+.ev-gate{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  background:var(--bg,#080C14);
+  animation:ev-gate-in .4s ease both;
+}
+.ev-gate[data-leaving]{ animation:ev-gate-out .26s ease both; pointer-events:none }
+@keyframes ev-gate-in { from{opacity:0} to{opacity:1} }
+@keyframes ev-gate-out{ from{opacity:1} to{opacity:0} }
+
+.ev-gate-card{
+  width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center;
+  text-align:center;
+}
+.ev-gate-card[data-wrong]{ animation:ev-gate-no .4s ease }
+@keyframes ev-gate-no{
+  10%,90%{transform:translateX(-2px)} 30%,70%{transform:translateX(4px)} 50%{transform:translateX(-4px)}
+}
+
+.ev-gate-logo{ height:20px; width:auto; opacity:.9; margin-bottom:26px }
+
+.ev-gate-soon{
+  font-size:9px; font-weight:700; letter-spacing:2.2px; text-transform:uppercase;
+  color:var(--gold,#D4A04A); opacity:.8;
+}
+.ev-gate-name{
+  font-family:'Playfair Display',Georgia,serif; font-weight:500; color:#fff;
+  font-size:clamp(26px,5vw,34px); line-height:1.15; letter-spacing:-.3px; margin:10px 0 0;
+}
+.ev-gate-say{
+  font-size:13.5px; font-weight:300; line-height:1.6; max-width:30ch;
+  color:var(--text-dim,var(--dim,#7E808A)); margin:12px 0 0;
+}
+
+.ev-gate-field{ display:flex; gap:8px; width:100%; margin-top:26px }
+.ev-gate-input{
+  flex:1 1 auto; min-width:0; font:inherit; font-size:15px; letter-spacing:2.4px;
+  text-align:center; text-transform:uppercase;
+  padding:12px 14px; border-radius:10px; color:#fff;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--hair,rgba(255,255,255,.07));
+  transition:border-color .2s, background .2s;
+}
+.ev-gate-input::placeholder{ color:var(--faint,#4E505A); letter-spacing:1.6px; text-transform:none }
+.ev-gate-input:focus{ outline:none; border-color:var(--hair-gold,rgba(212,160,74,.24));
+  background:rgba(212,160,74,.05) }
+.ev-gate-go{
+  flex:0 0 auto; font-size:13px; font-weight:500; padding:12px 20px; border-radius:10px;
+  color:#0A0C14; background:var(--gold,#D4A04A);
+  border:1px solid var(--gold,#D4A04A);
+  transition:background .2s, border-color .2s;
+}
+.ev-gate-go:hover{ background:var(--gold-deep,#C08830); border-color:var(--gold-deep,#C08830) }
+
+/* its line is held whether or not there is anything on it, so the card does
+   not grow under the pointer at the moment you mistype */
+.ev-gate-err{
+  font-size:12px; line-height:20px; min-height:20px; margin-top:12px;
+  color:var(--warn,#C0603A);
+}
+.ev-gate-back{
+  font-size:11px; letter-spacing:1.6px; text-transform:uppercase; font-weight:700;
+  color:var(--faint,#4E505A); margin-top:22px; transition:color .2s;
+}
+.ev-gate-back:hover{ color:var(--gold,#D4A04A) }
+
+@media (prefers-reduced-motion:reduce){
+  .ev-gate, .ev-gate[data-leaving], .ev-gate-card[data-wrong]{ animation:none }
+}

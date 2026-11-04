@@ -70,15 +70,19 @@ btn.insertAdjacentHTML('beforeend',
   `<svg class="ev-chev" viewBox="0 0 10 6" fill="none" width="10" height="6" aria-hidden="true">
      <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`);
 
+/* Being unreleased and being unreachable are two different things: a 'locked'
+   tool wears the Coming soon label AND is a working link, because the code
+   prompt that gates it is on the other side of that link. */
 const row = m => {
-  const on  = !!active && m.id === active.id;
-  const off = m.status !== 'available';
-  const tag = off ? 'span' : 'a';
+  const on   = !!active && m.id === active.id;
+  const go   = evenantReachable(m);
+  const soon = evenantUnreleased(m);
+  const tag  = go ? 'a' : 'span';
   return `<${tag} class="ev-item" role="menuitem" tabindex="-1"
-      ${off ? 'aria-disabled="true"' : `href="${esc(evenantHref(m))}" data-id="${esc(m.id)}"`}
+      ${go ? `href="${esc(evenantHref(m))}" data-id="${esc(m.id)}"` : 'aria-disabled="true"'}
       ${on ? 'aria-current="true" data-active="1"' : ''}>
       ${icon(m.icon)}<span class="ev-item-name">${esc(m.name)}</span>
-      ${off ? '<span class="ev-soon">Coming soon</span>' : ''}
+      ${soon ? '<span class="ev-soon">Coming soon</span>' : ''}
       ${on  ? `<svg class="ev-tick" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                  <path d="M2 6.4l2.6 2.6L10 3.4" stroke="currentColor" stroke-width="1.6"
                        stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}

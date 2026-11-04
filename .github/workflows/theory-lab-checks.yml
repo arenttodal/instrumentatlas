@@ -1,0 +1,83 @@
+# Theory Lab checks.
+#
+# The Accelerator keeps its own workflow (accelerator-checks.yml) because the
+# path filter lives on the workflow, not on the job: these two watch different
+# trees and must stay independently triggerable.
+#
+# theory.cjs is pure Node — no browser, no server. The other three drive a real
+# Chromium against the site served from the repo root, which is also how the
+# site is served in production (static files, no build step), so the paths the
+# tests exercise are the paths a visitor gets.
+name: Theory Lab checks
+on:
+  pull_request:
+    paths:
+      - theory-lab/**
+      - evenant-theory.js
+      - evenant-keyboard.js
+      - evenant-keyboard.css
+      - evenant-sound.js
+      - evenant-listen.js
+      - evenant-listen.css
+      - evenant-gate.js
+      - evenant-gate.css
+      - evenant-modules.js
+      - evenant-nav.js
+      - evenant-nav.css
+      - tests/**
+      - .github/workflows/theory-lab-checks.yml
+permissions:
+  contents: read
+jobs:
+  theory-lab:
+    # PINNED, NOT ubuntu-latest. GitHub moved ubuntu-latest to 26.04 and
+    # Playwright 1.55.0 refuses to install chromium there:
+    #   "ERROR: Playwright does not support chromium on ubuntu26.04-x64".
+    # Pin the runner to the image the pinned Playwright supports — the two
+    # versions move together or neither does.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Cheapest first: if the theory layer is wrong, nothing downstream of it
+      # is worth the cost of a browser.
+      - name: Theory layer
+        run: node tests/theory.cjs
+
+      - run: npm install --no-save --package-lock=false playwright@1.55.0
+      - run: npx playwright install --with-deps chromium
+
+      - name: Serve the site
+        run: |
+          python3 -m http.server 8765 > /tmp/theory-lab-server.log 2>&1 &
+          for i in $(seq 1 40); do
+            curl -sf http://127.0.0.1:8765/theory-lab/index.html > /dev/null && break
+            sleep 0.25
+          done
+
+      # No VA_SOURCE here: the Voicing Atlas is a separate repository, so the
+      # pixel comparison against it reports itself skipped and the behavioural
+      # half of the suite still runs. Run it locally with the Atlas checked out
+      # to re-confirm the paint.
+      - name: Keyboard component
+        run: node tests/keyboard.cjs
+
+      - name: Sound engine
+        run: node tests/sound.cjs
+
+      # Every module's own suite, so a new module is covered without editing
+      # this file.
+      - name: Module suites
+        run: |
+          shopt -s nullglob
+          found=0
+          for t in theory-lab/*/tests/*.cjs; do
+            echo "--- $t"
+            node "$t"
+            found=1
+          done
+          if [ "$found" = 0 ]; then echo "no module suites found"; exit 1; fi

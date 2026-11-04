@@ -1,0 +1,89 @@
+/* ============================================================================
+   THEORY LAB · SHARED CHROME
+   ----------------------------------------------------------------------------
+   The Theory Lab home and every module's front page. Tokens and card treatment
+   follow the Dojo's modes menu, which follows the Atlas family grid: a 1px
+   hairline, a near-transparent fill, warming to gold and lifting on hover.
+   Picking a module here should feel like picking a mode there.
+   ============================================================================ */
+
+:root{
+  --bg:#080C14;--gold:#D4A04A;--gold-deep:#C08830;--blue:#8FB4E0;
+  --warn:#C0603A;--ok:#5FB89A;
+  --text:#BEC0C8;--text-dim:#7E808A;--text-faint:#4E505A;
+  --hair:rgba(255,255,255,.07);--hair-gold:rgba(212,160,74,.24);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);overflow-y:scroll;scrollbar-gutter:stable}
+body{font-family:'DM Sans',-apple-system,sans-serif;font-size:16px;color:var(--text);
+  background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.6}
+h1,h2,h3{font-family:'Playfair Display',Georgia,serif;font-weight:500;color:#fff;letter-spacing:-.3px}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--hair-gold);outline-offset:3px;border-radius:4px}
+
+.lab{position:relative;min-height:100vh;overflow-x:hidden}
+.lab-grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.012) 1px,transparent 1px);background-size:3px 3px}
+.lab-atmos{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(1200px 620px at 50% -10%,rgba(212,160,74,.055),transparent 70%)}
+
+.lab-page{position:relative;z-index:10;width:100%;max-width:1080px;margin:0 auto;
+  padding:clamp(30px,6vh,58px) 32px 72px}
+.lab-head{margin-bottom:clamp(30px,5vh,46px);max-width:640px}
+.lab-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;
+  color:var(--gold);opacity:.9}
+.lab-head h1{font-size:clamp(34px,4.6vw,56px);line-height:1.05;margin:16px 0 18px}
+.lab-head h1 span{display:block}
+.lab-serif-em{font-style:italic;color:var(--gold)}
+.lab-head p{font-size:16.5px;font-weight:300;color:#9A9CA4}
+
+/* --- the module cards --- */
+.lab-modules{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.lab-module{display:block;position:relative;padding:26px 24px 24px;
+  border:1px solid var(--hair);border-radius:12px;background:rgba(255,255,255,.02);
+  transition:border-color .3s,background .3s,transform .3s,box-shadow .3s}
+a.lab-module:hover{border-color:var(--hair-gold);transform:translateY(-3px);
+  background:linear-gradient(180deg,rgba(10,14,24,.94) 0%,rgba(8,12,20,.97) 100%);
+  box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.lab-module h3{font-size:24px;margin:0 0 10px}
+.lab-module p{font-size:14px;line-height:1.6;color:var(--text-dim);font-weight:300}
+.lab-module .count{margin-top:18px;padding-top:14px;border-top:1px solid var(--hair);
+  font-size:12px;color:#5E606A;letter-spacing:.4px;display:flex;align-items:center;
+  justify-content:space-between;gap:10px}
+.lab-module-art{margin:-4px 0 18px;height:104px;display:flex;align-items:center;justify-content:center}
+.lab-module-art svg{width:100%;height:100%;display:block;overflow:visible}
+.lab-module-art .lit{opacity:.82;transition:opacity .35s ease}
+a.lab-module:hover .lab-module-art .lit{opacity:1}
+
+/* A members-only module is still a link: the code prompt is behind it. */
+.lab-tag{font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.lab-tag[data-state="members"]{color:var(--gold);opacity:.85}
+.lab-tag[data-state="open"]{color:var(--ok);opacity:.85}
+.lab-tag[data-state="soon"]{color:var(--text-faint)}
+.lab-module[data-state="soon"]{opacity:.45;pointer-events:none}
+.lab-buy{font-size:11px;color:var(--text-faint);letter-spacing:.3px}
+.lab-buy:hover{color:var(--gold)}
+
+/* --- a module's own front page: the same cards, one level down --- */
+/* The nav row. These three class names come from the Dojo's chrome, which the
+   lab pages do not load — only ear.html does, because it is a Dojo page. On
+   the hub and a module's front page they were unstyled, so the row fell to
+   three stacked blocks and the breadcrumb sat under the switcher instead of
+   beside it. Same values as dojo-base.css, so the two read identically. */
+.lab .atl-nav-left{display:flex;align-items:center;gap:15px;min-width:0}
+.lab .atl-nav-sep{width:1px;height:18px;background:var(--hair);flex:0 0 auto}
+.lab .atl-nav-crumb{display:flex;min-width:0}
+.lab-crumb{display:flex;align-items:center;gap:9px;font-size:10.5px;font-weight:700;
+  letter-spacing:2.2px;text-transform:uppercase;color:var(--text-faint)}
+.lab-crumb a:hover{color:var(--gold)}
+.lab-crumb i{font-style:normal;opacity:.5}
+.lab-crumb span{color:var(--text-dim)}
+
+@media (max-width:980px){ .lab-modules{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:760px){
+  .lab-page{padding:26px 20px 56px}
+  .lab-modules{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ a.lab-module:hover{transform:none} }
