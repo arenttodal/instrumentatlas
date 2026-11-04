@@ -88,6 +88,21 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .preset-field[aria-expanded="true"] .pf-chev{transform:rotate(180deg);color:var(--gold)}
 .tools-sep{width:1px;height:20px;background:var(--hair);margin:0 5px}
 
+/* The title is the track picker. It carries no border until you go near it, so
+   the header still reads as a title rather than as another control. */
+.score-field{display:flex;align-items:center;gap:9px;padding:2px 8px 2px 0;margin-left:-2px;
+  border:1px solid transparent;border-radius:9px;background:transparent;color:inherit;
+  transition:border-color .2s ease,background .2s ease,padding .2s ease}
+.score-field:hover,.score-field[aria-expanded="true"]{padding-left:9px;
+  border-color:var(--hair);background:rgba(255,255,255,.035)}
+.score-field[aria-expanded="true"]{border-color:var(--hair-gold);background:rgba(212,160,74,.09)}
+.score-field h1{margin:0}
+.score-field .pf-chev{margin-left:0}
+.score-field:hover .pf-chev{color:var(--dim)}
+.score-field[aria-expanded="true"] .pf-chev{transform:rotate(180deg);color:var(--gold)}
+#scmenu{width:250px}
+#sc-list button .sub{display:block;font-size:9.5px;color:#4E505A;letter-spacing:.2px;margin-top:3px}
+
 /* display + preset menus */
 .menu-wrap{position:relative}
 .dmenu{position:absolute;right:0;top:calc(100% + 10px);width:236px;max-height:72vh;overflow-y:auto;
@@ -298,6 +313,33 @@ body.annotating .lanes{cursor:crosshair}
 .boot.gone{opacity:0;pointer-events:none}
 .boot .n{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--gold)}
 .boot .s{font-size:12px;color:var(--dim);max-width:420px;text-align:center;line-height:1.6}
+/* Decoding a 74 stem score takes long enough that a 104px caption at the edge
+   of the transport reads as a page that has stopped working. This says the same
+   thing in the middle of the screen, and shows how far along it is. */
+.load{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s;
+  background:rgba(8,12,20,.5);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.load.on{opacity:1;visibility:visible}
+.load-card{display:flex;flex-direction:column;align-items:center;gap:13px;
+  padding:26px 34px 22px;border-radius:16px;
+  background:rgba(14,19,30,.97);border:1px solid var(--hair);
+  box-shadow:0 26px 70px rgba(0,0,0,.66);
+  transform:translateY(6px) scale(.97);transition:transform .26s cubic-bezier(.16,1,.3,1)}
+.load.on .load-card{transform:none}
+.load-ring{position:relative;width:54px;height:54px}
+.load-ring svg{width:54px;height:54px;transform:rotate(-90deg)}
+.load-ring .bg{stroke:rgba(255,255,255,.09)}
+.load-ring .fg{stroke:var(--gold);stroke-linecap:round;transition:stroke-dashoffset .18s linear}
+/* one stem has no ratio to report, so the arc turns instead of sitting at 0% */
+.load-ring.spin svg{animation:load-spin 1s linear infinite}
+.load-ring.spin .fg{transition:none}
+@keyframes load-spin{to{transform:rotate(270deg)}}
+.load-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;color:var(--gold);letter-spacing:.2px}
+.load-label{font-size:12px;color:var(--text);letter-spacing:.2px}
+.load-sub{font-size:10.5px;color:var(--faint);letter-spacing:.3px}
+/* the ring is the only thing that moves, so it keeps turning when motion is
+   reduced only as a stepped fill, never as a spin */
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../evenant-nav.css">
@@ -308,7 +350,22 @@ body.annotating .lanes{cursor:crosshair}
   <div class="top-l">
     <div data-ev-switch></div>
     <span class="top-div"></span>
-    <div class="title"><h1 id="t-title">Valley Sunrise</h1><span id="t-sub"></span></div>
+    <!-- The piece title is also the track picker: same type, same place, and
+         it only shows a border when you go near it. -->
+    <div class="title">
+      <div class="menu-wrap">
+        <button class="score-field" id="sc-btn" aria-haspopup="true" aria-expanded="false" title="Choose a track">
+          <h1 id="t-title">Valley Sunrise</h1>
+          <svg class="pf-chev" viewBox="0 0 10 6" fill="none" width="10" height="6">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="dmenu wide" id="scmenu">
+          <div class="dgroup"><span class="dlabel">Track</span><div id="sc-list"></div></div>
+        </div>
+      </div>
+      <span id="t-sub"></span>
+    </div>
   </div>
   <div class="tools">
     <div class="menu-wrap preset-wrap">
@@ -455,6 +512,21 @@ body.annotating .lanes{cursor:crosshair}
 </div>
 
 
+<div class="load" id="load" role="status" aria-live="polite">
+  <div class="load-card">
+    <div class="load-ring">
+      <svg viewBox="0 0 54 54" aria-hidden="true">
+        <circle class="bg" cx="27" cy="27" r="23" fill="none" stroke-width="3.5"/>
+        <circle class="fg" id="load-arc" cx="27" cy="27" r="23" fill="none" stroke-width="3.5"
+                stroke-dasharray="144.5" stroke-dashoffset="144.5"/>
+      </svg>
+      <span class="load-pct" id="load-pct">0%</span>
+    </div>
+    <div class="load-label" id="load-label">Decoding stems</div>
+    <div class="load-sub" id="load-sub"></div>
+  </div>
+</div>
+
 <div class="boot" id="boot">
   <div class="n" id="boot-n">Valley Sunrise</div>
   <div class="s" id="boot-s">Loading score…</div>
@@ -495,22 +567,88 @@ function placeSide(){
 }
 const audible = id => (typeof audibleTrack === 'function') ? audibleTrack(id) : !muted.has(id);
 
-/* ---------- load the score description ---------- */
-async function boot(){
-  try {
-    S = await (await fetch('score.json')).json();
-  } catch(e){
-    $('boot-s').innerHTML = 'Could not load <b>score.json</b> — it must sit beside this page, served over http://';
-    return;
+/* The circumference the arc is drawn on: 2 x PI x r, r = 23. */
+const ARC = 144.5;
+function showLoad(label, done, total, sub){
+  const ring = document.querySelector('.load-ring');
+  if(total){
+    const pct = Math.round(done / total * 100);
+    ring.classList.remove('spin');
+    $('load-arc').setAttribute('stroke-dashoffset', (ARC * (1 - pct / 100)).toFixed(1));
+    $('load-pct').textContent = pct + '%';
+  } else {
+    ring.classList.add('spin');
+    $('load-arc').setAttribute('stroke-dashoffset', (ARC * 0.75).toFixed(1));
+    $('load-pct').textContent = '';
   }
+  $('load-label').textContent = label;
+  $('load-sub').textContent = sub || '';
+  $('load').classList.add('on');
+}
+function hideLoad(){ $('load').classList.remove('on'); }
+
+/* ---------- the score library --------------------------------------------
+   scores.json lists what this viewer can open. Each entry names its own score
+   and annotation files, so adding a piece is a JSON file and one row, never a
+   code change. The title in the header is the picker.
+   -------------------------------------------------------------------------- */
+let LIB = [], scoreId = null;
+
+async function boot(){
+  try { LIB = await (await fetch('scores.json')).json(); }
+  catch(_){ LIB = [{id:'valley-sunrise', title:'Valley Sunrise',
+                    score:'score.json', annotations:'annotations.json'}]; }
+  const want = new URLSearchParams(location.search).get('score')
+            || localStorage.getItem('vs-score');
+  const entry = LIB.find(x => x.id === want) || LIB[0];
+  buildScoreMenu();
+  const ok = await openScore(entry.id);
+  if(!ok) return;
+  applyDisplay();
+  $('boot').classList.add('gone');
+  tick();
+}
+
+/* Switching score tears the old one down first. Audio nodes, decoded buffers,
+   mix state, loop points and annotations all belong to the piece that is open,
+   and carrying any of them across shows up as a stem from the last track still
+   sounding, or a solo on an id this score does not have. */
+async function openScore(id){
+  const entry = LIB.find(x => x.id === id) || LIB[0];
+  let next;
+  try { next = await (await fetch(entry.score)).json(); }
+  catch(e){
+    $('boot-s').innerHTML = 'Could not load <b>' + entry.score + '</b> — it must sit beside this page, served over http://';
+    return false;
+  }
+  hideLoad();
+  generation++; inflight.clear();
+  pause(); killAll(); buffers.clear(); missing.clear(); overBudget.clear(); decoded = 0; mixMode = false;
+  muted.clear(); solos.clear(); tempSolo = null;
+  loopA = loopB = null; loopOn = false; $('loop-btn').setAttribute('aria-pressed','false');
+  selTrack = null; offset = 0; startTime = 0;
+
+  S = next; scoreId = entry.id;
+  localStorage.setItem('vs-score', entry.id);
   duration = S.duration;
   $('t-title').textContent = S.title;
   $('t-sub').textContent = `${S.tracks.length} stems · ${S.bars} bars · \u2669 ${Math.round(S.tempo)}`;
   buildHeads(); fitLanes(); layout(); draw(); drawMini(); paintScrubTips(); placeSide();
-  await loadAnnotations();
-  applyDisplay(); buildPresetMenu();
-  $('boot').classList.add('gone');
-  tick();
+  await loadAnnotations(entry.annotations);
+  buildPresetMenu(); buildScoreMenu(); setPlayIcon();
+  return true;
+}
+
+function buildScoreMenu(){
+  const wrap = $('sc-list'); if(!wrap) return;
+  wrap.innerHTML = '';
+  LIB.forEach(e => {
+    const b = document.createElement('button');
+    b.className = e.id === scoreId ? 'on' : '';
+    b.innerHTML = e.title;
+    b.onclick = async () => { closeMenus(); if(e.id !== scoreId) await openScore(e.id); };
+    wrap.appendChild(b);
+  });
 }
 
 /* ---------- audio ----------------------------------------------------------
@@ -531,19 +669,80 @@ function ensureCtx(){
 }
 
 async function fetchStem(t){
-  for(const e of EXTS){
-    const url = `${S.audioBase}${t.file || t.id}.${e}`;
+  /* A score may name its own extension. Without one every stem costs two 404s
+     before the probe finds the file — 148 of them on a 74 lane score. */
+  for(const e of (S.audioExt ? [S.audioExt] : EXTS)){
+    const url = encodeURI(`${S.audioBase}${t.file || t.id}.${e}`);
     try { const r = await fetch(url); if(r.ok) return await r.arrayBuffer(); } catch(_){}
   }
   throw new Error('no audio for ' + t.id);
 }
 
-async function decode(t){
-  if(buffers.has(t.id)) return buffers.get(t.id);
-  const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
-  buffers.set(t.id, buf);
-  duration = Math.max(duration, buf.duration);
-  return buf;
+/* A score can be loaded before its stems exist. decode() records the misses
+   instead of throwing: play() used to abort the whole transport on the first
+   404, so one absent file silenced every other lane. */
+const missing = new Set();
+const overBudget = new Set();
+
+/* A decoded buffer is Float32 per sample per channel, so it costs far more
+   than the file it came from: a three minute stereo stem is 47 MB at 32 kHz
+   whatever its bitrate. Seventy-four of those is 3.5 GB, which kills the tab
+   rather than playing quietly, so decoding stops at a budget and says so. */
+const BUDGET = 700 * 1024 * 1024;
+const bufBytes = b => b.length * b.numberOfChannels * 4;
+let decoded = 0;
+
+/* The reservation is taken BEFORE decoding, not after. Checking the total once
+   the buffer already existed meant a stem being rejected had still just cost
+   its full allocation, so the tab took the peak it was meant to be spared. The
+   size is known in advance: it is the score's duration at the context's rate,
+   and decodeAudioData resamples to that. */
+const estBytes = () => Math.ceil((S.duration + 1) * ctx.sampleRate) * 2 * 4;
+
+/* Two things the reservation on its own did not survive.
+
+   The has() test is synchronous and the decode that follows is not, so two
+   callers wanting the same stem both passed it, both reserved, and both
+   decoded. One buffer landed in the map and both settlements were counted, so
+   the total drifted permanently above what was really held and the budget shrank
+   for the rest of the session. In flight promises are shared now, so a second
+   caller waits on the first.
+
+   And a decode outstanding when the score changed used to finish into the new
+   score: its buffer went into the freshly cleared map under the old score's
+   track id, and its bytes onto the new score's total. Each decode carries the
+   generation it started in and discards itself if that has moved on. */
+const inflight = new Map();
+let generation = 0;
+
+function decode(t){
+  if(buffers.has(t.id)) return Promise.resolve(buffers.get(t.id));
+  if(missing.has(t.id) || overBudget.has(t.id)) return Promise.resolve(null);
+  if(inflight.has(t.id)) return inflight.get(t.id);
+
+  const reserve = estBytes();
+  if(decoded + reserve > BUDGET){ overBudget.add(t.id); return Promise.resolve(null); }
+  decoded += reserve;
+  const mine = generation;
+
+  const job = (async () => {
+    try {
+      const buf = await ctx.decodeAudioData(await fetchStem(t));   // always stereo
+      if(mine !== generation){ decoded -= reserve; return null; }  // score moved on
+      decoded += bufBytes(buf) - reserve;                          // settle up
+      buffers.set(t.id, buf);
+      duration = Math.max(duration, buf.duration);
+      return buf;
+    } catch(_){
+      if(mine === generation){ decoded -= reserve; missing.add(t.id); }
+      else decoded -= reserve;
+      return null;
+    } finally {
+      if(inflight.get(t.id) === job) inflight.delete(t.id);
+    }
+  })();
+  inflight.set(t.id, job);
+  return job;
 }
 
 function killNode(n){
@@ -584,13 +783,50 @@ async function play(){
     ensureCtx();
     if(ctx.state === 'suspended') await ctx.resume();
     killAll();                            // belt and braces
+    if(wantMix()){
+      const m = mixTrack();
+      showLoad('Loading the full mix', 0, 0);
+      await decode(m);
+      hideLoad();
+      if(buffers.has(MIX_ID)){
+        const at = Math.min(offset, duration - 0.05), when = ctx.currentTime + 0.08;
+        startTime = when - at;
+        startNode(m, at, when, 1);
+        mixMode = true; playing = true; setPlayIcon();
+        $('status').textContent = '';
+        return;
+      }
+      $('status').textContent = 'no full mix — using the stems';
+    }
+    mixMode = false;
     const want = S.tracks.filter(t => audible(t.id));
     let n = 0;
-    for(const t of want){
-      await decode(t); n++;
+    /* One stem decodes fast enough that a card would only flash, so the panel
+       waits for a score big enough to be worth explaining. */
+    if(want.length > 2) showLoad('Decoding stems', 0, want.length, `0 of ${want.length}`);
+    /* A pool, not a loop. Awaiting each stem in turn meant a stem's request did
+       not leave the browser until the one before it had finished decoding, so
+       every round trip and every decode was laid end to end: 74 stems took 6.5s
+       to fetch on localhost, where latency is zero, against 0.8s six at a time.
+       Six is the classic per-host connection limit and keeps at most six
+       undecoded ArrayBuffers alive at once, which is the reason not to simply
+       fire all 74. */
+    const queue = [...want];
+    const step = () => {
+      n++;
       $('status').textContent = `decoding ${n}/${want.length}`;
-    }
-    $('status').textContent = '';
+      if(want.length > 2) showLoad('Decoding stems', n, want.length, `${n} of ${want.length}`);
+    };
+    await Promise.all(Array.from({length:Math.min(6, queue.length)}, async () => {
+      while(queue.length){ await decode(queue.shift()); step(); }
+    }));
+    hideLoad();
+    const gone = want.filter(t => missing.has(t.id)).length;
+    const over = want.filter(t => overBudget.has(t.id)).length;
+    $('status').textContent =
+      gone === want.length ? 'no stems for this track yet'
+      : over ? `${over} lanes silent — too many stems to hold at once`
+      : gone ? `${gone} stems missing` : '';
     const at = Math.min(offset, duration - 0.05);
     const when = ctx.currentTime + 0.08;
     startTime = when - at;
@@ -601,7 +837,7 @@ async function play(){
   } catch(err){
     $('status').textContent = 'audio error — see console';
     console.error(err);
-  } finally { starting = false; }
+  } finally { starting = false; hideLoad(); }
 }
 
 function pause(){
@@ -631,6 +867,17 @@ let applying = false;
 async function applyGains(){
   draw(); refreshOff(); drawMini();
   if(!playing || applying) return;
+  /* The mix cannot represent a selection, and the stems should not play under
+     it, so a change either way is a restart at the same position rather than a
+     gain move. It is the one place the transport stops, and only for the first
+     mute or the return to all lanes. */
+  if(mixMode !== wantMix()){
+    const at = position();
+    killAll(); offset = at; playing = false;
+    await play();
+    return;
+  }
+  if(mixMode) return;
   applying = true;
   try {
     const now = ctx.currentTime;
@@ -643,7 +890,9 @@ async function applyGains(){
     for(const t of S.tracks){
       if(audible(t.id) && !nodeFor(t.id)){
         $('status').textContent = 'adding ' + t.name + '…';
+        showLoad('Loading ' + t.name, 0, 0);
         await decode(t);
+        hideLoad();
         if(!playing) break;
         const at = position() + 0.06;
         const node = startNode(t, at, ctx.currentTime + 0.06, 0);
@@ -726,8 +975,23 @@ function audibleTrack(id){
   return solos.size ? solos.has(id) : true;
 }
 
+/* ---------- the full mix ---------------------------------------------------
+   Seventy-four stems decode to 3.25 GB, so "every lane on" was the one state
+   the player could not reach: it is the most stems, not the fewest. But every
+   lane on is exactly the state a single file can serve. When nothing is muted
+   and nothing is soloed the transport runs one mixdown instead of 74 stems,
+   at 47 MB. Touch a mute or a solo and it hands over to the stems, which is a
+   handful of buffers rather than all of them.
+   -------------------------------------------------------------------------- */
+const MIX_ID = '__mix';
+const hasMix = () => !!(S && S.mixdown);
+const wantMix = () => hasMix() && !solos.size && !muted.size;
+const mixTrack = () => ({ id:MIX_ID, name:'Full mix', file:S.mixdown });
+let mixMode = false;
+
 function buildHeads(){
   const h = $('heads-inner');
+  h.innerHTML = '';                 /* a score switch rebuilds the lane heads */
   S.tracks.forEach(t => {
     const row = document.createElement('div');
     row.className = 'head'; row.style.height = LANE + 'px';
@@ -772,7 +1036,8 @@ function syncHeads(){
 function refreshOff(){ syncHeads(); }
 
 const FAM = {woodwinds:'#6FB7E8',brass:'#D4A04A',strings:'#CF5F52',
-             percussion:'#9B8FD4',choir:'#7FD1B9'};
+             percussion:'#9B8FD4',choir:'#7FD1B9',
+             synth:'#B7D46A',keys:'#54C8C0',ethnic:'#D48FB0'};
 const famColor = f => FAM[f] || '#8FB4E0';
 
 /* ---------- draw ---------- */
@@ -967,11 +1232,12 @@ var sideOn = false;
    everything else steps down through the app's blues and greys so the chart
    reads as a hierarchy rather than a set of unrelated colours. */
 const ROLE_COLOR = {
-  melody:'#D4A04A',    // gold — the thing you are meant to follow
-  counter:'#C6A97C',   // muted sand, clearly related to gold but quieter
-  harmony:'#6E8FB8',   // soft blue
-  texture:'#5C6B7C',   // slate
-  rhythm:'#8B94A2'     // grey
+  melody:'#7FC4F5',    // light blue
+  counter:'#E0564F',   // red
+  harmony:'#5FBF7A',   // green
+  rhythm:'#E4D164',    // light yellow
+  ostinato:'#A47FD4',  // purple
+  texture:'#5C6B7C'    // slate, the one role with no colour of its own
 };
 const ROLES = Object.keys(ROLE_COLOR);
 let ANN = {sections:[], roles:[]};
@@ -988,9 +1254,12 @@ function saveDisp(){ localStorage.setItem('vs-display', JSON.stringify(DISP)); }
 let hoverInfo = null;   // {lane, bar}
 let dragSel = null, hoverLane = null, lastRole = 'melody';
 
-async function loadAnnotations(){
-  try { ANN = await (await fetch('annotations.json')).json(); }
+async function loadAnnotations(url){
+  try { ANN = await (await fetch(url || 'annotations.json')).json(); }
   catch(_){ ANN = {sections:[], roles:[]}; }
+  if(!ANN.sections) ANN.sections = [];
+  if(!ANN.roles) ANN.roles = [];
+  roleFilter = new Set(ROLES);
   buildRoleChips(); drawSidebar();
 }
 
@@ -1301,20 +1570,22 @@ $('pre-save').onclick = () => {
 };
 /* only one menu may be open at a time */
 function openMenu(id){
-  const map = {dmenu:'disp-btn', pmenu:'pre-btn'};
+  const map = {dmenu:'disp-btn', pmenu:'pre-btn', scmenu:'sc-btn'};
   Object.keys(map).forEach(m => {
     const el = $(m), on = (m === id) && !el.classList.contains('on');
     el.classList.toggle('on', on);
     const btn = $(map[m]);
-    btn.setAttribute(m === 'pmenu' ? 'aria-expanded' : 'aria-pressed', String(on));
+    btn.setAttribute(m === 'dmenu' ? 'aria-pressed' : 'aria-expanded', String(on));
   });
 }
 function closeMenus(){
-  ['dmenu','pmenu'].forEach(m => $(m).classList.remove('on'));
+  ['dmenu','pmenu','scmenu'].forEach(m => { const el = $(m); if(el) el.classList.remove('on'); });
   $('disp-btn').setAttribute('aria-pressed','false');
   $('pre-btn').setAttribute('aria-expanded','false');
+  $('sc-btn').setAttribute('aria-expanded','false');
 }
 $('pre-btn').onclick = e => { e.stopPropagation(); openMenu('pmenu'); };
+$('sc-btn').onclick  = e => { e.stopPropagation(); openMenu('scmenu'); };
 
 
 function applyDisplay(){

@@ -188,7 +188,6 @@ body{background:#080C14;margin:0}   /* the .atl reset never covered body itself:
 .atl-list{list-style:none}
 .atl-list li{position:relative;padding-left:20px;margin-bottom:11px;font-size:14.5px;line-height:1.6}
 .atl-list li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--gold)}
-.atl-list li b{color:#fff;font-weight:500}
 .atl-seat{border:1px solid var(--hair);border-radius:12px;padding:14px 20px;background:rgba(255,255,255,.015)}
 .atl-seat-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:5px 0;border-bottom:1px solid var(--hair);font-size:14px;transition:opacity .25s ease}
 .atl-seat-row:last-child{border-bottom:none}

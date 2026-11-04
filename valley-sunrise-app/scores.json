@@ -1,0 +1,14 @@
+[
+  {
+    "id": "valley-sunrise",
+    "title": "Valley Sunrise",
+    "score": "score.json",
+    "annotations": "annotations.json"
+  },
+  {
+    "id": "course-track",
+    "title": "Course Track",
+    "score": "scores/course-track.json",
+    "annotations": "scores/course-track-annotations.json"
+  }
+]

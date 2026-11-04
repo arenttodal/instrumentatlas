@@ -77,7 +77,7 @@ function viewFamily(fam){
           </div>
 
           <h3 class="atl-blockhead" style="margin-top:20px">What defines the family</h3>
-          <ul class="atl-list">${fam.role.map(r => `<li>${r}</li>`).join('')}</ul>
+          <ul class="atl-list">${fam.role.map(r => `<li>${esc(r)}</li>`).join('')}</ul>
 
           <h3 class="atl-blockhead" style="margin:0 0 14px">The instruments</h3>
           <div class="atl-strip" style="grid-template-columns:repeat(${Math.ceil(fam.members.length / 2)},minmax(0,1fr))">

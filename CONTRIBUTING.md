@@ -34,7 +34,7 @@ Pages redeploys in ~20 seconds.
 | Families complete | **4 of 4** |
 | 3D models | 8 `.glb`. **Only the cello is offered on the site**, via `MODELS_LIVE` in `atlas.js`; the rest are in the viewer only |
 | Model attribution | cello, horn, trumpet and violin have real credits. viola, bassoon, clarinet and violin2 say "Attribution pending, do not publish" and are switched off |
-| Studio | Theme 1 only, 3 tracks, 7 renders |
+| Studio | Theme 1 only, 3 tracks, 7 renders, all cut to exactly 8 bars |
 | Instrument audio | **20 of 20**, 54 clips. Two rows rather than three on snare drum and bass drum, one on cymbals and gong: an instrument gets as many rows as there are recordings |
 | Family audio | all twelve done, three per family, at `audio/families/<id>/` |
 | Plate artwork | all 20 converted engravings, credited to The Met (CC0) |
@@ -56,7 +56,12 @@ _headers           Cloudflare caching + framing
 audio/
   theme-1/         the studio's renders, one per part per section size
   instruments/     per-instrument demo clips
-video/             family hover footage, one .mp4 per family that has one
+video/             family hover footage, one .mp4 per family. All four match:
+                   1280x676, SAR 676:675 (DAR 256:135), h264 High, yuv420p,
+                   bt709, 25 fps, 8s, no audio track, 500-600 KB. The clip
+                   plays at opacity .20 under a dark scrim, so grade a new one
+                   to roughly the same mean luma as the others (25-58) before
+                   encoding, or it washes the headline out
 viewer/
   instruments.html the whole 3D viewer, self-contained
   *.glb            eight models, flat in this folder, NOT in a subfolder
@@ -94,7 +99,8 @@ Every family's `sizes` array must have exactly six entries, in this order.
 {
   id, name, tagline,
   lede,                    // one or two sentences
-  role: [ '<b>Lead.</b> Explanation.', … ],   // HTML allowed, 3–5 items
+  role: [ 'A plain sentence or two.', … ],     // escaped, 3–5 items. No
+                           // bolded lead-in: it made all sixteen read alike
   video,                   // optional: hover footage for the home page card
   demos,                   // optional: [{label, note, file}] × 3, played as
                            // pills under the lede. No key renders nothing.
@@ -197,6 +203,20 @@ tracks. The first note should be at beat 0.
 **Adding a theme:** render the parts at one tempo and length with the first note
 at time zero, drop them in `audio/<id>/`, add one `PASSAGES` entry. It appears
 in the dropdown by itself. Nothing else changes.
+
+**Every stem in a passage must decode to exactly the same number of samples,
+and that length must be the passage's own `bars`.** The engine gives each stem
+its own looping `AudioBufferSourceNode`, so a source loops over *its own* buffer
+and nothing re-aligns them: one stem four seconds shorter than the rest does not
+just end early, it slides further out of sync on every pass. This is how the
+flute in Theme 1 broke. `bars` has to agree too, because the playhead and the
+piano roll are drawn from `bars × beats`, not from the audio.
+
+ADTS frames are 1024 samples, so a stem can be cut or padded on frame boundaries
+without re-encoding: parse the frames, keep the first `ceil(seconds × rate /
+1024)`, and pad a short one with frames taken from a silent file encoded at the
+same rate, channel count and profile. `tools/` has no script for this yet; it
+was done inline. Re-encoding would work too and costs a generation of quality.
 
 ### `GALLERY`
 `{v, title, perf, why, chan}`, where `v` is a YouTube id. Shared across instruments
