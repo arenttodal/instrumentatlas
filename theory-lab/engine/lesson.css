@@ -47,6 +47,23 @@
   --gold-face-hi:linear-gradient(180deg,rgba(212,160,74,.38),rgba(212,160,74,.2));
   --ring:0 0 0 3px rgba(212,160,74,.1);
   --ease:cubic-bezier(.4,0,.2,1);
+
+  /* ---- OPTICAL CENTRING ----------------------------------------------------
+     DM Sans reports an ascent of 12 and a descent of 4 at 12.5px, and the
+     browser centres THAT box — 16px tall, with the baseline 12 down. But a
+     label like "Rise", "Dorian" or "LOOP" puts no ink in the 4px reserved
+     below the baseline, so it is drawn with 2px more air beneath it than above
+     and reads as sitting high. Every dropdown and every segment on the panel
+     had it, which is what made the whole row look slightly off its line.
+
+     So controls centre the CAP BAND — baseline to cap height — which is what
+     the eye reads as the block of text, treating a descender as the overhang
+     it is. The shift that needs is (descent - ascent + capHeight) / 2, which
+     comes to 1px at this size. --ink is that 1px, and because a box with a
+     fixed height centres its content in what padding leaves, asking for it
+     means padding-top of twice --ink against a padding-bottom of nothing.
+     tests/browser.cjs measures the ink and holds every control to it. */
+  --ink:1px;
 }
 html{background:var(--bg);overflow-y:scroll;scrollbar-gutter:stable}
 body{font-family:'DM Sans',-apple-system,sans-serif;font-size:17px;color:var(--text);
@@ -126,7 +143,7 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
    paints it, it does not replace it — so the keyboard, the screen reader and
    the phone's own picker all still work. */
 .ac-field select,select.ac-select{appearance:none;-webkit-appearance:none;
-  height:var(--ctl);max-width:100%;padding:0 32px 0 13px;
+  height:var(--ctl);max-width:100%;padding:calc(var(--ink)*2) 32px 0 13px;
   border:1px solid var(--hair-gold);border-radius:var(--rp);
   background-image:var(--panel);background-color:transparent;box-shadow:var(--edge);
   color:#fff;font-family:inherit;font-size:12.5px;font-weight:500;
@@ -148,6 +165,10 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
    its neighbour. The checkbox version is the transport's Loop; the button
    version is every toggle the activities declare. Both keep their real
    element and their real ARIA. */
+/* the text moves, the track does not: a switch's knob is a graphic and is
+   already on its centre. position/top rather than padding, so a label in a row
+   of fixed-height controls cannot change the height of the row. */
+.ac-sw>span,.ac-vol>span,.ac-time,.ac-audio-status{position:relative;top:var(--ink)}
 .ac-sw{display:inline-flex;align-items:center;gap:var(--s2);height:var(--ctl);
   font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
   color:var(--faint);cursor:pointer;white-space:nowrap;
@@ -166,7 +187,7 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
   transform:translateX(13px);background:var(--gold)}
 .ac-sw input[type=checkbox]:focus-visible{outline:none;box-shadow:var(--edge),var(--ring)}
 /* the toggle button: no pill around it, because the switch IS the control */
-.btn.ac-switch{padding:0;border:0;background:none;gap:var(--s2);height:var(--ctl);
+.btn.ac-switch{padding:calc(var(--ink)*2) 0 0;border:0;background:none;gap:var(--s2);height:var(--ctl);
   font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
   color:var(--faint)}
 .btn.ac-switch:hover{color:var(--dim);border-color:transparent}
@@ -229,7 +250,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
    segment carries neither edge nor ground until it is the chosen one. That is
    also the only one that should look raised, which is what the inset highlight
    and the shadow are for. */
-.ac-seg-track>.btn{height:26px;padding:0 11px;font-size:12px;
+.ac-seg-track>.btn{height:26px;padding:calc(var(--ink)*2) 11px 0;font-size:12px;
   border:0;box-shadow:none;background-image:none;border-radius:var(--rp);color:var(--dim)}
 .ac-seg-track>.btn:hover{color:#fff;
   background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
@@ -251,10 +272,30 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
    without. The column gap is bigger than the row gap because the eye needs
    less help separating things stacked than things side by side. */
 .ac-controls{display:flex;flex-direction:column;align-items:stretch;gap:var(--s4);margin-top:var(--s5)}
-/* a band is one row of like things. align-items:flex-end so a bare switch sits
-   on the same baseline as a control that has a caption above it. */
-.ac-band{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--s3) var(--s5)}
-.ac-band-act{gap:var(--s3) var(--s4)}
+/* A BAND IS ONE ROW OF LIKE THINGS.
+   The settings band is a GRID, not a wrapping flex row. Wrapped, each row
+   packs from the left and the next column begins wherever the last control
+   happened to end — so ROOT sat at one x and INSTRUMENT, one row below it, at
+   another. Columns that do not line up between rows is the ragged margin you
+   see before you can name it. auto-fill rather than auto-fit, because auto-fit
+   collapses the tracks a short row does not use and the columns would move
+   again. A segmented control takes the full width: it is one control, not one
+   column's worth.
+
+   The actions band stays a flex row — switches are narrow and all of one
+   height, and a grid would only spread them apart. */
+.ac-band{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));
+  align-items:end;gap:var(--s3) var(--s4)}
+.ac-band>.ac-seg{grid-column:1/-1}
+/* 132px, not 156: a tool's settings sit in a sub-column about 292px wide, and
+   at 156 two tracks plus the gap came to more than that, so auto-fill gave ONE
+   column and every field stacked — taller than the wrapping row it replaced.
+   The track has to be narrow enough that the narrowest column the panel ever
+   has still gets two. A field must be able to shrink into its track for that
+   to hold, so it is told it may. */
+.ac-band>.ac-field{min-width:0}
+.ac-band>.ac-field select{max-width:100%}
+.ac-band-act{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--s3) var(--s4)}
 .ac-controls>.btn,.ac-band>.btn,.ac-group>.btn{align-self:flex-end}
 .w-row{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
 
@@ -326,11 +367,11 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
 .ac-set{display:flex;flex-wrap:wrap;gap:0;align-items:center}
 /* A/B and undo/redo are pairs, so they are welded into one segmented control
    each: two halves of one object rather than four loose pills. */
-.ac-set .btn{font-size:12px;padding:0 13px;height:30px;border-radius:0;
+.ac-set .btn{font-size:12px;padding:calc(var(--ink)*2) 13px 0;height:30px;border-radius:0;
   margin-left:-1px;color:var(--dim)}
 .ac-set .btn:first-child{border-radius:var(--rp) 0 0 var(--rp);margin-left:0;padding-left:15px}
 .ac-set .btn:last-child{border-radius:0 var(--rp) var(--rp) 0;padding-right:15px}
-.ac-set .btn:only-child{border-radius:var(--rp);padding:0 15px}
+.ac-set .btn:only-child{border-radius:var(--rp);padding:calc(var(--ink)*2) 15px 0}
 .ac-set .btn:hover{z-index:1}
 /* the reset is a way out, not a thing to do: a quiet link at the end */
 .ac-set[data-set="reset"] .btn{border:0;border-bottom:1px solid var(--hair);
@@ -386,7 +427,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
    left edge carries the verdict, so right and wrong are told by position and
    shape as well as by colour. */
 .opts{display:grid;gap:var(--s2)}
-.opt{position:relative;text-align:left;padding:11px 15px 11px 17px;
+.opt{position:relative;text-align:left;padding:12px 15px 10px 17px;
   border:1px solid var(--hair);border-radius:var(--r2);overflow:hidden;
   font-size:14.5px;color:var(--text);font-weight:300;
   background-image:var(--panel);box-shadow:var(--edge);
@@ -438,7 +479,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
    hover, so a row of buttons twitched as the pointer crossed it. Only colour,
    edge and shadow move now. */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
-  height:var(--ctl);padding:0 16px;border:1px solid var(--hair);
+  height:var(--ctl);padding:calc(var(--ink)*2) 16px 0;border:1px solid var(--hair);
   border-radius:var(--rp);font-size:12.5px;font-weight:500;color:var(--dim);
   background-image:var(--panel);box-shadow:var(--edge);white-space:nowrap;
   transition:color .22s var(--ease),border-color .22s var(--ease),
@@ -448,11 +489,13 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
 
 /* the primary: filled, white type, and the only gold face on the panel */
 .btn.primary{border-color:rgba(212,160,74,.45);color:#fff;
-  background-image:var(--gold-face);padding:0 18px}
+  background-image:var(--gold-face);padding:calc(var(--ink)*2) 18px 0}
 .btn.primary:hover{border-color:var(--gold);background-image:var(--gold-face-hi);
   box-shadow:var(--edge),var(--ring)}
 
 /* the glyph buttons beside it: square, so the cluster reads as one object */
+/* an icon button is exempt: a glyph has no baseline, so nudging it only
+   pushes it off the centre it was already on */
 .btn.icon{width:var(--ctl);padding:0;color:var(--dim)}
 .btn.icon:hover{color:var(--gold)}
 /* The import control is a <label class="btn"> wrapping a file input. Left
@@ -672,7 +715,10 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
    over the controls. Everything gives up a little instead: the status sentence
    takes one line and trails off, the gaps close, the keyboard and the roll sit
    at their floors. Nothing is hidden and nothing overlaps. */
-@media (min-width:1001px) and (max-height:860px){
+/* 920, not 860: a segmented control takes a row to itself now, so the chord
+   lessons ask for one row more than they used to and 900px tall needs the same
+   help 860 did. */
+@media (min-width:1001px) and (max-height:920px){
   /* The reading column gives up some width here so the music column can hold
      its transport on one row and wrap its controls into fewer — the step text
      reads fine at 300px, and the alternative was the keyboard drawn over the
@@ -686,11 +732,10 @@ input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(
      The actions band stays a flex row, because switches are narrow and of one
      height and a grid would only spread them out. */
   .lplay .ac-controls{gap:var(--s3);margin-top:10px}
-  .lplay .ac-band:not(.ac-band-act){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-    align-items:end;gap:9px 12px}
+  .lplay .ac-band:not(.ac-band-act){grid-template-columns:repeat(4,minmax(0,1fr));gap:9px 12px}
   /* the mode row goes first so it does not strand a half-empty row above it:
      mode bar, then the four selects in one row */
-  .lplay .ac-band>.ac-seg{order:-1;grid-column:1/-1}
+  .lplay .ac-band>.ac-seg{order:-1}
   .lplay .ac-band-act{gap:9px var(--s4)}
   .lplay .ac-knobs .ac-field{gap:4px}
   /* the panel's own breathing room is the first thing to give up on a short

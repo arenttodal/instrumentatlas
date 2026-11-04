@@ -512,10 +512,12 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     ok(voices.trackCount >= 1, 'it has a track to slide');
     eq(voices.pressed, 'false', 'and still reports its state the way it always did');
 
-    /* back to the lesson this section was looking at, for the checks below */
-    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
-    await p.locator('#rail button').first().waitFor({ timeout:10000 });
-    await p.waitForTimeout(400);
+    /* The reharmonizer, because it is the one place every voice on the panel
+       appears at once: a select, a segmented control, the filled primary, and
+       the compare row — which a lesson deliberately does not carry. */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/reharm-lab');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    await p.waitForTimeout(600);
 
     /* ONE EDGE PER SEGMENTED CONTROL. The track draws it. A segment arrives as
        a .btn and so brings a border and an inset highlight of its own unless
@@ -539,6 +541,84 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     eq(seg.shadows, ['none'], 'nor an inset highlight, which reads as an edge too');
     eq(seg.grounds, ['none'], 'an unchosen segment has no ground at all');
     eq(seg.lit, 1, 'exactly one is lit');
+
+    /* ---- THE TEXT SITS ON THE CONTROL'S CENTRE --------------------------
+       DM Sans reports ascent 12 / descent 4, so the font box reserves 4px
+       below the baseline that a label like "Rise", "Dorian" or "LOOP" puts no
+       ink in. Centre that box — which is what a browser does — and every
+       label without a descender is drawn 2px high. Every dropdown and every
+       segment on the panel had it.
+
+       So this measures where the ink really is. For a label whose own ink
+       descends d below the baseline, a cap-band-centred control reads d/2 low,
+       because the descender hangs past the band the eye centres on. Anything
+       further than a pixel from that is the bug coming back. */
+    const centred = await p.evaluate(() => {
+      const c = document.createElement('canvas').getContext('2d');
+      const read = sel => {
+        const e = document.querySelector(sel);
+        if(!e) return null;
+        const cs = getComputedStyle(e);
+        const label = e.tagName === 'SELECT' ? e.options[e.selectedIndex].text : e.textContent.trim();
+        c.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+        const m = c.measureText(label);
+        /* where the browser puts the baseline: the font box, centred in what
+           the padding leaves of the element's height */
+        const h = e.getBoundingClientRect().height;
+        const pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
+        const bt = parseFloat(cs.borderTopWidth), bb = parseFloat(cs.borderBottomWidth);
+        const inner = h - pt - pb - bt - bb;
+        const A = m.fontBoundingBoxAscent, D = m.fontBoundingBoxDescent;
+        const baseline = bt + pt + (inner - (A + D)) / 2 + A;
+        /* the cap band is baseline-capHeight .. baseline; centre it on h/2 */
+        const capCentre = baseline - m.actualBoundingBoxAscent / 2;
+        return { label, off:+(capCentre - h / 2).toFixed(2) };
+      };
+      return { select:read('.ac-field select'),
+               segment:read('.ac-seg-track .btn:not([aria-current])'),
+               primary:read('.btn.primary'),
+               setbtn:read('.ac-set .btn') };
+    });
+    /* One-sided, because the fault has a direction. Centring the font box puts
+       every one of these between half a pixel and a pixel ABOVE the centre;
+       centring the cap band puts them between 0 and half a pixel below, where
+       the descender overhang makes them read right. So: never above, and never
+       more than a touch below. A symmetric tolerance would have let the bug
+       back in, since the whole defect is one pixel wide. */
+    for(const [what, m] of Object.entries(centred)){
+      ok(m, what + ' is on the panel');
+      ok(m.off >= -0.15 && m.off <= 0.8,
+         what + ' ("' + m.label + '") centres its cap band, not its font box: ' +
+         (m.off < 0 ? m.off + 'px above centre' : m.off + 'px below'));
+    }
+
+    /* AND THE COLUMNS LINE UP. The settings band is a grid, not a wrapping
+       row: wrapped, every row packed from the left and the next column began
+       wherever the last control happened to end, so ROOT sat at one x and
+       INSTRUMENT, a row below it, at another. */
+    const cols = await p.evaluate(() => {
+      const band = document.querySelector('.ac-band:not(.ac-band-act)');
+      const rows = new Map();
+      for(const e of band.children){
+        const r = e.getBoundingClientRect();
+        if(e.classList.contains('ac-seg')) continue;      // spans every column
+        const key = Math.round(r.top);
+        if(!rows.has(key)) rows.set(key, []);
+        rows.get(key).push(Math.round(r.left));
+      }
+      const lanes = [...rows.values()];
+      return { lanes, tracks:getComputedStyle(band).gridTemplateColumns.split(' ').length };
+    });
+    ok(cols.tracks >= 2, 'the settings band keeps at least two columns: ' + cols.tracks);
+    for(let i = 1; i < cols.lanes.length; i++)
+      eq(cols.lanes[i].slice(0, Math.min(cols.lanes[i].length, cols.lanes[0].length)),
+         cols.lanes[0].slice(0, Math.min(cols.lanes[i].length, cols.lanes[0].length)),
+         'row ' + (i + 1) + ' of the settings starts on the same columns as row 1');
+
+    /* back to the lesson the checks below are about */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
+    await p.locator('#rail button').first().waitFor({ timeout:10000 });
+    await p.waitForTimeout(400);
 
     /* the lesson rail replaced the breadcrumb and the outline disclosure */
     eq(await p.locator('.crumb').count(), 0, 'no breadcrumb: the rail says where you are');

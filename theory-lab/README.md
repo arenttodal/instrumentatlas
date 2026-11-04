@@ -289,6 +289,25 @@ its baseline and the next caption begins halfway across under nothing. An
 activity declares its controls in whatever order reads best; the sort is
 automatic and a new activity gets it for free.
 
+**Optical centring.** DM Sans reports an ascent of 12 and a descent of 4 at
+12.5px, and a browser centres that box — so a label with no descender ("Rise",
+"Dorian", "LOOP", which is most of them) is drawn with 2px more air beneath it
+than above and reads as sitting high. Controls therefore centre the *cap band*,
+baseline to cap height, treating a descender as the overhang it is. `--ink` is
+that shift, 1px at this size, and because a fixed-height box centres its
+content in what the padding leaves, asking for it means `padding-top` of twice
+`--ink` against no padding-bottom. Icon buttons are exempt: a glyph has no
+baseline to sit off.
+
+**Columns line up.** The settings band is a grid, not a wrapping flex row.
+Wrapped, every row packs from the left and the next column starts wherever the
+last control ended, so `ROOT` sits at one x and `INSTRUMENT`, one row below, at
+another. `auto-fill` rather than `auto-fit`, or the tracks a short row does not
+use collapse and the columns move again. The min track is 132px because the
+narrowest column the panel ever has — a tool's settings sub-column at 720p — is
+about 292px, and two tracks have to fit it; at 156px it gave one column and
+every field stacked.
+
 **Material.** `--panel` is the faint vertical gradient every control sits on
 and `--edge` is a one-pixel highlight along its top: light from above, which is
 the oldest way there is to make a flat rectangle look like a physical thing.
