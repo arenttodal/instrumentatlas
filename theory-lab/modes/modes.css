@@ -4,7 +4,7 @@
    Only what this module adds: the chord tiles, the row of mode buttons, and
    the keyboard's place under the piano roll. Everything else — the lesson
    shell, the transport, the controls, the quiz — comes from
-   accelerator/accelerator.css, which both host pages link.
+   theory-lab/engine/lesson.css, which both host pages link.
    ============================================================================ */
 
 /* breadcrumb link in the bar, matching the one the Accelerator draws */

@@ -9,17 +9,20 @@ const AccelAudio = (() => {
      script's own URL rather than written relative to the document. A page
      hosting this engine from a subfolder — theory-lab/modes/lessons.html —
      would otherwise look for them beside itself and find nothing. */
-  /* THE FALLBACK BANKS LIVE IN accelerator/audio/ AND ARE SHARED.
-     They are ~30 MB of mp3 that both products fall back to when the sample CDN
-     is out of reach, so they are not copied per product. The path is derived
-     from this script's own URL rather than written relative to the document,
-     because the page that loads this engine can sit at any depth; a page in
-     another tree can point it somewhere else with
+  /* THE FALLBACK BANKS SIT BESIDE THIS FILE, in theory-lab/engine/audio/.
+     Nine instruments, 33 mp3s, 0.8 MB: what a phrase falls back to when the
+     sample CDN is out of reach. They came from accelerator/audio/, which the
+     Accelerator deleted when it moved to activities that synthesise, so this
+     is the only copy rather than a second one.
+
+     The path is derived from this script's own URL rather than written
+     relative to the document, because a page loading this engine can sit at
+     any depth; one in another tree can point it elsewhere with
      <script src="…/audio.js" data-banks="…/">. */
   const BASE=(()=>{
     const el=document.currentScript;
     if(el&&el.dataset&&el.dataset.banks) return new URL(el.dataset.banks,location.href).href;
-    return el&&el.src ? new URL('../../accelerator/audio/',el.src).href : 'accelerator/audio/';
+    return el&&el.src ? new URL('audio/',el.src).href : 'theory-lab/engine/audio/';
   })();
   const path=n=>BASE+(n.instrument||'piano')+'/'+Accel.note(anchor(n.instrument||'piano',n.m))+'.mp3';
   async function load(url){

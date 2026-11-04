@@ -1,4 +1,4 @@
-/* accelerator/model.js reads LESSONS at load, to migrate legacy progress and to
+/* model.js reads LESSONS at load, to migrate legacy progress and to
    validate an imported backup. A page that uses the store without using the
    lesson engine — the Scales & Modes ear quiz — has no LESSONS, so this
    declares an empty one.

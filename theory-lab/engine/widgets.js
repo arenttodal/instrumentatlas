@@ -83,7 +83,7 @@ const AccelWidgets = (() => {
     /* BY FIELD, NOT BY ID. `activity` lets several lessons share one widget
        with different presets — six modes, one reharmonizer. It falls back to
        the lesson id, which is how every Accelerator lesson resolves. (The
-       `demo` field in accelerator/data.js is dead and is not consulted.) */
+       `demo` field this engine inherited is dead and is not consulted.) */
     const make=AccelActivities[lesson.activity||lesson.id];
     if(typeof make!=='function') throw Error('No activity named '+(lesson.activity||lesson.id));
     spec=make(state,kit);spec.render();update();const original=Accel.clone(state);

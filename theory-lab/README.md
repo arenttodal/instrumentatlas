@@ -15,6 +15,14 @@ theory-lab/
 ├── lab.css         hub + module chrome (tokens, cards, page shell)
 ├── lab.js          paints the hub
 ├── modules.js      THE REGISTRY: one entry per module
+├── engine/         THE LESSON ENGINE, this product's own
+│   ├── app.js      router, lesson page, LESSON_* hooks
+│   ├── widgets.js  transport, piano roll, control kit
+│   ├── audio.js    scheduler, voice hook, fallback banks
+│   ├── model.js    the progress store
+│   ├── lesson.css  the shell and the lesson's own styles
+│   ├── data-stub.js  for a page that wants the store, not the engine
+│   └── audio/      the fallback sample banks
 └── modes/          a module
     ├── index.html  its home: lessons and tools
     ├── lessons.html  the Accelerator engine, pointed at this module's data
@@ -32,8 +40,20 @@ Shared across the suite, one level up: `evenant-theory.js` (pure theory, no
 DOM), `evenant-keyboard.js` + `.css` (the Voicing Atlas keyboard as a
 component), `evenant-sound.js` (its 71 instruments as transport voices),
 `evenant-listen.js` + `.css` (the Instrument Atlas's video grid as a
-component), `evenant-gate.js`, `evenant-nav.js`, `evenant-modules.js`, and the
-Accelerator engine in `accelerator/`.
+component), `evenant-gate.js`, `evenant-nav.js` and `evenant-modules.js`.
+
+**The lesson engine is Theory Lab's own**, in `theory-lab/engine/`: `app.js`
+(router and lesson page), `widgets.js` (the transport, roll and control kit),
+`audio.js`, `model.js` (the progress store), `data-stub.js`, `lesson.css`, and
+`audio/` — nine instruments of mp3 that a phrase falls back to when the sample
+CDN is out of reach.
+
+It began as the Accelerator's engine and the two have since diverged: the
+Accelerator in `accelerator/` is a twelve-lesson course of bespoke activities
+run as micro levels, with a `beats` data shape of its own, and it is a
+different product from this one. **Changing `accelerator/` does not change
+Theory Lab and the reverse is equally true.** If you want something from one
+in the other, port it deliberately.
 
 There is no build step. Scripts are classic `<script defer>` in dependency
 order and top-level `const` is the module system — nothing exports. Order in
@@ -161,7 +181,7 @@ activities.loop = (s, u) => {
 ```
 
 `s` is the state — the lesson's `preset`, overridden by the query string,
-persisted per learner. `u` is the kit from `accelerator/widgets.js`: `host`,
+persisted per learner. `u` is the kit from `theory-lab/engine/widgets.js`: `host`,
 `params`, `button`, `group`, `select`, `range`, `toggle`, `editor`, `pitches`,
 `defaults()`, `notes()`, `update()`, `redraw()`, `say()`, `play()`,
 `preview()`, `clean()`.
@@ -226,8 +246,9 @@ written to the repo and nothing is posted anywhere.
 
 `ear.html` is the pattern: its own engine on `AccelAudio.Transport`, its own
 CSS, the Dojo's chrome, no Accelerator app. It still loads
-`accelerator/model.js` for the progress store, which needs `MODULES`/`LESSONS`
-to exist — hence `accelerator/data-stub.js`, which declares both empty.
+`theory-lab/engine/model.js` for the progress store, which needs
+`MODULES`/`LESSONS` to exist — hence `engine/data-stub.js`, which declares both
+empty.
 
 Progress is keyed by `<html data-store="…">`. Give the module **one** store key
 and use it on every page of it, so lessons and tools share a record.

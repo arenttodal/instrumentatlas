@@ -50,7 +50,7 @@
       '<a href="https://github.com/gleitz/midi-js-soundfonts">FluidR3 GM / MIDI.js Soundfonts</a>, ' +
       '<a href="https://creativecommons.org/licenses/by/3.0/us/">CC BY 3.0</a>. ' +
       'Samples transposed and level-adjusted during playback. ' +
-      '<a href="accelerator/AUDIO-CREDITS.md">Audio credits and limitations</a>.';
+      '<a href="/theory-lab/engine/AUDIO-CREDITS.md">Audio credits and limitations</a>.';
 
   /* EXTRA PANELS. A second product may want more on a lesson than the five
      sections — Scales & Modes adds Listen, a grid of recordings. It declares

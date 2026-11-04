@@ -89,7 +89,7 @@ const EVENANT_MODULES = [
   {
     id:'accelerator', name:'The Accelerator', icon:'accelerator', status:'locked',
     path:'accelerator.html',
-    blurb:'The interactive companion to the ebook. Six lessons, each with something to play with.'
+    blurb:'The interactive companion to the ebook. Twelve lessons, each a run of short steps with something to play with.'
   },
   /* Theory Lab is ONE tool here however many modules it grows. The locks live
      a level down, on the module cards at theory-lab/, so this list stays the

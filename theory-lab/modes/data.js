@@ -23,7 +23,7 @@
    widgets do, but the spec has them rewritten from the video transcripts once
    those exist. Every `url` in `videos` is a placeholder.
 
-   Unlike accelerator/data.js, NOTHING MUTATES THIS ARRAY after the literal.
+   Unlike the Accelerator's own data file, NOTHING MUTATES THIS ARRAY after the literal.
    What is written here is the whole truth about these lessons.
    ============================================================================ */
 

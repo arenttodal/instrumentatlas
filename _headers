@@ -12,6 +12,12 @@
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
 
+# The Theory Lab engine's fallback sample banks. Same deal as the others: a
+# file name is fixed for the life of its contents, so re-cutting one means a
+# new name rather than a new version of an old one.
+/theory-lab/engine/audio/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # Studio renders and per-instrument demo clips.
 /audio/*
   Cache-Control: public, max-age=31536000, immutable

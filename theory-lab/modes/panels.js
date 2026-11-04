@@ -1,7 +1,7 @@
 /* ============================================================================
    SCALES & MODES · THE HOOKS THE ENGINE LOOKS FOR
    ----------------------------------------------------------------------------
-   Two globals accelerator/app.js checks for and does without if they are not
+   Two globals theory-lab/engine/app.js checks for and does without if they are not
    there: LESSON_COPY, which puts the owner's words at the top of a mode, and
    LESSON_PANELS, which adds the Listen tab.
 

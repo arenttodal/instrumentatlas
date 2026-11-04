@@ -1,17 +1,12 @@
 /* ============================================================================
-   THE ACCELERATOR — SHELL AND LESSON STYLES
+   THEORY LAB — LESSON SHELL AND LESSON STYLES
    ----------------------------------------------------------------------------
-   Lifted verbatim out of accelerator.html's inline <style>, so that a second
-   product can host the same engine and get the same shell. Linked by
-   accelerator.html and by theory-lab/modes/lessons.html.
+   Linked by theory-lab/modes/lessons.html. Lifted out of the Accelerator's
+   inline <style> when a second product started hosting the same engine, and
+   the two have diverged since: the Accelerator in accelerator/ has moved to
+   base.css + ui.css and a lesson page of its own shape. This file is Theory
+   Lab's, and nothing in accelerator/ reads it.
 
-   Nothing here was changed in the move. The two orphaned files next to this one
-   — base.css and ui.css — are a different, older attempt and are linked by no
-   page; see accelerator/README.md.
-   ============================================================================ */
-
-/* ============================================================================
-   THE ACCELERATOR — STYLES
    Design system shared with the Instrument Atlas. See PORT.md §5.
    ============================================================================ */
 
