@@ -251,6 +251,54 @@ draft in `localStorage`; **Copy data** writes the whole object back as source
 to paste into the data file, and **Discard draft** clears it. Nothing is
 written to the repo and nothing is posted anywhere.
 
+## 6b. The instrument panel
+
+Every control a widget draws comes from `theory-lab/engine/widgets.js` and is
+painted by `theory-lab/engine/lesson.css`. An activity never styles anything
+itself; it declares what it needs and inherits the panel.
+
+**One control height.** `--ctl` is 34px and a select, a button, a switch and a
+slider all stand exactly that tall. More than any other single rule this is
+what makes a row of controls read as designed rather than assembled — their
+tops and bottoms line up instead of nearly matching. A control row
+bottom-aligns, so a control that is 12px short puts its caption 12px below its
+neighbour's, which is the most visible way a panel looks thrown together.
+
+**One spacing scale.** `--s1` 4px through `--s6` 38px. Every gap on the panel
+is one of them. Before this there were gaps of 6, 8, 9, 10, 12, 14, 18, 20, 22,
+24 and 26px, none of which meant anything.
+
+**Three voices and no more.**
+
+| | |
+|---|---|
+| `.btn` | the ordinary action — an outline |
+| `.btn.primary` | the one thing this panel is for; the only filled control |
+| `.btn.icon` | a glyph beside the primary, square, no label |
+
+A boolean is never a button: `kit.toggle()` emits `.ac-switch`, a track and a
+knob, because a state and an action should not be the same shape. An ordered
+one-of-N choice is never N buttons either: `kit.segment()` returns a track to
+append them to, and they weld into one segmented control.
+
+**Two bands.** `widgets.js` sorts a widget's controls into a settings band
+(captioned fields and segments) and an actions band (switches and buttons)
+before paint. Captioned fields are two lines tall and bare switches are one, so
+a single wrapping row staggers — whatever lands first on the second line sets
+its baseline and the next caption begins halfway across under nothing. An
+activity declares its controls in whatever order reads best; the sort is
+automatic and a new activity gets it for free.
+
+**Material.** `--panel` is the faint vertical gradient every control sits on
+and `--edge` is a one-pixel highlight along its top: light from above, which is
+the oldest way there is to make a flat rectangle look like a physical thing.
+Nothing fakes depth with a drop shadow, because on `#080C14` a shadow is
+invisible and only the highlight does any work.
+
+`theory-lab/modes/tests/browser.cjs` asserts the height, the baseline, the two
+bands and the single filled control, because each of those was wrong once and
+each is cheap to get wrong again.
+
 ## 7. A page that is not a lesson
 
 `ear.html` is the pattern: its own engine on `AccelAudio.Transport`, its own

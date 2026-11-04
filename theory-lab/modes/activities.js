@@ -6,10 +6,12 @@
    compare without asking. Loads after evenant-theory.js, evenant-keyboard.js,
    evenant-sound.js and themes.js.
 
-   EVERY ONE PLAYS OVER A DRONE, on by default. A mode is only audible against
-   a fixed tonic — play D Dorian with nothing under it and you have played C
-   major — and that is the single most common reason people say they cannot
-   hear modes.
+   EVERY ONE OFFERS A DRONE, off until it is asked for. A mode is only audible
+   against a fixed tonic — play D Dorian with nothing under it and you have
+   played C major — and that is the single most common reason people say they
+   cannot hear modes, so the switch is the first thing to reach for. It is not
+   on by default, because starting every widget with a sustained note under it
+   assumes what the reader wants to hear first, and assumes it loudly.
 
    The keyboard goes under the roll rather than in the controls column, which
    is what spec.draw(rollHost) is for. It is built once and then only told what
@@ -174,7 +176,7 @@ const ModeActivities = (() => {
       render(){
         u.select(u.host, 'Root', ROOTS.map(pc => ({ value: pc, label: rootName(pc, s.mode) })), s.rootPc,
           v => { s.rootPc = +v; u.redraw(); });
-        const bar = u.group(u.host, 'Mode');
+        const bar = u.segment(u.host, 'Mode');
         bar.classList.add('md-modebar');
         T.MODES.forEach(m => {
           const b = u.button(bar, m.name, () => { s.mode = m.id; pick = null; u.redraw(); });
@@ -319,7 +321,7 @@ const ModeActivities = (() => {
           v => { s.theme = v; const t = themeById(v); s.from = t.home; u.redraw(); });
         u.select(u.host, 'Root', ROOTS.map(pc => ({ value: pc, label: rootName(pc, s.mode) })), s.rootPc,
           v => { s.rootPc = +v; u.redraw(); });
-        const bar = u.group(u.host, 'Mode');
+        const bar = u.segment(u.host, 'Mode');
         bar.classList.add('md-modebar');
         T.MODES.forEach(m => {
           const b = u.button(bar, m.name, () => { s.mode = m.id; u.update(); u.redraw(); });

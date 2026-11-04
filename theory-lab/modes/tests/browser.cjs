@@ -273,8 +273,13 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
     eq(await p.locator('#rail').count(), 0, l.id + ' is a tool: no step rail');
     eq(await p.locator('.lrail').count(), 0, 'and no lesson rail');
-    ok(await p.locator('.ac-actions .ac-set').count() === 3,
-       l.id + ' keeps compare and revise, which is a tool\'s business');
+    /* four groups, not one run of seven pills: slot A, slot B, history, and the
+       way out. Checking the labels rather than the count, so this says what the
+       row is for instead of how many boxes it happens to have. */
+    eq(await p.evaluate(() => [...document.querySelectorAll('.ac-actions .ac-set')]
+         .map(g => [...g.querySelectorAll('button')].map(b => b.textContent.trim()).join('/'))),
+       ['Keep A/Hear A', 'Keep B/Hear B', 'Undo/Redo', 'Reset the tool'],
+       l.id + ' keeps compare and revise, in pairs, which is a tool\'s business');
   }
 
   /* ...and a lesson does not carry it */
@@ -449,6 +454,67 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     eq(skin.groupBorder, '0px', 'a group is a heading and its contents, not a box with a notch');
     eq(skin.ring, 'none', 'and the heading arrives without a focus ring');
     ok(skin.focused, 'while still being focused, which is what the ring was for');
+
+    /* ---- THE PANEL IS ONE OBJECT ----------------------------------------
+       The three things that decide whether a row of controls reads as designed
+       or as assembled, each of which was wrong before and each of which is
+       cheap to get wrong again:
+
+         ONE HEIGHT. Every control stands --ctl tall. The slider used to be
+         22px among 34px selects, and because a control row bottom-aligns that
+         put its caption 16px below its neighbour's.
+
+         ONE BASELINE. Everything in a band shares a top edge, which only holds
+         while the heights do.
+
+         TWO BANDS. Captioned fields are two lines tall and bare switches are
+         one, so a single wrapping row staggers: whatever lands first on the
+         second line sets its baseline and the next caption starts halfway
+         across under nothing. */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/brightness-lab');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    await p.waitForTimeout(600);
+    const panel = await p.evaluate(() => {
+      const h = s => { const e = document.querySelector(s); return e ? Math.round(e.getBoundingClientRect().height) : null; };
+      const band = document.querySelector('.ac-band');
+      const tops = [...band.children].map(e => Math.round(e.getBoundingClientRect().top));
+      const caps = [...band.querySelectorAll(':scope > .ac-field')]
+        .map(e => Math.round(e.getBoundingClientRect().top));
+      return { ctl:getComputedStyle(document.documentElement).getPropertyValue('--ctl').trim(),
+               select:h('.ac-field select'), range:h('.ac-field input[type=range]'),
+               btn:h('.ac-band-act .btn:not(.ac-switch)') ?? h('.btn:not(.ac-switch):not(.icon)'),
+               bands:document.querySelectorAll('.ac-controls > .ac-band').length,
+               capSpread:caps.length ? Math.max(...caps) - Math.min(...caps) : 0,
+               topSpread:Math.max(...tops) - Math.min(...tops),
+               /* a band holds fields OR actions, never both */
+               mixed:[...document.querySelectorAll('.ac-band:not(.ac-band-act)')]
+                 .some(b => [...b.children].some(e => e.classList.contains('ac-switch'))) };
+    });
+    eq(panel.ctl, '34px', 'the panel has one control height');
+    eq(panel.select, 34, 'the select stands at it');
+    eq(panel.range, 34, 'and so does the slider, which is what keeps their captions level');
+    eq(panel.btn, 34, 'and so does a button');
+    eq(panel.capSpread, 0, 'every caption in a band sits on one line');
+    eq(panel.bands, 2, 'controls come in two bands: the settings, then what acts on them');
+    ok(!panel.mixed, 'and a switch never lands in the settings band to stagger it');
+
+    /* the switch is a switch and the primary is the only filled control */
+    const voices = await p.evaluate(() => {
+      const faces = [...document.querySelectorAll('#demo-host .btn')]
+        .filter(b => getComputedStyle(b).backgroundImage.includes('212, 160, 74'));
+      return { filled:faces.map(b => b.textContent.trim()),
+               switchIsNotPill:getComputedStyle(document.querySelector('.btn.ac-switch')).borderTopWidth,
+               trackCount:document.querySelectorAll('.ac-switch .ac-sw-track').length,
+               pressed:document.querySelector('.btn.ac-switch').getAttribute('aria-pressed') };
+    });
+    eq(voices.filled, ['Play'], 'exactly one control on the panel is filled, and it is Play');
+    eq(voices.switchIsNotPill, '0px', 'a switch is not another pill');
+    ok(voices.trackCount >= 1, 'it has a track to slide');
+    eq(voices.pressed, 'false', 'and still reports its state the way it always did');
+
+    /* back to the lesson this section was looking at, for the checks below */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
+    await p.locator('#rail button').first().waitFor({ timeout:10000 });
 
     /* the lesson rail replaced the breadcrumb and the outline disclosure */
     eq(await p.locator('.crumb').count(), 0, 'no breadcrumb: the rail says where you are');

@@ -16,6 +16,37 @@
   --warn:#C0603A;--ok:#5FB89A;
   --text:#BEC0C8;--dim:#7E808A;--faint:#4E505A;
   --hair:rgba(255,255,255,.07);--hair-gold:rgba(212,160,74,.24);
+
+  /* ---- THE INSTRUMENT PANEL ------------------------------------------------
+     Everything below is what makes a panel of controls read as one machined
+     object rather than a pile of boxes someone sized by eye.
+
+     ONE SPACING SCALE. The old chrome had gaps of 6, 8, 9, 10, 12, 14, 18, 20,
+     22, 24 and 26px, none of which meant anything. These six do, and every gap
+     on the panel is now one of them.
+
+     ONE CONTROL HEIGHT. A select, a button, a switch and a slider all stand
+     --ctl tall and sit on one baseline. More than anything else here, that is
+     what the eye reads as "designed" — a row of controls whose tops and
+     bottoms line up, instead of five heights that nearly match.
+
+     TWO SURFACES. --panel is the faint vertical gradient every control sits
+     on, and --edge is a one-pixel highlight along its top. Together they catch
+     the light from above, which is the oldest trick there is for making a flat
+     rectangle look like a physical thing. Nothing here uses a drop shadow to
+     fake depth on a dark background, because on #080C14 a shadow is invisible
+     and only the highlight does any work.
+     ------------------------------------------------------------------------ */
+  --s1:4px;--s2:8px;--s3:12px;--s4:18px;--s5:26px;--s6:38px;
+  --r1:8px;--r2:12px;--rp:100px;
+  --ctl:34px;
+  --panel:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.016));
+  --panel-hi:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.03));
+  --edge:inset 0 1px 0 rgba(255,255,255,.07);
+  --gold-face:linear-gradient(180deg,rgba(212,160,74,.26),rgba(212,160,74,.13));
+  --gold-face-hi:linear-gradient(180deg,rgba(212,160,74,.38),rgba(212,160,74,.2));
+  --ring:0 0 0 3px rgba(212,160,74,.1);
+  --ease:cubic-bezier(.4,0,.2,1);
 }
 html{background:var(--bg);overflow-y:scroll;scrollbar-gutter:stable}
 body{font-family:'DM Sans',-apple-system,sans-serif;font-size:17px;color:var(--text);
@@ -74,80 +105,218 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
    ============================================================================ */
 
 /* --- a labelled field: the label ABOVE the control, never beside it ------- */
-.ac-field{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;
+/* The label is the smallest, quietest type on the panel and the control is the
+   loudest: you read a panel by its controls and only check the labels when you
+   do not recognise one. Letterspaced caps at 9.5px is the Atlas's label voice
+   and it is used here for every label without exception — the transport used
+   to label Loop and Volume in 12.5px sentence case, so one row carried two
+   different ideas of what a label is. */
+.ac-field{display:inline-flex;flex-direction:column;align-items:flex-start;gap:var(--s2);
   font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
   color:var(--faint);max-width:100%}
 .ac-field>span{display:inline-flex;align-items:baseline;gap:6px}
-.ac-field output{color:var(--gold);font-weight:700;letter-spacing:1px}
+.ac-field output{color:var(--gold);font-weight:700;letter-spacing:1px;
+  font-variant-numeric:tabular-nums}
 
-/* --- the select, painted ------------------------------------------------- */
+/* --- the select ----------------------------------------------------------
+   The Atlas's selector is a pill with a gold-tinted edge that lights up and
+   grows a soft ring on hover. Theory Lab had a square-cornered grey box, so
+   the two products did not look related. This is the Atlas's control, at the
+   size this panel uses. The element stays a native <select> — appearance:none
+   paints it, it does not replace it — so the keyboard, the screen reader and
+   the phone's own picker all still work. */
 .ac-field select,select.ac-select{appearance:none;-webkit-appearance:none;
-  min-height:34px;max-width:100%;padding:7px 32px 7px 13px;
-  border:1px solid var(--hair);border-radius:8px;background-color:rgba(255,255,255,.03);
-  color:var(--text);font-family:inherit;font-size:12.5px;font-weight:400;
-  letter-spacing:0;text-transform:none;cursor:pointer;transition:border-color .2s,color .2s;
-  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%237E808A' stroke-width='1.4'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 12px center}
-.ac-field select:hover{border-color:var(--hair-gold);color:#fff}
-.ac-field select:focus-visible{border-color:var(--gold)}
+  height:var(--ctl);max-width:100%;padding:0 32px 0 13px;
+  border:1px solid var(--hair-gold);border-radius:var(--rp);
+  background-image:var(--panel);background-color:transparent;box-shadow:var(--edge);
+  color:#fff;font-family:inherit;font-size:12.5px;font-weight:500;
+  letter-spacing:0;text-transform:none;cursor:pointer;
+  transition:border-color .22s var(--ease),background .22s var(--ease),box-shadow .22s var(--ease);
+  background-repeat:no-repeat;background-position:right 12px center,0 0;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23D4A04A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l4 3.5 4-3.5'/%3E%3C/svg%3E"),var(--panel)}
+.ac-field select:hover{border-color:var(--gold);background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23D4A04A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l4 3.5 4-3.5'/%3E%3C/svg%3E"),var(--panel-hi);
+  box-shadow:var(--edge),var(--ring)}
+.ac-field select:focus-visible{border-color:var(--gold);box-shadow:var(--edge),var(--ring)}
 /* the OS paints the open list, so its options need a readable pair of their own */
 .ac-field select option{background:#0C1220;color:var(--text)}
 
-/* --- checkbox and slider ------------------------------------------------- */
-.ac-transport input[type=checkbox],.ac-controls input[type=checkbox]{
-  appearance:none;-webkit-appearance:none;position:relative;flex:0 0 auto;
-  width:15px;height:15px;border:1px solid rgba(255,255,255,.14);border-radius:4px;
-  background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .2s,background .2s}
-.ac-transport input[type=checkbox]:checked,.ac-controls input[type=checkbox]:checked{
-  background:rgba(212,160,74,.2);border-color:var(--gold)}
-.ac-transport input[type=checkbox]:checked::after,.ac-controls input[type=checkbox]:checked::after{
-  content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;
-  border:solid var(--gold);border-width:0 1.6px 1.6px 0;transform:rotate(42deg)}
+/* --- the switch ----------------------------------------------------------
+   Loop, Drone, Remap melody, Mark what differs: these are states, and as pills
+   they were the same shape as "Play the cadence", which is an action. A track
+   and a knob say on-or-off before the label is read, and say which it is now
+   without the reader having to notice that one pill is slightly more gold than
+   its neighbour. The checkbox version is the transport's Loop; the button
+   version is every toggle the activities declare. Both keep their real
+   element and their real ARIA. */
+.ac-sw{display:inline-flex;align-items:center;gap:var(--s2);height:var(--ctl);
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint);cursor:pointer;white-space:nowrap;
+  transition:color .22s var(--ease)}
+.ac-sw:hover{color:var(--dim)}
+.ac-sw input[type=checkbox],.ac-sw-track{appearance:none;-webkit-appearance:none;
+  position:relative;flex:0 0 auto;width:30px;height:17px;border-radius:var(--rp);
+  border:1px solid var(--hair);background-image:var(--panel);box-shadow:var(--edge);
+  cursor:pointer;transition:border-color .22s var(--ease),background .22s var(--ease)}
+.ac-sw input[type=checkbox]::after,.ac-sw-track::after{
+  content:'';position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;
+  background:#6A6C76;transition:transform .22s var(--ease),background .22s var(--ease)}
+.ac-sw input[type=checkbox]:checked,.ac-switch[aria-pressed="true"] .ac-sw-track{
+  border-color:var(--gold);background-image:var(--gold-face)}
+.ac-sw input[type=checkbox]:checked::after,.ac-switch[aria-pressed="true"] .ac-sw-track::after{
+  transform:translateX(13px);background:var(--gold)}
+.ac-sw input[type=checkbox]:focus-visible{outline:none;box-shadow:var(--edge),var(--ring)}
+/* the toggle button: no pill around it, because the switch IS the control */
+.btn.ac-switch{padding:0;border:0;background:none;gap:var(--s2);height:var(--ctl);
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint)}
+.btn.ac-switch:hover{color:var(--dim);border-color:transparent}
+.btn.ac-switch[aria-pressed="true"]{background:none;border-color:transparent;color:var(--text)}
+.btn.ac-switch:focus-visible{outline:none}
+.btn.ac-switch:focus-visible .ac-sw-track{box-shadow:var(--edge),var(--ring);border-color:var(--gold)}
 
-.ac-transport input[type=range],.ac-controls input[type=range]{
-  appearance:none;-webkit-appearance:none;width:104px;max-width:100%;height:3px;
-  border-radius:3px;background:rgba(255,255,255,.12);cursor:pointer}
-.ac-transport input[type=range]::-webkit-slider-thumb,.ac-controls input[type=range]::-webkit-slider-thumb{
-  appearance:none;-webkit-appearance:none;width:12px;height:12px;border:0;border-radius:50%;
-  background:var(--gold)}
-.ac-transport input[type=range]::-moz-range-thumb,.ac-controls input[type=range]::-moz-range-thumb{
-  width:12px;height:12px;border:0;border-radius:50%;background:var(--gold)}
-.ac-field input[type=range]{width:168px}
+/* --- the slider ----------------------------------------------------------
+   The old one was a 3px hairline with a flat dot on it: the half you had
+   travelled looked exactly like the half you had not, so the control carried
+   no value at all. --p is set by the kit on every input, and the track is
+   painted from it — gold behind the thumb, neutral in front. The thumb is a
+   real knob with a dark core and a gold rim, and it grows when you take hold
+   of it. */
+.ac-sw-spacer{display:none}
+input[type=range]{appearance:none;-webkit-appearance:none;width:104px;max-width:100%;
+  height:var(--ctl);background:none;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold) 0 calc(var(--p,0)*100%),rgba(255,255,255,.1) calc(var(--p,0)*100%) 100%)}
+input[type=range]::-moz-range-track{height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold) 0 calc(var(--p,0)*100%),rgba(255,255,255,.1) calc(var(--p,0)*100%) 100%)}
+input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
+  width:14px;height:14px;margin-top:-5px;border-radius:50%;
+  border:2px solid var(--gold);background:#0E1420;box-shadow:0 1px 3px rgba(0,0,0,.5);
+  transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--gold);background:#0E1420;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.12);box-shadow:0 1px 3px rgba(0,0,0,.5),var(--ring)}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+input[type=range]:focus-visible{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(0,0,0,.5),var(--ring)}
+/* --ctl, like every other control in a field. At 22px the slider was shorter
+   than the selects beside it, and since a control row bottom-aligns, that put
+   BRIGHTNESS's label 16px below ROOT's — two labels on the same row at two
+   different heights, which is the single most visible way a panel looks
+   thrown together. */
+.ac-field input[type=range]{width:168px;height:var(--ctl)}
 
 /* --- a labelled group: the legend is a heading, not a notch in a border --- */
 .ac-group{border:0;padding:0;margin:0;min-width:0;display:flex;flex-wrap:wrap;
-  align-items:flex-end;gap:8px}
-.ac-group>legend{float:left;width:100%;padding:0;margin:0 0 9px;
+  align-items:center;gap:var(--s2)}
+.ac-group>legend{float:left;width:100%;padding:0;margin:0 0 var(--s2);
   font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
   color:var(--faint)}
+
+/* --- a segmented control -------------------------------------------------
+   The fieldset is a plain block whose legend sits above; the track inside it
+   is the control. Generic, because an ordered one-of-N choice is not peculiar
+   to modes — anything else that needs one gets this for free. */
+.ac-seg{display:block}
+.ac-seg-track{display:inline-flex;flex-wrap:wrap;align-items:center;gap:0;
+  padding:3px;border:1px solid var(--hair);border-radius:var(--rp);
+  background-image:var(--panel);box-shadow:var(--edge);max-width:100%}
 
 /* --- the step editor: eight steps, each a unit ---------------------------- */
 .ac-editor{gap:14px 22px}
 .ac-step{display:flex;align-items:flex-end;gap:8px;flex:0 0 auto}
 
-/* --- the control row ----------------------------------------------------- */
-.ac-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px 20px;margin-top:22px}
-.ac-controls>.btn,.ac-group>.btn{align-self:flex-end}
-.w-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+/* --- the control row -----------------------------------------------------
+   align-items:center, not flex-end. Every control is --ctl tall now, so they
+   align themselves; flex-end only mattered while they were five heights that
+   nearly matched, and it left the ones with labels sitting lower than the ones
+   without. The column gap is bigger than the row gap because the eye needs
+   less help separating things stacked than things side by side. */
+.ac-controls{display:flex;flex-direction:column;align-items:stretch;gap:var(--s4);margin-top:var(--s5)}
+/* a band is one row of like things. align-items:flex-end so a bare switch sits
+   on the same baseline as a control that has a caption above it. */
+.ac-band{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--s3) var(--s5)}
+.ac-band-act{gap:var(--s3) var(--s4)}
+.ac-controls>.btn,.ac-band>.btn,.ac-group>.btn{align-self:flex-end}
+.w-row{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
 
-/* --- the transport ------------------------------------------------------- */
-.ac-transport{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
-.ac-inline{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim)}
-.ac-transport [data-time]{font-size:12px;color:var(--faint);
-  font-variant-numeric:tabular-nums;letter-spacing:.5px}
+/* --- the transport -------------------------------------------------------
+   A transport reads left to right: what you press, then what it is doing, then
+   how it is set. Play and its two glyphs are one welded cluster with no gap
+   between them, which is how every transport since the tape machine has looked
+   and what stops them reading as three unrelated buttons. The status sentence
+   takes the slack in the middle so the settings stay pinned to the right. */
+.ac-transport{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s4)}
+.ac-tg{display:inline-flex;align-items:center;gap:var(--s1)}
+.ac-time{font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.ac-vol{display:inline-flex;align-items:center;gap:var(--s2);height:var(--ctl);
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--faint)}
+.ac-vol input[type=range]{width:84px}
 .ac-audio-status{font-size:11.5px;color:var(--faint);margin-left:auto;text-align:right}
-.ac-timeline{height:3px;margin-top:12px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
-.ac-timeline i{display:block;height:100%;width:0;background:var(--gold)}
+
+/* --- the glyphs ----------------------------------------------------------
+   Drawn from one attribute with clip-path and a gradient: no icon font, no
+   sprite sheet, nothing that can fall out of step with the label beside it. */
+.ac-ico{display:block;width:9px;height:10px;background:currentColor;flex:0 0 auto}
+[data-state="play"] .ac-ico{clip-path:polygon(0 0,100% 50%,0 100%)}
+[data-state="pause"] .ac-ico{clip-path:none;
+  background:linear-gradient(90deg,currentColor 0 34%,transparent 34% 66%,currentColor 66% 100%)}
+[data-state="loading"] .ac-ico{clip-path:none;border-radius:50%;width:10px;height:10px;
+  background:conic-gradient(from 0deg,transparent 0 55%,currentColor 55% 100%);
+  -webkit-mask:radial-gradient(circle,transparent 0 2.6px,#000 2.8px);
+          mask:radial-gradient(circle,transparent 0 2.6px,#000 2.8px);
+  animation:ac-spin .8s linear infinite}
+@keyframes ac-spin{to{transform:rotate(360deg)}}
+.ico-stop{width:9px;height:9px;border-radius:1.5px;clip-path:none}
+.ico-start{position:relative;width:10px;height:10px;clip-path:polygon(100% 0,25% 50%,100% 100%)}
+.btn.icon .ico-start::after{content:''}
+
+/* --- the scrubber --------------------------------------------------------
+   The old timeline was a 3px bar you could only watch. This one you can take
+   hold of: the whole strip is the hit area, the fill shows where you are, and
+   a knob rides the join so there is something to aim at. */
+/* The knob is 13px wide and centred on its position, so the track is inset by
+   half of it at each end — otherwise the knob hangs off the panel at 0 and at
+   the end, which is what a half-moon at the left edge was. */
+.ac-scrub{position:relative;margin-top:var(--s3);padding:var(--s2) 7px;cursor:pointer;
+  flex:0 0 auto;border-radius:var(--r1)}
+.ac-scrub:focus-visible{outline:none;box-shadow:var(--ring)}
+/* A GROOVE, NOT A RULE. At 4px of 8%-white this was indistinguishable from the
+   hairline that separates two sections, so the one control on the panel you
+   could drag looked like a divider. It is cut INTO the panel — dark channel,
+   light top edge — the way a fader slot is, and the knob rides it at all times
+   rather than appearing on hover, because a control you cannot see is a
+   control nobody uses. */
+.ac-timeline{height:5px;border-radius:4px;background:rgba(0,0,0,.3);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.04);
+  overflow:hidden}
+.ac-timeline i{display:block;height:100%;width:0;border-radius:4px;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold));
+  box-shadow:0 0 10px rgba(212,160,74,.4)}
+.ac-scrub::after{content:'';position:absolute;top:50%;
+  left:calc(7px + var(--p,0)*(100% - 14px));
+  width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;
+  border:2px solid var(--gold);background:#111826;pointer-events:none;
+  box-shadow:0 1px 4px rgba(0,0,0,.6);
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
+.ac-scrub:hover::after{transform:scale(1.15);box-shadow:0 1px 4px rgba(0,0,0,.6),var(--ring)}
+.ac-scrub:focus-visible::after{box-shadow:0 1px 4px rgba(0,0,0,.6),var(--ring)}
 
 /* --- compare and revise: three jobs, not seven identical buttons --------- */
-.ac-actions{margin-top:24px}
-.ac-actions .ac-group{gap:10px 26px}
-.ac-set{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.ac-set .btn{font-size:12px;padding:7px 14px}
+.ac-actions{margin-top:var(--s5)}
+.ac-actions .ac-group{gap:var(--s3) var(--s5)}
+.ac-set{display:flex;flex-wrap:wrap;gap:0;align-items:center}
+/* A/B and undo/redo are pairs, so they are welded into one segmented control
+   each: two halves of one object rather than four loose pills. */
+.ac-set .btn{font-size:12px;padding:0 13px;height:30px;border-radius:0;
+  margin-left:-1px;color:var(--dim)}
+.ac-set .btn:first-child{border-radius:var(--rp) 0 0 var(--rp);margin-left:0;padding-left:15px}
+.ac-set .btn:last-child{border-radius:0 var(--rp) var(--rp) 0;padding-right:15px}
+.ac-set .btn:only-child{border-radius:var(--rp);padding:0 15px}
+.ac-set .btn:hover{z-index:1}
 /* the reset is a way out, not a thing to do: a quiet link at the end */
-.ac-set[data-set="reset"] .btn{border-color:transparent;padding-left:4px;padding-right:4px;
-  color:var(--faint);border-radius:0;border-bottom:1px solid var(--hair)}
-.ac-set[data-set="reset"] .btn:hover{color:var(--gold);border-bottom-color:var(--hair-gold)}
+.ac-set[data-set="reset"] .btn{border:0;border-bottom:1px solid var(--hair);
+  padding:0 2px;height:auto;color:var(--faint);border-radius:0;background:none;box-shadow:none}
+.ac-set[data-set="reset"] .btn:hover{color:var(--gold);border-bottom-color:var(--hair-gold);background:none}
 
 /* --- captions and read-outs --------------------------------------------- */
 .ac-feedback{font-size:14px;color:var(--dim);font-weight:300;margin-top:14px;
@@ -191,13 +360,30 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
 .q{padding:20px 22px;border:1px solid var(--hair);border-radius:12px;margin-bottom:12px;
   background:rgba(255,255,255,.015)}
 .q>p{font-size:16px;margin-bottom:14px;color:#fff;font-weight:400}
-.opts{display:grid;gap:7px}
-.opt{text-align:left;padding:11px 15px;border:1px solid var(--hair);border-radius:9px;
-  font-size:14.5px;color:var(--text);font-weight:300;transition:all .2s}
-.opt:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
-.opt.right{border-color:var(--ok);background:rgba(95,184,154,.1);color:#fff}
-.opt.wrong{border-color:var(--warn);background:rgba(192,96,58,.1);color:#fff}
-.opt:disabled{cursor:default}
+/* AN ANSWER IS A CONTROL TOO. These were flat hairline rectangles while every
+   other surface on the page had been given a face, so the one thing the reader
+   is asked to press looked like the one thing nobody had styled. Same panel,
+   same radius, same ease as the instrument beside them — and the marker on the
+   left edge carries the verdict, so right and wrong are told by position and
+   shape as well as by colour. */
+.opts{display:grid;gap:var(--s2)}
+.opt{position:relative;text-align:left;padding:11px 15px 11px 17px;
+  border:1px solid var(--hair);border-radius:var(--r2);overflow:hidden;
+  font-size:14.5px;color:var(--text);font-weight:300;
+  background-image:var(--panel);box-shadow:var(--edge);
+  transition:color .22s var(--ease),border-color .22s var(--ease),
+             background .22s var(--ease),transform .22s var(--ease)}
+.opt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:transparent;transition:background .22s var(--ease)}
+.opt:hover:not(:disabled){border-color:var(--hair-gold);color:#fff;
+  background-image:var(--panel-hi);transform:translateX(2px)}
+.opt:hover:not(:disabled)::before{background:var(--hair-gold)}
+.opt.right{border-color:var(--ok);background-image:linear-gradient(180deg,rgba(95,184,154,.16),rgba(95,184,154,.06));color:#fff}
+.opt.right::before{background:var(--ok)}
+.opt.wrong{border-color:var(--warn);background-image:linear-gradient(180deg,rgba(192,96,58,.16),rgba(192,96,58,.06));color:#fff}
+.opt.wrong::before{background:var(--warn)}
+.opt:disabled{cursor:default;transform:none}
+.opt:disabled:hover{transform:none}
 .why{margin-top:13px;padding-top:13px;border-top:1px solid var(--hair);font-size:13.5px;
   line-height:1.65;color:var(--dim);font-weight:300;display:none}
 .why.on{display:block}
@@ -216,9 +402,40 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
   color:var(--faint);margin-bottom:9px}
 .w-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .w-col{display:grid;gap:5px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--hair);
-  border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s;white-space:nowrap}
-.btn:hover{border-color:var(--hair-gold);color:#fff}
+/* ---- THE BUTTON, IN THREE VOICES ------------------------------------------
+   The panel had one button and used it eleven times a screen, so Play, Undo,
+   Drone and "Reset the tool" were all the same pill and the eye had to read
+   every word to find the one it wanted. There are only ever three things a
+   button can be here, and now they look like three things:
+
+     .btn            secondary — the ordinary action. An outline.
+     .btn.primary    the one thing this panel is for. The only filled control.
+     .btn.icon       a glyph beside the primary, square, no label.
+
+   plus .ac-switch, above, for the ones that are states rather than actions.
+   Nothing else. A fourth voice would be a fourth thing to learn.
+
+   transition:all was also doing real damage — it animated width and padding on
+   hover, so a row of buttons twitched as the pointer crossed it. Only colour,
+   edge and shadow move now. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:var(--ctl);padding:0 16px;border:1px solid var(--hair);
+  border-radius:var(--rp);font-size:12.5px;font-weight:500;color:var(--dim);
+  background-image:var(--panel);box-shadow:var(--edge);white-space:nowrap;
+  transition:color .22s var(--ease),border-color .22s var(--ease),
+             background .22s var(--ease),box-shadow .22s var(--ease)}
+.btn:hover{border-color:var(--hair-gold);color:#fff;background-image:var(--panel-hi)}
+.btn:active{background-image:var(--panel)}
+
+/* the primary: filled, white type, and the only gold face on the panel */
+.btn.primary{border-color:rgba(212,160,74,.45);color:#fff;
+  background-image:var(--gold-face);padding:0 18px}
+.btn.primary:hover{border-color:var(--gold);background-image:var(--gold-face-hi);
+  box-shadow:var(--edge),var(--ring)}
+
+/* the glyph buttons beside it: square, so the cluster reads as one object */
+.btn.icon{width:var(--ctl);padding:0;color:var(--dim)}
+.btn.icon:hover{color:var(--gold)}
 /* The import control is a <label class="btn"> wrapping a file input. Left
    unstyled the native picker sits inside the pill and makes it 380px wide,
    which pushes a 390px page sideways. Hide the input rather than display:none
@@ -226,12 +443,13 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
 .btn input[type=file]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .btn:focus-within{border-color:var(--hair-gold);color:#fff}
-.btn.wide{border-radius:9px;justify-content:flex-start;width:100%}
-.btn.gold{border-color:rgba(212,160,74,.4);color:#fff;background:rgba(212,160,74,.09)}
-.btn.gold:hover{background:rgba(212,160,74,.18)}
-.btn.on{border-color:var(--gold);background:rgba(212,160,74,.2);color:#fff}
-.btn[aria-pressed="true"]{border-color:var(--c,var(--gold));color:#fff;
-  background:rgba(212,160,74,.12)}
+.btn.wide{border-radius:var(--r1);justify-content:flex-start;width:100%;padding:0 16px}
+/* .gold is the old name for .primary; both are kept so a page that still asks
+   for the old one does not silently lose its emphasis. */
+.btn.gold{border-color:rgba(212,160,74,.45);color:#fff;background-image:var(--gold-face)}
+.btn.gold:hover{border-color:var(--gold);background-image:var(--gold-face-hi)}
+.btn.on,.btn[aria-pressed="true"]:not(.ac-switch){border-color:var(--c,var(--gold));color:#fff;
+  background-image:var(--gold-face)}
 /* The roll's key. widgets.js has always emitted this element and nothing has
    ever styled it, so the layer names ran together at body size — "Slot 1Slot
    2Slot 3Slot 4". Spaced, and brought down to the scale the rest of the
@@ -246,10 +464,19 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
   opacity:.6;visibility:hidden;pointer-events:none}
 /* The bar numbers are HTML under the roll rather than <text> inside it, so the
    roll can stretch to any shape without stretching type with it. */
-.ac-roll-bars{position:relative;height:15px;margin-top:2px;flex:0 0 auto}
-.ac-roll-bars span{position:absolute;top:0;font-size:11px;color:#BEC0C8;white-space:nowrap}
-.ac-legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 0;
-  font-size:11px;letter-spacing:.3px}
+.ac-roll-bars{position:relative;height:14px;margin-top:var(--s1);flex:0 0 auto}
+.ac-roll-bars span{position:absolute;top:0;font-size:9.5px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--faint);white-space:nowrap}
+/* THE KEY READS AS A KEY. The layer names were set in the body colour at body
+   size with the layer's colour applied to the type, so "Melody" and "Chords"
+   were two coloured words and you had to already know they referred to the
+   bars. A swatch in front of each says what it is, and the name can then go
+   back to the label voice everything else on the panel uses. */
+.ac-legend{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s4);margin:var(--s2) 0 0;
+  font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.ac-legend span{display:inline-flex;align-items:center;gap:6px}
+.ac-legend span::before{content:'';width:12px;height:3px;border-radius:2px;
+  background:currentColor;flex:0 0 auto}
 .w-read{font-size:12.5px;color:var(--dim);font-weight:300;line-height:1.6;
   padding-top:14px;border-top:1px solid var(--hair)}
 .w-read b{color:#fff;font-weight:500}
@@ -403,7 +630,11 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
 /* A lesson stacks the two boxes: the music takes the slack, the knobs keep
    their natural height. */
 .lplay .ac-music{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
-.lplay .ac-knobs{flex:0 0 auto;min-height:0}
+/* what you listen to, then a rule, then what you turn — the tool draws the
+   same division vertically, with a border between its two columns */
+.lplay .ac-knobs{flex:0 0 auto;min-height:0;margin-top:var(--s4);padding-top:var(--s4);
+  border-top:1px solid var(--hair)}
+.lplay .ac-controls{margin-top:0}
 .lplay .ac-music>[data-roll]{flex:1 1 auto;min-height:88px;display:flex;flex-direction:column}
 .lplay .ac-roll-stage{flex:1 1 auto}
 .lplay .ac-controls{flex:0 0 auto}
@@ -430,15 +661,23 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
   .lcols{grid-template-columns:minmax(300px,336px) 1fr;gap:22px}
   .lplay .ac-audio-status{flex:1 1 100px;min-width:0;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  /* Two fixed columns rather than flex-wrap: wrapping gave a different number
-     of rows per activity, so the tallest one — locrian's — overflowed while
-     the others fit. A grid is the same height for all of them. */
-  .lplay .ac-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-    align-items:end;gap:9px 12px;margin-top:10px}
+  /* A fixed grid rather than flex-wrap for the settings band: wrapping gave a
+     different number of rows per activity, so the tallest one — locrian's —
+     overflowed while the others fit. A grid is the same height for all of them.
+     The actions band stays a flex row, because switches are narrow and of one
+     height and a grid would only spread them out. */
+  .lplay .ac-controls{gap:var(--s3);margin-top:10px}
+  .lplay .ac-band:not(.ac-band-act){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    align-items:end;gap:9px 12px}
   /* the mode row goes first so it does not strand a half-empty row above it:
-     mode bar, then the four selects in one row, then the two buttons */
-  .lplay .ac-controls>.ac-group{order:-1;grid-column:1/-1}
+     mode bar, then the four selects in one row */
+  .lplay .ac-band>.ac-seg{order:-1;grid-column:1/-1}
+  .lplay .ac-band-act{gap:9px var(--s4)}
   .lplay .ac-knobs .ac-field{gap:4px}
+  /* the panel's own breathing room is the first thing to give up on a short
+     screen — the groove keeps its size, only the air around it goes */
+  .lplay .ac-scrub{padding:4px 7px;margin-top:var(--s2)}
+  .lplay .ac-knobs{margin-top:var(--s3);padding-top:var(--s3)}
   /* the selects have to be able to shrink into a quarter-width cell */
   .lplay .ac-controls .ac-field,.lplay .ac-controls .btn{min-width:0}
   .lplay .ac-controls .ac-field select{width:100%;min-width:0}

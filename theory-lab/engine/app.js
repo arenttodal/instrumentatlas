@@ -352,7 +352,11 @@
   function keys(e){
     if(!curLesson || e.metaKey || e.ctrlKey || e.altKey) return;
     const t = e.target;
-    if(t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    /* The widget has arrow keys of its own — the scrubber seeks with them, the
+       keyboard walks with them — so once focus is inside it, the arrows belong
+       to the instrument and not to the lesson's Back and Next. */
+    if(t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' ||
+             t.isContentEditable || (t.closest && t.closest('#demo-host')))) return;
     if(e.key === 'ArrowRight' && curStep < curSteps.length - 1){ e.preventDefault(); showStep(curStep + 1); }
     if(e.key === 'ArrowLeft'  && curStep > 0){ e.preventDefault(); showStep(curStep - 1); }
   }
