@@ -1,6 +1,10 @@
 /* The voice hook in the transport, and the Voicing Atlas sound layer on top.
    node tests/sound.cjs   (needs the site served; ACCEL_URL or :8765)
 
+   Driven through theory-lab/modes/lessons.html, because the engine that owns
+   the hook is theory-lab/engine/ — the Accelerator is a separate product with
+   an engine of its own.
+
    smplr and its samples come from a CDN. Where that is reachable the real
    instruments load; where it is not — a locked-down CI runner, a train — the
    voice falls back to this repo's own banks, and that fallback is the thing
@@ -19,14 +23,28 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
   const page = await browser.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
-  await page.addInitScript(() => { try { localStorage.setItem('evenant-gate-accelerator','g3j74oa'); } catch(_){} });
-  await page.goto(BASE + '/accelerator.html#/foundations/overtones');
+  /* The voice hook lives in the Theory Lab's engine, so this drives a Theory
+     Lab page. The Accelerator is a separate product with a separate engine and
+     does not carry it. */
+  await page.addInitScript(() => { try { localStorage.setItem('evenant-gate-lab-modes','g1ctlzg'); } catch(_){} });
+  await page.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
   await page.locator('[data-play]').waitFor();
 
   /* ------------------------------------------------- 1. the hook exists --- */
   eq(await page.evaluate(() => typeof AccelAudio.voices.register), 'function', 'voices.register');
   eq(await page.evaluate(() => typeof AccelAudio.ctx), 'function', 'AccelAudio.ctx()');
-  eq(await page.evaluate(() => AccelAudio.voices.list()), [], 'nothing is registered until something registers');
+  /* This page's boot.js registers the Voicing Atlas instruments, so the
+     registry is populated rather than empty — what matters is that it holds
+     only what something asked it to hold, and that forgetting works. */
+  ok(await page.evaluate(() => !AccelAudio.voices.has('nothing:asked-for-this')),
+     'the registry holds only what was registered');
+  eq(await page.evaluate(() => {
+       AccelAudio.voices.register('probe:hook', { load(){ return Promise.resolve(true); },
+         start(){ return () => {}; }, stopAll(){} });
+       const had = AccelAudio.voices.has('probe:hook');
+       AccelAudio.voices.forget('probe:hook');
+       return [had, AccelAudio.voices.has('probe:hook')];
+     }), [true, false], 'and a voice can be registered and forgotten');
 
   /* --------------------------------- 2. a voice is loaded once and played --- */
   await page.evaluate(() => {
@@ -95,7 +113,9 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
   eq(await page.evaluate(() => sad.starts), 0, 'so no note is sent to it');
 
   /* ------------------------------------- 5. EvSound registers everything --- */
-  await page.addScriptTag({ url: '/evenant-sound.js' });
+  /* The page loads evenant-sound.js itself and boot.js has already registered
+     once; registering again is how this asserts the count, and it has to be
+     idempotent for that to be safe. */
   const reg = await page.evaluate(() => EvSound.register(AccelAudio));
   eq(reg, 72, 'all 72 instruments register as voices');
   ok(await page.evaluate(() => AccelAudio.voices.has('va:splendid')), "including VA's grand");

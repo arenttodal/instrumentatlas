@@ -38,18 +38,11 @@ const Accel = (() => {
     const items=ns.filter(n=>n.s<4*bar+4 && n.s+n.d>4*bar).map(n=>({...n,inside:chord.pcs.includes(n.m%12),weight:Math.min(n.s+n.d,4*bar+4)-Math.max(n.s,4*bar)+(n.s===4*bar?1:0)}));
     return {items,fit:items.filter(n=>n.inside).reduce((a,n)=>a+n.weight,0),total:items.reduce((a,n)=>a+n.weight,0)};
   };
-  /* ONE STORE PER PRODUCT. The Accelerator keeps accel-work-v2; a second
-     product hosting this engine sets data-store on <html> and gets its own, so
-     two products' progress can never mix in one browser. The legacy
-     accel-progress migration is the Accelerator's own history and runs only
-     for the default key. */
-  const DEFAULT_KEY='accel-work-v2';
-  const key=(typeof document!=='undefined'&&document.documentElement.dataset.store)||DEFAULT_KEY;
-  let writable=true;
+  const key='accel-work-v2';let writable=true;
   let data={version:2,lessons:{},sketch:{motif:seed()},last:'/'};
   const plain = x => x && typeof x==='object' && !Array.isArray(x);
   try { const r=JSON.parse(localStorage.getItem(key)||'null'); if(r?.version===2 && plain(r.lessons) && plain(r.sketch) && valid(r.sketch.motif))data=r; } catch(_){}
-  if(key===DEFAULT_KEY) try { const old=JSON.parse(localStorage.getItem('accel-progress')||'{}');if(plain(old))for(const l of LESSONS)if(!Object.hasOwn(data.lessons,l.id)&&plain(old[l.id]))data.lessons[l.id]={seen:!!old[l.id].seen,exerciseDone:!!old[l.id].exerciseDone,quizPassed:!!old[l.id].quizPassed}; } catch(_){}
+  try { const old=JSON.parse(localStorage.getItem('accel-progress')||'{}');if(plain(old))for(const l of LESSONS)if(!Object.hasOwn(data.lessons,l.id)&&plain(old[l.id]))data.lessons[l.id]={seen:!!old[l.id].seen,exerciseDone:!!old[l.id].exerciseDone,quizPassed:!!old[l.id].quizPassed}; } catch(_){}
   const save=()=>{try{localStorage.setItem(key,JSON.stringify(data));writable=true;}catch(_){writable=false;}};
   const lesson=id=>Object.hasOwn(data.lessons,id)&&plain(data.lessons[id])?data.lessons[id]:{};
   const patch=(id,v)=>{data.lessons[id]={...lesson(id),...clone(v)};save();};

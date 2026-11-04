@@ -30,29 +30,8 @@ const AccelWidgets = (() => {
     for(let b=0;b<beats;b+=4)svg+='<text x="'+(35+b/beats*650)+'" y="199" fill="#BEC0C8" font-size="12">Bar '+(b/4+1)+'</text>';
     host.innerHTML='<div class="ac-roll-stage">'+svg+'</svg><i class="ac-playhead" aria-hidden="true"></i></div><div class="ac-legend">'+layers.map((l,i)=>'<span style="color:'+colors[i%4]+'">'+esc(l)+'</span>').join('')+'</div>';
   }
-  /* `params` is what a deep link asked for. It is merged over the lesson's own
-     preset — the URL wins, because it is the more specific instruction — and
-     handed to the activity as kit.params.
-
-     Applying it to state: a deep link is an explicit request for a particular
-     view, so it overrides whatever was saved. A preset with no deep link is
-     only a starting point, so it applies on a first visit and then leaves the
-     learner's own work alone. */
-  function mount(host,lesson,params){
+  function mount(host,lesson){
     const saved=Accel.lesson(lesson.id);let state=Accel.clone(saved.widget||{});if(!state||typeof state!=='object'||Array.isArray(state))state={};
-    const linked=!!(params&&Object.keys(params).length);
-    /* A URL carries everything as a string. A preset carries real types, and
-       kit.defaults() rejects a value whose type does not match its default —
-       which is right for a corrupted saved state and wrong for '?rootPc=2',
-       so the query is coerced back to what it plainly is before it is merged. */
-    const typed={};
-    for(const k in (params||{})){
-      const v=params[k];
-      typed[k] = v==='true' ? true : v==='false' ? false
-               : (v!=='' && v!=null && !isNaN(v)) ? Number(v) : v;
-    }
-    const wanted={...(lesson.preset||{}),...typed};
-    if(linked||!saved.widget) Object.assign(state,Accel.clone(wanted));
     let alive=true;let comparisons=saved.comparisons||{},undo=[],redo=[],previous=null,revising=false,cleanup=()=>{},spec,info;
     host.innerHTML='<div class="ac-transport"><button class="btn gold" data-play>Play</button><button class="btn" data-restart>Restart</button><button class="btn" data-stop>Stop</button><label class="ac-inline">Loop <input type="checkbox" data-loop checked></label><label class="ac-inline">Volume <input type="range" data-volume min="0" max="1" step=".01"></label><span data-time>0:00</span></div><p class="ac-audio-status" data-status role="status">Audio loads when you press Play.</p><div class="ac-timeline"><i data-progress></i></div><div data-roll></div><div class="ac-controls" data-controls></div><p class="w-read" data-read aria-live="polite"></p><div class="ac-actions" data-actions></div>';
     const q=s=>host.querySelector(s),controls=q('[data-controls]'),actions=q('[data-actions]');
@@ -70,7 +49,7 @@ const AccelWidgets = (() => {
     }
     function redraw(){cleanup();cleanup=()=>{};controls.replaceChildren();spec.render();update();}
     function restore(value){Object.keys(state).forEach(k=>delete state[k]);Object.assign(state,Accel.clone(value));redraw();}
-    const kit={host:controls,params:wanted,button,group,select,range,toggle,editor,pitches,update,redraw,
+    const kit={host:controls,button,group,select,range,toggle,editor,pitches,update,redraw,
       clean:f=>{const prev=cleanup;cleanup=()=>{prev();f();};},
       say:text=>q('[data-read]').textContent=text,
       saveSketch:(values,text)=>{Accel.setSketch(values);q('[data-read]').textContent=text;},
@@ -80,29 +59,15 @@ const AccelWidgets = (() => {
       defaults:values=>{for(const [k,v] of Object.entries(values))if(!(k in state)||typeof state[k]!==typeof v||Array.isArray(v)&&!Array.isArray(state[k]))state[k]=Accel.clone(v);},
       notes:(key,fallback)=>{if(!Accel.valid(state[key]))state[key]=Accel.clone(fallback);}
     };
-    /* BY FIELD, NOT BY ID. `activity` lets several lessons share one widget
-       with different presets — six modes, one reharmonizer. It falls back to
-       the lesson id, which is how every Accelerator lesson resolves. (The
-       `demo` field in accelerator/data.js is dead and is not consulted.) */
-    const make=AccelActivities[lesson.activity||lesson.id];
-    if(typeof make!=='function') throw Error('No activity named '+(lesson.activity||lesson.id));
-    spec=make(state,kit);spec.render();update();const original=Accel.clone(state);
-    /* THREE JOBS, NOT SEVEN BUTTONS. Keeping and hearing a version, stepping
-       through history, and starting over are different things, and in one flat
-       row of identical pills they read as one undifferentiated clump. Same
-       buttons, same labels — grouped, with the way out as a quiet link. */
+    spec=AccelActivities[lesson.id](state,kit);spec.render();update();const original=Accel.clone(state);
     const compare=group(actions,'Compare and revise');
-    const set=name=>{const d=document.createElement('div');d.className='ac-set';d.dataset.set=name;compare.append(d);return d;};
-    const ab=set('ab');
     for(const slot of ['A','B']){
-      button(ab,'Keep '+slot,()=>{comparisons[slot]=Accel.clone(state);save();kit.say('Version '+slot+' saved.');});
-      button(ab,'Hear '+slot,()=>{if(!comparisons[slot]){kit.say('Keep a version in '+slot+' first.');return;}const playing=transport.status==='playing';restore(comparisons[slot]);if(!playing)transport.play(0);});
+      button(compare,'Keep '+slot,()=>{comparisons[slot]=Accel.clone(state);save();kit.say('Version '+slot+' saved.');});
+      button(compare,'Hear '+slot,()=>{if(!comparisons[slot]){kit.say('Keep a version in '+slot+' first.');return;}const playing=transport.status==='playing';restore(comparisons[slot]);if(!playing)transport.play(0);});
     }
-    const history=set('history');
-    button(history,'Undo',()=>{if(!undo.length)return;redo.push(Accel.clone(state));revising=true;restore(undo.pop());revising=false;});
-    button(history,'Redo',()=>{if(!redo.length)return;undo.push(Accel.clone(state));revising=true;restore(redo.pop());revising=false;});
-    /* "Restore lesson start" on a tool is the wrong words: there is no lesson. */
-    button(set('reset'),lesson.kind==='lab'?'Reset the tool':'Restore lesson start',()=>restore(original));
+    button(compare,'Undo',()=>{if(!undo.length)return;redo.push(Accel.clone(state));revising=true;restore(undo.pop());revising=false;});
+    button(compare,'Redo',()=>{if(!redo.length)return;undo.push(Accel.clone(state));revising=true;restore(redo.pop());revising=false;});
+    button(compare,'Restore lesson start',()=>restore(original));
     return {check:()=>spec.check(),play:()=>transport.play(0),inspect:()=>Accel.clone(info),capture:save,destroy:()=>{alive=false;cleanup();transport.destroy();}};
   }
   return {mount,esc};
