@@ -125,7 +125,7 @@ code is accepted — hash and query intact.
   id:'four-note-loop', module:'lessons', n:2,
   title:'…', short:'…', claim:'…',
   activity:'loop',                    /* which widget */
-  preset:{ bars:4, drone:true },      /* its starting state */
+  preset:{ bars:4, drone:false },     /* its starting state */
   challenge:'…',                      /* the prompt above it */
   videos:[{ part:'theory', title:'…', url:'…', minutes:6 }],
   body:['…'],                         /* HTML-bearing strings */
@@ -169,7 +169,7 @@ Accelerator already uses:
 
 ```js
 activities.loop = (s, u) => {
-  u.defaults({ bars:4, drone:true });     /* fill in anything the preset left out */
+  u.defaults({ bars:4, drone:false });    /* fill in anything the preset left out */
   return {
     build(){ return { events, bpm:88, beats:16 }; },  /* what the transport plays */
     render(){ /* draw the controls into u.host */ },
@@ -199,32 +199,41 @@ and before the first widget mounts, and `EvSound.apply(events, id)` points a
 phrase at one of them. If the sample CDN cannot be reached the voice falls back
 to this repo's own banks and the phrase still sounds.
 
-Every widget that plays anything should play over an optional tonic drone, on
-by default. A mode without a tonic underneath it is not a mode.
+Every widget that plays anything should offer a tonic drone, **off until it is
+asked for**. A mode without a tonic underneath it is not a mode, so the drone
+is the first thing to reach for when one refuses to sound like itself — but
+starting every widget with a sustained note under it assumes what the reader
+wants to hear first, and assumes it loudly.
 
-## 6. Extra tabs on a lesson
+## 6. Extra steps on a lesson
 
-A lesson is five sections in a fixed order. A module that wants more declares
-`LESSON_PANELS(lesson)`, and the engine draws a tab bar — **Overview** for the
-sections it already had, plus one tab per panel. Declare nothing and the page
-is exactly what it was.
+A lesson is a **run of numbered steps**, not a page you scroll and not a tab
+bar. `stepsOf(lesson)` builds the run: Try it, one step per beat of reading,
+Practise if there is an exercise, one step per quiz question, then one step per
+declared panel, then Done. The step rail at the top of the reading column is
+the progress indicator, Back and Next and the arrow keys move through it, and
+`?step=4` opens one directly.
+
+A module that wants a step of its own declares `LESSON_PANELS(lesson)`. Declare
+nothing and the lesson is exactly what it was.
 
 ```js
 const LESSON_PANELS = lesson => {
   if(lesson.kind === 'lab') return [];          // a tool has no lesson around it
-  return [{ id:'listen', label:'Listen', badge:6,
+  return [{ id:'listen', label:'Listen', badge:6, lead:'…',
             mount(host){ return EvListen.render(host, …); } }];
 };
 ```
 
-`mount` runs the first time its tab is opened and never again, so a tab nobody
-clicks costs nothing. What it returns is destroyed when the reader leaves the
-lesson. Opening a tab other than Overview stops the transport, because the
-transport's own Stop button goes off screen with it.
+`mount` runs the first time its step is reached and never again, so a step
+nobody walks to costs nothing. What it returns is destroyed when the reader
+leaves the lesson. A panel step fills the **wide** column — the widget is
+hidden and `#panel-host` takes its place — and reaching one stops the
+transport, because the transport goes off screen with it.
 
-`#/lessons/lydian?tab=listen` opens a tab directly, which is what a video
-description links to. Clicking a tab rewrites the hash, so what the reader is
-looking at is always what the address bar says.
+`label` names the step in the rail; `lead` is one line above the panel. Moving
+between steps rewrites the hash, so what the reader is looking at is always
+what the address bar says.
 
 **The Listen grid.** `EvListen.render(host, items, opts)` returns `{destroy}`
 and draws the Instrument Atlas's video card: thumbnail, play disc, metadata.
@@ -241,6 +250,73 @@ end / Clear end / Mark verified and a field for a different video. Edits are a
 draft in `localStorage`; **Copy data** writes the whole object back as source
 to paste into the data file, and **Discard draft** clears it. Nothing is
 written to the repo and nothing is posted anywhere.
+
+## 6b. The instrument panel
+
+Every control a widget draws comes from `theory-lab/engine/widgets.js` and is
+painted by `theory-lab/engine/lesson.css`. An activity never styles anything
+itself; it declares what it needs and inherits the panel.
+
+**One control height.** `--ctl` is 34px and a select, a button, a switch and a
+slider all stand exactly that tall. More than any other single rule this is
+what makes a row of controls read as designed rather than assembled — their
+tops and bottoms line up instead of nearly matching. A control row
+bottom-aligns, so a control that is 12px short puts its caption 12px below its
+neighbour's, which is the most visible way a panel looks thrown together.
+
+**One spacing scale.** `--s1` 4px through `--s6` 38px. Every gap on the panel
+is one of them. Before this there were gaps of 6, 8, 9, 10, 12, 14, 18, 20, 22,
+24 and 26px, none of which meant anything.
+
+**Three voices and no more.**
+
+| | |
+|---|---|
+| `.btn` | the ordinary action — an outline |
+| `.btn.primary` | the one thing this panel is for; the only filled control |
+| `.btn.icon` | a glyph beside the primary, square, no label |
+
+A boolean is never a button: `kit.toggle()` emits `.ac-switch`, a track and a
+knob, because a state and an action should not be the same shape. An ordered
+one-of-N choice is never N buttons either: `kit.segment()` returns a track to
+append them to, and they weld into one segmented control.
+
+**Two bands.** `widgets.js` sorts a widget's controls into a settings band
+(captioned fields and segments) and an actions band (switches and buttons)
+before paint. Captioned fields are two lines tall and bare switches are one, so
+a single wrapping row staggers — whatever lands first on the second line sets
+its baseline and the next caption begins halfway across under nothing. An
+activity declares its controls in whatever order reads best; the sort is
+automatic and a new activity gets it for free.
+
+**Optical centring.** DM Sans reports an ascent of 12 and a descent of 4 at
+12.5px, and a browser centres that box — so a label with no descender ("Rise",
+"Dorian", "LOOP", which is most of them) is drawn with 2px more air beneath it
+than above and reads as sitting high. Controls therefore centre the *cap band*,
+baseline to cap height, treating a descender as the overhang it is. `--ink` is
+that shift, 1px at this size, and because a fixed-height box centres its
+content in what the padding leaves, asking for it means `padding-top` of twice
+`--ink` against no padding-bottom. Icon buttons are exempt: a glyph has no
+baseline to sit off.
+
+**Columns line up.** The settings band is a grid, not a wrapping flex row.
+Wrapped, every row packs from the left and the next column starts wherever the
+last control ended, so `ROOT` sits at one x and `INSTRUMENT`, one row below, at
+another. `auto-fill` rather than `auto-fit`, or the tracks a short row does not
+use collapse and the columns move again. The min track is 132px because the
+narrowest column the panel ever has — a tool's settings sub-column at 720p — is
+about 292px, and two tracks have to fit it; at 156px it gave one column and
+every field stacked.
+
+**Material.** `--panel` is the faint vertical gradient every control sits on
+and `--edge` is a one-pixel highlight along its top: light from above, which is
+the oldest way there is to make a flat rectangle look like a physical thing.
+Nothing fakes depth with a drop shadow, because on `#080C14` a shadow is
+invisible and only the highlight does any work.
+
+`theory-lab/modes/tests/browser.cjs` asserts the height, the baseline, the two
+bands and the single filled control, because each of those was wrong once and
+each is cheap to get wrong again.
 
 ## 7. A page that is not a lesson
 
@@ -279,4 +355,10 @@ up by existing CI without touching the workflow.
 - After unlocking, the gate continues to the URL the buyer arrived on — hash
   and query included.
 - Every page at 390 px has no horizontal page scroll.
+- **Nothing scrolls on a desktop.** Every route — the hub, a module, a lesson
+  at every step, a tool — fits one screen from 1280x720 up, and nothing is
+  clipped behind the lock. `theory-lab/modes/tests/browser.cjs` asserts this
+  at 1280x720, 1366x768 and 1440x900; its probe looks for leaves below the
+  fold and for a flex box shorter than what it holds, because
+  `body{overflow:hidden}` makes `scrollHeight` report a perfect fit either way.
 - The Accelerator is untouched: same look, same behaviour, its own CI green.

@@ -16,6 +16,54 @@
   --warn:#C0603A;--ok:#5FB89A;
   --text:#BEC0C8;--dim:#7E808A;--faint:#4E505A;
   --hair:rgba(255,255,255,.07);--hair-gold:rgba(212,160,74,.24);
+
+  /* ---- THE INSTRUMENT PANEL ------------------------------------------------
+     Everything below is what makes a panel of controls read as one machined
+     object rather than a pile of boxes someone sized by eye.
+
+     ONE SPACING SCALE. The old chrome had gaps of 6, 8, 9, 10, 12, 14, 18, 20,
+     22, 24 and 26px, none of which meant anything. These six do, and every gap
+     on the panel is now one of them.
+
+     ONE CONTROL HEIGHT. A select, a button, a switch and a slider all stand
+     --ctl tall and sit on one baseline. More than anything else here, that is
+     what the eye reads as "designed" — a row of controls whose tops and
+     bottoms line up, instead of five heights that nearly match.
+
+     TWO SURFACES. --panel is the faint vertical gradient every control sits
+     on, and --edge is a one-pixel highlight along its top. Together they catch
+     the light from above, which is the oldest trick there is for making a flat
+     rectangle look like a physical thing. Nothing here uses a drop shadow to
+     fake depth on a dark background, because on #080C14 a shadow is invisible
+     and only the highlight does any work.
+     ------------------------------------------------------------------------ */
+  --s1:4px;--s2:8px;--s3:12px;--s4:18px;--s5:26px;--s6:38px;
+  --r1:8px;--r2:12px;--rp:100px;
+  --ctl:34px;
+  --panel:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.016));
+  --panel-hi:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.03));
+  --edge:inset 0 1px 0 rgba(255,255,255,.07);
+  --gold-face:linear-gradient(180deg,rgba(212,160,74,.26),rgba(212,160,74,.13));
+  --gold-face-hi:linear-gradient(180deg,rgba(212,160,74,.38),rgba(212,160,74,.2));
+  --ring:0 0 0 3px rgba(212,160,74,.1);
+  --ease:cubic-bezier(.4,0,.2,1);
+
+  /* ---- OPTICAL CENTRING ----------------------------------------------------
+     DM Sans reports an ascent of 12 and a descent of 4 at 12.5px, and the
+     browser centres THAT box — 16px tall, with the baseline 12 down. But a
+     label like "Rise", "Dorian" or "LOOP" puts no ink in the 4px reserved
+     below the baseline, so it is drawn with 2px more air beneath it than above
+     and reads as sitting high. Every dropdown and every segment on the panel
+     had it, which is what made the whole row look slightly off its line.
+
+     So controls centre the CAP BAND — baseline to cap height — which is what
+     the eye reads as the block of text, treating a descender as the overhang
+     it is. The shift that needs is (descent - ascent + capHeight) / 2, which
+     comes to 1px at this size. --ink is that 1px, and because a box with a
+     fixed height centres its content in what padding leaves, asking for it
+     means padding-top of twice --ink against a padding-bottom of nothing.
+     tests/browser.cjs measures the ink and holds every control to it. */
+  --ink:1px;
 }
 html{background:var(--bg);overflow-y:scroll;scrollbar-gutter:stable}
 body{font-family:'DM Sans',-apple-system,sans-serif;font-size:17px;color:var(--text);
@@ -53,35 +101,11 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
   background:linear-gradient(90deg,var(--gold-deep),var(--gold));
   transition:width .5s cubic-bezier(.16,1,.3,1)}
 
-.wrap{position:relative;z-index:10;max-width:940px;margin:0 auto;padding:0 30px}
 .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase;color:var(--gold)}
 
 /* --- module index --- */
-.hero{padding:66px 0 40px}
-.hero h1{font-size:clamp(38px,5vw,58px);line-height:1.04;margin:16px 0 18px}
-.hero h1 em{font-style:italic;color:var(--gold);display:block}
-.hero p{max-width:620px;color:#9A9CA4;font-weight:300;font-size:16.5px}
-.lessons{display:grid;gap:12px;padding-bottom:80px}
-.lcard{display:grid;grid-template-columns:40px 1fr auto;gap:20px;align-items:center;
-  padding:20px 22px;border:1px solid var(--hair);border-radius:12px;background:rgba(255,255,255,.02);
-  transition:border-color .3s,background .3s,transform .3s}
-.lcard:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.03);transform:translateY(-2px)}
-.lnum{font-family:'Playfair Display',serif;font-size:22px;color:var(--faint);text-align:center}
-.lcard.done .lnum{color:var(--gold)}
-.lcard h3{font-size:21px;margin-bottom:5px}
-.lcard p{font-size:14px;color:var(--dim);font-weight:300;line-height:1.55}
-.ltag{font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--faint);
-  padding:5px 11px;border:1px solid var(--hair);border-radius:100px;white-space:nowrap}
-.lcard.done .ltag{color:var(--ok);border-color:rgba(95,184,154,.3)}
 
 /* --- lesson --- */
-.crumb{display:flex;align-items:center;gap:12px;font-size:10.5px;letter-spacing:2.2px;
-  text-transform:uppercase;font-weight:700;color:var(--faint);padding:26px 0 0}
-.crumb a:hover{color:var(--gold)}
-.crumb i{font-style:normal;color:#33353D}
-.lesson{padding-bottom:90px}
-.lesson-n{margin-top:20px}
-.lesson h1{font-size:clamp(32px,4.2vw,48px);line-height:1.06;margin:14px 0 0}
 /* ============================================================================
    WIDGET CHROME
    ----------------------------------------------------------------------------
@@ -98,133 +122,279 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
    ============================================================================ */
 
 /* --- a labelled field: the label ABOVE the control, never beside it ------- */
-.ac-field{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;
+/* The label is the smallest, quietest type on the panel and the control is the
+   loudest: you read a panel by its controls and only check the labels when you
+   do not recognise one. Letterspaced caps at 9.5px is the Atlas's label voice
+   and it is used here for every label without exception — the transport used
+   to label Loop and Volume in 12.5px sentence case, so one row carried two
+   different ideas of what a label is. */
+.ac-field{display:inline-flex;flex-direction:column;align-items:flex-start;gap:var(--s2);
   font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
   color:var(--faint);max-width:100%}
 .ac-field>span{display:inline-flex;align-items:baseline;gap:6px}
-.ac-field output{color:var(--gold);font-weight:700;letter-spacing:1px}
+.ac-field output{color:var(--gold);font-weight:700;letter-spacing:1px;
+  font-variant-numeric:tabular-nums}
 
-/* --- the select, painted ------------------------------------------------- */
+/* --- the select ----------------------------------------------------------
+   The Atlas's selector is a pill with a gold-tinted edge that lights up and
+   grows a soft ring on hover. Theory Lab had a square-cornered grey box, so
+   the two products did not look related. This is the Atlas's control, at the
+   size this panel uses. The element stays a native <select> — appearance:none
+   paints it, it does not replace it — so the keyboard, the screen reader and
+   the phone's own picker all still work. */
 .ac-field select,select.ac-select{appearance:none;-webkit-appearance:none;
-  min-height:34px;max-width:100%;padding:7px 32px 7px 13px;
-  border:1px solid var(--hair);border-radius:8px;background-color:rgba(255,255,255,.03);
-  color:var(--text);font-family:inherit;font-size:12.5px;font-weight:400;
-  letter-spacing:0;text-transform:none;cursor:pointer;transition:border-color .2s,color .2s;
-  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%237E808A' stroke-width='1.4'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 12px center}
-.ac-field select:hover{border-color:var(--hair-gold);color:#fff}
-.ac-field select:focus-visible{border-color:var(--gold)}
+  height:var(--ctl);max-width:100%;padding:calc(var(--ink)*2) 32px 0 13px;
+  border:1px solid var(--hair-gold);border-radius:var(--rp);
+  background-image:var(--panel);background-color:transparent;box-shadow:var(--edge);
+  color:#fff;font-family:inherit;font-size:12.5px;font-weight:500;
+  letter-spacing:0;text-transform:none;cursor:pointer;
+  transition:border-color .22s var(--ease),background .22s var(--ease),box-shadow .22s var(--ease);
+  background-repeat:no-repeat;background-position:right 12px center,0 0;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23D4A04A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l4 3.5 4-3.5'/%3E%3C/svg%3E"),var(--panel)}
+.ac-field select:hover{border-color:var(--gold);background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23D4A04A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l4 3.5 4-3.5'/%3E%3C/svg%3E"),var(--panel-hi);
+  box-shadow:var(--edge),var(--ring)}
+.ac-field select:focus-visible{border-color:var(--gold);box-shadow:var(--edge),var(--ring)}
 /* the OS paints the open list, so its options need a readable pair of their own */
 .ac-field select option{background:#0C1220;color:var(--text)}
 
-/* --- checkbox and slider ------------------------------------------------- */
-.ac-transport input[type=checkbox],.ac-controls input[type=checkbox]{
-  appearance:none;-webkit-appearance:none;position:relative;flex:0 0 auto;
-  width:15px;height:15px;border:1px solid rgba(255,255,255,.14);border-radius:4px;
-  background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .2s,background .2s}
-.ac-transport input[type=checkbox]:checked,.ac-controls input[type=checkbox]:checked{
-  background:rgba(212,160,74,.2);border-color:var(--gold)}
-.ac-transport input[type=checkbox]:checked::after,.ac-controls input[type=checkbox]:checked::after{
-  content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;
-  border:solid var(--gold);border-width:0 1.6px 1.6px 0;transform:rotate(42deg)}
+/* --- the switch ----------------------------------------------------------
+   Loop, Drone, Remap melody, Mark what differs: these are states, and as pills
+   they were the same shape as "Play the cadence", which is an action. A track
+   and a knob say on-or-off before the label is read, and say which it is now
+   without the reader having to notice that one pill is slightly more gold than
+   its neighbour. The checkbox version is the transport's Loop; the button
+   version is every toggle the activities declare. Both keep their real
+   element and their real ARIA. */
+/* the text moves, the track does not: a switch's knob is a graphic and is
+   already on its centre. position/top rather than padding, so a label in a row
+   of fixed-height controls cannot change the height of the row. */
+.ac-sw>span,.ac-vol>span,.ac-time,.ac-audio-status{position:relative;top:var(--ink)}
+.ac-sw{display:inline-flex;align-items:center;gap:var(--s2);height:var(--ctl);
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint);cursor:pointer;white-space:nowrap;
+  transition:color .22s var(--ease)}
+.ac-sw:hover{color:var(--dim)}
+.ac-sw input[type=checkbox],.ac-sw-track{appearance:none;-webkit-appearance:none;
+  position:relative;flex:0 0 auto;width:30px;height:17px;border-radius:var(--rp);
+  border:1px solid var(--hair);background-image:var(--panel);box-shadow:var(--edge);
+  cursor:pointer;transition:border-color .22s var(--ease),background .22s var(--ease)}
+.ac-sw input[type=checkbox]::after,.ac-sw-track::after{
+  content:'';position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;
+  background:#6A6C76;transition:transform .22s var(--ease),background .22s var(--ease)}
+.ac-sw input[type=checkbox]:checked,.ac-switch[aria-pressed="true"] .ac-sw-track{
+  border-color:var(--gold);background-image:var(--gold-face)}
+.ac-sw input[type=checkbox]:checked::after,.ac-switch[aria-pressed="true"] .ac-sw-track::after{
+  transform:translateX(13px);background:var(--gold)}
+.ac-sw input[type=checkbox]:focus-visible{outline:none;box-shadow:var(--edge),var(--ring)}
+/* the toggle button: no pill around it, because the switch IS the control */
+.btn.ac-switch{padding:calc(var(--ink)*2) 0 0;border:0;background:none;gap:var(--s2);height:var(--ctl);
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--faint)}
+.btn.ac-switch:hover{color:var(--dim);border-color:transparent}
+.btn.ac-switch[aria-pressed="true"]{background:none;border-color:transparent;color:var(--text)}
+.btn.ac-switch:focus-visible{outline:none}
+.btn.ac-switch:focus-visible .ac-sw-track{box-shadow:var(--edge),var(--ring);border-color:var(--gold)}
 
-.ac-transport input[type=range],.ac-controls input[type=range]{
-  appearance:none;-webkit-appearance:none;width:104px;max-width:100%;height:3px;
-  border-radius:3px;background:rgba(255,255,255,.12);cursor:pointer}
-.ac-transport input[type=range]::-webkit-slider-thumb,.ac-controls input[type=range]::-webkit-slider-thumb{
-  appearance:none;-webkit-appearance:none;width:12px;height:12px;border:0;border-radius:50%;
-  background:var(--gold)}
-.ac-transport input[type=range]::-moz-range-thumb,.ac-controls input[type=range]::-moz-range-thumb{
-  width:12px;height:12px;border:0;border-radius:50%;background:var(--gold)}
-.ac-field input[type=range]{width:168px}
+/* --- the slider ----------------------------------------------------------
+   The old one was a 3px hairline with a flat dot on it: the half you had
+   travelled looked exactly like the half you had not, so the control carried
+   no value at all. --p is set by the kit on every input, and the track is
+   painted from it — gold behind the thumb, neutral in front. The thumb is a
+   real knob with a dark core and a gold rim, and it grows when you take hold
+   of it. */
+.ac-sw-spacer{display:none}
+input[type=range]{appearance:none;-webkit-appearance:none;width:104px;max-width:100%;
+  height:var(--ctl);background:none;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold) 0 calc(var(--p,0)*100%),rgba(255,255,255,.1) calc(var(--p,0)*100%) 100%)}
+input[type=range]::-moz-range-track{height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold) 0 calc(var(--p,0)*100%),rgba(255,255,255,.1) calc(var(--p,0)*100%) 100%)}
+input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;
+  width:14px;height:14px;margin-top:-5px;border-radius:50%;
+  border:2px solid var(--gold);background:#0E1420;box-shadow:0 1px 3px rgba(0,0,0,.5);
+  transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--gold);background:#0E1420;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.12);box-shadow:0 1px 3px rgba(0,0,0,.5),var(--ring)}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+input[type=range]:focus-visible{outline:none}
+input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 1px 3px rgba(0,0,0,.5),var(--ring)}
+/* --ctl, like every other control in a field. At 22px the slider was shorter
+   than the selects beside it, and since a control row bottom-aligns, that put
+   BRIGHTNESS's label 16px below ROOT's — two labels on the same row at two
+   different heights, which is the single most visible way a panel looks
+   thrown together. */
+.ac-field input[type=range]{width:168px;height:var(--ctl)}
 
 /* --- a labelled group: the legend is a heading, not a notch in a border --- */
 .ac-group{border:0;padding:0;margin:0;min-width:0;display:flex;flex-wrap:wrap;
-  align-items:flex-end;gap:8px}
-.ac-group>legend{float:left;width:100%;padding:0;margin:0 0 9px;
+  align-items:center;gap:var(--s2)}
+.ac-group>legend{float:left;width:100%;padding:0;margin:0 0 var(--s2);
   font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
   color:var(--faint)}
+
+/* --- a segmented control -------------------------------------------------
+   The fieldset is a plain block whose legend sits above; the track inside it
+   is the control. Generic, because an ordered one-of-N choice is not peculiar
+   to modes — anything else that needs one gets this for free. */
+.ac-seg{display:block}
+.ac-seg-track{display:inline-flex;flex-wrap:wrap;align-items:center;gap:0;
+  padding:3px;border:1px solid var(--hair);border-radius:var(--rp);
+  background-image:var(--panel);box-shadow:var(--edge);max-width:100%}
+/* ONE EDGE, AND IT IS THE TRACK'S.
+   A segment arrives as a .btn, so it brought a border and --edge's inset top
+   highlight with it — and the track draws a border of its own around all of
+   them. Seven capsules inside one capsule: the control read as a box of boxes
+   and the eye had nothing to settle on. The container already says these
+   belong together and the gold face already says which one is chosen, so a
+   segment carries neither edge nor ground until it is the chosen one. That is
+   also the only one that should look raised, which is what the inset highlight
+   and the shadow are for. */
+.ac-seg-track>.btn{height:26px;padding:calc(var(--ink)*2) 11px 0;font-size:12px;
+  border:0;box-shadow:none;background-image:none;border-radius:var(--rp);color:var(--dim)}
+.ac-seg-track>.btn:hover{color:#fff;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
+/* the brighter face, not the standard one: with no edge of its own the chosen
+   segment has only its ground to be chosen by, and over the track's own warm
+   wash the standard face went muddy rather than lit */
+.ac-seg-track>.btn[aria-current="true"]{color:#fff;background-image:var(--gold-face-hi);
+  box-shadow:var(--edge),0 1px 3px rgba(0,0,0,.35)}
+.ac-seg-track>.btn:focus-visible{outline:none;box-shadow:var(--ring);color:#fff}
 
 /* --- the step editor: eight steps, each a unit ---------------------------- */
 .ac-editor{gap:14px 22px}
 .ac-step{display:flex;align-items:flex-end;gap:8px;flex:0 0 auto}
 
-/* --- the control row ----------------------------------------------------- */
-.ac-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px 20px;margin-top:22px}
-.ac-controls>.btn,.ac-group>.btn{align-self:flex-end}
-.w-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+/* --- the control row -----------------------------------------------------
+   align-items:center, not flex-end. Every control is --ctl tall now, so they
+   align themselves; flex-end only mattered while they were five heights that
+   nearly matched, and it left the ones with labels sitting lower than the ones
+   without. The column gap is bigger than the row gap because the eye needs
+   less help separating things stacked than things side by side. */
+.ac-controls{display:flex;flex-direction:column;align-items:stretch;gap:var(--s4);margin-top:var(--s5)}
+/* A BAND IS ONE ROW OF LIKE THINGS.
+   The settings band is a GRID, not a wrapping flex row. Wrapped, each row
+   packs from the left and the next column begins wherever the last control
+   happened to end — so ROOT sat at one x and INSTRUMENT, one row below it, at
+   another. Columns that do not line up between rows is the ragged margin you
+   see before you can name it. auto-fill rather than auto-fit, because auto-fit
+   collapses the tracks a short row does not use and the columns would move
+   again. A segmented control takes the full width: it is one control, not one
+   column's worth.
 
-/* --- the transport ------------------------------------------------------- */
-.ac-transport{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
-.ac-inline{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim)}
-.ac-transport [data-time]{margin-left:auto;font-size:12px;color:var(--faint);
-  font-variant-numeric:tabular-nums;letter-spacing:.5px}
-.ac-audio-status{font-size:12px;color:var(--faint);margin-top:10px}
-.ac-timeline{height:3px;margin-top:12px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
-.ac-timeline i{display:block;height:100%;width:0;background:var(--gold)}
+   The actions band stays a flex row — switches are narrow and all of one
+   height, and a grid would only spread them apart. */
+.ac-band{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));
+  align-items:end;gap:var(--s3) var(--s4)}
+.ac-band>.ac-seg{grid-column:1/-1}
+/* 132px, not 156: a tool's settings sit in a sub-column about 292px wide, and
+   at 156 two tracks plus the gap came to more than that, so auto-fill gave ONE
+   column and every field stacked — taller than the wrapping row it replaced.
+   The track has to be narrow enough that the narrowest column the panel ever
+   has still gets two. A field must be able to shrink into its track for that
+   to hold, so it is told it may. */
+.ac-band>.ac-field{min-width:0}
+.ac-band>.ac-field select{max-width:100%}
+.ac-band-act{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--s3) var(--s4)}
+.ac-controls>.btn,.ac-band>.btn,.ac-group>.btn{align-self:flex-end}
+.w-row{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
+
+/* --- the transport -------------------------------------------------------
+   A transport reads left to right: what you press, then what it is doing, then
+   how it is set. Play and its two glyphs are one welded cluster with no gap
+   between them, which is how every transport since the tape machine has looked
+   and what stops them reading as three unrelated buttons. The status sentence
+   takes the slack in the middle so the settings stay pinned to the right. */
+.ac-transport{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s4)}
+.ac-tg{display:inline-flex;align-items:center;gap:var(--s1)}
+.ac-time{font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.ac-vol{display:inline-flex;align-items:center;gap:var(--s2);height:var(--ctl);
+  font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--faint)}
+.ac-vol input[type=range]{width:84px}
+.ac-audio-status{font-size:11.5px;color:var(--faint);margin-left:auto;text-align:right}
+
+/* --- the glyphs ----------------------------------------------------------
+   Drawn from one attribute with clip-path and a gradient: no icon font, no
+   sprite sheet, nothing that can fall out of step with the label beside it. */
+.ac-ico{display:block;width:9px;height:10px;background:currentColor;flex:0 0 auto}
+[data-state="play"] .ac-ico{clip-path:polygon(0 0,100% 50%,0 100%)}
+[data-state="pause"] .ac-ico{clip-path:none;
+  background:linear-gradient(90deg,currentColor 0 34%,transparent 34% 66%,currentColor 66% 100%)}
+[data-state="loading"] .ac-ico{clip-path:none;border-radius:50%;width:10px;height:10px;
+  background:conic-gradient(from 0deg,transparent 0 55%,currentColor 55% 100%);
+  -webkit-mask:radial-gradient(circle,transparent 0 2.6px,#000 2.8px);
+          mask:radial-gradient(circle,transparent 0 2.6px,#000 2.8px);
+  animation:ac-spin .8s linear infinite}
+@keyframes ac-spin{to{transform:rotate(360deg)}}
+.ico-stop{width:9px;height:9px;border-radius:1.5px;clip-path:none}
+.ico-start{position:relative;width:10px;height:10px;clip-path:polygon(100% 0,25% 50%,100% 100%)}
+.btn.icon .ico-start::after{content:''}
+
+/* --- the scrubber --------------------------------------------------------
+   The old timeline was a 3px bar you could only watch. This one you can take
+   hold of: the whole strip is the hit area, the fill shows where you are, and
+   a knob rides the join so there is something to aim at. */
+/* The knob is 13px wide and centred on its position, so the track is inset by
+   half of it at each end — otherwise the knob hangs off the panel at 0 and at
+   the end, which is what a half-moon at the left edge was. */
+.ac-scrub{position:relative;margin-top:var(--s3);padding:var(--s2) 7px;cursor:pointer;
+  flex:0 0 auto;border-radius:var(--r1)}
+.ac-scrub:focus-visible{outline:none;box-shadow:var(--ring)}
+/* A GROOVE, NOT A RULE. At 4px of 8%-white this was indistinguishable from the
+   hairline that separates two sections, so the one control on the panel you
+   could drag looked like a divider. It is cut INTO the panel — dark channel,
+   light top edge — the way a fader slot is, and the knob rides it at all times
+   rather than appearing on hover, because a control you cannot see is a
+   control nobody uses. */
+.ac-timeline{height:5px;border-radius:4px;background:rgba(0,0,0,.3);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.04);
+  overflow:hidden}
+.ac-timeline i{display:block;height:100%;width:0;border-radius:4px;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold));
+  box-shadow:0 0 10px rgba(212,160,74,.4)}
+.ac-scrub::after{content:'';position:absolute;top:50%;
+  left:calc(7px + var(--p,0)*(100% - 14px));
+  width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;
+  border:2px solid var(--gold);background:#111826;pointer-events:none;
+  box-shadow:0 1px 4px rgba(0,0,0,.6);
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
+.ac-scrub:hover::after{transform:scale(1.15);box-shadow:0 1px 4px rgba(0,0,0,.6),var(--ring)}
+.ac-scrub:focus-visible::after{box-shadow:0 1px 4px rgba(0,0,0,.6),var(--ring)}
 
 /* --- compare and revise: three jobs, not seven identical buttons --------- */
-.ac-actions{margin-top:24px}
-.ac-actions .ac-group{gap:10px 26px}
-.ac-set{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.ac-set .btn{font-size:12px;padding:7px 14px}
+.ac-actions{margin-top:var(--s5)}
+.ac-actions .ac-group{gap:var(--s3) var(--s5)}
+.ac-set{display:flex;flex-wrap:wrap;gap:0;align-items:center}
+/* A/B and undo/redo are pairs, so they are welded into one segmented control
+   each: two halves of one object rather than four loose pills. */
+.ac-set .btn{font-size:12px;padding:calc(var(--ink)*2) 13px 0;height:30px;border-radius:0;
+  margin-left:-1px;color:var(--dim)}
+.ac-set .btn:first-child{border-radius:var(--rp) 0 0 var(--rp);margin-left:0;padding-left:15px}
+.ac-set .btn:last-child{border-radius:0 var(--rp) var(--rp) 0;padding-right:15px}
+.ac-set .btn:only-child{border-radius:var(--rp);padding:calc(var(--ink)*2) 15px 0}
+.ac-set .btn:hover{z-index:1}
 /* the reset is a way out, not a thing to do: a quiet link at the end */
-.ac-set[data-set="reset"] .btn{border-color:transparent;padding-left:4px;padding-right:4px;
-  color:var(--faint);border-radius:0;border-bottom:1px solid var(--hair)}
-.ac-set[data-set="reset"] .btn:hover{color:var(--gold);border-bottom-color:var(--hair-gold)}
+.ac-set[data-set="reset"] .btn{border:0;border-bottom:1px solid var(--hair);
+  padding:0 2px;height:auto;color:var(--faint);border-radius:0;background:none;box-shadow:none}
+.ac-set[data-set="reset"] .btn:hover{color:var(--gold);border-bottom-color:var(--hair-gold);background:none}
 
 /* --- captions and read-outs --------------------------------------------- */
-.ac-caption{font-size:12px;color:var(--faint);font-weight:300;line-height:1.6;margin-top:12px;
-  max-width:var(--measure)}
-.sec p[data-exercise]{max-width:var(--measure);margin:16px 0}
 .ac-feedback{font-size:14px;color:var(--dim);font-weight:300;margin-top:14px;
   min-height:1.6em;max-width:var(--measure)}
 
 /* --- the lede: what this is, before anything asks you to do something ---
    Only on a lesson whose product declares LESSON_COPY. The body copy at the
    prose size, then one row of chips naming what the thing is good for. */
-.ac-lede{margin:30px 0 0;max-width:var(--measure)}
-.ac-lede p{font-size:16px;line-height:1.75;font-weight:300;color:var(--text)}
-.ac-lede p+p{margin-top:15px}
 .ac-usefor{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:20px}
 .ac-usefor-lab{font-size:9.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
   color:var(--faint);margin-right:4px}
 .ac-chip{font-size:11.5px;color:var(--dim);padding:5px 12px;border:1px solid var(--hair);
   border-radius:100px;white-space:nowrap}
 
-/* --- the lesson's tab bar ---
-   Only on a lesson whose product declares LESSON_PANELS; the Accelerator has
-   none, so this paints nothing there. The Atlas's instrument tabs in the
-   smaller of their two sizes, so the suite reads as one thing. */
-.ac-tabs{display:flex;flex-wrap:wrap;gap:22px;margin:22px 0 0;
-  border-bottom:1px solid var(--hair)}
-.ac-tab{position:relative;padding:0 0 10px;font-size:9.5px;font-weight:700;
-  letter-spacing:1.6px;text-transform:uppercase;color:var(--faint);
-  background:none;border:0;cursor:pointer;transition:color .2s}
-.ac-tab:hover{color:var(--dim)}
-.ac-tab[aria-selected="true"]{color:var(--gold)}
-.ac-tab[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:-1px;
-  height:1.5px;background:var(--gold)}
-.ac-tab em{font-style:normal;color:var(--faint);margin-left:5px}
-.ac-tabpanel{display:none}
-.ac-tabpanel.is-active{display:block}
 /* a panel's own content starts clear of the bar */
-.ac-tabpanel[data-panel]:not([data-panel="overview"]).is-active{padding-top:30px}
 
-/* The in-page jump links. app.js has always emitted them and no stylesheet
-   has ever had a rule, so they ran together as one unreadable line —
-   "ExploreWhy it worksChallengePractiseCheck yourself". The scroll spy that
-   sets aria-current was equally invisible; it marks the current section now. */
-.ac-sections{display:flex;flex-wrap:wrap;gap:8px 22px;margin:22px 0 0;
-  padding-top:16px;border-top:1px solid var(--hair);
-  font-size:10.5px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;
-  color:var(--faint)}
-.ac-sections a{color:var(--faint);transition:color .2s}
-.ac-sections a:hover{color:var(--gold)}
-.ac-sections a[aria-current]{color:var(--gold)}
 .claim{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;line-height:1.5;
   color:var(--gold);max-width:640px;margin:18px 0 0}
-.sec{margin-top:52px}
 .sec-h{display:flex;align-items:baseline;gap:14px;margin-bottom:20px}
 .sec-h b{font-size:11px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold)}
 .sec-h span{flex:1 1 auto;height:1px;background:var(--hair)}
@@ -245,42 +415,41 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
 .source em{color:var(--faint);font-style:italic}
 
 /* --- exercise --- */
-.ex{display:grid;gap:10px}
-.ex-row{display:grid;grid-template-columns:112px 1fr;gap:20px;align-items:start;
-  padding:16px 20px;border:1px solid var(--hair);border-radius:10px;background:rgba(255,255,255,.015)}
-.ex-row b{font-size:9.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;
-  color:var(--gold);padding-top:3px}
-.ex-row p{font-size:14.5px;line-height:1.6;font-weight:300}
-.ex-done{margin-top:18px}
-.ex-done button{display:inline-flex;align-items:center;gap:9px;padding:9px 17px;
-  border:1px solid var(--hair);border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s}
-.ex-done button:hover{border-color:var(--hair-gold);color:#fff}
-.ex-done button[aria-pressed="true"]{border-color:var(--ok);color:var(--ok);background:rgba(95,184,154,.08)}
 
 /* --- quiz --- */
 .q{padding:20px 22px;border:1px solid var(--hair);border-radius:12px;margin-bottom:12px;
   background:rgba(255,255,255,.015)}
 .q>p{font-size:16px;margin-bottom:14px;color:#fff;font-weight:400}
-.opts{display:grid;gap:7px}
-.opt{text-align:left;padding:11px 15px;border:1px solid var(--hair);border-radius:9px;
-  font-size:14.5px;color:var(--text);font-weight:300;transition:all .2s}
-.opt:hover:not(:disabled){border-color:var(--hair-gold);color:#fff}
-.opt.right{border-color:var(--ok);background:rgba(95,184,154,.1);color:#fff}
-.opt.wrong{border-color:var(--warn);background:rgba(192,96,58,.1);color:#fff}
-.opt:disabled{cursor:default}
+/* AN ANSWER IS A CONTROL TOO. These were flat hairline rectangles while every
+   other surface on the page had been given a face, so the one thing the reader
+   is asked to press looked like the one thing nobody had styled. Same panel,
+   same radius, same ease as the instrument beside them — and the marker on the
+   left edge carries the verdict, so right and wrong are told by position and
+   shape as well as by colour. */
+.opts{display:grid;gap:var(--s2)}
+.opt{position:relative;text-align:left;padding:12px 15px 10px 17px;
+  border:1px solid var(--hair);border-radius:var(--r2);overflow:hidden;
+  font-size:14.5px;color:var(--text);font-weight:300;
+  background-image:var(--panel);box-shadow:var(--edge);
+  transition:color .22s var(--ease),border-color .22s var(--ease),
+             background .22s var(--ease),transform .22s var(--ease)}
+.opt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:transparent;transition:background .22s var(--ease)}
+.opt:hover:not(:disabled){border-color:var(--hair-gold);color:#fff;
+  background-image:var(--panel-hi);transform:translateX(2px)}
+.opt:hover:not(:disabled)::before{background:var(--hair-gold)}
+.opt.right{border-color:var(--ok);background-image:linear-gradient(180deg,rgba(95,184,154,.16),rgba(95,184,154,.06));color:#fff}
+.opt.right::before{background:var(--ok)}
+.opt.wrong{border-color:var(--warn);background-image:linear-gradient(180deg,rgba(192,96,58,.16),rgba(192,96,58,.06));color:#fff}
+.opt.wrong::before{background:var(--warn)}
+.opt:disabled{cursor:default;transform:none}
+.opt:disabled:hover{transform:none}
 .why{margin-top:13px;padding-top:13px;border-top:1px solid var(--hair);font-size:13.5px;
   line-height:1.65;color:var(--dim);font-weight:300;display:none}
 .why.on{display:block}
 .why b{color:var(--gold);font-weight:700}
 
 /* --- pager --- */
-.pager{display:flex;justify-content:space-between;gap:20px;margin-top:36px;padding-top:30px;
-  border-top:1px solid var(--hair)}
-.pager span{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--faint);font-weight:700;margin-bottom:5px}
-.pager b{font-family:'Playfair Display',serif;font-size:20px;color:#fff;font-weight:500}
-.pager a:hover b{color:var(--gold)}
-.pager .r{text-align:right;margin-left:auto}
 
 /* ===========================================================================
    WIDGET CHROME — shared by every demonstration
@@ -293,9 +462,42 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
   color:var(--faint);margin-bottom:9px}
 .w-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .w-col{display:grid;gap:5px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--hair);
-  border-radius:100px;font-size:12.5px;color:var(--dim);transition:all .2s;white-space:nowrap}
-.btn:hover{border-color:var(--hair-gold);color:#fff}
+/* ---- THE BUTTON, IN THREE VOICES ------------------------------------------
+   The panel had one button and used it eleven times a screen, so Play, Undo,
+   Drone and "Reset the tool" were all the same pill and the eye had to read
+   every word to find the one it wanted. There are only ever three things a
+   button can be here, and now they look like three things:
+
+     .btn            secondary — the ordinary action. An outline.
+     .btn.primary    the one thing this panel is for. The only filled control.
+     .btn.icon       a glyph beside the primary, square, no label.
+
+   plus .ac-switch, above, for the ones that are states rather than actions.
+   Nothing else. A fourth voice would be a fourth thing to learn.
+
+   transition:all was also doing real damage — it animated width and padding on
+   hover, so a row of buttons twitched as the pointer crossed it. Only colour,
+   edge and shadow move now. */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
+  height:var(--ctl);padding:calc(var(--ink)*2) 16px 0;border:1px solid var(--hair);
+  border-radius:var(--rp);font-size:12.5px;font-weight:500;color:var(--dim);
+  background-image:var(--panel);box-shadow:var(--edge);white-space:nowrap;
+  transition:color .22s var(--ease),border-color .22s var(--ease),
+             background .22s var(--ease),box-shadow .22s var(--ease)}
+.btn:hover{border-color:var(--hair-gold);color:#fff;background-image:var(--panel-hi)}
+.btn:active{background-image:var(--panel)}
+
+/* the primary: filled, white type, and the only gold face on the panel */
+.btn.primary{border-color:rgba(212,160,74,.45);color:#fff;
+  background-image:var(--gold-face);padding:calc(var(--ink)*2) 18px 0}
+.btn.primary:hover{border-color:var(--gold);background-image:var(--gold-face-hi);
+  box-shadow:var(--edge),var(--ring)}
+
+/* the glyph buttons beside it: square, so the cluster reads as one object */
+/* an icon button is exempt: a glyph has no baseline, so nudging it only
+   pushes it off the centre it was already on */
+.btn.icon{width:var(--ctl);padding:0;color:var(--dim)}
+.btn.icon:hover{color:var(--gold)}
 /* The import control is a <label class="btn"> wrapping a file input. Left
    unstyled the native picker sits inside the pill and makes it 380px wide,
    which pushes a 390px page sideways. Hide the input rather than display:none
@@ -303,18 +505,40 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
 .btn input[type=file]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .btn:focus-within{border-color:var(--hair-gold);color:#fff}
-.btn.wide{border-radius:9px;justify-content:flex-start;width:100%}
-.btn.gold{border-color:rgba(212,160,74,.4);color:#fff;background:rgba(212,160,74,.09)}
-.btn.gold:hover{background:rgba(212,160,74,.18)}
-.btn.on{border-color:var(--gold);background:rgba(212,160,74,.2);color:#fff}
-.btn[aria-pressed="true"]{border-color:var(--c,var(--gold));color:#fff;
-  background:rgba(212,160,74,.12)}
+.btn.wide{border-radius:var(--r1);justify-content:flex-start;width:100%;padding:0 16px}
+/* .gold is the old name for .primary; both are kept so a page that still asks
+   for the old one does not silently lose its emphasis. */
+.btn.gold{border-color:rgba(212,160,74,.45);color:#fff;background-image:var(--gold-face)}
+.btn.gold:hover{border-color:var(--gold);background-image:var(--gold-face-hi)}
+.btn.on,.btn[aria-pressed="true"]:not(.ac-switch){border-color:var(--c,var(--gold));color:#fff;
+  background-image:var(--gold-face)}
 /* The roll's key. widgets.js has always emitted this element and nothing has
    ever styled it, so the layer names ran together at body size — "Slot 1Slot
    2Slot 3Slot 4". Spaced, and brought down to the scale the rest of the
    widget chrome uses. */
-.ac-legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 0;
-  font-size:11px;letter-spacing:.3px}
+/* The roll's own box. position:relative is what the playhead is absolute
+   against — it lives in accelerator/ui.css for the Accelerator, and the engine
+   separation left this page without it, so the playhead was an inert <i> with
+   a left percentage that did nothing. */
+.ac-roll-stage{position:relative;min-height:0}
+.ac-roll-stage svg{width:100%;height:100%;display:block}
+.ac-playhead{position:absolute;top:8%;height:75%;width:2px;background:#fff;
+  opacity:.6;visibility:hidden;pointer-events:none}
+/* The bar numbers are HTML under the roll rather than <text> inside it, so the
+   roll can stretch to any shape without stretching type with it. */
+.ac-roll-bars{position:relative;height:14px;margin-top:var(--s1);flex:0 0 auto}
+.ac-roll-bars span{position:absolute;top:0;font-size:9.5px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--faint);white-space:nowrap}
+/* THE KEY READS AS A KEY. The layer names were set in the body colour at body
+   size with the layer's colour applied to the type, so "Melody" and "Chords"
+   were two coloured words and you had to already know they referred to the
+   bars. A swatch in front of each says what it is, and the name can then go
+   back to the label voice everything else on the panel uses. */
+.ac-legend{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s4);margin:var(--s2) 0 0;
+  font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.ac-legend span{display:inline-flex;align-items:center;gap:6px}
+.ac-legend span::before{content:'';width:12px;height:3px;border-radius:2px;
+  background:currentColor;flex:0 0 auto}
 .w-read{font-size:12.5px;color:var(--dim);font-weight:300;line-height:1.6;
   padding-top:14px;border-top:1px solid var(--hair)}
 .w-read b{color:#fff;font-weight:500}
@@ -341,7 +565,6 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
 @media (max-width:860px){
   .w-grid{grid-template-columns:1fr}
   .w-side{border-left:none;border-top:1px solid var(--hair)}
-  .lcard{grid-template-columns:32px 1fr;gap:14px}
   .ltag{grid-column:2;justify-self:start}
   .ex-row{grid-template-columns:1fr;gap:8px}
   .wrap{padding:0 20px}
@@ -397,9 +620,391 @@ h1[tabindex="-1"]:focus,h1[tabindex="-1"]:focus-visible{outline:none}
    No section nav, no pager to speak of, and the widget gets the full column. */
 .lesson.is-lab{padding-bottom:70px}
 .lesson.is-lab .demo{margin-top:20px}
-.lesson.is-lab .pager{margin-top:34px}
 
 @media (max-width:760px){
   .ac-videos{gap:6px}
   .ac-video{padding:7px 11px;font-size:12px}
+}
+
+/* ============================================================================
+   THE LESSON PAGE — THREE COLUMNS, NO SCROLL
+   ----------------------------------------------------------------------------
+   lessons | step text | the thing itself. The demonstration stays in front of
+   you while you read about it and while you answer questions on it, which is
+   the whole reason the reading is one step at a time rather than a page.
+
+   THE VIEWPORT LOCK IS A FLEX CHAIN from html down, NOT a subtracted bar
+   height. The nav bar's height is a clamp and the browser's own chrome is not
+   knowable, so any hardcoded guess leaves the page a pixel or two scrollable —
+   which is the exact thing this is for. Below 1000px the lock is released and
+   the page scrolls like any other, because a phone has no room for three
+   columns and pretending otherwise is worse than scrolling.
+   ============================================================================ */
+@media (min-width:1001px){
+  html.lesson-view{overflow:hidden}
+  html.lesson-view body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+  html.lesson-view #view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  html.lesson-view .lwrap{flex:1 1 auto;min-height:0}
+}
+
+.lwrap{position:relative;z-index:10;width:100%;max-width:1680px;margin:0 auto;
+  padding:0 26px 0 0;display:grid;grid-template-columns:232px minmax(0,1fr);gap:0}
+.lmain{display:flex;flex-direction:column;min-width:0;min-height:0;padding-left:30px}
+
+/* --- the lesson rail: where you are in the course, without a click -------- */
+.lrail{display:flex;flex-direction:column;gap:2px;min-height:0;overflow-y:auto;
+  padding:18px 18px 24px 26px;border-right:1px solid var(--hair)}
+.lrail-home{display:inline-flex;align-items:center;gap:7px;font-size:9.5px;font-weight:700;
+  letter-spacing:1.8px;text-transform:uppercase;color:var(--faint);margin-bottom:16px;flex:0 0 auto}
+.lrail-home:hover{color:var(--gold)}
+.lrail-group{flex:0 0 auto;margin-bottom:16px}
+.lrail-group>p{font-size:9px;font-weight:700;letter-spacing:1.9px;text-transform:uppercase;
+  color:#3E404A;margin:0 0 7px}
+.lrail-group>a{display:flex;align-items:center;gap:9px;padding:6px 9px;margin:0 -9px;
+  border-radius:7px;font-size:13px;color:var(--dim);line-height:1.35;
+  transition:background .2s,color .2s}
+.lrail-group>a:hover{background:rgba(255,255,255,.03);color:#fff}
+.lrail-group>a[aria-current]{background:rgba(212,160,74,.1);color:#fff}
+.lrail-dot{flex:0 0 auto;width:6px;height:6px;border-radius:50%;
+  border:1px solid var(--hair-gold);background:transparent}
+.lrail-dot[data-done="true"]{background:var(--gold);border-color:var(--gold)}
+.lrail-dot[data-tool]{border-radius:1px;transform:rotate(45deg);border-color:#3E404A}
+.lrail-group>a[aria-current] .lrail-dot{border-color:var(--gold)}
+
+/* --- the head ------------------------------------------------------------ */
+.lhead{flex:0 0 auto;padding:16px 0 0}
+.lhead h1{font-size:clamp(21px,2.3vw,30px);line-height:1.1;margin:7px 0 0}
+.lhead h1:focus{outline:none}
+
+/* --- the two working columns --------------------------------------------- */
+.lcols{flex:1 1 auto;display:grid;grid-template-columns:minmax(330px,400px) 1fr;
+  gap:30px;align-items:stretch;padding:16px 0 0;min-height:0}
+.lside{display:flex;flex-direction:column;min-height:0}
+.lplay{min-width:0;align-self:stretch;max-height:100%;overflow-y:auto;width:100%;
+  border:1px solid var(--hair);border-radius:14px;background:rgba(255,255,255,.015)}
+/* THE MUSIC SCALES TO THE SPACE LEFT. The piano roll is an SVG with a
+   viewBox, so it can be told to fill what remains after the transport, the
+   keyboard and the controls have taken theirs — which is how this column fits
+   a 900px laptop and a 1440px monitor without either being tuned for. A fixed
+   roll height would mean the page fits at exactly one viewport size. */
+.lplay .demo{border:0;border-radius:0;background:none;
+  display:flex;flex-direction:column;min-height:0;height:100%}
+/* A lesson stacks the two boxes: the music takes the slack, the knobs keep
+   their natural height. */
+.lplay .ac-music{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+/* what you listen to, then a rule, then what you turn — the tool draws the
+   same division vertically, with a border between its two columns */
+.lplay .ac-knobs{flex:0 0 auto;min-height:0;margin-top:var(--s4);padding-top:var(--s4);
+  border-top:1px solid var(--hair)}
+.lplay .ac-controls{margin-top:0}
+.lplay .ac-music>[data-roll]{flex:1 1 auto;min-height:88px;display:flex;flex-direction:column}
+.lplay .ac-roll-stage{flex:1 1 auto}
+.lplay .ac-controls{flex:0 0 auto}
+/* The keyboard is driven by one custom property, so it scales with the
+   viewport rather than holding 165px on a laptop where that is the difference
+   between a readable piano roll and a 60px smear of one. Below its floor the
+   keys stop being hittable, so that is where it stops. */
+.lplay .va-kb{--kb-height:clamp(96px,14vh,165px)}
+@media (max-height:820px){
+  .lplay .ac-music>[data-roll]{min-height:120px}
+  .lplay .ac-controls{gap:12px 16px}
+  .lplay .w-read{font-size:12px;padding-top:10px}
+}
+/* On a 720px laptop the music and the knobs together ask for more than the
+   column has, and the knobs do not shrink — so the keyboard used to be drawn
+   over the controls. Everything gives up a little instead: the status sentence
+   takes one line and trails off, the gaps close, the keyboard and the roll sit
+   at their floors. Nothing is hidden and nothing overlaps. */
+/* 920, not 860: a segmented control takes a row to itself now, so the chord
+   lessons ask for one row more than they used to and 900px tall needs the same
+   help 860 did. */
+@media (min-width:1001px) and (max-height:920px){
+  /* The reading column gives up some width here so the music column can hold
+     its transport on one row and wrap its controls into fewer — the step text
+     reads fine at 300px, and the alternative was the keyboard drawn over the
+     controls. */
+  .lcols{grid-template-columns:minmax(300px,336px) 1fr;gap:22px}
+  .lplay .ac-audio-status{flex:1 1 100px;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* A fixed grid rather than flex-wrap for the settings band: wrapping gave a
+     different number of rows per activity, so the tallest one — locrian's —
+     overflowed while the others fit. A grid is the same height for all of them.
+     The actions band stays a flex row, because switches are narrow and of one
+     height and a grid would only spread them out. */
+  .lplay .ac-controls{gap:var(--s3);margin-top:10px}
+  .lplay .ac-band:not(.ac-band-act){grid-template-columns:repeat(4,minmax(0,1fr));gap:9px 12px}
+  /* the mode row goes first so it does not strand a half-empty row above it:
+     mode bar, then the four selects in one row */
+  .lplay .ac-band>.ac-seg{order:-1}
+  .lplay .ac-band-act{gap:9px var(--s4)}
+  .lplay .ac-knobs .ac-field{gap:4px}
+  /* the panel's own breathing room is the first thing to give up on a short
+     screen — the groove keeps its size, only the air around it goes */
+  .lplay .ac-scrub{padding:4px 7px;margin-top:var(--s2)}
+  .lplay .ac-knobs{margin-top:var(--s3);padding-top:var(--s3)}
+  /* the selects have to be able to shrink into a quarter-width cell */
+  .lplay .ac-controls .ac-field,.lplay .ac-controls .btn{min-width:0}
+  .lplay .ac-controls .ac-field select{width:100%;min-width:0}
+  .lplay .ac-field input[type=range]{width:100%;min-width:0}
+  .lplay .w-read{padding-top:6px;margin-bottom:0}
+}
+@media (min-width:1001px) and (max-height:800px){
+  .lplay .ac-music>[data-roll]{min-height:100px}
+  .lplay .va-kb{--kb-height:78px}
+  /* The lessons built on the chord activity carry a seven-tile grid in the
+     music column as well, and at 720px that was the 70px that did not fit.
+     The tiles keep their degree, their name and their function and give up the
+     comparison hint, which the reading line under the controls says anyway. */
+  .lplay .md-kb-host{margin:8px 0 0}
+  .lplay .md-grid{margin:8px 0 0;gap:6px}
+  .lplay .md-tile{padding:6px 5px 5px;gap:2px}
+  .lplay .md-num{font-size:14px}
+  .lplay .md-tile b{font-size:11.5px}
+  .lplay .md-vs{display:none}
+  .lplay .ac-controls{gap:7px 12px}
+}
+/* 1280x720 is the floor this is built to fit, and on the chord lessons it is
+   the last 30px that decides it. The signature hint goes the way of the
+   comparison hint, and the roll and keyboard sit at their smallest usable size. */
+@media (min-width:1001px) and (max-height:745px){
+  .lplay .ac-music>[data-roll]{min-height:84px}
+  .lplay .va-kb{--kb-height:72px}
+  .lplay .md-sig{display:none}
+  .lplay .ac-controls{margin-top:6px}
+  .lplay .w-read{padding-top:4px}
+}
+.lplay .demo-note{padding:13px 20px;border-top:1px solid var(--hair);font-size:12.5px;
+  color:var(--faint);line-height:1.55;margin:0}
+
+/* --- the step rail -------------------------------------------------------- */
+.rail{display:flex;align-items:center;gap:5px;flex:0 0 auto;padding-bottom:4px}
+.rail button{flex:1 1 0;height:4px;min-width:0;border-radius:2px;border:0;padding:0;
+  background:rgba(255,255,255,.09);cursor:pointer;transition:transform .2s,background .2s}
+.rail button:hover{transform:scaleY(1.8)}
+.rail button.seen{background:rgba(212,160,74,.42)}
+.rail button.on{background:var(--gold)}
+.rail-n{flex:0 0 auto;margin-left:10px;font-size:9.5px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--faint);white-space:nowrap}
+
+/* --- the step itself ------------------------------------------------------ */
+/* The step starts near the top rather than floating in the middle of the
+   column. Step length varies a lot — two lines on Try it, a paragraph on Why,
+   a question and four options on Check — and centring moved the first line to
+   a different height on every step, so the eye had to hunt for it each time
+   you pressed Next. Anchored, it is always in the same place. */
+.lstep{flex:1 1 auto;display:flex;flex-direction:column;justify-content:flex-start;
+  min-height:0;overflow-y:auto;padding:clamp(14px,5vh,54px) 0 14px}
+.lstep>div{width:100%}
+.lstep .prose{max-width:none}
+.lstep .prose p{font-size:15px;line-height:1.62;margin-bottom:13px;font-weight:300}
+.lstep .prose p:last-child{margin-bottom:0}
+.lstep .claim{font-family:'Playfair Display',Georgia,serif;font-style:italic;
+  font-size:clamp(19px,1.7vw,23px);line-height:1.42;color:var(--gold);margin:10px 0 0}
+.lstep .step-h{font-size:19px;margin:8px 0 12px}
+.lstep .step-lead{font-size:14.5px;line-height:1.6;color:var(--text);margin:10px 0 16px;font-weight:300}
+.lstep .q{margin:0 0 14px;padding:0;border:0;background:none}
+.lstep .q legend{font-size:16px;color:#fff;margin-bottom:12px;padding:0}
+.lstep .opt{font-size:13.5px;padding:10px 13px}
+.lstep .why{font-size:12.5px}
+.lstep .ac-field{display:flex;margin-bottom:12px}
+.lstep .ac-actions{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 0}
+.lstep .ac-feedback{font-size:13px;line-height:1.55;margin-top:12px}
+.lstep .ac-usefor{margin-top:22px}
+.lstep [data-exercise]{font-size:14px;line-height:1.6;font-weight:300;margin:0}
+
+/* the closing step */
+.step-end{text-align:left}
+.step-end .tick{width:34px;height:34px;border-radius:50%;border:1px solid var(--ok);
+  color:var(--ok);display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:14px}
+.step-end h2{font-size:24px;margin:0 0 8px}
+.step-end .src{font-size:12px;color:var(--faint);line-height:1.6;margin:0 0 18px}
+.step-end .src.credit{margin:20px 0 0;padding-top:14px;border-top:1px solid var(--hair);font-size:11px}
+.step-end .src.credit a{color:#6E707A;border-bottom:1px solid rgba(255,255,255,.12)}
+.step-end .go{margin-top:2px}
+
+/* a panel step fills the wide column, so Listen gets the room the widget has */
+.lpanel{height:100%;min-height:0;overflow-y:auto;padding:18px 20px}
+.lplay .demo[hidden],.lpanel[hidden]{display:none}
+
+/* --- back and next -------------------------------------------------------- */
+.lnav{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:14px 0 18px;
+  border-top:1px solid var(--hair)}
+.lnav .sp{flex:1 1 auto}
+.lnav .hint{font-size:10.5px;color:#3E404A}
+.lnav .btn:disabled{opacity:.35;cursor:default}
+.lnav .btn:disabled:hover{border-color:var(--hair);color:var(--dim)}
+
+/* --- the course overview -------------------------------------------------- */
+/* ---- THE OVERVIEW FITS ONE SCREEN AS WELL ---------------------------------
+   The hero is fixed and the modules take what is left. Every vertical gap is
+   a vh-aware clamp rather than a fixed pixel count, so the same page closes up
+   on a 720px laptop and opens out on a 1080px monitor instead of being tuned
+   for one and scrolling on the other.
+   ------------------------------------------------------------------------- */
+@media (min-width:1001px){
+  html.over-view{overflow:hidden}
+  html.over-view body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+  html.over-view #view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  html.over-view .owrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  html.over-view .hero{flex:0 0 auto}
+  html.over-view .omod:last-child{margin-bottom:0}
+}
+.owrap{position:relative;z-index:10;width:100%;max-width:1180px;margin:0 auto;
+  padding:0 30px clamp(14px,2.4vh,34px)}
+.hero{padding:clamp(16px,3.2vh,56px) 0 clamp(14px,2.4vh,32px);max-width:640px}
+.hero h1{font-size:clamp(28px,3.6vw,46px);line-height:1.06;
+  margin:clamp(6px,1.1vh,13px) 0 clamp(6px,1.1vh,13px)}
+.hero p{color:var(--dim);font-weight:300;margin-bottom:clamp(10px,1.8vh,21px)}
+.omod{margin-bottom:clamp(14px,2.6vh,34px)}
+.omod>h2{font-size:12px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
+  color:var(--faint);margin-bottom:4px}
+.omod>p{font-size:12.5px;color:#3E404A;margin-bottom:14px}
+.ocards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+/* On a 720px or 768px laptop the nine cards and the hero come to more than one
+   screen. Rather than scroll, the cards close up and their one-line summary is
+   capped at two lines — the title and the number are what you pick from. */
+@media (min-width:1001px) and (max-height:860px){
+  .ocard{padding:11px 14px;gap:11px}
+  .ocards{gap:9px}
+  .ocard h3{font-size:15px}
+  .ocard p{font-size:12px;line-height:1.45;display:-webkit-box;-webkit-box-orient:vertical;
+    -webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+  .omod>p{margin-bottom:8px}
+  .hero p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;
+    overflow:hidden}
+}
+.ocard{display:grid;grid-template-columns:30px 1fr auto;gap:14px;align-items:baseline;
+  padding:16px 18px;border:1px solid var(--hair);border-radius:11px;
+  background:rgba(255,255,255,.02);transition:border-color .3s,background .3s,transform .3s}
+a.ocard:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05);transform:translateY(-2px)}
+.ocard .on{font-family:'Playfair Display',Georgia,serif;font-size:15px;color:var(--gold);opacity:.8}
+.ocard.done .on{color:var(--ok)}
+.ocard h3{font-size:16.5px;margin:0 0 3px}
+.ocard p{font-size:12.5px;color:var(--dim);font-weight:300;line-height:1.5}
+.otag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--faint);white-space:nowrap}
+.ocard.done .otag{color:var(--ok)}
+
+/* --- a tool: the thing, full width ---------------------------------------- */
+
+/* ---- A TOOL IS LOCKED TO ONE SCREEN TOO ----------------------------------
+   Same chain as a lesson: html → body → #view → .twrap, each a flex column
+   that passes the remaining height down, so the piano roll takes whatever the
+   header, transport, controls and keyboard leave. No subtracted bar height
+   anywhere, because the nav is a clamp and browser chrome is not knowable.
+   A tool keeps its seven buttons — it is the thing you came to turn over —
+   so its keyboard sits a little lower than a lesson's to pay for them.
+   ------------------------------------------------------------------------- */
+@media (min-width:1001px){
+  html.tool-view{overflow:hidden}
+  html.tool-view body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+  html.tool-view #view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+  html.tool-view .twrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+    padding-bottom:clamp(14px,2.4vh,26px)}
+  html.tool-view .thead{flex:0 0 auto;padding:clamp(12px,2.6vh,30px) 0 clamp(10px,1.8vh,18px)}
+  /* THE KNOBS GO BESIDE THE MUSIC, NOT UNDER IT. Stacked, the chord grid's
+     last row of buttons sat 300px below the fold on a 720px laptop. Side by
+     side, the tallest of the two columns sets the height and the piano roll
+     takes whatever the shorter one leaves, so the whole instrument is on one
+     screen from 720px up. */
+  html.tool-view .twrap .demo{flex:1 1 auto;min-height:0;display:flex;
+    flex-direction:row;align-items:stretch;gap:0;padding:0;overflow:hidden}
+  html.tool-view .twrap .ac-music{flex:1 1 auto;min-width:0;min-height:0;
+    display:flex;flex-direction:column;padding:16px 20px}
+  html.tool-view .twrap .ac-knobs{flex:0 0 clamp(340px,38%,560px);min-width:0;min-height:0;
+    display:flex;flex-direction:column;overflow-y:auto;
+    border-left:1px solid var(--hair);padding:16px 20px}
+  /* The knobs own their column, so the vertical margins the stacked layout
+     needed to separate them from the music are dead weight here. */
+  html.tool-view .twrap .ac-controls{margin-top:0;gap:13px 18px}
+  html.tool-view .twrap .ac-actions{margin-top:14px}
+  html.tool-view .twrap .w-read{padding-top:12px;margin-bottom:0}
+  html.tool-view .twrap .ac-music>[data-roll]{flex:1 1 auto;min-height:110px;
+    display:flex;flex-direction:column}
+  html.tool-view .twrap .ac-roll-stage{flex:1 1 auto}
+  html.tool-view .twrap .ac-transport,
+  html.tool-view .twrap .ac-controls,
+  html.tool-view .twrap .ac-actions{flex:0 0 auto}
+  html.tool-view .twrap .va-kb{--kb-height:clamp(92px,12vh,140px)}
+  html.tool-view .twrap .demo-note{flex:0 0 auto;margin-top:10px}
+}
+
+/* ---- A SHORT SCREEN SPLITS THE KNOBS IN TWO -------------------------------
+   On a 720px or 768px laptop the settings alone are taller than the column
+   that holds them, while the reading line and the compare row beside them come
+   to less than half that. So below 860px the knobs become two columns of their
+   own — settings on the left, what it reads and what you do with it on the
+   right — and the column's height becomes the taller of the two instead of
+   their sum. Above 860px they stay in one column, because there they fit and
+   two would only look sparse.
+   ------------------------------------------------------------------------- */
+@media (min-width:1001px) and (max-height:860px){
+  html.tool-view .twrap .ac-knobs{flex:0 0 clamp(430px,46%,680px);padding:9px 18px;
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.7fr);
+    grid-template-rows:min-content 1fr;column-gap:20px;align-content:start;overflow:hidden}
+  html.tool-view .twrap .ac-controls{grid-column:1;grid-row:1/span 2;gap:8px 13px}
+  html.tool-view .twrap .ac-knobs .ac-field{gap:4px}
+  html.tool-view .twrap .md-modebar>legend{margin-bottom:6px}
+  html.tool-view .twrap .w-read{grid-column:2;grid-row:1;padding-top:0;margin:0}
+  html.tool-view .twrap .ac-actions{grid-column:2;grid-row:2;margin-top:9px;align-self:start}
+  /* the mode row is the tallest control; at this height it earns a smaller button */
+  html.tool-view .twrap .md-modebar .btn{padding:7px 10px;font-size:11.5px}
+  html.tool-view .twrap .ac-field input[type=range]{width:140px}
+  /* The music column is narrower once the knobs take two of their own, so the
+     transport wrapped onto a second row and the status sentence was what did
+     it. Let it take one line and trail off; the full text is still read out,
+     because it keeps its role="status". */
+  html.tool-view .twrap .ac-music{padding:12px 16px}
+  html.tool-view .twrap .ac-audio-status{flex:1 1 60px;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* The seven tiles were taking the height the roll needed to be readable as
+     pitch rather than a band. They keep their degree, their name and their
+     function and give up the two hint lines — the reading line beside them
+     already says which chords are the signature ones. */
+  html.tool-view .twrap .md-grid{margin:10px 0 0;gap:6px}
+  html.tool-view .twrap .md-tile{padding:7px 5px 6px;gap:2px}
+  html.tool-view .twrap .md-num{font-size:15px}
+  html.tool-view .twrap .md-vs{display:none}
+  html.tool-view .twrap .md-kb-host{margin:10px 0 0}
+  html.tool-view .twrap .ac-music>[data-roll]{min-height:150px}
+}
+
+/* The shortest laptop this is built for is 1280x720. The keyboard and the roll
+   each give up a little more here, and the overview's last gaps close, so that
+   720px is a fit rather than a near miss. Below this the lock comes off anyway. */
+@media (min-width:1001px) and (max-height:760px){
+  html.tool-view .twrap .ac-music{padding:10px 14px}
+  html.tool-view .twrap .va-kb{--kb-height:80px}
+  html.tool-view .twrap .md-sig{display:none}
+  html.tool-view .twrap .ac-music>[data-roll]{min-height:130px}
+  .owrap{padding-bottom:10px}
+  .hero{padding:12px 0 10px}
+  .omod{margin-bottom:10px}
+}
+.twrap{position:relative;z-index:10;width:100%;max-width:1480px;margin:0 auto;padding:0 30px 56px}
+.thead{padding:clamp(20px,4vh,40px) 0 22px;max-width:760px}
+.thead h1{font-size:clamp(28px,3.4vw,40px);line-height:1.06;margin:9px 0 10px}
+.thead h1:focus{outline:none}
+.thead .claim{font-family:'Playfair Display',Georgia,serif;font-style:italic;
+  font-size:19px;line-height:1.45;color:var(--gold);margin:0}
+.twrap .demo-note{font-size:12.5px;color:var(--faint);margin-top:14px;max-width:var(--measure)}
+
+/* --- below 1000px the lock comes off and the columns stack ---------------- */
+@media (max-width:1000px){
+  /* minmax(0,1fr), not 1fr: the chip row's min-content width would otherwise
+     set the column and push the whole page sideways. */
+  .lwrap{grid-template-columns:minmax(0,1fr);padding:0 20px 40px}
+  .lmain{padding-left:0;min-width:0}
+  .lrail{flex-direction:row;flex-wrap:wrap;gap:8px;overflow:visible;min-width:0;
+    border-right:0;border-bottom:1px solid var(--hair);padding:14px 0 12px;margin-bottom:4px}
+  .lrail-home{margin-bottom:0}
+  /* flex:1 1 100% overrides the base flex:0 0 auto, so the group narrows to the
+     rail and its chips wrap instead of running off the screen. */
+  .lrail-group{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;min-width:0}
+  .lrail-group>p{display:none}
+  .lrail-group>a{margin:0;padding:5px 10px;border:1px solid var(--hair);border-radius:100px;font-size:12px}
+  .lcols{grid-template-columns:1fr;gap:18px;padding-top:12px}
+  .lplay{max-height:none;overflow:visible;order:-1}
+  .lstep{padding:10px 0;overflow:visible;justify-content:flex-start}
+  .lnav{padding-bottom:10px}
 }

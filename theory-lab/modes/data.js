@@ -48,9 +48,9 @@ const LESSONS = [
   short:'One note at a time, from the brightest to the darkest.',
   claim:'Every mode is one note away from the one beside it. Line them up brightest to darkest and each step lowers exactly one degree.',
   activity:'brightness',
-  preset:{ rootPc:2, mode:'lydian', drone:true },
+  preset:{ rootPc:2, mode:'lydian', drone:false },
   challenge:'Walk the slider down from Lydian and stop at the mode that is minor everywhere except one raised note.',
-  demoNote:'Press play and move the slider. Every step down lowers exactly one degree — watch which key flashes, and listen to what it does against the drone.',
+  demoNote:'Press play and move the slider. Every step down lowers exactly one degree — watch which key flashes, and turn the drone on to hear what it does against a tonic.',
   videos:[
     { part:'theory',  title:'The colour-note idea',    url:V('intro','theory'),  minutes:5 },
     { part:'hearing', title:'Drone and brightness',    url:V('intro','hearing'), minutes:5 }
@@ -59,7 +59,7 @@ const LESSONS = [
     'Seven notes, seven places to start. Begin a major scale on its second degree and the same seven notes make a different scale, because the gaps have moved. That is all a mode is — and it is a poor way to learn them, because it tells you nothing about what they sound like.',
     'Here is the useful order instead. Put the seven modes in a line from brightest to darkest: <strong>Lydian, Ionian, Mixolydian, Dorian, Aeolian, Phrygian, Locrian</strong>. Now walk down it. At every single step, exactly one degree drops by a semitone, and the degrees drop in this order: the 4th, then the 7th, the 3rd, the 6th, the 2nd and the 5th.',
     'So the difference between any two neighbours is one note. Lydian is major with a raised 4th. Mixolydian is major with a lowered 7th. Dorian is minor with a raised 6th. Phrygian is minor with a lowered 2nd. Each one has a <em>colour note</em>, and that note is the whole mode.',
-    'The second thing matters as much as the first: <strong>a mode only exists against a tonic</strong>. Play D Dorian with nothing underneath and you have played C major starting on D. Put a D underneath it and you have played Dorian. That is why the drone is on by default here, and why it is the first thing to reach for when a mode refuses to sound like itself.'
+    'The second thing matters as much as the first: <strong>a mode only exists against a tonic</strong>. Play D Dorian with nothing underneath and you have played C major starting on D. Put a D underneath it and you have played Dorian. That is why the drone is the first thing to reach for when a mode refuses to sound like itself \u2014 turn it on and the same seven notes snap into place.'
   ],
   ex:{
     beginner:'Put on a D drone. Play D Lydian up and down, then D Ionian. Find the one note that changed and sing it.',

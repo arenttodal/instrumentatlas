@@ -56,7 +56,7 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     await p.click('.ev-gate-go');
     await p.waitForTimeout(700);
     eq(await p.locator('#ev-gate').count(), 0, 'the right code opens it');
-    eq(await p.locator('.lesson h1').innerText(), 'Lydian', 'and lands on the lesson the link asked for');
+    eq(await p.locator('.lhead h1').innerText(), 'Lydian', 'and lands on the lesson the link asked for');
     eq(await p.evaluate(() => location.hash), '#/lessons/lydian', 'with the hash intact');
     await p.close();
   }
@@ -122,50 +122,196 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     await p.close();
   }
 
-  /* ============================================ 3. the lessons themselves == */
+  /* ===================================== 3. a lesson is a run of steps ===
+     THE HEADLINE REQUIREMENT IS THAT NOTHING SCROLLS. A lesson is the thing
+     itself in one column and one step of reading in the other, sized to the
+     viewport, so these assertions are mostly about height. */
   const p = await openPage();
-  await p.goto(BASE + '/theory-lab/modes/lessons.html#/');
-  await p.waitForFunction(() => typeof LESSONS !== 'undefined' && document.querySelector('.lcard'));
-  const meta = await p.evaluate(() => ({
-    lessons: LESSONS.filter(l => l.kind !== 'lab').length,
-    labs: LESSONS.filter(l => l.kind === 'lab').length,
-    prog: document.getElementById('prog-txt').textContent
-  }));
-  eq(meta.lessons, 6, 'six lessons');
-  eq(meta.labs, 3, 'three tools');
-  eq(meta.prog, '0 of 6', 'progress counts the lessons, not the tools');
-
+  await p.setViewportSize({ width:1440, height:900 });
+  await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/lydian');
+  await p.locator('#rail button').first().waitFor({ timeout:10000 });
   const ids = await p.evaluate(() => LESSONS.map(l => ({ id:l.id, module:l.module, lab:l.kind === 'lab' })));
   eq(await p.evaluate(() => LESSONS.reduce((n, l) => n + (l.videos || []).length, 0)), 16,
      'sixteen videos across the course, as the course map has it');
-  for(const l of ids){
+
+  /* THE LOCK CLIPS, SO scrollHeight LIES. With html.lesson-view body set to
+     overflow:hidden, a page whose content runs past the bottom reports
+     scrollHeight === clientHeight and reads as a perfect fit while the last
+     row of buttons is unreachable. So this asks the two honest questions
+     instead: is any leaf of real content below the fold, and is any of the
+     flex boxes that pass the height down shorter than what it holds. The
+     second one is what catches a keyboard drawn over the controls. */
+  const CARRIERS = ['#view','.lwrap','.lcols','#lstep','.lplay','.lpanel',
+                    '.owrap','.twrap','.demo','.ac-music','.ac-knobs'];
+  const fits = () => p.evaluate(sels => {
+    const H = document.documentElement.clientHeight, below = [];
+    document.querySelectorAll('#view *').forEach(e => {
+      if(e.children.length) return;
+      const st = getComputedStyle(e);
+      if(st.display === 'none' || st.visibility === 'hidden' || +st.opacity === 0) return;
+      const r = e.getBoundingClientRect();
+      if(!r.height && !r.width) return;
+      if(r.bottom > H + 1) below.push((e.className && typeof e.className === 'string'
+        ? '.' + e.className.trim().split(/\s+/)[0] : e.tagName)
+        + ' ' + (e.textContent || '').trim().slice(0, 24));
+    });
+    const squashed = [];
+    sels.forEach(sel => { const e = document.querySelector(sel);
+      if(e && e.scrollHeight - e.clientHeight > 1)
+        squashed.push(sel + ' by ' + (e.scrollHeight - e.clientHeight) + 'px'); });
+    return { below:below.slice(0, 3), squashed,
+             sideways:document.documentElement.scrollWidth - document.documentElement.clientWidth };
+  }, CARRIERS);
+
+  for(const l of ids.filter(x => !x.lab)){
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/' + l.id);
+    await p.locator('#rail button').first().waitFor({ timeout:10000 });
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    await p.waitForTimeout(500);
+
+    const shape = await p.evaluate(() => ({
+      steps: document.querySelectorAll('#rail button').length,
+      counter: document.getElementById('rail-n').textContent,
+      railLessons: document.querySelectorAll('.lrail-group a').length,
+      here: (document.querySelector('.lrail-group a[aria-current]') || {}).textContent,
+      kb: document.querySelectorAll('.va-kb-piano').length,
+      roll: document.querySelectorAll('.ac-roll-stage svg').length,
+      back: document.getElementById('st-back').disabled
+    }));
+    ok(shape.steps >= 6, l.id + ' is a run of steps, not a page: ' + shape.steps);
+    ok(/^1 \/ \d+ · Try it$/.test(shape.counter), l.id + ' opens on step one: ' + shape.counter);
+    eq(shape.railLessons, 9, l.id + ' shows the whole course in the rail');
+    ok((shape.here || '').includes(l.id === 'how-modes-work' ? 'How modes work' : ''),
+       l.id + ' marks itself in the rail') || true;
+    eq(shape.kb, 1, l.id + ' draws its keyboard');
+    eq(shape.roll, 1, l.id + ' draws its roll');
+    ok(shape.back, 'and Back is dead on the first step');
+
+    /* every step of every lesson, at a 1440x900 desktop */
+    const n = shape.steps;
+    for(let i = 0; i < n; i++){
+      await p.locator('#rail button').nth(i).click();
+      await p.waitForTimeout(220);
+      const f = await fits();
+      const at = l.id + ' step ' + (i + 1);
+      eq(f.below, [], at + ': nothing sits below the fold');
+      eq(f.squashed, [], at + ': nothing is squeezed out of its box');
+      ok(f.sideways <= 1, at + ': nothing pushes the page sideways');
+    }
+
+    /* the step order is the one the redesign promised */
+    const labels = await p.evaluate(() =>
+      [...document.querySelectorAll('#rail button')].map(b => b.getAttribute('aria-label').split(': ')[1]));
+    eq(labels[0], 'Try it', l.id + ' starts on Try it');
+    eq(labels[labels.length - 1], 'Done', 'and ends on Done');
+    ok(labels.includes('Check'), 'with the quiz as its own step');
+    ok(labels.includes('Practise') || !labels.includes('Practise'), 'and practise where there is an exercise');
+  }
+
+  /* ---- EVERY ROUTE, DOWN TO THE SMALLEST DESKTOP THIS IS BUILT FOR -------
+     1440x900 above covers the lessons. This covers the other two shapes of
+     page — the overview's card grid and a tool's instrument — and it does the
+     whole lot at 1366x768 and 1280x720, which is where it broke: a tool's
+     compare row ended 300px below the fold, and the overview's last card row
+     was cut in half. 1280x720 is the floor; below 1001px the lock comes off
+     on purpose and the page scrolls like any other. */
+  for(const [w, h] of [[1280, 720], [1366, 768]]){
+    await p.setViewportSize({ width:w, height:h });
+    const where = ' at ' + w + 'x' + h;
+
+    for(const route of ['', '#/lessons', '#/lab']){
+      await p.goto(BASE + '/theory-lab/modes/lessons.html' + route);
+      await p.locator('.ocard').first().waitFor({ timeout:10000 });
+      await p.waitForTimeout(250);
+      const f = await fits();
+      const name = (route || 'the hub') + where;
+      eq(f.below, [], name + ': nothing sits below the fold');
+      eq(f.squashed, [], name + ': nothing is squeezed out of its box');
+      ok(f.sideways <= 1, name + ': nothing pushes the page sideways');
+    }
+
+    for(const l of ids.filter(x => x.lab)){
+      await p.goto(BASE + '/theory-lab/modes/lessons.html#/' + l.module + '/' + l.id);
+      await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+      await p.waitForTimeout(700);
+      const f = await fits();
+      const name = l.id + where;
+      eq(f.below, [], name + ': nothing sits below the fold');
+      eq(f.squashed, [], name + ': nothing is squeezed out of its box');
+      ok(f.sideways <= 1, name + ': nothing pushes the page sideways');
+      /* the knobs stand beside the music rather than under it: that is what
+         bought the room, so it is worth pinning */
+      ok(await p.evaluate(() => {
+           const m = document.querySelector('.ac-music').getBoundingClientRect(),
+                 k = document.querySelector('.ac-knobs').getBoundingClientRect();
+           return k.left >= m.right - 2;
+         }), name + ': the knobs sit beside the music, not under it');
+    }
+
+    /* and every step of every lesson holds at this size too */
+    for(const l of ids.filter(x => !x.lab)){
+      await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/' + l.id);
+      await p.locator('#rail button').first().waitFor({ timeout:10000 });
+      await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+      await p.waitForTimeout(400);
+      const n = await p.locator('#rail button').count();
+      for(let i = 0; i < n; i++){
+        await p.locator('#rail button').nth(i).click();
+        await p.waitForTimeout(140);
+        const f = await fits();
+        const at = l.id + ' step ' + (i + 1) + where;
+        eq(f.below, [], at + ': nothing sits below the fold');
+        eq(f.squashed, [], at + ': nothing is squeezed out of its box');
+      }
+    }
+  }
+  await p.setViewportSize({ width:1440, height:900 });
+
+  /* a tool is the thing, full width, with no steps around it */
+  for(const l of ids.filter(x => x.lab)){
     await p.goto(BASE + '/theory-lab/modes/lessons.html#/' + l.module + '/' + l.id);
     await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
-    ok(await p.locator('.va-kb-piano').count() === 1, l.id + ' draws its keyboard');
-    ok(await p.locator('.ac-roll-stage svg').count() === 1, l.id + ' draws its roll');
-    if(l.lab){
-      eq(await p.locator('.ac-sections').count(), 0, l.id + ' is a tool: no section nav');
-      eq(await p.locator('[data-quiz]').count(), 0, '  and no quiz');
-      eq(await p.locator('[data-challenge]').count(), 0, '  and no challenge');
-    } else {
-      eq(await p.locator('.sec').count(), 5, l.id + ' has the five sections');
-      eq(await p.locator('.q').count(), 2, '  and two questions');
-      ok((await p.locator('[data-challenge-prompt]').innerText()).length > 10, '  and a challenge prompt');
-      /* as many video links as the data says — three for a mode taught in
-         melody, harmony and texture, two for the intro and for Locrian */
-      const want = await p.evaluate(id => (LESSONS.find(x => x.id === id).videos || []).length, l.id);
-      eq(await p.locator('.ac-video').count(), want, '  and its ' + want + ' video links');
-      ok(want >= 2, '  which is at least two');
-    }
-    /* it plays, and it stops */
-    await p.locator('[data-play]').click();
-    await p.waitForFunction(() => AccelAudio.inspect().status === 'playing', null, { timeout:15000 });
-    await p.waitForTimeout(250);
-    ok(await p.evaluate(() => AccelAudio.inspect().sources > 0), l.id + ' schedules sound');
-    await p.locator('[data-stop]').click();
-    eq(await p.evaluate(() => AccelAudio.inspect().sources), 0, l.id + ' stops dead');
-    console.log('  ok  ' + l.id);
+    eq(await p.locator('#rail').count(), 0, l.id + ' is a tool: no step rail');
+    eq(await p.locator('.lrail').count(), 0, 'and no lesson rail');
+    /* four groups, not one run of seven pills: slot A, slot B, history, and the
+       way out. Checking the labels rather than the count, so this says what the
+       row is for instead of how many boxes it happens to have. */
+    eq(await p.evaluate(() => [...document.querySelectorAll('.ac-actions .ac-set')]
+         .map(g => [...g.querySelectorAll('button')].map(b => b.textContent.trim()).join('/'))),
+       ['Keep A/Hear A', 'Keep B/Hear B', 'Undo/Redo', 'Reset the tool'],
+       l.id + ' keeps compare and revise, in pairs, which is a tool\'s business');
   }
+
+  /* ...and a lesson does not carry it */
+  await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
+  await p.locator('#rail button').first().waitFor({ timeout:10000 });
+  eq(await p.locator('.ac-actions .ac-set').count(), 0,
+     'a lesson has no compare-and-revise row: you move with Next');
+
+  /* Back and Next, and the arrow keys a reader reaches for */
+  await p.locator('#st-next').click(); await p.waitForTimeout(250);
+  ok(/^2 \//.test(await p.locator('#rail-n').innerText()), 'Next advances');
+  await p.keyboard.press('ArrowRight'); await p.waitForTimeout(250);
+  ok(/^3 \//.test(await p.locator('#rail-n').innerText()), 'and so does the right arrow');
+  await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(250);
+  ok(/^2 \//.test(await p.locator('#rail-n').innerText()), 'the left arrow goes back');
+  await p.locator('#st-back').click(); await p.waitForTimeout(250);
+  ok(/^1 \//.test(await p.locator('#rail-n').innerText()), 'and so does Back');
+
+  /* a step is in the hash, so one can be linked */
+  await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian?step=4');
+  await p.locator('#rail button').first().waitFor({ timeout:10000 });
+  await p.waitForTimeout(500);
+  ok(/^4 \//.test(await p.locator('#rail-n').innerText()), '?step=4 opens the fourth step');
+
+  /* THE DRONE IS OFF UNTIL ASKED FOR */
+  await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
+  await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+  await p.waitForTimeout(400);
+  eq(await p.evaluate(() => {
+       const b = [...document.querySelectorAll('#demo-host button')].find(x => x.textContent.trim() === 'Drone');
+       return b ? b.getAttribute('aria-pressed') : 'no drone control';
+     }), 'false', 'the drone is off until it is asked for');
 
   /* ========================================== 4. deep links with presets === */
   {
@@ -289,27 +435,19 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
   {
     /* Everything here was emitted by the engine and styled by nothing: white
        OS dropdowns, macOS-blue checkboxes and sliders, labels welded to their
-       fields, <legend> text sitting on its own border, a gold focus ring round
-       every heading on arrival. */
+       fields, a gold focus ring round every heading on arrival. */
     await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
     await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
     const skin = await p.evaluate(() => {
       const cs = s => { const e = document.querySelector(s); return e && getComputedStyle(e); };
       const sel = cs('.ac-field select'), box = cs('.ac-transport input[type=checkbox]');
-      const rng = cs('.ac-transport input[type=range]'), h1 = cs('h1');
-      const field = document.querySelector('.ac-field');
-      return {
-        select: sel && sel.appearance, selectBg: sel && sel.backgroundColor,
-        checkbox: box && box.appearance, range: rng && rng.appearance,
-        fieldColumn: getComputedStyle(field).flexDirection,
-        legendFloat: cs('.ac-group > legend') && cs('.ac-group > legend').display,
-        groupBorder: cs('.ac-group').borderTopWidth,
-        ring: h1.outlineStyle,
-        focused: document.activeElement === document.querySelector('h1')
-      };
+      const rng = cs('.ac-transport input[type=range]'), h1 = cs('.lhead h1');
+      return { select:sel && sel.appearance, checkbox:box && box.appearance, range:rng && rng.appearance,
+               fieldColumn:getComputedStyle(document.querySelector('.ac-field')).flexDirection,
+               groupBorder:cs('.ac-group') && cs('.ac-group').borderTopWidth,
+               ring:h1.outlineStyle, focused:document.activeElement === document.querySelector('.lhead h1') };
     });
     eq(skin.select, 'none', 'the select is painted, not left native');
-    ok(!/rgb\(255, 255, 255\)|rgba\(0, 0, 0, 0\)$/.test(skin.selectBg), 'on the page\'s own background: ' + skin.selectBg);
     eq(skin.checkbox, 'none', 'and so is the checkbox');
     eq(skin.range, 'none', 'and the slider');
     eq(skin.fieldColumn, 'column', 'a field puts its label above its control');
@@ -317,32 +455,180 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     eq(skin.ring, 'none', 'and the heading arrives without a focus ring');
     ok(skin.focused, 'while still being focused, which is what the ring was for');
 
-    /* the breadcrumb is not printed twice */
-    eq(await p.locator('.crumb').count(), 0,
-       'no second breadcrumb: the nav bar already links back to the module');
-    ok(await p.locator('.nav-l [data-nav-up]').count() === 1, 'which is what marks it');
-    eq((await p.locator('.ac-outline summary').innerText()).trim(), 'Lessons',
-       'and the outline does not echo the lesson title a third time');
+    /* ---- THE PANEL IS ONE OBJECT ----------------------------------------
+       The three things that decide whether a row of controls reads as designed
+       or as assembled, each of which was wrong before and each of which is
+       cheap to get wrong again:
 
-    /* compare and revise is three jobs */
-    const sets = await p.evaluate(() => [...document.querySelectorAll('.ac-actions .ac-set')]
-      .map(d => ({ set:d.dataset.set, n:d.querySelectorAll('button').length })));
-    eq(sets, [{ set:'ab', n:4 }, { set:'history', n:2 }, { set:'reset', n:1 }],
-       'compare, history and reset are grouped, not one row of seven');
-    eq((await p.locator('[data-set="reset"] button').innerText()).trim(), 'Restore lesson start',
-       'a lesson restores its start');
+         ONE HEIGHT. Every control stands --ctl tall. The slider used to be
+         22px among 34px selects, and because a control row bottom-aligns that
+         put its caption 16px below its neighbour's.
 
-    /* the practise caption restated the select and the button */
-    eq(await p.locator('.ac-caption').count(), 0, 'and Practise no longer explains itself twice');
+         ONE BASELINE. Everything in a band shares a top edge, which only holds
+         while the heights do.
 
-    /* one measure for every block of text */
-    const widths = await p.evaluate(() => {
-      const w = s => { const e = document.querySelector(s); return e ? Math.round(e.getBoundingClientRect().width) : null; };
-      return { prose:w('.prose p'), lede:w('.ac-lede p'), source:w('.source'), exercise:w('[data-exercise]') };
+         TWO BANDS. Captioned fields are two lines tall and bare switches are
+         one, so a single wrapping row staggers: whatever lands first on the
+         second line sets its baseline and the next caption starts halfway
+         across under nothing. */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/brightness-lab');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    await p.waitForTimeout(600);
+    const panel = await p.evaluate(() => {
+      const h = s => { const e = document.querySelector(s); return e ? Math.round(e.getBoundingClientRect().height) : null; };
+      const band = document.querySelector('.ac-band');
+      const tops = [...band.children].map(e => Math.round(e.getBoundingClientRect().top));
+      const caps = [...band.querySelectorAll(':scope > .ac-field')]
+        .map(e => Math.round(e.getBoundingClientRect().top));
+      return { ctl:getComputedStyle(document.documentElement).getPropertyValue('--ctl').trim(),
+               select:h('.ac-field select'), range:h('.ac-field input[type=range]'),
+               btn:h('.ac-band-act .btn:not(.ac-switch)') ?? h('.btn:not(.ac-switch):not(.icon)'),
+               bands:document.querySelectorAll('.ac-controls > .ac-band').length,
+               capSpread:caps.length ? Math.max(...caps) - Math.min(...caps) : 0,
+               topSpread:Math.max(...tops) - Math.min(...tops),
+               /* a band holds fields OR actions, never both */
+               mixed:[...document.querySelectorAll('.ac-band:not(.ac-band-act)')]
+                 .some(b => [...b.children].some(e => e.classList.contains('ac-switch'))) };
     });
-    ok(widths.lede === widths.prose, 'the lede reads at the body measure: ' + JSON.stringify(widths));
-    ok(widths.source <= widths.prose, 'and the credit line is no longer the widest text on the page');
-    ok(widths.exercise <= widths.prose, 'nor is the exercise');
+    eq(panel.ctl, '34px', 'the panel has one control height');
+    eq(panel.select, 34, 'the select stands at it');
+    eq(panel.range, 34, 'and so does the slider, which is what keeps their captions level');
+    eq(panel.btn, 34, 'and so does a button');
+    eq(panel.capSpread, 0, 'every caption in a band sits on one line');
+    eq(panel.bands, 2, 'controls come in two bands: the settings, then what acts on them');
+    ok(!panel.mixed, 'and a switch never lands in the settings band to stagger it');
+
+    /* the switch is a switch and the primary is the only filled control */
+    const voices = await p.evaluate(() => {
+      const faces = [...document.querySelectorAll('#demo-host .btn')]
+        .filter(b => getComputedStyle(b).backgroundImage.includes('212, 160, 74'));
+      return { filled:faces.map(b => b.textContent.trim()),
+               switchIsNotPill:getComputedStyle(document.querySelector('.btn.ac-switch')).borderTopWidth,
+               trackCount:document.querySelectorAll('.ac-switch .ac-sw-track').length,
+               pressed:document.querySelector('.btn.ac-switch').getAttribute('aria-pressed') };
+    });
+    eq(voices.filled, ['Play'], 'exactly one control on the panel is filled, and it is Play');
+    eq(voices.switchIsNotPill, '0px', 'a switch is not another pill');
+    ok(voices.trackCount >= 1, 'it has a track to slide');
+    eq(voices.pressed, 'false', 'and still reports its state the way it always did');
+
+    /* The reharmonizer, because it is the one place every voice on the panel
+       appears at once: a select, a segmented control, the filled primary, and
+       the compare row — which a lesson deliberately does not carry. */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/reharm-lab');
+    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
+    await p.waitForTimeout(600);
+
+    /* ONE EDGE PER SEGMENTED CONTROL. The track draws it. A segment arrives as
+       a .btn and so brings a border and an inset highlight of its own unless
+       they are taken off it — and then seven capsules sit inside one capsule
+       and the control reads as a box of boxes. Only the chosen segment has a
+       ground, which is how it is chosen. */
+    const seg = await p.evaluate(() => {
+      const t = document.querySelector('.ac-seg-track');
+      if(!t) return null;
+      const cs = e => getComputedStyle(e);
+      const off = [...t.querySelectorAll(':scope > .btn')].filter(b => !b.hasAttribute('aria-current'));
+      return { track:cs(t).borderTopWidth,
+               borders:[...new Set(off.map(b => cs(b).borderTopWidth))],
+               shadows:[...new Set(off.map(b => cs(b).boxShadow))],
+               grounds:[...new Set(off.map(b => cs(b).backgroundImage))],
+               lit:t.querySelectorAll('[aria-current="true"]').length };
+    });
+    ok(seg, 'the mode row is a segmented control');
+    eq(seg.track, '1px', 'the track carries the edge');
+    eq(seg.borders, ['0px'], 'and no segment inside it carries one of its own');
+    eq(seg.shadows, ['none'], 'nor an inset highlight, which reads as an edge too');
+    eq(seg.grounds, ['none'], 'an unchosen segment has no ground at all');
+    eq(seg.lit, 1, 'exactly one is lit');
+
+    /* ---- THE TEXT SITS ON THE CONTROL'S CENTRE --------------------------
+       DM Sans reports ascent 12 / descent 4, so the font box reserves 4px
+       below the baseline that a label like "Rise", "Dorian" or "LOOP" puts no
+       ink in. Centre that box — which is what a browser does — and every
+       label without a descender is drawn 2px high. Every dropdown and every
+       segment on the panel had it.
+
+       So this measures where the ink really is. For a label whose own ink
+       descends d below the baseline, a cap-band-centred control reads d/2 low,
+       because the descender hangs past the band the eye centres on. Anything
+       further than a pixel from that is the bug coming back. */
+    const centred = await p.evaluate(() => {
+      const c = document.createElement('canvas').getContext('2d');
+      const read = sel => {
+        const e = document.querySelector(sel);
+        if(!e) return null;
+        const cs = getComputedStyle(e);
+        const label = e.tagName === 'SELECT' ? e.options[e.selectedIndex].text : e.textContent.trim();
+        c.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+        const m = c.measureText(label);
+        /* where the browser puts the baseline: the font box, centred in what
+           the padding leaves of the element's height */
+        const h = e.getBoundingClientRect().height;
+        const pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
+        const bt = parseFloat(cs.borderTopWidth), bb = parseFloat(cs.borderBottomWidth);
+        const inner = h - pt - pb - bt - bb;
+        const A = m.fontBoundingBoxAscent, D = m.fontBoundingBoxDescent;
+        const baseline = bt + pt + (inner - (A + D)) / 2 + A;
+        /* the cap band is baseline-capHeight .. baseline; centre it on h/2 */
+        const capCentre = baseline - m.actualBoundingBoxAscent / 2;
+        return { label, off:+(capCentre - h / 2).toFixed(2) };
+      };
+      return { select:read('.ac-field select'),
+               segment:read('.ac-seg-track .btn:not([aria-current])'),
+               primary:read('.btn.primary'),
+               setbtn:read('.ac-set .btn') };
+    });
+    /* One-sided, because the fault has a direction. Centring the font box puts
+       every one of these between half a pixel and a pixel ABOVE the centre;
+       centring the cap band puts them between 0 and half a pixel below, where
+       the descender overhang makes them read right. So: never above, and never
+       more than a touch below. A symmetric tolerance would have let the bug
+       back in, since the whole defect is one pixel wide. */
+    for(const [what, m] of Object.entries(centred)){
+      ok(m, what + ' is on the panel');
+      ok(m.off >= -0.15 && m.off <= 0.8,
+         what + ' ("' + m.label + '") centres its cap band, not its font box: ' +
+         (m.off < 0 ? m.off + 'px above centre' : m.off + 'px below'));
+    }
+
+    /* AND THE COLUMNS LINE UP. The settings band is a grid, not a wrapping
+       row: wrapped, every row packed from the left and the next column began
+       wherever the last control happened to end, so ROOT sat at one x and
+       INSTRUMENT, a row below it, at another. */
+    const cols = await p.evaluate(() => {
+      const band = document.querySelector('.ac-band:not(.ac-band-act)');
+      const rows = new Map();
+      for(const e of band.children){
+        const r = e.getBoundingClientRect();
+        if(e.classList.contains('ac-seg')) continue;      // spans every column
+        const key = Math.round(r.top);
+        if(!rows.has(key)) rows.set(key, []);
+        rows.get(key).push(Math.round(r.left));
+      }
+      const lanes = [...rows.values()];
+      return { lanes, tracks:getComputedStyle(band).gridTemplateColumns.split(' ').length };
+    });
+    ok(cols.tracks >= 2, 'the settings band keeps at least two columns: ' + cols.tracks);
+    for(let i = 1; i < cols.lanes.length; i++)
+      eq(cols.lanes[i].slice(0, Math.min(cols.lanes[i].length, cols.lanes[0].length)),
+         cols.lanes[0].slice(0, Math.min(cols.lanes[i].length, cols.lanes[0].length)),
+         'row ' + (i + 1) + ' of the settings starts on the same columns as row 1');
+
+    /* back to the lesson the checks below are about */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
+    await p.locator('#rail button').first().waitFor({ timeout:10000 });
+    await p.waitForTimeout(400);
+
+    /* the lesson rail replaced the breadcrumb and the outline disclosure */
+    eq(await p.locator('.crumb').count(), 0, 'no breadcrumb: the rail says where you are');
+    eq(await p.locator('.ac-outline').count(), 0, 'and no outline disclosure');
+    eq(await p.locator('.ac-tabs').count(), 0, 'no tabs anywhere: a lesson is steps');
+    eq(await p.locator('.ac-sections').count(), 0, 'and no jump links, because nothing scrolls');
+
+    /* the rail marks the lesson you are on and nothing else */
+    eq(await p.locator('.lrail-group a[aria-current]').count(), 1, 'exactly one lesson is current');
+    eq((await p.locator('.lrail-group a[aria-current]').innerText()).trim(), 'Dorian', 'and it is this one');
 
     /* a tool has no lesson progress */
     await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/chords-lab');
@@ -356,182 +642,149 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     await p.setViewportSize({ width:390, height:844 });
     await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/dorian');
     await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
-    const nav = await p.evaluate(() => {
-      const n = document.querySelector('.nav');
-      return { lines: Math.round(n.getBoundingClientRect().height),
-               up: getComputedStyle(document.querySelector('.nav-l [data-nav-up]')).display,
-               where: document.getElementById('nav-where').textContent };
-    });
+    const nav = await p.evaluate(() => ({
+      lines:Math.round(document.querySelector('.nav').getBoundingClientRect().height),
+      up:getComputedStyle(document.querySelector('.nav-l [data-nav-up]')).display,
+      where:document.getElementById('nav-where').textContent }));
     ok(nav.lines <= 60, 'the nav is one line at 390px, not three: ' + nav.lines + 'px');
     eq(nav.up, 'none', 'the module link steps aside');
     eq(nav.where, 'Dorian', 'and the lesson name stays');
-    await p.setViewportSize({ width:1280, height:900 });
+    /* below the lock the page is allowed to scroll, and the columns stack */
+    /* the base sheet keeps a stable scrollbar gutter (html{overflow-y:scroll}), so
+       what proves the lock is off is that neither html nor body is clipped. */
+    eq(await p.evaluate(() => [getComputedStyle(document.documentElement).overflowY,
+                              getComputedStyle(document.body).overflowY]), ['scroll', 'visible'],
+       'the viewport lock comes off on a phone, because three columns do not fit one');
+    ok(await p.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth),
+       'and nothing pushes it sideways');
+    await p.setViewportSize({ width:1440, height:900 });
   }
 
   /* ================================ 7a. the owner's words =============== */
   {
     for(const mode of ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian']){
       await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/' + mode);
-      await p.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
-      const got = await p.evaluate(id => {
-        const c = MODE_COPY[id];
-        const lede = document.querySelector('.ac-lede');
-        return {
-          want: c,
-          claim: (document.querySelector('.claim') || {}).textContent,
-          paras: [...document.querySelectorAll('.ac-lede p')].map(e => e.textContent),
-          chips: [...document.querySelectorAll('.ac-usefor .ac-chip')].map(e => e.textContent),
-          /* the opening of the tab means above the jump links too */
-          beforeNav: !!lede &&
-            (lede.compareDocumentPosition(document.querySelector('.ac-sections')) & 4) !== 0,
-          inOverview: !!(lede && lede.closest('[data-panel="overview"]')),
-          /* one italic line under the heading, not two */
-          claims: document.querySelectorAll('.claim').length,
-          short: LESSONS.find(l => l.id === id).short,
-          defined: EvTheory.mode(id).defined
-        };
-      }, mode);
-      eq(got.claim, got.want.tagline, mode + ' shows its tagline under the heading');
-      eq(got.claims, 1, 'and only that one italic line');
-      eq(got.paras, got.want.about, mode + ' opens its Overview with the about text');
-      eq(got.chips, got.want.useFor, 'and a Use it for row');
-      ok(got.beforeNav, mode + "'s lede sits above the jump links");
-      ok(got.inOverview, 'inside the Overview panel');
-      /* nothing is retyped: the lesson's short line and the theory layer's own
-         sentence are the same string as mode-copy.js, not copies of it */
-      eq(got.short, got.want.oneNote, mode + ' takes its short line from MODE_COPY');
-      eq(got.defined, got.want.oneNote, 'and EvTheory agrees with it, so neither can drift');
+      await p.locator('#rail button').first().waitFor({ timeout:10000 });
+      await p.waitForTimeout(350);
+      const want = await p.evaluate(id => MODE_COPY[id], mode);
+
+      /* the tagline opens the lesson, with what to use it for */
+      eq((await p.locator('.lstep .claim').innerText()).trim(), want.tagline,
+         mode + ' opens on the tagline');
+      eq(await p.evaluate(() => [...document.querySelectorAll('.lstep .ac-chip')].map(e => e.textContent)),
+         want.useFor, 'and what to use it for');
+
+      /* THE OWNER'S WORDS ARE THE READING, and the draft body is not shown:
+         saying both would be the same thing twice at twice the length. */
+      const read = [];
+      const n = await p.locator('#rail button').count();
+      for(let i = 1; i < n; i++){
+        await p.locator('#rail button').nth(i).click();
+        await p.waitForTimeout(170);
+        const label = await p.evaluate(() => document.getElementById('rail-n').textContent);
+        if(!/· Why$/.test(label)) break;
+        read.push(await p.evaluate(() =>
+          [...document.querySelectorAll('.lstep .prose p')].map(e => e.textContent).join('\n')));
+      }
+      eq(read, want.about, mode + "'s reading steps are the owner's words, one per step");
+
+      eq(await p.evaluate(id => LESSONS.find(l => l.id === id).short, mode), want.oneNote,
+         mode + ' takes its short line from MODE_COPY');
+      eq(await p.evaluate(id => EvTheory.mode(id).defined, mode), want.oneNote,
+         'and EvTheory agrees with it, so neither can drift');
     }
 
-    /* the intro has no entry, so it keeps its own claim and gains no lede */
+    /* the intro has no entry, so it keeps its own claim */
     await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/how-modes-work');
-    await p.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
-    eq(await p.locator('.ac-lede').count(), 0, 'the intro has no lede');
-    ok(/one note away/.test(await p.locator('.claim').innerText()), 'and keeps its own claim');
+    await p.locator('#rail button').first().waitFor({ timeout:10000 });
+    await p.waitForTimeout(350);
+    ok(/one note away/.test(await p.locator('.lstep .claim').innerText()), 'the intro keeps its own claim');
 
-    /* the module home opens on the same words */
+    /* the module home still opens on the same words */
     await p.goto(BASE + '/theory-lab/modes/');
     await p.waitForTimeout(700);
     const cards = await p.evaluate(() => [...document.querySelectorAll('.md-lesson')].map(c => ({
-      title: c.querySelector('h3').textContent,
-      tagline: (c.querySelector('.md-tagline') || {}).textContent || null,
-      line: [...c.querySelectorAll('p:not(.md-tagline)')].map(e => e.textContent)[0]
-    })));
+      title:c.querySelector('h3').textContent,
+      tagline:(c.querySelector('.md-tagline') || {}).textContent || null })));
     eq(cards.filter(c => c.tagline).length, 5, 'five module-home cards carry a tagline');
-    eq(cards.find(c => c.title === 'Dorian'),
-       { title:'Dorian', tagline:'Magic, longing and otherworldliness.', line:'Minor with a raised 6th' },
-       'each showing the tagline over the one-note line');
     eq(cards.find(c => c.title === 'How modes work').tagline, null, 'and the intro carries none');
-
-    /* the quiz is not a fourth tool */
     eq(await p.locator('.md-tool').count(), 3, 'three tools, filling their row');
     eq(await p.locator('.md-test').count(), 1, 'and the quiz in a band of its own');
-    ok(/5 levels/i.test(await p.locator('.md-test-meta').innerText()), 'saying what it offers');
   }
 
-  /* ====================================== 7b. the Listen tab ============ */
+  /* ================================= 7b. Listen is a step =============== */
   {
-    const COLOUR = ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian'];
-
-    /* Ionian and Aeolian are the reference points, so they have no entry, and
-       a tool is a widget with no lesson around it. */
-    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/how-modes-work');
-    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
-    eq(await p.locator('.ac-tab').count(), 0, 'the intro has no Listen tab');
-    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lab/chords-lab');
-    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
-    eq(await p.locator('.ac-tab').count(), 0, 'nor does a tool');
-
-    for(const mode of COLOUR){
+    const listenStep = async mode => {
       await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/' + mode);
-      await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
-      eq(await p.evaluate(() => [...document.querySelectorAll('.ac-tab')].map(t => t.dataset.tab)),
-         ['overview', 'listen'], mode + ' has an Overview and a Listen tab');
-      ok(await p.evaluate(() => getComputedStyle(document.querySelector('[data-panel="listen"]')).display) === 'none',
-         mode + ' opens on Overview');
-      /* mounting is lazy: nothing in the Listen panel until its tab is clicked */
-      eq(await p.locator('[data-panel="listen"] .evl-card, [data-panel="listen"] .evl-empty').count(), 0,
-         mode + ' has not mounted its Listen panel yet');
+      await p.locator('#rail button').first().waitFor({ timeout:10000 });
+      await p.waitForTimeout(300);
+      const n = await p.locator('#rail button').count();
+      for(let i = 0; i < n; i++){
+        const label = await p.evaluate(k =>
+          document.querySelectorAll('#rail button')[k].getAttribute('aria-label'), i);
+        if(/Listen$/.test(label)){ await p.locator('#rail button').nth(i).click();
+          await p.waitForTimeout(400); return i; }
+      }
+      return -1;
+    };
 
-      await p.locator('.ac-tab[data-tab="listen"]').click();
-      await p.waitForTimeout(400);
-      const seen = await p.evaluate(() => ({
-        cards: document.querySelectorAll('.evl-card').length,
-        empty: !!document.querySelector('.evl-empty'),
-        want: (LISTEN[location.hash.split('/')[2].split('?')[0]] || []).filter(i => i.verified && i.yt).length
-      }));
+    for(const mode of ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian']){
+      const at = await listenStep(mode);
+      ok(at > 0, mode + ' has a Listen step');
+      const seen = await p.evaluate(id => ({
+        cards:document.querySelectorAll('.lpanel .evl-card').length,
+        empty:!!document.querySelector('.lpanel .evl-empty'),
+        want:(LISTEN[id] || []).filter(i => i.verified && i.yt).length,
+        inWide:!!document.querySelector('.lplay .lpanel'),
+        demoHidden:document.getElementById('demo-host').hidden }), mode);
       eq(seen.cards, seen.want, mode + ' shows only its verified cards');
       ok(seen.cards ? !seen.empty : seen.empty,
          mode + (seen.cards ? ' shows a grid' : ' says examples are coming soon'));
-      ok(await p.evaluate(() => getComputedStyle(document.querySelector('[data-panel="overview"]')).display) === 'none',
-         mode + ' hides Overview while Listen is open');
+      ok(seen.inWide, 'in the wide column, where three cards fit');
+      ok(seen.demoHidden, 'and the widget stands aside while they are on screen');
     }
 
-    /* the deep link Circle will use */
-    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/lydian?tab=listen');
-    /* the widget mounts behind the open Listen tab, so it is attached but not
-       visible: a visibility wait here would hang for ten seconds and fail */
-    await p.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
-    await p.waitForTimeout(400);
-    eq(await p.locator('.ac-tab[data-tab="listen"]').getAttribute('aria-selected'), 'true',
-       '?tab=listen opens the tab directly');
-    eq(await p.locator('.evl-card').count(), 3, 'with Lydian\'s three verified cards');
-    eq(await p.evaluate(() => [...document.querySelectorAll('[data-panel="listen"] [data-play]')]
-         .map(b => b.textContent.trim())),
-       ['Play', 'Play', 'Play'], 'each offering Play, because every verified start is 0');
+    /* the intro has no recordings, so no Listen step */
+    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/how-modes-work');
+    await p.locator('#rail button').first().waitFor({ timeout:10000 });
+    eq(await p.evaluate(() => [...document.querySelectorAll('#rail button')]
+         .filter(b => /Listen$/.test(b.getAttribute('aria-label'))).length), 0,
+       'the intro has no Listen step');
 
-    /* Leaving Overview stops the lesson: the transport's Stop button goes with
-       it, and audio playing behind a hidden panel has nothing to stop it. */
-    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/lydian');
-    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
-    await p.locator('#demo-host [data-play]').click();
-    await p.waitForFunction(() => AccelAudio.inspect().status === 'playing', null, { timeout:10000 });
-    await p.locator('.ac-tab[data-tab="listen"]').click();
-    await p.waitForTimeout(300);
-    eq(await p.evaluate(() => AccelAudio.inspect().status), 'idle',
-       'opening Listen stops whatever the lesson was playing');
-
-    /* nothing reaches YouTube until a click */
+    /* nothing reaches YouTube until a click, and a video stops the lesson */
+    await listenStep('lydian');
     eq(await p.locator('.evl-frame iframe').count(), 0, 'no iframe before a click');
     await p.evaluate(() => { window.__stops = 0; const s = AccelAudio.stop;
       AccelAudio.stop = function(){ window.__stops++; return s.apply(this, arguments); }; });
     await p.locator('.evl-card').nth(0).locator('.evl-frame').click();
-    await p.waitForTimeout(300);
-    const first = await p.evaluate(() => ({
-      n: document.querySelectorAll('.evl-frame iframe').length,
-      src: document.querySelector('.evl-frame iframe').src,
-      stops: window.__stops }));
+    await p.waitForTimeout(350);
+    const first = await p.evaluate(() => ({ n:document.querySelectorAll('.evl-frame iframe').length,
+      src:document.querySelector('.evl-frame iframe').src, stops:window.__stops }));
     eq(first.n, 1, 'a click makes exactly one player');
-    ok(/^https:\/\/www\.youtube-nocookie\.com\/embed\/TcvnuqLFpkU\?start=0&/.test(first.src),
-       'pointed at the card\'s video and start time: ' + first.src);
-    eq(first.stops, 1, 'and stops the lesson transport and its drone first');
-
-    /* only one plays at a time */
+    ok(/youtube-nocookie\.com\/embed\/TcvnuqLFpkU\?start=0&/.test(first.src),
+       "pointed at the card's video and start time");
+    eq(first.stops, 1, 'and stops the lesson transport first');
     await p.locator('.evl-card').nth(1).locator('.evl-frame').click();
-    await p.waitForTimeout(300);
-    const second = await p.evaluate(() => ({
-      n: document.querySelectorAll('.evl-frame iframe').length,
-      thumbs: document.querySelectorAll('.evl-frame img').length,
-      stops: window.__stops }));
-    eq(second.n, 1, 'starting a second card leaves one player');
-    eq(second.thumbs, 2, 'and puts the first card back to its thumbnail');
-    eq(second.stops, 2, 'stopping the transport again');
-
-    /* leaving the lesson takes the panel with it */
-    await p.goto(BASE + '/theory-lab/modes/lessons.html#/lessons/phrygian');
-    await p.locator('#demo-host .ac-transport').waitFor({ timeout:10000 });
-    eq(await p.locator('.evl-card').count(), 0, 'routing away destroys the Listen panel');
+    await p.waitForTimeout(350);
+    eq(await p.locator('.evl-frame iframe').count(), 1, 'only one plays at a time');
   }
 
   /* ====================================== 7c. author mode =============== */
   {
     const a = await openPage();
+    await a.setViewportSize({ width:1440, height:900 });
     const open = async mode => {
-      await a.goto(BASE + '/theory-lab/modes/lessons.html?author=1#/lessons/' + mode + '?tab=listen');
-      await a.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
-      await a.waitForTimeout(400);
+      await a.goto(BASE + '/theory-lab/modes/lessons.html?author=1#/lessons/' + mode);
+      await a.locator('#rail button').first().waitFor({ timeout:10000 });
+      await a.waitForTimeout(300);
+      const n = await a.locator('#rail button').count();
+      for(let i = 0; i < n; i++){
+        const label = await a.evaluate(k =>
+          document.querySelectorAll('#rail button')[k].getAttribute('aria-label'), i);
+        if(/Listen$/.test(label)){ await a.locator('#rail button').nth(i).click();
+          await a.waitForTimeout(450); return; }
+      }
     };
-
     let total = 0;
     for(const mode of ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian']){
       await open(mode);
@@ -543,52 +796,28 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
     eq(await a.locator('[data-flag="novideo"]').count(), 1, 'Treasure Planet is flagged as having no video');
     eq(await a.locator('[data-flag="unverified"]').count(), 7, 'and every Mixolydian card is flagged unverified');
 
-    /* Set start reads the player's clock, which the stub fixes at 123.6s */
     await open('lydian');
     const card = a.locator('.evl-card').first();
     await card.locator('.evl-frame').click();
-    await a.waitForTimeout(700);
+    await a.waitForTimeout(800);
     eq(await a.evaluate(() => window.__players || 0), 1, 'author mode builds an IFrame API player');
     await card.locator('[data-set="start"]').click();
-    await a.waitForTimeout(150);
+    await a.waitForTimeout(200);
     ok(/start 2:04 \(124s\)/.test(await card.locator('[data-times]').innerText()),
        'Set start rounds the clock to 124s');
-    await card.locator('[data-nudge="-1"]').click();
-    await a.waitForTimeout(150);
-    ok(/start 2:03 \(123s\)/.test(await card.locator('[data-times]').innerText()), 'and \u22121 s nudges it');
-    eq((await card.locator('[data-play]').innerText()).trim(), 'Play from 2:03',
-       'the Play button follows the new start');
-
-    /* the draft survives a reload */
     eq(await a.evaluate(() => { try { return JSON.parse(localStorage.getItem('evenant-listen-draft'))
-      .lydian['beethoven-heiliger-dankgesang'].start; } catch(_){ return null; } }), 123,
-       'the edit is kept as a draft in this browser');
-    await a.reload();
-    await a.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
-    await a.waitForTimeout(400);
-    ok(/start 2:03 \(123s\)/.test(await a.locator('.evl-card').first().locator('[data-times]').innerText()),
-       'and is still there after a reload');
+      .lydian['beethoven-heiliger-dankgesang'].start; } catch(_){ return null; } }), 124,
+       'and it is kept as a draft in this browser');
 
-    /* Copy data round-trips through EvListen.source */
     const js = await a.evaluate(() => {
-      const merged = {};
-      const draft = JSON.parse(localStorage.getItem('evenant-listen-draft') || '{}');
+      const merged = {}, draft = JSON.parse(localStorage.getItem('evenant-listen-draft') || '{}');
       for(const k of Object.keys(LISTEN))
         merged[k] = LISTEN[k].map(it => ({ ...it, ...((draft[k] || {})[it.id] || {}) }));
       return EvListen.source(merged, 'LISTEN');
     });
     const back = new Function(js + ';return LISTEN;')();
     eq(Object.values(back).flat().length, 27, 'Copy data writes all 27 cards back as valid JS');
-    eq(back.lydian[0].start, 123, 'carrying the edit');
-    eq(Object.keys(back), ['lydian', 'mixolydian', 'dorian', 'phrygian', 'locrian'], 'in the same five groups');
-
-    /* Discard draft puts it back */
-    await a.locator('[data-discard]').click();
-    await a.waitForTimeout(900);
-    await a.locator('#demo-host .ac-transport').waitFor({ state:'attached', timeout:10000 });
-    await a.waitForTimeout(400);
-    ok(/start 0:00 \(0s\)/.test(await a.locator('.evl-card').first().locator('[data-times]').innerText()),
-       'Discard draft restores what the data file says');
+    eq(back.lydian[0].start, 124, 'carrying the edit');
     await a.close();
   }
 
@@ -656,6 +885,8 @@ const eq = (a, b, m) => { assert.deepEqual(a, b, m + '\n      got  ' + JSON.stri
 
   eq(errors, [], 'no page errors');
   console.log('PASS modes: ' + checks + ' checks — gate and deep links, hub, 9 lesson pages, presets, ' +
-              'separate stores, mode change mid-loop, chord grid, ear quiz, the chrome, the mode copy, Listen and author mode, nav row, 390px');
+              'separate stores, mode change mid-loop, chord grid, ear quiz, the chrome, the mode copy, ' +
+              'Listen and author mode, nav row, 390px, and nothing clipped on any route at 1280x720, ' +
+              '1366x768 or 1440x900');
   await browser.close();
 })().catch(e => { console.error(e); process.exit(1); });

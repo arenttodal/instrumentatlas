@@ -6,10 +6,12 @@
    compare without asking. Loads after evenant-theory.js, evenant-keyboard.js,
    evenant-sound.js and themes.js.
 
-   EVERY ONE PLAYS OVER A DRONE, on by default. A mode is only audible against
-   a fixed tonic — play D Dorian with nothing under it and you have played C
-   major — and that is the single most common reason people say they cannot
-   hear modes.
+   EVERY ONE OFFERS A DRONE, off until it is asked for. A mode is only audible
+   against a fixed tonic — play D Dorian with nothing under it and you have
+   played C major — and that is the single most common reason people say they
+   cannot hear modes, so the switch is the first thing to reach for. It is not
+   on by default, because starting every widget with a sustained note under it
+   assumes what the reader wants to hear first, and assumes it loudly.
 
    The keyboard goes under the roll rather than in the controls column, which
    is what spec.draw(rollHost) is for. It is built once and then only told what
@@ -76,7 +78,12 @@ const ModeActivities = (() => {
      1. BRIGHTNESS — one note changes each time the mode darkens
      ======================================================================== */
   activities.brightness = (s, u) => {
-    u.defaults({ rootPc:2, mode:'lydian', drone:true, instrument:EvSound.remembered() });
+    /* THE DRONE IS OFF UNTIL IT IS ASKED FOR. A mode only exists against a
+       tonic, so the drone is the thing to reach for when one refuses to sound
+       like itself — but starting every widget with a sustained note under it
+       is an assumption about what the reader wants to hear first, and a loud
+       one. The toggle is right there. */
+    u.defaults({ rootPc:2, mode:'lydian', drone:false, instrument:EvSound.remembered() });
     if(!T.mode(s.mode)) s.mode = 'lydian';
     let moved = null, movedAt = 0;
 
@@ -169,7 +176,7 @@ const ModeActivities = (() => {
       render(){
         u.select(u.host, 'Root', ROOTS.map(pc => ({ value: pc, label: rootName(pc, s.mode) })), s.rootPc,
           v => { s.rootPc = +v; u.redraw(); });
-        const bar = u.group(u.host, 'Mode');
+        const bar = u.segment(u.host, 'Mode');
         bar.classList.add('md-modebar');
         T.MODES.forEach(m => {
           const b = u.button(bar, m.name, () => { s.mode = m.id; pick = null; u.redraw(); });
@@ -244,7 +251,7 @@ const ModeActivities = (() => {
      ======================================================================== */
   activities.reharm = (s, u) => {
     u.defaults({ theme:'rise', rootPc:2, mode:'lydian', from:'ionian',
-                 idiomatic:false, melody:true, harmony:true, drone:true,
+                 idiomatic:false, melody:true, harmony:true, drone:false,
                  instrument:EvSound.remembered() });
     if(!T.mode(s.mode)) s.mode = 'lydian';
     if(!T.mode(s.from)) s.from = 'ionian';
@@ -314,7 +321,7 @@ const ModeActivities = (() => {
           v => { s.theme = v; const t = themeById(v); s.from = t.home; u.redraw(); });
         u.select(u.host, 'Root', ROOTS.map(pc => ({ value: pc, label: rootName(pc, s.mode) })), s.rootPc,
           v => { s.rootPc = +v; u.redraw(); });
-        const bar = u.group(u.host, 'Mode');
+        const bar = u.segment(u.host, 'Mode');
         bar.classList.add('md-modebar');
         T.MODES.forEach(m => {
           const b = u.button(bar, m.name, () => { s.mode = m.id; u.update(); u.redraw(); });

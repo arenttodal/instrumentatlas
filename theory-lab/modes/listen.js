@@ -2,7 +2,7 @@
    SCALES & MODES · LISTEN
    ----------------------------------------------------------------------------
    Real pieces, each starting at the passage that shows the mode. Rendered by
-   evenant-listen.js into the Listen tab of a mode's lesson page.
+   evenant-listen.js into the Listen step of a mode's lesson page.
 
    IONIAN AND AEOLIAN HAVE NO ENTRY. They are the two reference points every
    other mode is defined against, so there is nothing to point at.
@@ -12,7 +12,7 @@
    strongly the mode is there: throughout, passage or inflection.
 
    VERIFIED IS A TIMESTAMP THAT HAS BEEN LISTENED TO. Only verified:true cards
-   are shown to a reader. Open a mode's Listen tab with ?author=1 to see them
+   are shown to a reader. Open a mode's Listen step with ?author=1 to see them
    all, set start and end by ear, mark them verified, and copy the result back
    into this file.
    ============================================================================ */

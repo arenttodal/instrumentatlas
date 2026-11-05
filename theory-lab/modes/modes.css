@@ -21,26 +21,52 @@
    Seven, in brightness order, and they wrap to two rows on a phone rather
    than scrolling: a row you have to scroll hides the darkest modes, which
    are the ones people have not met. */
-.ac-group.md-modebar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.md-modebtn{padding:7px 12px;font-size:12.5px;border-radius:8px;
-  border:1px solid var(--hair);background:rgba(255,255,255,.02);color:var(--text);
-  transition:border-color .2s,background .2s,color .2s}
-.md-modebtn:hover{border-color:var(--hair-gold);color:#fff}
-.md-modebtn[aria-current="true"]{border-color:var(--gold);background:rgba(212,160,74,.14);color:#fff}
+/* A SEGMENTED CONTROL, NOT SEVEN BUTTONS.
+   The seven modes are not seven unrelated choices — they are one ordered
+   series, brightest to darkest, and exactly one is true at a time. Seven
+   separate boxes said neither of those things: they looked like seven places
+   you could go and gave no hint that Lydian and Locrian are the two ends of
+   something. Welded into a single track with hairline divisions, the row says
+   "one of these, and they are in an order" before a word is read, and the lit
+   segment says which. It is also the shape every operating system uses for
+   this exact job, so nobody has to learn it.
+
+   The gradient under the track runs gold to blue at a tenth of the strength
+   the rest of the panel uses — just enough that the bright end looks warm and
+   the dark end cool, which is the lesson. */
+.md-modebar{background-image:linear-gradient(90deg,rgba(212,160,74,.07),rgba(143,180,224,.06)),var(--panel)}
+/* The segment itself is the engine's — see .ac-seg-track in lesson.css. All
+   this module adds is the warm-to-cool wash across the track, because for
+   these seven the order IS the lesson. */
 
 /* --- the chord grid: seven tiles, one per degree --- */
-.md-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin:16px 0 2px}
-.md-tile{display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:12px 6px 10px;border-radius:10px;text-align:center;
-  border:1px solid var(--hair);background:rgba(255,255,255,.02);
-  /* the function colour is a hairline at the top rather than a fill, so seven
-     tiles do not read as seven different buttons */
-  box-shadow:inset 0 2px 0 -1px var(--fn);
-  transition:border-color .2s,background .2s,transform .2s}
-.md-tile:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.06);transform:translateY(-1px)}
-.md-tile.is-on{border-color:var(--gold);background:rgba(212,160,74,.14)}
+/* --- the chord grid: seven tiles, one per degree ---
+   THREE SIZES OF TYPE, NOT FIVE. The tile used to stack a numeral, a name, a
+   function, a signature mark and a comparison, all at four different sizes, so
+   there was no first thing to look at. The numeral leads, the chord name
+   answers it, and the function is the small print; the signature mark moved
+   out of the stack and onto the tile's top edge as a gold rule, where it marks
+   the tile without adding a line to read. */
+.md-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--s2);margin:var(--s4) 0 2px}
+.md-tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:11px 6px 9px;border-radius:var(--r2);text-align:center;overflow:hidden;
+  border:1px solid var(--hair);background-image:var(--panel);box-shadow:var(--edge);
+  transition:border-color .22s var(--ease),background .22s var(--ease),
+             transform .22s var(--ease),box-shadow .22s var(--ease)}
+/* the function colour is a rule along the top edge rather than a fill, so
+   seven tiles do not read as seven different buttons */
+.md-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--fn);opacity:.75}
+.md-tile:hover{border-color:var(--hair-gold);background-image:var(--panel-hi);
+  transform:translateY(-2px);box-shadow:var(--edge),0 6px 16px rgba(0,0,0,.35)}
+.md-tile.is-on{border-color:var(--gold);background-image:var(--gold-face);
+  box-shadow:var(--edge),0 4px 14px rgba(212,160,74,.14)}
+/* a signature chord is what the mode is FOR, so it is marked on the tile's own
+   edge — a second gold line under the function rule, not a fifth line of type */
 .md-tile.is-sig{border-color:var(--hair-gold)}
-.md-num{font-family:'Playfair Display',Georgia,serif;font-size:17px;color:#fff;line-height:1.1}
+.md-tile.is-sig::after{content:'';position:absolute;top:2px;left:0;right:0;height:1px;
+  background:var(--gold);opacity:.9}
+.md-num{font-family:'Playfair Display',Georgia,serif;font-size:18px;color:#fff;line-height:1.05}
 .md-tile b{font-weight:400;font-size:12.5px;color:var(--text)}
 .md-fn{font-size:8.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--fn);opacity:.85}
 .md-sig{font-size:8.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
@@ -95,7 +121,8 @@ a.md-lesson:hover{border-color:var(--hair-gold);background:rgba(212,160,74,.05)}
   .md-tile{padding:10px 4px 8px}
   .md-num{font-size:15px}
   .md-tile b{font-size:11.5px}
-  .md-modebtn{padding:6px 10px;font-size:12px}
+  /* .ac-seg-track>.btn is (0,2,0), so this has to match it to be heard */
+  .ac-seg-track>.md-modebtn{padding:0 9px;font-size:11.5px}
 }
 @media (prefers-reduced-motion:reduce){
   .md-tile:hover,a.md-tool:hover,a.md-test:hover{transform:none}
